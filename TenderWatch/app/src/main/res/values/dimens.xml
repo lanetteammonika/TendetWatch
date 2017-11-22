@@ -7,5 +7,6 @@
     <dimen name="value_30">30dp</dimen>
     <dimen name="value_20">20dp</dimen>
     <dimen name="value_15">15dp</dimen>
+    <dimen name="value_22">22dp</dimen>
 
 </resources>

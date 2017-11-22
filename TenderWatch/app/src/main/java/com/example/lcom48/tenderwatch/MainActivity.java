@@ -28,7 +28,7 @@ public TextView aboutapp;
             @Override
             public void onClick(View view) {
                 //final Dialog dialog = new Dialog(MainActivity.this);
-                Dialog dialog=new Dialog(context,R.style.full_screen_dialog);
+                final Dialog dialog=new Dialog(context,R.style.full_screen_dialog);
                 //setting custom layout to dialog
                 dialog.setContentView(R.layout.aboutapp);
 
@@ -46,13 +46,13 @@ public TextView aboutapp;
 //                image.setImageDrawable(getResources().getDrawable(android.R.drawable.ic_dialog_info));
 //
 //                //adding button click event
-//                Button dismissButton = (Button) dialog.findViewById(R.id.button);
-//                dismissButton.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        dialog.dismiss();
-//                    }
-//                });
+                Button dismissButton = (Button) dialog.findViewById(R.id.button_close);
+                dismissButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                    }
+                });
                 dialog.show();
             }
         });
