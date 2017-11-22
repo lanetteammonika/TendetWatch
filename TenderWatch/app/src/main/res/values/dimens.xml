@@ -4,5 +4,8 @@
     <dimen name="value_10">10dp</dimen>
     <dimen name="text_20">20sp</dimen>
     <dimen name="value_40">40dp</dimen>
+    <dimen name="value_30">30dp</dimen>
+    <dimen name="value_20">20dp</dimen>
+    <dimen name="value_15">15dp</dimen>
 
 </resources>
