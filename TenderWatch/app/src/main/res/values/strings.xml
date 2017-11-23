@@ -1,4 +1,10 @@
 <resources>
     <string name="app_name">TenderWatch</string>
     <string name="about_app"><u>About TenderWatch</u></string>
+    <string name="title_activity_login">Login</string>
+    <string name="forgetpassword"><u>Forget Password?</u></string>
+    <string name="create_acc"><u>CREATE AN ACCOUNT</u></string>
+    <string name="facebook_app_id">390992694666738</string>
+    <string name="fb_login_protocol_scheme">fb390992694666738</string>
+
 </resources>

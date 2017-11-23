@@ -7,6 +7,12 @@
     <dimen name="value_30">30dp</dimen>
     <dimen name="value_20">20dp</dimen>
     <dimen name="value_15">15dp</dimen>
-    <dimen name="value_22">22dp</dimen>
+    <dimen name="value_25">25dp</dimen>
+    <dimen name="value_45">45dp</dimen>
+    <dimen name="value_50">50dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="value_5">5dp</dimen>
+    <dimen name="value_2">2dp</dimen>
+    <dimen name="value_7">7dp</dimen>
 
 </resources>

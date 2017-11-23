@@ -187,19 +187,31 @@
             android:layout_marginRight="@dimen/value_40"
             android:layout_marginLeft="@dimen/value_40"
             android:layout_marginTop="@dimen/value_15">
-            <Button
-                android:id="@+id/btn_facebook"
+            <FrameLayout
+                android:id="@+id/FrameLayout1"
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:background="@drawable/round_corner"
-                android:layout_gravity="center"
-                android:text="Sign-in with Fackbook"
-                android:textSize="15sp"
-                android:textAllCaps="false"
-                android:textColor="@color/colorWhite"
-                android:backgroundTint="#2D4487"
+                android:layout_height="wrap_content" >
 
-                />
+                <com.facebook.login.widget.LoginButton
+                    android:id="@+id/login_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone" />
+
+                <Button
+                    android:id="@+id/fb"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:background="@drawable/round_corner"
+                    android:layout_gravity="center"
+                    android:text="Sign-in with facbook"
+                    android:textSize="15sp"
+                    android:textAllCaps="false"
+                    android:textColor="@color/colorWhite"
+                    android:backgroundTint="#2D4487"
+
+                    />
+            </FrameLayout>
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
