@@ -22,16 +22,49 @@
         android:layout_marginBottom="@dimen/value_30"
         android:layout_marginRight="@dimen/value_20"
         android:orientation="vertical" >
+
     </LinearLayout>
     <Button
         android:id="@+id/button_close"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_marginRight="2dp"
-
-        android:layout_marginTop="@dimen/value_22"
+        android:layout_marginTop="@dimen/value_20"
         android:layout_alignRight="@+id/relativeLayout1"
         android:layout_alignTop="@+id/relativeLayout1"
-        android:background="@drawable/cancel_button_3x"
+        android:background="@drawable/image_border"
+
+
         />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="@dimen/value_15"
+        android:layout_marginRight="@dimen/value_15"
+        android:layout_marginTop="@dimen/value_50"
+        android:layout_marginBottom="@dimen/value_40"
+        android:orientation="vertical"
+        >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginBottom="@dimen/value_10"
+            >
+            <ImageView
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:src="@drawable/icon_40_3x"
+                android:gravity="center"/>
+        </LinearLayout>
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <WebView
+        android:id="@+id/about_webview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+</LinearLayout>
+
+    </LinearLayout>
 </RelativeLayout>
