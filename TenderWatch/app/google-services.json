@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "855533374572",
+    "firebase_url": "https://tenderwatch-3b66e.firebaseio.com",
+    "project_id": "tenderwatch-3b66e",
+    "storage_bucket": "tenderwatch-3b66e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:855533374572:android:bb1144c3615a1289",
+        "android_client_info": {
+          "package_name": "com.example.lcom48.tenderwatch"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "855533374572-euv7e2jcoa9vi3ro7l48f0lj5dnv5812.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBtVM-wQtYDnVtDkq-P3iR_9O_hH7wu_5Q"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

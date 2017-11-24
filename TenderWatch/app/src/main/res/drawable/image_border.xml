@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item >
+        <shape xmlns:android="http://schemas.android.com/apk/res/android">
+            <solid android:color="#FFFFFF" />
+            <padding android:left="2dp" android:top="2dp" android:right="2dp"
+                android:bottom="2dp" />
+            <corners android:bottomRightRadius="18dip"
+                android:bottomLeftRadius="18dip"
+                android:topRightRadius="18dip"
+                android:topLeftRadius="18dip"/>
+        </shape>
+    </item>
+    <item>
+        <shape android:shape="oval">
+            <solid
+                android:color="#FFF"/>
+            <size
+                android:width="40dp"
+                android:height="40dp"/>
+        </shape>
+    </item>
+
+    <item android:drawable="@drawable/cancel_button_3x"/>
+</layer-list>
