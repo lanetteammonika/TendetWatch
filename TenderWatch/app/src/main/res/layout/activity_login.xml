@@ -219,7 +219,6 @@
             android:orientation="horizontal"
             android:layout_marginRight="@dimen/value_40"
             android:layout_marginLeft="@dimen/value_40"
-            android:orientation="horizontal"
             android:layout_marginTop="@dimen/value_5">
             <FrameLayout
                 android:id="@+id/FrameLayout2"
