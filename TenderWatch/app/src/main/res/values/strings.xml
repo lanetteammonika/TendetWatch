@@ -3,13 +3,14 @@
     <string name="about_app"><u>About TenderWatch</u></string>
     <string name="title_activity_login">Login</string>
     <string name="forgetpassword"><u>Forget Password?</u></string>
-    <string name="create_acc"><u>CREATE AN ACCOUNT</u></string>
     <string name="facebook_app_id">338657463270317</string>
     <string name="fb_login_protocol_scheme">fb338657463270317</string>
-    <string name="btn_login_from_google">G+ Login</string>
+    <string name="create_acc"><u>CREATE AN ACCOUNT</u></string>
+    <string name="facebook_an_from_google">G+ Login</string>
     <string name="action_settings">Settings</string>
 
     <!-- Button text -->
     <string name="btn_logout_from_google">Logout from Google</string>
     <string name="btn_revoke_access">Revoke Access</string>
+    <string name="server_client_id">855533374572-euv7e2jcoa9vi3ro7l48f0lj5dnv5812.apps.googleusercontent.com</string>
 </resources>

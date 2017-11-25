@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -22,6 +23,8 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.lcom48.tenderwatch.GetterSetter.SharedPreference;
+import com.example.lcom48.tenderwatch.Models.LoginPost;
+import com.example.lcom48.tenderwatch.Retrofit.ApiUtils;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -35,10 +38,17 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.SignInButton;
+import com.google.android.gms.common.api.Api;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
+import android.provider.Settings.Secure;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+import static java.security.AccessController.getContext;
 
 public class Login extends AppCompatActivity implements View.OnClickListener, GoogleApiClient.OnConnectionFailedListener {
     //LoginButton loginButton;
@@ -58,30 +68,37 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
     private Button btnSignOut, btnRevokeAccess, btngoogle;
     private LinearLayout llProfileLayout;
     private ImageView imgProfilePic;
+    private com.example.lcom48.tenderwatch.Retrofit.Api mAPIService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        context = getApplicationContext();
 
+        Init();
+        InitListener();
+    }
+
+    private void Init() {
         fb = (Button) findViewById(R.id.fb);
         loginButton = (LoginButton) findViewById(R.id.login_button);
-
+        mAPIService = ApiUtils.getAPIService();
         FacebookSdk.sdkInitialize(getApplicationContext());
         callbackManager = CallbackManager.Factory.create();
         btnSignIn = (SignInButton) findViewById(R.id.btn_sign_in);
         btngoogle = (Button) findViewById(R.id.google);
+    }
 
-
+    private void InitListener() {
         btnSignIn.setOnClickListener(this);
-
         btngoogle.setOnClickListener(this);
-
-        context = getApplicationContext();
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestEmail()
-                .build();
+            .requestIdToken(getString(R.string.server_client_id))
+            .requestServerAuthCode(getString(R.string.server_client_id), false)
+            .requestEmail()
+            .build();
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .enableAutoManage(this, this)
@@ -121,6 +138,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
                 //  info.setText("Login attempt failed.");
             }
         });
+
     }
 
     private void signIn() {
@@ -154,34 +172,40 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
         }
     }
 
-    private void signOut() {
-        Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
-                new ResultCallback<Status>() {
-                    @Override
-                    public void onResult(Status status) {
-                        //  updateUI(false);
-                    }
-                });
-    }
 
-    private void revokeAccess() {
-        Auth.GoogleSignInApi.revokeAccess(mGoogleApiClient).setResultCallback(
-                new ResultCallback<Status>() {
-                    @Override
-                    public void onResult(Status status) {
-                        // updateUI(false);
-                    }
-                });
+    public void sendPost(String idToken, String role,String deviceId) {
+        mAPIService.savePost(idToken,role,deviceId).enqueue(new Callback<LoginPost>() {
+            @Override
+            public void onResponse(Call<LoginPost> call, Response<LoginPost> response) {
+
+                if(response.isSuccessful()) {
+                   // showResponse(response.body().toString());
+                    Log.i(TAG, "post submitted to API." + response.body().toString());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<LoginPost> call, Throwable t) {
+                Log.e(TAG, "Unable to submit post to API.");
+            }
+        });
     }
 
     private void handleSignInResult(GoogleSignInResult result) {
         Log.d(TAG, "handleSignInResult:" + result.isSuccess());
       //  GoogleSignInAccount account = completedTask.getResult(ApiException.class);
-        //String idToken = result.getIdToken();
-
+//        String idToken = result.getIdToken();
+//
         if (result.isSuccess()) {
             SharedPreference sp = new SharedPreference();
             sp.setPreferences(getApplicationContext(), "Login", "GOOGLEYES");
+            GoogleSignInAccount acct = result.getSignInAccount();
+            String idToken = acct.getIdToken();
+            String deviceId =Settings.Secure.getString(getContentResolver(),
+                    Settings.Secure.ANDROID_ID);
+            sendPost(idToken, "contractor", deviceId);
+            // Show signed-in UI.
+            Log.d(TAG, "idToken:" + idToken);
             intent = new Intent(Login.this, Welcome.class);
             startActivity(intent);
             // Signed in successfully, show authenticated UI.
@@ -206,9 +230,9 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
         } else {
             // Signed out, show unauthenticated UI.
             //  updateUI(false);
+            Log.e(TAG, "display name: ");
         }
     }
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -217,8 +241,17 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
         if (requestCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             handleSignInResult(result);
+
         }
     }
+
+
+
+
+
+
+//...
+
 
     @Override
     public void onClick(View view) {
