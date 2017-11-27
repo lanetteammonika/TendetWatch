@@ -1,4 +1,4 @@
-package com.example.lcom48.tenderwatch.Models;
+package com.tenderWatch.Models;
 
 /**
  * Created by lcom48 on 25/11/17.
@@ -6,7 +6,7 @@ package com.example.lcom48.tenderwatch.Models;
 
 
 import com.google.gson.annotations.Expose;
-        import com.google.gson.annotations.SerializedName;
+import com.google.gson.annotations.SerializedName;
 
 public class LoginPost {
 

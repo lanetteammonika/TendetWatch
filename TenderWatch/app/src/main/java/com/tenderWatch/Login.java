@@ -1,30 +1,25 @@
-package com.example.lcom48.tenderwatch;
+package com.tenderWatch;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.example.lcom48.tenderwatch.GetterSetter.SharedPreference;
-import com.example.lcom48.tenderwatch.Models.LoginPost;
-import com.example.lcom48.tenderwatch.Retrofit.ApiUtils;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -38,17 +33,19 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.SignInButton;
-import com.google.android.gms.common.api.Api;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
-import android.provider.Settings.Secure;
+import com.google.android.gms.tasks.Task;
+import com.tenderWatch.Models.LoginPost;
+import com.tenderWatch.Retrofit.Api;
+import com.tenderWatch.Retrofit.ApiUtils;
+import com.tenderWatch.SharedPreference.SharedPreference;
+import com.tenderWatch.Validation.Validation;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
-import static java.security.AccessController.getContext;
 
 public class Login extends AppCompatActivity implements View.OnClickListener, GoogleApiClient.OnConnectionFailedListener {
     //LoginButton loginButton;
@@ -56,7 +53,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
     Intent intent;
     private CallbackManager callbackManager;
     private static final String TAG = Login.class.getSimpleName();
-    private TextView info;
+    private EditText txtEmail,txtPassword;
     private LoginButton loginButton;
     private Button fb;
     private static final int RC_SIGN_IN = 007;
@@ -65,10 +62,10 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
     private ProgressDialog mProgressDialog;
 
     private SignInButton btnSignIn;
-    private Button btnSignOut, btnRevokeAccess, btngoogle;
+    private Button btnSignOut, btnRevokeAccess, btngoogle, btnlogin;
     private LinearLayout llProfileLayout;
     private ImageView imgProfilePic;
-    private com.example.lcom48.tenderwatch.Retrofit.Api mAPIService;
+    private Api mAPIService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +73,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         context = getApplicationContext();
-
+        System.out.print("called");
         Init();
         InitListener();
     }
@@ -84,16 +81,56 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
     private void Init() {
         fb = (Button) findViewById(R.id.fb);
         loginButton = (LoginButton) findViewById(R.id.login_button);
+        btnlogin =(Button) findViewById(R.id.btn_login);
         mAPIService = ApiUtils.getAPIService();
         FacebookSdk.sdkInitialize(getApplicationContext());
         callbackManager = CallbackManager.Factory.create();
         btnSignIn = (SignInButton) findViewById(R.id.btn_sign_in);
         btngoogle = (Button) findViewById(R.id.google);
+        txtEmail = (EditText) findViewById(R.id.txt_email);
+        txtPassword = (EditText) findViewById(R.id.txt_password);
     }
 
     private void InitListener() {
+
+        txtEmail.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                    Validation.isEmailAddress(txtEmail, true);
+            }
+        });
+        txtPassword.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+                Validation.isPassword(txtPassword,true);
+                Log.i(TAG, "post submitted to API." +  Validation.isValidPassword(txtPassword.getText().toString()));
+
+            }
+        });
         btnSignIn.setOnClickListener(this);
         btngoogle.setOnClickListener(this);
+        btnlogin.setOnClickListener(this);
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(getString(R.string.server_client_id))
             .requestServerAuthCode(getString(R.string.server_client_id), false)
@@ -104,6 +141,13 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
                 .enableAutoManage(this, this)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
+//        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+//                .requestEmail()
+//                .build();
+//        mGoogleApiClient = new GoogleApiClient.Builder(this)
+//                .addOnConnectionFailedListener(this)
+//                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+//                .build();
 
         // Customizing G+ button
         btnSignIn.setSize(SignInButton.SIZE_STANDARD);
@@ -116,6 +160,9 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
                 Log.d(TAG, String.valueOf(loginResult));
                 SharedPreference sp = new SharedPreference();
                 String accessToken= loginResult.getAccessToken().getToken();
+                String deviceId =Settings.Secure.getString(getContentResolver(),
+                        Settings.Secure.ANDROID_ID);
+                savePostFB(accessToken, "contractor", deviceId);
                 if(AccessToken.getCurrentAccessToken()!=null)
                 {
                     Log.v("User is login","YES");
@@ -139,6 +186,16 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
             }
         });
 
+    }
+
+    private boolean checkValidation() {
+        boolean ret = true;
+
+       // if (!Validation.hasText(etNormalText)) ret = false;
+        if (!Validation.isEmailAddress(txtEmail, true)) ret = false;
+        if (!Validation.isPassword(txtPassword, false)) ret = false;
+
+        return ret;
     }
 
     private void signIn() {
@@ -172,9 +229,26 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
         }
     }
 
+    public void savePostFB(String idToken, String role,String deviceId) {
+        mAPIService.savePostFB(idToken,role,deviceId).enqueue(new Callback<LoginPost>() {
+            @Override
+            public void onResponse(Call<LoginPost> call, Response<LoginPost> response) {
+
+                if(response.isSuccessful()) {
+                    // showResponse(response.body().toString());
+                    Log.i(TAG, "post submitted to API." + response.body().toString());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<LoginPost> call, Throwable t) {
+                Log.e(TAG, "Unable to submit post to API.");
+            }
+        });
+    }
 
     public void sendPost(String idToken, String role,String deviceId) {
-        mAPIService.savePost(idToken,role,deviceId).enqueue(new Callback<LoginPost>() {
+        mAPIService.savePostGoogle(idToken,role,deviceId).enqueue(new Callback<LoginPost>() {
             @Override
             public void onResponse(Call<LoginPost> call, Response<LoginPost> response) {
 
@@ -243,8 +317,14 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
             handleSignInResult(result);
 
         }
-    }
+//        if (requestCode == RC_SIGN_IN) {
+//            // The Task returned from this call is always completed, no need to attach
+//            // a listener.
+//            Task<GoogleSignInAccount> task = Auth.GoogleSignInApi.getSignedInAccountFromIntent(data);
+//            handleSignInResult(task);
+//        }
 
+    }
 
 
 
@@ -264,7 +344,27 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
             case R.id.fb:
                 loginButton.performClick();
                 break;
+            case R.id.btn_login:
+                if ( checkValidation () ){
+                    login();
+                    Toast.makeText(Login.this, "Form contains error", Toast.LENGTH_LONG).show();
+
+                }
+
+                else
+                    Toast.makeText(Login.this, "Form contains error", Toast.LENGTH_LONG).show();
+                break;
         }
+    }
+
+    private void login() {
+        String email=txtEmail.getText().toString();
+        String password =txtPassword.getText().toString();
+        String role="contractor";
+        SharedPreference sp=new SharedPreference();
+
+        String deviceId =  sp.getPreferences(getApplicationContext(),"deviceId");
+
     }
 
     private void showProgressDialog() {
@@ -282,7 +382,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
             mProgressDialog.hide();
         }
     }
-
+///
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         Log.d(TAG, "onConnectionFailed:" + connectionResult);

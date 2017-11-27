@@ -1,4 +1,4 @@
-package com.example.lcom48.tenderwatch.Retrofit;
+package com.tenderWatch.Retrofit;
 
 /**
  * Created by lcom48 on 25/11/17.

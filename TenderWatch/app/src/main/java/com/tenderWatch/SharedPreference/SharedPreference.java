@@ -1,9 +1,16 @@
-package com.example.lcom48.tenderwatch.GetterSetter;
+package com.tenderWatch.SharedPreference;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
+import android.widget.Toast;
+
+import com.tenderWatch.Login;
+
+import static com.facebook.FacebookSdk.getApplicationContext;
 
 /**
  * Created by lcom48 on 24/11/17.
@@ -34,5 +41,26 @@ public class SharedPreference {
             return null;
         }
         return json;
+    }
+
+    public void ShowDialog(Context context, String Msg){
+        AlertDialog.Builder builder = new AlertDialog.Builder(
+                context);
+        builder.setTitle("Tender Watch");
+        builder.setMessage(Msg);
+
+        builder.setPositiveButton("OK",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog,
+                                        int which) {
+                        dialog.dismiss();
+                      //  Toast.makeText(getApplicationContext(),"Yes is clicked",Toast.LENGTH_LONG).show();
+                    }
+                });
+
+        //.setTextColor(neededColor);
+
+
+        builder.show();
     }
 }

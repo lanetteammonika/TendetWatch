@@ -1,20 +1,18 @@
-package com.example.lcom48.tenderwatch;
+package com.tenderWatch;
 
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutCompat;
+import android.provider.Settings;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.tenderWatch.SharedPreference.SharedPreference;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private TextView aboutapp;
@@ -36,6 +34,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btnContractor.setOnClickListener(this);
         btnClient.setOnClickListener(this);
         aboutapp.setOnClickListener(this);
+        String deviceId = Settings.Secure.getString(getContentResolver(),
+                Settings.Secure.ANDROID_ID);
+        SharedPreference sp = new SharedPreference();
+        sp.setPreferences(getApplicationContext(), "deviceId", deviceId);
     }
 
     private void InitView() {
@@ -48,7 +50,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.aboutapp:
-                final Dialog dialog=new Dialog(context,R.style.full_screen_dialog);
+                final Dialog dialog=new Dialog(context, R.style.full_screen_dialog);
                 dialog.setContentView(R.layout.aboutapp);
 
                 Button dismissButton = (Button) dialog.findViewById(R.id.button_close);

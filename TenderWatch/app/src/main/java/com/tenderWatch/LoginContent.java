@@ -1,4 +1,4 @@
-package com.example.lcom48.tenderwatch;
+package com.tenderWatch;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;

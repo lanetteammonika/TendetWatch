@@ -1,35 +1,25 @@
 {
   "project_info": {
-    "project_number": "855533374572",
-    "firebase_url": "https://tenderwatch-3b66e.firebaseio.com",
-    "project_id": "tenderwatch-3b66e",
-    "storage_bucket": "tenderwatch-3b66e.appspot.com"
+    "project_number": "153589139177",
+    "project_id": "tenderwatch-5edc3"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:855533374572:android:bb1144c3615a1289",
+        "mobilesdk_app_id": "1:153589139177:android:27d689d63f1b7a06",
         "android_client_info": {
-          "package_name": "com.example.lcom48.tenderwatch"
+          "package_name": "com.google.samples.quickstart.signin"
         }
       },
       "oauth_client": [
         {
-          "client_id": "855533374572-05a7coc7vevh7hep36q6tccs1h8lsgm1.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.lcom48.tenderwatch",
-            "certificate_hash": "70184df0a6db17cef8320a932431e9cb35beb6fd"
-          }
-        },
-        {
-          "client_id": "855533374572-euv7e2jcoa9vi3ro7l48f0lj5dnv5812.apps.googleusercontent.com",
+          "client_id": "153589139177-93tafh9qdejtgglpecn95e3u5i30rog5.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBtVM-wQtYDnVtDkq-P3iR_9O_hH7wu_5Q"
+          "current_key": "AIzaSyBWjr47aegD4zZ--EJWtUASw64BaEDdtmA"
         }
       ],
       "services": {
@@ -37,16 +27,50 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 2,
-          "other_platform_oauth_client": [
-            {
-              "client_id": "855533374572-euv7e2jcoa9vi3ro7l48f0lj5dnv5812.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "status": 1,
+          "other_platform_oauth_client": []
         },
         "ads_service": {
-          "status": 2
+          "status": 1
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:153589139177:android:86cabed89b15d3a4",
+        "android_client_info": {
+          "package_name": "com.tenderWatch"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "153589139177-ngig0j87qevdl3p9uu0pbmtel6e1lio8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tenderWatch",
+            "certificate_hash": "70184df0a6db17cef8320a932431e9cb35beb6fd"
+          }
+        },
+        {
+          "client_id": "153589139177-93tafh9qdejtgglpecn95e3u5i30rog5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBWjr47aegD4zZ--EJWtUASw64BaEDdtmA"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
         }
       }
     }
