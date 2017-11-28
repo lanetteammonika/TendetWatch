@@ -66,6 +66,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
     private LinearLayout llProfileLayout;
     private ImageView imgProfilePic;
     private Api mAPIService;
+    String newString;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,8 +75,19 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
         setContentView(R.layout.activity_login);
         context = getApplicationContext();
         System.out.print("called");
+        if (savedInstanceState == null) {
+            Bundle extras = getIntent().getExtras();
+            if(extras == null) {
+                newString= null;
+            } else {
+                newString= extras.getString("Role");
+            }
+        } else {
+            newString= (String) savedInstanceState.getSerializable("Role");
+        }
         Init();
         InitListener();
+
     }
 
     private void Init() {
@@ -89,6 +101,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
         btngoogle = (Button) findViewById(R.id.google);
         txtEmail = (EditText) findViewById(R.id.txt_email);
         txtPassword = (EditText) findViewById(R.id.txt_password);
+
     }
 
     private void InitListener() {
@@ -193,7 +206,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
 
        // if (!Validation.hasText(etNormalText)) ret = false;
         if (!Validation.isEmailAddress(txtEmail, true)) ret = false;
-        if (!Validation.isPassword(txtPassword, false)) ret = false;
+        if (!Validation.isPassword(txtPassword, true)) ret = false;
 
         return ret;
     }
@@ -236,6 +249,8 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
 
                 if(response.isSuccessful()) {
                     // showResponse(response.body().toString());
+                    intent = new Intent(Login.this, Welcome.class);
+                    startActivity(intent);
                     Log.i(TAG, "post submitted to API." + response.body().toString());
                 }
             }
@@ -247,13 +262,35 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
         });
     }
 
-    public void sendPost(String idToken, String role,String deviceId) {
+    public void sendPostGoogle(String idToken, String role,String deviceId) {
         mAPIService.savePostGoogle(idToken,role,deviceId).enqueue(new Callback<LoginPost>() {
             @Override
             public void onResponse(Call<LoginPost> call, Response<LoginPost> response) {
 
                 if(response.isSuccessful()) {
                    // showResponse(response.body().toString());
+                    intent = new Intent(Login.this, Welcome.class);
+                    startActivity(intent);
+                    Log.i(TAG, "post submitted to API." + response.body().toString());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<LoginPost> call, Throwable t) {
+                Log.e(TAG, "Unable to submit post to API.");
+            }
+        });
+    }
+
+    public void sendPost(String email,String password, String role,String deviceId) {
+        mAPIService.savePost(email,password,role,deviceId).enqueue(new Callback<LoginPost>() {
+            @Override
+            public void onResponse(Call<LoginPost> call, Response<LoginPost> response) {
+
+                if(response.isSuccessful()) {
+                    // showResponse(response.body().toString());
+                    intent = new Intent(Login.this, Welcome.class);
+                    startActivity(intent);
                     Log.i(TAG, "post submitted to API." + response.body().toString());
                 }
             }
@@ -277,11 +314,10 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
             String idToken = acct.getIdToken();
             String deviceId =Settings.Secure.getString(getContentResolver(),
                     Settings.Secure.ANDROID_ID);
-            sendPost(idToken, "contractor", deviceId);
+            sendPostGoogle(idToken, "contractor", deviceId);
             // Show signed-in UI.
             Log.d(TAG, "idToken:" + idToken);
-            intent = new Intent(Login.this, Welcome.class);
-            startActivity(intent);
+
             // Signed in successfully, show authenticated UI.
 //            GoogleSignInAccount acct = result.getSignInAccount();
 //
@@ -347,10 +383,8 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
             case R.id.btn_login:
                 if ( checkValidation () ){
                     login();
-                    Toast.makeText(Login.this, "Form contains error", Toast.LENGTH_LONG).show();
-
+                    Toast.makeText(Login.this, "Form contains not error", Toast.LENGTH_LONG).show();
                 }
-
                 else
                     Toast.makeText(Login.this, "Form contains error", Toast.LENGTH_LONG).show();
                 break;
@@ -360,10 +394,10 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
     private void login() {
         String email=txtEmail.getText().toString();
         String password =txtPassword.getText().toString();
-        String role="contractor";
+        String role=newString;
         SharedPreference sp=new SharedPreference();
-
         String deviceId =  sp.getPreferences(getApplicationContext(),"deviceId");
+        sendPost(email,password,role,deviceId);
 
     }
 

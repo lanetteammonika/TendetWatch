@@ -70,10 +70,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.btn_contractor:
                 intent = new Intent(MainActivity.this, Login.class);
+                intent.putExtra("Role", "contractor");
                 startActivity(intent);
                 break;
             case R.id.btn_client:
                 intent = new Intent(MainActivity.this, Login.class);
+                intent.putExtra("Role", "client");
                 startActivity(intent);
                 break;
         }

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.lcom48.tenderwatch.Login"
+    tools:context="com.example.lcom48.tenderWatch.Login"
     android:orientation="vertical"
     android:background="@color/colorWhite">
 
@@ -80,6 +80,7 @@
                 />
 
             <EditText
+                android:id="@+id/txt_email"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/value_40"
@@ -113,6 +114,7 @@
                 />
 
             <EditText
+                android:id="@+id/txt_password"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/value_40"
@@ -154,7 +156,7 @@
             android:layout_marginLeft="@dimen/value_40"
             android:layout_marginTop="@dimen/value_7">
             <Button
-                android:id="@+id/btn_client"
+                android:id="@+id/btn_login"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/button"

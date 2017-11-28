@@ -14,5 +14,6 @@
     <dimen name="value_5">5dp</dimen>
     <dimen name="value_2">2dp</dimen>
     <dimen name="value_7">7dp</dimen>
+    <dimen name="text_15">15sp</dimen>
 
 </resources>

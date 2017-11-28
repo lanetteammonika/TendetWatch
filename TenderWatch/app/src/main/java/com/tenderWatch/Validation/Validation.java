@@ -15,7 +15,7 @@ public class Validation {
         // you can change the expression based on your need
         private static final String EMAIL_REGEX = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
         private static final String PHONE_REGEX = "\\d{3}-\\d{7}";
-        private static final String PASSWORD_PATTERN = "^(?=.*[0-9])(?=.*[a-z])(?=.*[!@#$%^&*+=?-]).{8}$";
+        private static final String PASSWORD_PATTERN = "^(?=.*[0-9])(?=.*[a-z])(?=.*[!@#$%^&*+=?-]).{8,15}$";
         // Error Messages
         private static final String REQUIRED_MSG = "required";
         private static final String EMAIL_MSG = "invalid email";

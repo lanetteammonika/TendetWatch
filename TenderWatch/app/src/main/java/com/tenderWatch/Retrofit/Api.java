@@ -48,5 +48,9 @@ public interface Api {
                                @Field("password") String password,
                                @Field("role") String role,
                                @Field("deviceId") String deviceId);
+    @POST("auth/forgot")
+    @FormUrlEncoded
+    Call<LoginPost> forgotPassword(@Field("email") String email,
+                             @Field("role") String role);
 }
 
