@@ -4,11 +4,19 @@ package com.tenderWatch.Retrofit;
  * Created by lcom48 on 25/11/17.
  */
 
+import com.tenderWatch.Models.GetCountry;
 import com.tenderWatch.Models.LoginPost;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.GET;
 import retrofit2.http.POST;
 //let parameters: Parameters = [“email” : self.txfEmail.text!,
 //        “password” : self.txfPassword.text!,
@@ -52,5 +60,7 @@ public interface Api {
     @FormUrlEncoded
     Call<LoginPost> forgotPassword(@Field("email") String email,
                              @Field("role") String role);
+    @GET("auth/country")
+    Call<ArrayList<GetCountry>> getCountryData();
 }
 
