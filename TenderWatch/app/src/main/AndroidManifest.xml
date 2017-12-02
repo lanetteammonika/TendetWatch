@@ -42,7 +42,9 @@
         <activity android:name=".ForgotPassword">
 
         </activity>
-        <activity android:name=".CountryList">
+        <activity
+            android:name=".CountryList"
+           >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -1,36 +1,41 @@
 package com.tenderWatch;
 
+import android.annotation.SuppressLint;
+import android.app.Service;
 import android.content.Context;
-import android.content.ContextWrapper;
-import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.Filter;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
+import android.widget.SectionIndexer;
 import android.widget.TextView;
 
 import com.tenderWatch.Models.GetCountry;
-import com.tenderWatch.Models.LoginPost;
 import com.tenderWatch.Retrofit.Api;
 import com.tenderWatch.Retrofit.ApiUtils;
-import com.tenderWatch.Validation.Validation;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -42,11 +47,19 @@ public class CountryList extends AppCompatActivity {
     private EditText edtSearch;
     private static final String TAG = CountryList.class.getSimpleName();
     private Api mAPIService;
-
-
+    Map<String, Integer> mapIndex;
+    private static final ArrayList<Item> countryList = new ArrayList<CountryList.Item>();
+    private static final ArrayList<String> alpha = new ArrayList<String>();
+    private static final ArrayList<String> alpha2 = new ArrayList<String>();
+    public static final ArrayList<String> list = new ArrayList<String>();
+    public static char[] alphabetlist = new char[27];
+    private List Data;
     //ArrayList list;
     public static final String JSON_STRING = "{\"employee\":{\"name\":\"Sachin\",\"salary\":56000}}";
+    private SideSelector sideSelector = null;
+    private RelativeLayout rlCountry;
 
+    @SuppressLint("ClickableViewAccessibility")
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,13 +68,60 @@ public class CountryList extends AppCompatActivity {
 
         edtSearch = (EditText) findViewById(R.id.edtSearch);
         lvCountry = (ListView) findViewById(R.id.lvCountry);
+        sideSelector = (SideSelector) findViewById(R.id.side_selector);
+        rlCountry = (RelativeLayout) findViewById(R.id.rlCountry);
         mAPIService = ApiUtils.getAPIService();
-        //Call<List<GetCountry>> call =  mAPIService.getCountryData();
-        //
+
         mAPIService.getCountryData().enqueue(new Callback<ArrayList<GetCountry>>() {
             @Override
             public void onResponse(Call<ArrayList<GetCountry>> call, Response<ArrayList<GetCountry>> response) {
                 Log.i("array-------", response.body().get(0).getCountryName().toString());
+
+                Data = response.body();
+
+
+                for (int i = 0; i < Data.size(); i++) {
+                    //JSONObject obj = array.getJSONObject(n);
+                    String name = response.body().get(i).getCountryName().toString();
+                    String flag = response.body().get(i).getImageString().toString();
+                    String value = String.valueOf(name.charAt(0));
+                    alpha.add(name + '~' + flag);
+
+
+                    // }
+                }
+
+                Collections.sort(alpha);
+                for (int i = 0; i < Data.size(); i++) {
+                    String name = alpha.get(i).split("~")[0];
+                    String flag = alpha.get(i).split("~")[1];
+                    String value = String.valueOf(name.charAt(0));
+                    if (!list.contains(value)) {
+                        list.add(value);
+                        //alphabetlist.append(value);
+
+
+                        Log.i("array-------", String.valueOf(list));
+                        alpha2.add(value);
+                        alpha2.add(name);
+
+                        //set Country Header (Like:-A,B,C,...)
+                        countryList.add(new SectionItem(value, ""));
+                        //set Country Name
+                        countryList.add(new EntryItem(name, flag));
+
+                        //Log.i("array section-------",alpha.get(n).getTitle());
+
+                    } else {
+                        alpha2.add(name);
+
+                        //set Country Name
+                        countryList.add(new EntryItem(name, flag));
+                    }
+                }
+                String str = list.toString().replaceAll(",", "");
+                alphabetlist = str.substring(1, str.length() - 1).replaceAll(" ", "").toCharArray();
+                // set adapter
 
             }
 
@@ -71,53 +131,12 @@ public class CountryList extends AppCompatActivity {
 
             }
         });
-        String jsonString = "{\"Array\":  [{\"name\":\"Anguilla\"},{\"name\":\"Albania\"},{\"name\":\"India\"}]}";
-        ArrayList<Item> countryList = new ArrayList<CountryList.Item>();
-
-        try {
-            JSONObject object = new JSONObject(jsonString);
-            JSONArray array = object.getJSONArray("Array");
-            //JSONObject obj= new JSONObject();
-
-            ArrayList<String> list = new ArrayList<String>();
-            ArrayList<Item> alpha = new ArrayList<CountryList.Item>();
-
-            for (int n = 0; n < array.length(); n++) {
-                JSONObject obj = array.getJSONObject(n);
-                String name = obj.getString("name");
-                String value = String.valueOf(name.charAt(0));
-
-                if (!list.contains(value)) {
-                    list.add(value);
-                    Log.i("array-------", String.valueOf(list));
-                    //  alpha.add(value);
-                    alpha.add(new SectionItem(value));
-                    //set Country Header (Like:-A,B,C,...)
-                    countryList.add(new SectionItem(value));
-                    //set Country Name
-                    countryList.add(new EntryItem(name));
-
-                    //Log.i("array section-------",alpha.get(n).getTitle());
-
-                } else {
-                    //set Country Name
-                    countryList.add(new EntryItem(name));
-                }
-
-            }
-
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-
-        // set adapter
-        final CountryAdapter adapter = new CountryAdapter(this, countryList);
+        final IndexingArrayAdapter adapter = new IndexingArrayAdapter(getApplicationContext(), R.id.lvCountry, countryList);
         lvCountry.setAdapter(adapter);
         lvCountry.setTextFilterEnabled(true);
+        if (sideSelector != null)
+            sideSelector.setListView(lvCountry);
 
-        // filter on text change
         edtSearch.addTextChangedListener(new TextWatcher() {
 
             @Override
@@ -137,6 +156,9 @@ public class CountryList extends AppCompatActivity {
 
 
         });
+
+
+
     }
 
     /**
@@ -146,6 +168,8 @@ public class CountryList extends AppCompatActivity {
         boolean isSection();
 
         String getTitle();
+
+        String getFlag();
     }
 
     /**
@@ -153,58 +177,48 @@ public class CountryList extends AppCompatActivity {
      */
     public class SectionItem implements Item {
         private final String title;
+        private final String flag;
 
-        public SectionItem(String title) {
+
+        public SectionItem(String title, String flag) {
             this.title = title;
+            this.flag = flag;
+        }
+
+        public String getFlag() {
+            return flag;
         }
 
         public String getTitle() {
             return title;
         }
 
-
         @Override
         public boolean isSection() {
             return true;
         }
     }
 
-    public class SectionChar implements Item {
-        private final char alphabet;
-
-        public SectionChar(char title) {
-            this.alphabet = title;
-        }
-
-        public char getAlphabet() {
-            return alphabet;
-        }
-
-        @Override
-        public boolean isSection() {
-            return true;
-        }
-
-        @Override
-        public String getTitle() {
-            return null;
-        }
-
-
-    }
 
     /**
      * Entry Item
      */
     public class EntryItem implements Item {
         public final String title;
+        private final String flag;
 
-        public EntryItem(String title) {
+
+        public EntryItem(String title, String flag) {
             this.title = title;
+            this.flag = flag;
         }
 
         public String getTitle() {
             return title;
+        }
+
+        public String getFlag() {
+            return flag;
         }
 
         @Override
@@ -213,19 +227,48 @@ public class CountryList extends AppCompatActivity {
         }
     }
 
-    /**
-     * Adapter
-     */
-    public class CountryAdapter extends BaseAdapter {
+
+    public class IndexingArrayAdapter extends BaseAdapter implements SectionIndexer {
+
         private Context context;
         private ArrayList<Item> item;
         private ArrayList<Item> originalItem;
+        private int textViewResourceId;
 
-
-        public CountryAdapter(Context context, ArrayList<Item> item) {
+        public IndexingArrayAdapter(Context context, int textViewResourceId, ArrayList<Item> item) {
             this.context = context;
+            this.textViewResourceId = textViewResourceId;
             this.item = item;
-            //this.originalItem = item;
+        }
+
+
+        public Object[] getSections() {
+            String[] chars = new String[SideSelector.ALPHABET2.length];
+            for (int i = 0; i < SideSelector.ALPHABET2.length; i++) {
+                chars[i] = String.valueOf(SideSelector.ALPHABET2[i]);
+            }
+
+            return chars;
+        }
+
+
+        @Override
+        public int getPositionForSection(int i) {
+            //String indexer= String.valueOf(SideSelector.ALPHABET[i]);
+            String indexer = String.valueOf(list.get(i));
+            Log.d(TAG, "getPositionForSection " + i);
+
+            int retval = alpha2.indexOf(indexer);
+            //int retval=alpha.indexOf("G");
+            // int g = (int) (getCount() * ((float) i / (float) getSections().length));
+            return retval;
+            //return 0;
+        }
+
+
+        @Override
+        public int getSectionForPosition(int i) {
+            return 0;
         }
 
         @Override
@@ -245,6 +288,7 @@ public class CountryList extends AppCompatActivity {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
+            //scroollpos(position);
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             if (item.get(position).isSection()) {
                 // if section header
@@ -255,7 +299,11 @@ public class CountryList extends AppCompatActivity {
                 // if item
                 convertView = inflater.inflate(R.layout.layout_item, parent, false);
                 TextView tvItemTitle = convertView.findViewById(R.id.tvItemTitle);
+                ImageView flag = convertView.findViewById(R.id.img);
+                String t = item.get(position).getFlag();
                 tvItemTitle.setText(item.get(position).getTitle());
+                Bitmap flag1 = StringToBitMap(item.get(position).getFlag());
+                flag.setImageBitmap(flag1);
             }
 
             return convertView;
@@ -312,5 +360,23 @@ public class CountryList extends AppCompatActivity {
 
             return filter;
         }
+
+
     }
+
+    public Bitmap StringToBitMap(String encodedString) {
+        try {
+            byte[] encodeByte = Base64.decode(encodedString, Base64.DEFAULT);
+            Bitmap bitmap = BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
+            return bitmap;
+        } catch (Exception e) {
+            e.getMessage();
+            return null;
+        }
+    }
+
+    /**
+     * Adapter
+     */
+
 }

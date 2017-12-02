@@ -1,8 +1,10 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:id="@+id/rlCountry"
+   >
 
     <EditText
         android:id="@+id/edtSearch"
@@ -15,7 +17,18 @@
     <ListView
         android:id="@+id/lvCountry"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="match_parent"
+        android:layout_marginRight="35dp"
+        android:layout_marginTop="40dp">
+
     </ListView>
 
-</LinearLayout>
+    <com.tenderWatch.SideSelector
+        android:id="@+id/side_selector"
+        android:layout_width="30dp"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="40dp"
+
+        />
+</RelativeLayout>
