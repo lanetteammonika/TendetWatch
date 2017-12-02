@@ -4,6 +4,8 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:id="@+id/rlCountry"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
    >
 
     <EditText
@@ -12,7 +14,11 @@
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:hint="Search..."
-        android:padding="10dp" />
+        android:padding="10dp"
+        android:nextFocusUp="@id/edtSearch"
+        android:nextFocusLeft="@id/edtSearch"
+        android:singleLine="true"
+        />
 
     <ListView
         android:id="@+id/lvCountry"

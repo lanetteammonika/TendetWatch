@@ -58,6 +58,7 @@ public class CountryList extends AppCompatActivity {
     public static final String JSON_STRING = "{\"employee\":{\"name\":\"Sachin\",\"salary\":56000}}";
     private SideSelector sideSelector = null;
     private RelativeLayout rlCountry;
+    IndexingArrayAdapter adapter;
 
     @SuppressLint("ClickableViewAccessibility")
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -71,6 +72,7 @@ public class CountryList extends AppCompatActivity {
         sideSelector = (SideSelector) findViewById(R.id.side_selector);
         rlCountry = (RelativeLayout) findViewById(R.id.rlCountry);
         mAPIService = ApiUtils.getAPIService();
+
 
         mAPIService.getCountryData().enqueue(new Callback<ArrayList<GetCountry>>() {
             @Override
@@ -122,6 +124,12 @@ public class CountryList extends AppCompatActivity {
                 String str = list.toString().replaceAll(",", "");
                 alphabetlist = str.substring(1, str.length() - 1).replaceAll(" ", "").toCharArray();
                 // set adapter
+                adapter = new IndexingArrayAdapter(getApplicationContext(), R.id.lvCountry, countryList);
+
+                lvCountry.setAdapter(adapter);
+                lvCountry.setTextFilterEnabled(true);
+                if (sideSelector != null)
+                    sideSelector.setListView(lvCountry);
 
             }
 
@@ -131,13 +139,17 @@ public class CountryList extends AppCompatActivity {
 
             }
         });
-        final IndexingArrayAdapter adapter = new IndexingArrayAdapter(getApplicationContext(), R.id.lvCountry, countryList);
-        lvCountry.setAdapter(adapter);
-        lvCountry.setTextFilterEnabled(true);
-        if (sideSelector != null)
-            sideSelector.setListView(lvCountry);
 
-        edtSearch.addTextChangedListener(new TextWatcher() {
+        edtSearch.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                sideSelector.setVisibility(v.INVISIBLE);
+            }
+        });
+
+
+
+                edtSearch.addTextChangedListener(new TextWatcher() {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
