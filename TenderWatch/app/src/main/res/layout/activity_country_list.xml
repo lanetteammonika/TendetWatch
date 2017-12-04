@@ -1,4 +1,4 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -6,26 +6,108 @@
     android:id="@+id/rlCountry"
     android:focusable="true"
     android:focusableInTouchMode="true"
-   >
+    android:background="#FFF"
 
-    <EditText
-        android:id="@+id/edtSearch"
+   >
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="#FFF"
+        android:layout_marginTop="@dimen/value_5"
+        android:layout_marginLeft="@dimen/value_10"
+        >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+
+            <LinearLayout
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                >
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/left_arr_3x"
+                    android:layout_gravity="center"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Back"
+                    android:textColor="#000"
+                    android:layout_gravity="center"
+                    android:textSize="@dimen/text_15"
+                    android:layout_marginLeft="@dimen/value_5"
+                    />
+            </LinearLayout>
+
+        </LinearLayout>
+    </LinearLayout>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|center_horizontal"
+        android:text="You're interested in Tenders from \n which Country?"
+        android:textAlignment="center"
+        android:textColor="@color/colorBlack"
+        android:textSize="18sp"
+        android:layout_marginTop="5dp"
+         />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:text="Trial Version"
+        android:layout_marginRight="20dp"
+        android:textColor="@color/colorBlack"
+        android:textSize="18sp"
+         />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center">
+
+            <EditText
+        android:id="@+id/edtSearch"
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
         android:gravity="center_vertical"
-        android:hint="Search..."
-        android:padding="10dp"
         android:nextFocusUp="@id/edtSearch"
         android:nextFocusLeft="@id/edtSearch"
         android:singleLine="true"
+        android:layout_marginRight="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/searchbox"
+        android:textSize="15sp"
         />
+        <ImageView
+            android:layout_width="20sp"
+            android:layout_height="20sp"
+            android:layout_marginTop="8dp"
+            android:layout_alignTop="@+id/edtSearch"
+            android:layout_centerHorizontal="true"
+            android:src="@android:drawable/ic_menu_search" />
 
+    </RelativeLayout>
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginBottom="20dp"
+android:id="@+id/rllist"
+    android:layout_alignParentBottom="true"
+    >
     <ListView
         android:id="@+id/lvCountry"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginRight="35dp"
-        android:layout_marginTop="40dp">
+        android:layout_marginRight="50dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginBottom="30dp"
+android:choiceMode="singleChoice"
+        >
 
     </ListView>
 
@@ -34,7 +116,25 @@
         android:layout_width="30dp"
         android:layout_height="match_parent"
         android:layout_alignParentRight="true"
-        android:layout_marginTop="40dp"
-
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
         />
+
+    <Button
+        android:id="@+id/btn_CountryNext"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:background="@drawable/button"
+        android:layout_gravity="center"
+        android:text="Next"
+        android:textSize="20sp"
+        android:textAllCaps="false"
+        android:textColor="@color/colorWhite"
+        android:layout_marginLeft="60dp"
+        android:layout_marginRight="60dp"
+        android:layout_alignParentBottom="true"          />
+
 </RelativeLayout>
+
+</LinearLayout>

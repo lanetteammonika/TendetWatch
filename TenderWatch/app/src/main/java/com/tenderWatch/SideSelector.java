@@ -2,6 +2,7 @@ package com.tenderWatch;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -20,7 +21,7 @@ public class SideSelector extends View {
     private static String TAG = SideSelector.class.getCanonicalName();
     //public static char[] ALPHABET2 =CountryList.alphabetlist;
     public static char[] ALPHABET2 = new char[]{'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
-            'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'Y', 'Z', 'Å'};
+            'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'Y','X', 'Z', 'Å'};
     public static final int BOTTOM_PADDING = 10;
 
     private SectionIndexer selectionIndexer = null;
@@ -46,8 +47,8 @@ public class SideSelector extends View {
     private void init() {
         setBackgroundColor(0x44FFFFFF);
         paint = new Paint();
-        paint.setColor(0xFFA6A9AA);
-        paint.setTextSize(20);
+        paint.setColor(Color.BLUE);
+        paint.setTextSize(18);
         paint.setTextAlign(Paint.Align.CENTER);
     }
 
