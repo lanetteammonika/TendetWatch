@@ -35,14 +35,16 @@ public class IndexingArrayAdapter extends BaseAdapter implements SectionIndexer 
     ViewHolderSection holderSection;
     int position;
     private static final String TAG = "IndexingArrayAdapter";
+    char[] chars;
 
 
-    public IndexingArrayAdapter(Context context, int textViewResourceId, ArrayList<CountryList.Item> item, ArrayList<String> alpha2, ArrayList<String> list) {
+    public IndexingArrayAdapter(Context context, int textViewResourceId, ArrayList<CountryList.Item> item, ArrayList<String> alpha2, ArrayList<String> list,char[] chars) {
         this.context = context;
         this.textViewResourceId = textViewResourceId;
         this.item = item;
         this.alpha2 = alpha2;
         this.list = list;
+        this.chars=chars;
         holder = new ViewHolder();
         holderSection = new ViewHolderSection();
     }

@@ -68,6 +68,7 @@ public class CountryList extends AppCompatActivity {
     private SideSelector sideSelector = null;
     IndexingArrayAdapter adapter;
     Button btn_next;
+    String alphabetS="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,7 +110,7 @@ public class CountryList extends AppCompatActivity {
                     String value = String.valueOf(name.charAt(0));
                     if (!list.contains(value)) {
                         list.add(value);
-                        //alphabetlist.append(value);
+                        alphabetS.concat(value);//alphabetlist.append(value);
 
 
                         Log.i("array-------", String.valueOf(list));
@@ -130,10 +131,23 @@ public class CountryList extends AppCompatActivity {
                         countryList.add(new EntryItem(name, flag,false));
                     }
                 }
+
                 String str = list.toString().replaceAll(",", "");
+                char[] chars = str.toCharArray();
+                Log.i(TAG, "post submitted to API."+chars);
+                char[] al = new char[27];
+                for(int j=1, i=0;j<chars.length;j=j+2, i++){
+                    al[i]=chars[j];
+                    Log.i(TAG, "post."+chars[j]);
+                }
+
+                Log.i(TAG, "post submitted to API."+al);
+
+                SideSelector ss=new SideSelector(getApplicationContext());
+                ss.setAlphabet(al);
                 alphabetlist = str.substring(1, str.length() - 1).replaceAll(" ", "").toCharArray();
                 // set adapter
-                adapter = new IndexingArrayAdapter(getApplicationContext(), R.id.lvCountry, countryList, alpha2, list);
+                adapter = new IndexingArrayAdapter(getApplicationContext(), R.id.lvCountry, countryList, alpha2, list,chars);
 
                 lvCountry.setAdapter(adapter);
                 lvCountry.setTextFilterEnabled(true);

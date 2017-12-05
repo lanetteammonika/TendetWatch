@@ -20,8 +20,9 @@ import java.util.ArrayList;
 public class SideSelector extends View {
     private static String TAG = SideSelector.class.getCanonicalName();
     //public static char[] ALPHABET2 =CountryList.alphabetlist;
-    public static char[] ALPHABET2 = new char[]{'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
-            'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'Y','X', 'Z', 'Å'};
+//    public static char[] ALPHABET2 = new char[]{'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
+//            'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'Y','X', 'Z', 'Å'};
+    public static char[] ALPHABET2;
     public static final int BOTTOM_PADDING = 10;
 
     private SectionIndexer selectionIndexer = null;
@@ -81,6 +82,10 @@ public class SideSelector extends View {
             list.setSelection(position);
         }
         return true;
+    }
+    public void setAlphabet(char[] chars){
+        ALPHABET2=chars;
+        init();
     }
 
     protected void onDraw(Canvas canvas) {
