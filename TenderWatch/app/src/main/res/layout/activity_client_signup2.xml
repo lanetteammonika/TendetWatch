@@ -11,6 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
+        android:id="@+id/llback"
         >
 
         <LinearLayout
@@ -68,7 +69,7 @@
             android:layout_marginLeft="@dimen/value_40"
             android:layout_marginRight="@dimen/value_40"
             android:layout_marginTop="@dimen/value_10"
-
+            android:id="@+id/selectCountry"
             >
             <ImageView
                 android:layout_width="25dp"
@@ -78,13 +79,14 @@
                 />
 
             <EditText
-                android:layout_width="match_parent"
+                android:id="@+id/country"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/value_40"
                 android:text="Country"
                 android:textSize="@dimen/text_20"
                 android:backgroundTint="@android:color/transparent"
-                android:focusable="false"
+android:enabled="false"
                 android:singleLine="true"
                 android:textColor="@color/colorBlack"
                 />
@@ -120,14 +122,15 @@
                 />
 
             <EditText
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/value_40"
+                android:layout_marginLeft="40dp"
                 android:hint="CC Mobile No"
                 android:textSize="@dimen/text_20"
                 android:backgroundTint="@android:color/transparent"
                 android:singleLine="true"
                 android:inputType="number"
+                android:id="@+id/mobileNo"
                 />
 
         </RelativeLayout>
@@ -160,7 +163,9 @@
                 android:hint="Occupation"
                 android:textSize="@dimen/text_20"
                 android:backgroundTint="@android:color/transparent"
-                android:singleLine="true"/>
+                android:singleLine="true"
+                android:id="@+id/occupation"
+                />
 
         </RelativeLayout>
         <View
@@ -177,6 +182,7 @@
             android:layout_marginLeft="@dimen/value_40"
             android:layout_marginRight="@dimen/value_40"
             android:layout_marginTop="@dimen/value_10"
+            android:id="@+id/rlAboutme"
             >
             <ImageView
                 android:layout_width="25dp"
@@ -186,6 +192,7 @@
                 />
 
             <EditText
+                android:id="@+id/edt_aboutme"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/value_40"
@@ -207,7 +214,7 @@
             android:layout_marginBottom="5dp"
             />
         <Button
-            android:id="@+id/btn_client"
+            android:id="@+id/btn_Next"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:layout_gravity="center"

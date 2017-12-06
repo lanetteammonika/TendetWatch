@@ -1,6 +1,5 @@
 package com.tenderWatch.Adapters;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -22,6 +21,7 @@ import com.tenderWatch.R;
 import com.tenderWatch.SideSelector;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Locale;
 
 public class IndexingArrayAdapter extends BaseAdapter implements SectionIndexer {
@@ -36,7 +36,7 @@ public class IndexingArrayAdapter extends BaseAdapter implements SectionIndexer 
     int position;
     private static final String TAG = "IndexingArrayAdapter";
     char[] chars;
-
+    public HashMap<String,String> checked = new HashMap<String,String>();
 
     public IndexingArrayAdapter(Context context, int textViewResourceId, ArrayList<CountryList.Item> item, ArrayList<String> alpha2, ArrayList<String> list,char[] chars) {
         this.context = context;
@@ -50,6 +50,8 @@ public class IndexingArrayAdapter extends BaseAdapter implements SectionIndexer 
     }
 
 
+
+
     public Object[] getSections() {
         String[] chars = new String[SideSelector.ALPHABET2.length];
         for (int i = 0; i < SideSelector.ALPHABET2.length; i++) {
@@ -59,7 +61,21 @@ public class IndexingArrayAdapter extends BaseAdapter implements SectionIndexer 
         return chars;
     }
 
+    public void setCheckedItem(int i) {
 
+
+        if (checked.containsKey(String.valueOf(i))){
+            checked.remove(String.valueOf(i));
+        }
+
+        else {
+            checked.put(String.valueOf(i), String.valueOf(item.get(i).getTitle())+"~"+String.valueOf(item.get(i).getCode()));
+        }
+    }
+
+    public HashMap<String, String> getallitems(){
+        return checked;
+    }
     @Override
     public int getPositionForSection(int i) {
         //String indexer= String.valueOf(SideSelector.ALPHABET[i]);
@@ -113,9 +129,13 @@ public class IndexingArrayAdapter extends BaseAdapter implements SectionIndexer 
                 holder.itemLayout=(RelativeLayout) convertView.findViewById(R.id.itemlayout);
                 holder.flag = (ImageView) convertView.findViewById(R.id.img);
                 holder.tvItemTitle = (TextView) convertView.findViewById(R.id.tvItemTitle);
+                holder.tvItemCode = (TextView) convertView.findViewById(R.id.tvItemCode);
+
                 holder.imgtrue = (ImageView) convertView.findViewById(R.id.imgtrue);
                 holder.tvItemTitle.setText(item.get(position).getTitle());
                 Bitmap flag1 = StringToBitMap(item.get(position).getFlag());
+               String code=item.get(position).getCode();
+                holder.tvItemCode.setText(item.get(position).getCode());
                 holder.flag.setImageBitmap(flag1);
                // holder.itemLayout.setBackgroundColor(Color.argb(255, 207, 207, 207));
 
@@ -212,6 +232,7 @@ public class IndexingArrayAdapter extends BaseAdapter implements SectionIndexer 
         ImageView flag;
         ImageView imgtrue;
         RelativeLayout itemLayout;
+        TextView tvItemCode;
     }
 
     class ViewHolderSection {

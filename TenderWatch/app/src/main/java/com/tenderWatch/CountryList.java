@@ -1,54 +1,36 @@
 package com.tenderWatch;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.app.Service;
-import android.content.Context;
+import android.app.Dialog;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.os.Build;
-import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Base64;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Filter;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
-import android.widget.SectionIndexer;
 import android.widget.TextView;
 
 import com.tenderWatch.Adapters.IndexingArrayAdapter;
 import com.tenderWatch.Models.GetCountry;
 import com.tenderWatch.Retrofit.Api;
 import com.tenderWatch.Retrofit.ApiUtils;
+import com.tenderWatch.SharedPreference.SharedPreference;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
-import static android.provider.AlarmClock.EXTRA_MESSAGE;
 
 public class CountryList extends AppCompatActivity {
 
@@ -66,10 +48,13 @@ public class CountryList extends AppCompatActivity {
     //ArrayList list;
     public static final String JSON_STRING = "{\"employee\":{\"name\":\"Sachin\",\"salary\":56000}}";
     private SideSelector sideSelector = null;
-    IndexingArrayAdapter adapter;
+    IndexingArrayAdapter adapter,bAdapter;
     Button btn_next;
     String alphabetS="";
-
+    LinearLayout lltext;
+    TextView txtSelectedContract;
+    Intent intent;
+    String check;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,13 +62,46 @@ public class CountryList extends AppCompatActivity {
 
         edtSearch = (EditText) findViewById(R.id.edtSearch);
         lvCountry = (ListView) findViewById(R.id.lvCountry);
+         lltext = (LinearLayout) findViewById(R.id.lltext);
 
         sideSelector = (SideSelector) findViewById(R.id.side_selector);
         mAPIService = ApiUtils.getAPIService();
         lvCountry.setDivider(null);
         btn_next = (Button) findViewById(R.id.btn_CountryNext);
-
-
+        txtSelectedContract=(TextView) findViewById(R.id.txt_selectedContract);
+        lvCountry.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+        Intent show = getIntent();
+        check=show.getStringExtra("check");
+        if(!check.equals("signup")) {
+            final Dialog dialog = new Dialog(CountryList.this);
+            dialog.setContentView(R.layout.select_contract);
+            lltext.setVisibility(View.VISIBLE);
+            final TextView txtTrial = (TextView) dialog.findViewById(R.id.txt_trial);
+            TextView txtMonth = (TextView) dialog.findViewById(R.id.txt_month);
+            TextView txtYear = (TextView) dialog.findViewById(R.id.txt_year);
+            txtTrial.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    txtSelectedContract.setText("$0 / year");
+                    dialog.dismiss();
+                }
+            });
+            txtMonth.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    txtSelectedContract.setText("$15 / month");
+                    dialog.dismiss();
+                }
+            });
+            txtYear.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    txtSelectedContract.setText("$120 / year");
+                    dialog.dismiss();
+                }
+            });
+            dialog.show();
+        }
         mAPIService.getCountryData().enqueue(new Callback<ArrayList<GetCountry>>() {
             @Override
             public void onResponse(Call<ArrayList<GetCountry>> call, Response<ArrayList<GetCountry>> response) {
@@ -96,8 +114,9 @@ public class CountryList extends AppCompatActivity {
                     //JSONObject obj = array.getJSONObject(n);
                     String name = response.body().get(i).getCountryName().toString();
                     String flag = response.body().get(i).getImageString().toString();
+                    String countryCode=response.body().get(i).getCountryCode().toString();
                     String value = String.valueOf(name.charAt(0));
-                    alpha.add(name + '~' + flag);
+                    alpha.add(name + '~' + countryCode+ '`' +flag);
 
 
                     // }
@@ -106,7 +125,10 @@ public class CountryList extends AppCompatActivity {
                 Collections.sort(alpha);
                 for (int i = 0; i < Data.size(); i++) {
                     String name = alpha.get(i).split("~")[0];
-                    String flag = alpha.get(i).split("~")[1];
+                    String countryCode = alpha.get(i).split("~")[1].split("`")[0];
+
+                     String   flag=alpha.get(i).split("`")[1];
+
                     String value = String.valueOf(name.charAt(0));
                     if (!list.contains(value)) {
                         list.add(value);
@@ -118,9 +140,9 @@ public class CountryList extends AppCompatActivity {
                         alpha2.add(name);
 
                         //set Country Header (Like:-A,B,C,...)
-                        countryList.add(new SectionItem(value, "",false));
+                        countryList.add(new SectionItem(value, "","",false));
                         //set Country Name
-                        countryList.add(new EntryItem(name, flag,false));
+                        countryList.add(new EntryItem(name, flag,countryCode,false));
 
                         //Log.i("array section-------",alpha.get(n).getTitle());
 
@@ -128,7 +150,7 @@ public class CountryList extends AppCompatActivity {
                         alpha2.add(name);
 
                         //set Country Name
-                        countryList.add(new EntryItem(name, flag,false));
+                        countryList.add(new EntryItem(name, flag,countryCode,false));
                     }
                 }
 
@@ -168,22 +190,59 @@ public class CountryList extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position,
                                     long id) {
-
+                TextView tvItemTitle=(TextView) view.findViewById(R.id.tvItemTitle);
+                String value= (String) lvCountry.getItemAtPosition(position).toString();
+                String Country=tvItemTitle.getText().toString();
                 adapter.setItemSelected(position);
-
-//                    Log.i(TAG, "Clicked"+position);
-//                    LayoutInflater inflater = (LayoutInflater) getApplication().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//                    view = inflater.inflate(R.layout.layout_item, parent, false);
-//                    ImageView img = view.findViewById(R.id.imgtrue);
-//                    img.setVisibility(view.VISIBLE);
-//                    RelativeLayout rl1=view.findViewById(R.id.itemlayout);
-//                    rl1.setBackgroundColor(Color.YELLOW);
-//                adapter.notifyDataSetChanged();
+               adapter.setCheckedItem(position);
 
             }
         });
+        //IndexingArrayAdapter bAdapter = null;
 
 
+btn_next.setOnClickListener(new View.OnClickListener() {
+    @Override
+    public void onClick(View v) {
+        ArrayList<String> a_country = new ArrayList<String>();
+        SharedPreference ss =new SharedPreference();
+
+        HashMap<String, String> items=adapter.getallitems();
+       // String s = items.get(0).toString();
+        for (Map.Entry<String, String> entry : items.entrySet()) {
+            //String listtttt = entry.getValue();
+            a_country.add(entry.getValue());
+            // Do things with the list
+        }
+        if(txtSelectedContract.getText().toString().equals("$0 / year")){
+            if(a_country.size()>1){
+                if(!check.equals("signup")) {
+                    ss.ShowDialog(CountryList.this, "During Free Trial Period you can choose only 1 country");
+                }else{
+                    ss.ShowDialog(CountryList.this, "Choose one country");
+                }
+            }
+            else{
+                //call intent
+
+                intent = new Intent(CountryList.this, SignUp.class);
+                intent.putExtra("Country",a_country);
+                startActivity(intent);
+
+            }
+        }
+        else{
+            intent = new Intent(CountryList.this, SignUp.class);
+            intent.putExtra("Country",a_country);
+            startActivity(intent);
+
+
+        }
+//        for(int y=0;y<items.size();y++){
+//            a_country.add(items.get(y).toString());
+//        }
+    }
+});
         edtSearch.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -215,6 +274,13 @@ public class CountryList extends AppCompatActivity {
 
     }
 
+    public boolean isEnabled(int position) {
+        if(lvCountry.getCount()>0){
+            return false;
+        }
+        return true;
+    }
+
     /**
      * row item
      */
@@ -224,6 +290,8 @@ public class CountryList extends AppCompatActivity {
         String getTitle();
 
         String getFlag();
+
+        String getCode();
 
         boolean getSelected();
 
@@ -236,16 +304,24 @@ public class CountryList extends AppCompatActivity {
     public class SectionItem implements Item {
         private final String title;
         private final String flag;
+        private final String code;
+
         private boolean isSelected;
 
-        public SectionItem(String title, String flag, boolean isSelected) {
+        public SectionItem(String title, String flag, String code, boolean isSelected) {
             this.title = title;
             this.flag = flag;
+            this.code = code;
             this.isSelected = isSelected;
         }
 
         public String getFlag() {
             return flag;
+        }
+
+        @Override
+        public String getCode() {
+            return code;
         }
 
         @Override
@@ -275,11 +351,13 @@ public class CountryList extends AppCompatActivity {
     public class EntryItem implements Item {
         public final String title;
         private final String flag;
+        private final String code;
         private boolean isSelected;
 
-        public EntryItem(String title, String flag, boolean isSelected) {
+        public EntryItem(String title, String flag, String code, boolean isSelected) {
             this.title = title;
             this.flag = flag;
+            this.code = code;
             this.isSelected = isSelected;
         }
 
@@ -293,6 +371,11 @@ public class CountryList extends AppCompatActivity {
 
         public String getFlag() {
             return flag;
+        }
+
+        @Override
+        public String getCode() {
+            return code;
         }
 
         @Override

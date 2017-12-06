@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+    <!--<LinearLayout-->
+        <!--android:id="@+id/relativeLayout1"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_centerInParent="true"-->
+        <!--android:background="#99000000"-->
+        <!--android:orientation="vertical" >-->
+    <!--</LinearLayout>-->
+    <LinearLayout
+        android:id="@+id/relativeLayout2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:background="@drawable/round_corner"
+       android:layout_marginTop="@dimen/value_5"
+        android:layout_marginBottom="@dimen/value_5"
+        android:orientation="vertical" >
+<TextView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="TenderWatch"
+    android:textColor="@color/colorBlack"
+    android:textSize="@dimen/text_20"
+    android:layout_gravity="center"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Select a Subscription Plan"
+            android:textSize="@dimen/text_15"
+            android:layout_gravity="center"/>
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:background="#808080"
+           android:layout_marginTop="@dimen/value_10"
+            />
+        <TextView
+            android:id="@+id/txt_trial"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="1 month free trial"
+            android:textSize="@dimen/text_15"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/value_15"
+            android:textColor="@color/colorPrimary"/>
+        <TextView
+            android:id="@+id/txt_month"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Monthly Subscription ($15/Month)"
+            android:textSize="@dimen/text_15"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/value_25"
+            android:textColor="@color/colorPrimary"/>
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:background="#808080"
+            android:layout_marginTop="@dimen/value_10"
+            android:layout_marginBottom="@dimen/value_10"
+            />
+        <TextView
+            android:id="@+id/txt_year"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Yearly Subscription ($120/Year)"
+            android:textSize="@dimen/text_15"
+            android:layout_gravity="center"
+            android:textColor="@color/colorPrimary"/>
+    </LinearLayout>
+
+
+</RelativeLayout>
