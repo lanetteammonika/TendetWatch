@@ -1,6 +1,7 @@
 package com.tenderWatch;
 
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
@@ -12,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,9 +22,13 @@ import com.tenderWatch.SharedPreference.SharedPreference;
 public class AboutMe extends AppCompatActivity {
 
     EditText edtAbotMe;
-    TextView txtCount;
+    TextView txtCount,txtSave;
+    String AboutMe;
     int textCount=0;
     private Toolbar mToolbar;
+    LinearLayout aboutmeBack;
+    Intent intent,show;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,6 +61,13 @@ public class AboutMe extends AppCompatActivity {
        // getSupportActionBar().setDisplayShowCustomEnabled(true);
         edtAbotMe=(EditText) findViewById(R.id.txt_aboutme);
         txtCount=(TextView) findViewById(R.id.txt_count);
+        txtSave=(TextView) findViewById(R.id.aboutme_save);
+        aboutmeBack=(LinearLayout) findViewById(R.id.aboutme_back);
+        show=getIntent();
+        AboutMe=show.getStringExtra("about");
+        if(!AboutMe.equals("About Me")){
+            edtAbotMe.setText(AboutMe);
+        }
         edtAbotMe.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -83,6 +96,27 @@ public class AboutMe extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable s) {
 
+            }
+        });
+        aboutmeBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                intent = new Intent(AboutMe.this, SignUp.class);
+                if(edtAbotMe.getText().toString()==""){
+                intent.putExtra("aboutMe","About Me");}
+                else{
+                    intent.putExtra("aboutMe",AboutMe);
+
+                }
+                startActivity(intent);
+            }
+        });
+        txtSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                intent = new Intent(AboutMe.this, SignUp.class);
+                intent.putExtra("aboutMe",edtAbotMe.getText().toString());
+                startActivity(intent);
             }
         });
 
