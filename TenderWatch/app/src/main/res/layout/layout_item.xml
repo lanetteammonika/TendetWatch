@@ -9,38 +9,38 @@
     >
     
 <ImageView
-    android:layout_width="26dp"
-    android:layout_height="35dp"
+    android:layout_width="@dimen/value_26"
+    android:layout_height="@dimen/value_35"
     android:id="@+id/img"
     android:layout_gravity="center_vertical"
-    android:layout_marginLeft="5dp"/>
+    android:layout_marginLeft="@dimen/value_5"/>
     <TextView
         android:id="@+id/tvItemTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="50dp"
+        android:layout_marginLeft="@dimen/value_50"
         android:layout_gravity="center_vertical"
         android:text="Item"
-        android:layout_marginTop="7dp"
+        android:layout_marginTop="@dimen/value_7"
         android:textColor="#000"/>
     <TextView
         android:id="@+id/tvItemCode"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="50dp"
+        android:layout_marginLeft="@dimen/value_50"
         android:layout_gravity="center_vertical"
         android:text="Item"
-        android:layout_marginTop="7dp"
+        android:layout_marginTop="@dimen/value_7"
         android:textColor="#000"
         android:visibility="gone"/>
     <ImageView
-        android:layout_width="10dp"
-        android:layout_height="10dp"
+        android:layout_width="@dimen/value_10"
+        android:layout_height="@dimen/value_10"
         android:id="@+id/imgtrue"
         android:layout_gravity="right"
         android:layout_weight="1"
-        android:layout_marginRight="5dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginRight="@dimen/value_5"
+        android:layout_marginTop="@dimen/value_10"
         android:src="@drawable/tick_3x"
         android:visibility="invisible"
 

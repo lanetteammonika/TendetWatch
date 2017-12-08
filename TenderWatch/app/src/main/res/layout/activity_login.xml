@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.lcom48.tenderWatch.Login"
+    tools:context="com.tenderWatch.Login"
     android:orientation="vertical"
     android:background="@color/colorWhite">
 
@@ -22,13 +22,13 @@
         >
 
         <LinearLayout
-            android:id="@+id/toolbar"
+            android:id="@+id/login_toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
              >
             <ImageView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
+                android:layout_width="@dimen/value_30"
+                android:layout_height="@dimen/value_30"
                 android:src="@drawable/left_arr_3x"
                 android:layout_gravity="center"/>
             <TextView
@@ -52,8 +52,8 @@
         android:gravity="center_horizontal"
         >
         <ImageView
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_width="@dimen/value_100"
+            android:layout_height="@dimen/value_100"
             android:src="@drawable/icon_40_3x"
             />
         <TextView
@@ -73,8 +73,8 @@
 
             >
             <ImageView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
+                android:layout_width="@dimen/value_30"
+                android:layout_height="@dimen/value_30"
                 android:src="@drawable/mail_3x"
                 android:layout_marginTop="@dimen/value_7"
                 />
@@ -95,9 +95,9 @@
             android:layout_width="fill_parent"
             android:layout_height="1dp"
             android:background="#808080"
-            android:layout_marginLeft="40dp"
-            android:layout_marginRight="40dp"
-            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="@dimen/value_40"
+            android:layout_marginRight="@dimen/value_40"
+            android:layout_marginBottom="@dimen/value_5"
             />
         <RelativeLayout
             android:layout_width="match_parent"
@@ -107,8 +107,8 @@
             android:layout_marginTop="@dimen/value_5"
             >
             <ImageView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
+                android:layout_width="@dimen/value_30"
+                android:layout_height="@dimen/value_30"
                 android:src="@drawable/password_3x"
                 android:layout_marginTop="@dimen/value_5"
                 />
@@ -129,9 +129,9 @@
             android:layout_width="fill_parent"
             android:layout_height="1dp"
             android:background="#808080"
-            android:layout_marginLeft="40dp"
-            android:layout_marginRight="40dp"
-            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="@dimen/value_40"
+            android:layout_marginRight="@dimen/value_40"
+            android:layout_marginBottom="@dimen/value_5"
             />
         <LinearLayout
             android:layout_width="match_parent"
@@ -142,6 +142,7 @@
             android:gravity="right"
             >
             <TextView
+                android:id="@+id/lbl_forgotPassword"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/forgetpassword"
@@ -150,7 +151,7 @@
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/value_40"
             android:orientation="horizontal"
             android:layout_marginRight="@dimen/value_40"
             android:layout_marginLeft="@dimen/value_40"
@@ -158,14 +159,13 @@
             <Button
                 android:id="@+id/btn_login"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/value_40"
                 android:background="@drawable/button"
                 android:layout_gravity="center"
                 android:text="Sign In"
                 android:textSize="25sp"
                 android:textAllCaps="false"
                 android:textColor="@color/colorWhite"
-
                 />
         </LinearLayout>
         <LinearLayout
@@ -180,6 +180,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/create_acc"
                 android:textColor="@color/colorBlack"
+                android:id="@+id/create_account"
                 />
         </LinearLayout>
         <LinearLayout
@@ -199,11 +200,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:visibility="gone" />
-
                 <Button
                     android:id="@+id/fb"
                     android:layout_width="match_parent"
-                    android:layout_height="40dp"
+                    android:layout_height="@dimen/value_40"
                     android:background="@drawable/round_corner"
                     android:layout_gravity="center"
                     android:text="Sign-in with facbook"
@@ -211,7 +211,6 @@
                     android:textAllCaps="false"
                     android:textColor="@color/colorWhite"
                     android:backgroundTint="#2D4487"
-
                     />
             </FrameLayout>
         </LinearLayout>
@@ -236,7 +235,7 @@
                 <Button
                     android:id="@+id/google"
                     android:layout_width="match_parent"
-                    android:layout_height="40dp"
+                    android:layout_height="@dimen/value_40"
                     android:background="@drawable/round_corner"
                     android:layout_gravity="center"
                     android:text="Sign-in with Google"

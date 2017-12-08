@@ -6,6 +6,7 @@ package com.tenderWatch.Retrofit;
 
 import com.tenderWatch.Models.GetCountry;
 import com.tenderWatch.Models.LoginPost;
+import com.tenderWatch.Models.Register;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -13,11 +14,16 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.transform.Result;
+
+import okhttp3.MultipartBody;
 import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.Multipart;
 import retrofit2.http.POST;
+import retrofit2.http.Part;
 //let parameters: Parameters = [“email” : self.txfEmail.text!,
 //        “password” : self.txfPassword.text!,
 //        “role” : appDelegate.isClient! ? “client” : “contractor”,
@@ -62,5 +68,18 @@ public interface Api {
                              @Field("role") String role);
     @GET("auth/country")
     Call<ArrayList<GetCountry>> getCountryData();
+    @Multipart
+    @POST("auth/register")
+    Call<Register> uploadImage(@Part MultipartBody.Part email,
+                               @Part MultipartBody.Part password,
+                               @Part MultipartBody.Part country,
+                               @Part MultipartBody.Part contactNo,
+                               @Part MultipartBody.Part occupation,
+                               @Part MultipartBody.Part aboutMe,
+                               @Part MultipartBody.Part role,
+                               @Part MultipartBody.Part deviceId,
+                               @Part MultipartBody.Part image
+                               );
+
 }
 

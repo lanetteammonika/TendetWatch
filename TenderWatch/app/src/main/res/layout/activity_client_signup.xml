@@ -19,6 +19,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:id="@+id/client_signup_back"
             >
 
             <LinearLayout
@@ -27,8 +28,8 @@
                 android:layout_height="wrap_content"
                 >
                 <ImageView
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
+                    android:layout_width="@dimen/value_30"
+                    android:layout_height="@dimen/value_30"
                     android:src="@drawable/left_arr_3x"
                     android:layout_gravity="center"/>
                 <TextView
@@ -62,13 +63,14 @@
 
             >
             <ImageView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
+                android:layout_width="@dimen/value_30"
+                android:layout_height="@dimen/value_30"
                 android:src="@drawable/mail_3x"
                 android:layout_marginTop="@dimen/value_7"
                 />
 
             <EditText
+                android:id="@+id/signup_email"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/value_40"
@@ -95,13 +97,14 @@
             android:layout_marginTop="@dimen/value_15"
             >
             <ImageView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
+                android:layout_width="@dimen/value_30"
+                android:layout_height="@dimen/value_30"
                 android:src="@drawable/password_3x"
                 android:layout_marginTop="@dimen/value_5"
                 />
 
             <EditText
+                android:id="@+id/signup_password"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/value_40"
@@ -130,13 +133,14 @@
             android:layout_marginTop="@dimen/value_15"
             >
             <ImageView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
+                android:layout_width="@dimen/value_30"
+                android:layout_height="@dimen/value_30"
                 android:src="@drawable/boxright_3x"
                 android:layout_marginTop="@dimen/value_5"
                 />
 
             <EditText
+                android:id="@+id/signup_confirmpassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/value_40"
@@ -167,7 +171,7 @@
             <Button
                 android:id="@+id/btn_client_signup"
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
+                android:layout_height="@dimen/value_35"
                 android:background="@drawable/button"
                 android:layout_gravity="center"
                 android:text="Sign Up"
@@ -234,7 +238,7 @@
                 <Button
                     android:id="@+id/googlesignup"
                     android:layout_width="match_parent"
-                    android:layout_height="40dp"
+                    android:layout_height="@dimen/value_40"
                     android:background="@drawable/round_corner"
                     android:layout_gravity="center"
                     android:text="Sign-Up with Google"

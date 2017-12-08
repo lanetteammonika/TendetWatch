@@ -55,6 +55,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
     private static final String TAG = Login.class.getSimpleName();
     private EditText txtEmail,txtPassword;
     private LoginButton loginButton;
+    private TextView lblCreateAccount,lblForgotPassword;
     private Button fb;
     private static final int RC_SIGN_IN = 007;
 
@@ -63,7 +64,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
 
     private SignInButton btnSignIn;
     private Button btnSignOut, btnRevokeAccess, btngoogle, btnlogin;
-    private LinearLayout llProfileLayout;
+    private LinearLayout back;
     private ImageView imgProfilePic;
     private Api mAPIService;
     String newString;
@@ -101,7 +102,9 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
         btngoogle = (Button) findViewById(R.id.google);
         txtEmail = (EditText) findViewById(R.id.txt_email);
         txtPassword = (EditText) findViewById(R.id.txt_password);
-
+        lblCreateAccount=(TextView) findViewById(R.id.create_account);
+        back=(LinearLayout) findViewById(R.id.login_toolbar);
+        lblForgotPassword=(TextView) findViewById(R.id.lbl_forgotPassword);
     }
 
     private void InitListener() {
@@ -144,6 +147,9 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
         btnSignIn.setOnClickListener(this);
         btngoogle.setOnClickListener(this);
         btnlogin.setOnClickListener(this);
+        lblCreateAccount.setOnClickListener(this);
+        back.setOnClickListener(this);
+        lblForgotPassword.setOnClickListener(this);
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(getString(R.string.server_client_id))
             .requestServerAuthCode(getString(R.string.server_client_id), false)
@@ -388,6 +394,28 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
                 else
                     Toast.makeText(Login.this, "Form contains error", Toast.LENGTH_LONG).show();
                 break;
+            case R.id.create_account:
+                intent = new Intent(Login.this, SignUpSelection.class);
+                startActivity(intent);
+                break;
+
+            case R.id.lbl_forgotPassword:
+                intent = new Intent(Login.this, ForgotPassword.class);
+
+                startActivity(intent);
+                break;
+
+            case R.id.login_toolbar:
+//               // back.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+                intent = new Intent(Login.this, MainActivity.class);
+
+                startActivity(intent);
+                break;
+
+            /// }
+                // });
         }
     }
 

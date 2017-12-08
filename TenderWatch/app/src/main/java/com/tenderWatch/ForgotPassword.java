@@ -10,11 +10,13 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.tenderWatch.Models.LoginPost;
 import com.tenderWatch.Retrofit.Api;
 import com.tenderWatch.Retrofit.ApiUtils;
+import com.tenderWatch.SharedPreference.SharedPreference;
 import com.tenderWatch.Validation.Validation;
 
 import retrofit2.Call;
@@ -26,6 +28,8 @@ public class ForgotPassword extends AppCompatActivity implements View.OnClickLis
     private EditText txtEmail;
     private static final String TAG = Login.class.getSimpleName();
     private Api mAPIService;
+    private LinearLayout back;
+    Intent intent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +41,7 @@ public class ForgotPassword extends AppCompatActivity implements View.OnClickLis
 
     private void InitListener() {
         btnSubmit.setOnClickListener(this);
+        back.setOnClickListener(this);
         txtEmail.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -59,7 +64,7 @@ public class ForgotPassword extends AppCompatActivity implements View.OnClickLis
         btnSubmit=(Button) findViewById(R.id.btn_submit);
         txtEmail=(EditText) findViewById(R.id.txt_forgotemail);
         mAPIService = ApiUtils.getAPIService();
-
+        back = (LinearLayout) findViewById(R.id.forgot_toolbar);
     }
 
     @Override
@@ -71,11 +76,21 @@ public class ForgotPassword extends AppCompatActivity implements View.OnClickLis
 
                 if ( checkValidation () ){
                     forgotPassword();
-                    Toast.makeText(ForgotPassword.this, "Form contains not error", Toast.LENGTH_LONG).show();
+                 //   Toast.makeText(ForgotPassword.this, "Form contains not error", Toast.LENGTH_LONG).show();
                 }
                 else
-                    Toast.makeText(ForgotPassword.this, "Form contains error", Toast.LENGTH_LONG).show();
+                   // Toast.makeText(ForgotPassword.this, "Form contains error", Toast.LENGTH_LONG).show();
                 break;
+
+            case R.id.forgot_toolbar:
+                back.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        intent = new Intent(ForgotPassword.this, Login.class);
+
+                        startActivity(intent);
+                    }
+                });
 
         }
     }
@@ -94,11 +109,16 @@ public class ForgotPassword extends AppCompatActivity implements View.OnClickLis
         mAPIService.forgotPassword(email,role).enqueue(new Callback<LoginPost>() {
             @Override
             public void onResponse(Call<LoginPost> call, Response<LoginPost> response) {
+                SharedPreference sp=new SharedPreference();
 
                 if(response.isSuccessful()) {
                     // showResponse(response.body().toString());
                     int res=response.code();
-                    Log.i(TAG, "post submitted to API." + response.body().toString());
+                    sp.ShowDialog(ForgotPassword.this,"Your password is send in your registered EmailId");
+                    //Log.i(TAG, "post submitted to API." + response.body().toString());
+                }else{
+                    sp.ShowDialog(ForgotPassword.this,"Error while sending password in your registered EmailId");
+
                 }
             }
 

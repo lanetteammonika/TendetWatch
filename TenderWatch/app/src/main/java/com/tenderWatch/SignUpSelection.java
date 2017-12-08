@@ -4,18 +4,25 @@ import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
@@ -35,36 +42,45 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.ResultCallback;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 import com.tenderWatch.Retrofit.Api;
 import com.tenderWatch.SharedPreference.SharedPreference;
+import com.tenderWatch.Validation.Validation;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.ProtocolException;
 import java.net.URL;
 
+
 public class SignUpSelection extends AppCompatActivity implements View.OnClickListener, GoogleApiClient.OnConnectionFailedListener {
 
     Context context;
     Intent intent;
+    Button signUp;
     private CallbackManager callbackManager;
     private static final String TAG = SignUpSelection.class.getSimpleName();
-    private EditText txtEmail, txtPassword;
+    private EditText txtEmail, txtPassword,txtConfirmPassword;
     private LoginButton loginButton;
-    private Button fb;
+    private Button fb,signUP;
     private static final int RC_SIGN_IN = 007;
+
+    SharedPreference sp=new SharedPreference();
 
     private GoogleApiClient mGoogleApiClient;
     private ProgressDialog mProgressDialog;
 
     private SignInButton btnSignIn;
     private Button btnSignOut, btnRevokeAccess, btngoogle, btnlogin;
-    private LinearLayout llProfileLayout;
+    private LinearLayout back;
     private ImageView imgProfilePic;
     private Api mAPIService;
     String newString, profilePicUrl;
@@ -92,6 +108,64 @@ public class SignUpSelection extends AppCompatActivity implements View.OnClickLi
     private void InitListener() {
         btnSignIn.setOnClickListener(this);
         btngoogle.setOnClickListener(this);
+        signUp.setOnClickListener(this);
+        back.setOnClickListener(this);
+
+        txtEmail.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                Validation.isEmailAddress(txtEmail, true);
+            }
+        });
+
+        txtPassword.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                Validation.isPassword(txtPassword,true);
+                Log.i(TAG, "post submitted to API." +  Validation.isValidPassword(txtPassword.getText().toString()));
+
+            }
+        });
+
+        txtConfirmPassword.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                Validation.isPassword(txtConfirmPassword,true);
+                Log.i(TAG, "post submitted to API." +  Validation.isValidPassword(txtPassword.getText().toString()));
+
+            }
+        });
+
         //btnlogin.setOnClickListener(this);
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.server_client_id))
@@ -103,15 +177,7 @@ public class SignUpSelection extends AppCompatActivity implements View.OnClickLi
                 .enableAutoManage(this, this)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
-//        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-//                .requestEmail()
-//                .build();
-//        mGoogleApiClient = new GoogleApiClient.Builder(this)
-//                .addOnConnectionFailedListener(this)
-//                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
-//                .build();
 
-        // Customizing G+ button
         btnSignIn.setSize(SignInButton.SIZE_STANDARD);
         btnSignIn.setScopes(gso.getScopeArray());
         fb.setOnClickListener(this);
@@ -120,6 +186,7 @@ public class SignUpSelection extends AppCompatActivity implements View.OnClickLi
             @Override
             public void onSuccess(LoginResult loginResult) {
                 Log.d(TAG, String.valueOf(loginResult));
+
                 SharedPreference sp = new SharedPreference();
 
                 String accessToken = loginResult.getAccessToken().getToken();
@@ -137,18 +204,34 @@ public class SignUpSelection extends AppCompatActivity implements View.OnClickLi
                                         profilePicUrl = data.getJSONObject("picture").getJSONObject("data").getString("url");
                                         String src = profilePicUrl.toString();
                                         URL url = new URL(profilePicUrl);
-                                        getBitmapFromURL(url);
-                                        //InputStream is = new FileInputStream(profilePicUrl);
-                                        // InputStream in = url.openConnection().getInputStream();
-                                        //  Bitmap profilePic= BitmapFactory.decodeStream(url.openConnection().getInputStream());
+                                        txtEmail.setText(object.getString("email"));
+                                        Picasso.with(SignUpSelection.this)
+                                                .load(profilePicUrl)
+                                                .into(new Target() {
+                                                    @Override
+                                                    public void onBitmapLoaded (final Bitmap bitmap, Picasso.LoadedFrom from){
+                                                        Log.v("Main", String.valueOf(bitmap));
+                                                        intent = new Intent(SignUpSelection.this, SignUp.class);
 
+                                                        intent.putExtra("bitmap",bitmap);
+                                                        startActivity(intent);
+
+                                                    }
+
+                                                    @Override
+                                                    public void onBitmapFailed(Drawable errorDrawable) {
+                                                        Log.v("Main", "errrorrrr");
+
+                                                    }
+
+                                                    @Override
+                                                    public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+                                                    }
+                                                });
 
                                         Log.i(TAG, profilePicUrl);
-                                        // Uri uri =  Uri.parse(profilePicUrl);
-                                        //  Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(),uri);
-                                        //   Log.i(TAG, String.valueOf(profilePic));
-                                        // mImageView.setBitmap(profilePic);
-                                    }
+                                                                           }
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 } catch (IOException e) {
@@ -169,8 +252,6 @@ public class SignUpSelection extends AppCompatActivity implements View.OnClickLi
 
                 }
                 sp.setPreferences(getApplicationContext(), "Login", "FBYES");
-                intent = new Intent(SignUpSelection.this, SignUp.class);
-                startActivity(intent);
             }
 
             @Override
@@ -188,56 +269,6 @@ public class SignUpSelection extends AppCompatActivity implements View.OnClickLi
 
     }
 
-    @SuppressLint("StaticFieldLeak")
-    public static void getBitmapFromURL(URL url) throws IOException {
-//        try {
-//            URL url = new URL(src);
-//            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-//            //connection.setRequestMethod("GET");
-//            connection.setDoOutput(true);
-//            connection.setChunkedStreamingMode(0);
-//
-//            OutputStream out = new BufferedOutputStream(connection.getOutputStream());
-//          //  writeStream(out);
-//
-//            InputStream in = new BufferedInputStream(connection.getInputStream());
-//            //readStream(in)
-//
-//// get the response code, returns 200 if it's OK
-//           // int responseCode = connection.getResponseCode();
-//
-//            InputStream input = connection.getInputStream();
-//            Bitmap myBitmap = BitmapFactory.decodeStream(input);
-//            //connection.connect();
-//            return myBitmap;
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//            return null;
-//        }
-        String response;
-
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        connection.setReadTimeout(10000);
-        connection.setConnectTimeout(10000);
-        connection.setRequestMethod("GET");
-        connection.setUseCaches(false);
-        connection.setAllowUserInteraction(false);
-        connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-        int responceCode = connection.getResponseCode();
-
-        if (responceCode == HttpURLConnection.HTTP_OK) {
-            String line;
-            BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            while ((line = br.readLine()) != null) {
-                response = "";// String variable declared global
-                response += line;
-                Log.i("response_line", response);
-            }
-        } else {
-            response = "";
-        }
-
-    }
     private void InitView() {
         fb = (Button) findViewById(R.id.fbsignup);
         loginButton = (LoginButton) findViewById(R.id.signupfb_button);
@@ -247,9 +278,14 @@ public class SignUpSelection extends AppCompatActivity implements View.OnClickLi
         callbackManager = CallbackManager.Factory.create();
         btnSignIn = (SignInButton) findViewById(R.id.signupgoogle_button);
         btngoogle = (Button) findViewById(R.id.googlesignup);
-        // txtEmail = (EditText) findViewById(R.id.txt_email);
+        txtEmail = (EditText) findViewById(R.id.signup_email);
+        txtPassword = (EditText) findViewById(R.id.signup_password);
+        signUp=(Button) findViewById(R.id.btn_client_signup);
+        txtConfirmPassword = (EditText) findViewById(R.id.signup_confirmpassword);
+        back=(LinearLayout) findViewById(R.id.client_signup_back);
         // txtPassword = (EditText) findViewById(R.id.txt_password);
     }
+
     private void signIn() {
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         startActivityForResult(signInIntent, RC_SIGN_IN);
@@ -280,6 +316,7 @@ public class SignUpSelection extends AppCompatActivity implements View.OnClickLi
             });
         }
     }
+
     private void showProgressDialog() {
         if (mProgressDialog == null) {
             mProgressDialog = new ProgressDialog(this);
@@ -295,11 +332,18 @@ public class SignUpSelection extends AppCompatActivity implements View.OnClickLi
             mProgressDialog.hide();
         }
     }
+    private boolean checkValidation() {
+        boolean ret = true;
+
+        // if (!Validation.hasText(etNormalText)) ret = false;
+        if (!Validation.isEmailAddress(txtEmail, true)) ret = false;
+        if (!Validation.isPassword(txtPassword, true)) ret = false;
+
+        return ret;
+    }
     private void handleSignInResult(GoogleSignInResult result) {
         Log.d(TAG, "handleSignInResult:" + result.isSuccess());
-        //  GoogleSignInAccount account = completedTask.getResult(ApiException.class);
-//        String idToken = result.getIdToken();
-//
+
         if (result.isSuccess()) {
             SharedPreference sp = new SharedPreference();
             sp.setPreferences(getApplicationContext(), "Login", "GOOGLEYES");
@@ -310,36 +354,37 @@ public class SignUpSelection extends AppCompatActivity implements View.OnClickLi
             String personEmail = acct.getEmail();
             String personId = acct.getId();
             Uri personPhoto = acct.getPhotoUrl();
+            txtEmail.setText(personEmail);
 
             String idToken = acct.getIdToken();
             String deviceId =Settings.Secure.getString(getContentResolver(),
                     Settings.Secure.ANDROID_ID);
-            //sendPostGoogle(idToken, "contractor", deviceId);
-            // Show signed-in UI.
             Log.d(TAG, "idToken:" + idToken);
+            Picasso.with(SignUpSelection.this)
+                    .load(personPhoto)
+                    .into(new Target() {
+                        @Override
+                        public void onBitmapLoaded (final Bitmap bitmap, Picasso.LoadedFrom from){
+            /* Save the bitmap or do something with it here */
+                            Log.v("Main", String.valueOf(bitmap));
+//                            intent = new Intent(SignUpSelection.this, SignUp.class);
+//
+//                            intent.putExtra("bitmap",bitmap);
+//                            startActivity(intent);
 
-            // Signed in successfully, show authenticated UI.
-//            GoogleSignInAccount acct = result.getSignInAccount();
-//
-//            Log.e(TAG, "display name: " + acct.getDisplayName());
-//
-//            String personName = acct.getDisplayName();
-//         //   String personPhotoUrl = acct.getPhotoUrl().toString();
-//            String email = acct.getEmail();
-//
-//            Log.e(TAG, "Name: " + personName + ", email: " + email);
+                        }
 
-            //txtName.setText(personName);
-            // txtEmail.setText(email);
-//            Glide.with(getApplicationContext()).load(personPhotoUrl)
-//                    .thumbnail(0.5f)
-//                    .crossFade()
-//                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-//                    .into(imgProfilePic);
-            //   updateUI(true);
+                        @Override
+                        public void onBitmapFailed(Drawable errorDrawable) {
+                            Log.v("Main", "errrorrrr");
+                        }
+
+                        @Override
+                        public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+                        }
+                    });
         } else {
-            // Signed out, show unauthenticated UI.
-            //  updateUI(false);
             Log.e(TAG, "display name: ");
         }
     }
@@ -351,18 +396,8 @@ public class SignUpSelection extends AppCompatActivity implements View.OnClickLi
         if (requestCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             handleSignInResult(result);
-
         }
-//        if (requestCode == RC_SIGN_IN) {
-//            // The Task returned from this call is always completed, no need to attach
-//            // a listener.
-//            Task<GoogleSignInAccount> task = Auth.GoogleSignInApi.getSignedInAccountFromIntent(data);
-//            handleSignInResult(task);
-//        }
-
     }
-
-
 
     @Override
     public void onClick(View v) {
@@ -374,9 +409,46 @@ public class SignUpSelection extends AppCompatActivity implements View.OnClickLi
             case R.id.fbsignup:
                 loginButton.performClick();
                 break;
+            case R.id.btn_client_signup:
+                if ( checkValidation () ){
+                    signup();
+
+                    //Toast.makeText(SignUpSelection.this, "Form contains not error", Toast.LENGTH_LONG).show();
+                }
+                else
+                    //Toast.makeText(SignUpSelection.this, "Form contains error", Toast.LENGTH_LONG).show();
+                break;
+            case R.id.client_signup_back:
+                back.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        intent = new Intent(SignUpSelection.this, Login.class);
+                        startActivity(intent);
+                    }
+                });
+                break;
         }
     }
+    private void signup() {
+        String email=txtEmail.getText().toString();
+        String password =txtPassword.getText().toString();
+        String confirmPassword =txtConfirmPassword.getText().toString();
+        if(!password.equals(confirmPassword)){
+            txtConfirmPassword.setError("confirm password does not match");
+        }
+        String role=sp.getPreferences(getApplicationContext(),"role");;
+        SharedPreference sp=new SharedPreference();
+        String deviceId =  sp.getPreferences(getApplicationContext(),"deviceId");
+        intent = new Intent(SignUpSelection.this, SignUp.class);
+        sp.setPreferences(SignUpSelection.this,"email",email);
+        sp.setPreferences(SignUpSelection.this,"password",password);
+        //intent.putExtra("email",email);
+        //intent.putExtra("password",password);
+        startActivity(intent);
 
+        //sendPost(email,password,role,deviceId);
+
+    }
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         Log.d(TAG, "onConnectionFailed:" + connectionResult);

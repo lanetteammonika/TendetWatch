@@ -19,6 +19,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     Context context;
     private Button btnContractor,btnClient;
     Intent intent;
+    SharedPreference sp = new SharedPreference();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,7 +38,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         aboutapp.setOnClickListener(this);
         String deviceId = Settings.Secure.getString(getContentResolver(),
                 Settings.Secure.ANDROID_ID);
-        SharedPreference sp = new SharedPreference();
         sp.setPreferences(getApplicationContext(), "deviceId", deviceId);
     }
 
@@ -44,6 +45,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btnContractor = (Button) findViewById(R.id.btn_contractor);
         btnClient = (Button) findViewById(R.id.btn_client);
         aboutapp = (TextView) findViewById(R.id.aboutapp);
+
     }
 
     @Override
@@ -70,12 +72,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.btn_contractor:
                 intent = new Intent(MainActivity.this, Login.class);
-                intent.putExtra("Role", "contractor");
+                sp.setPreferences(getApplicationContext(), "role", "contractor");
+               // intent.putExtra("Role", "contractor");
                 startActivity(intent);
                 break;
             case R.id.btn_client:
                 intent = new Intent(MainActivity.this, Login.class);
-                intent.putExtra("Role", "client");
+                sp.setPreferences(getApplicationContext(), "role", "client");
                 startActivity(intent);
                 break;
         }

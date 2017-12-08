@@ -26,8 +26,8 @@
     </LinearLayout>
     <Button
         android:id="@+id/button_close"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="@dimen/value_40"
+        android:layout_height="@dimen/value_40"
         android:layout_marginTop="@dimen/value_20"
         android:layout_alignRight="@+id/relativeLayout1"
         android:layout_alignTop="@+id/relativeLayout1"
@@ -51,8 +51,8 @@
             android:layout_marginBottom="@dimen/value_10"
             >
             <ImageView
-                android:layout_width="80dp"
-                android:layout_height="80dp"
+                android:layout_width="@dimen/value_80"
+                android:layout_height="@dimen/value_80"
                 android:src="@drawable/icon_40_3x"
                 android:gravity="center"/>
         </LinearLayout>

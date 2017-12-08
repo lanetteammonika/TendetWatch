@@ -10,18 +10,18 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="@dimen/value_5"
         android:id="@+id/llback"
         >
 
         <LinearLayout
-            android:id="@+id/toolbar"
+            android:id="@+id/signup2_toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             >
             <ImageView
-                android:layout_width="25dp"
-                android:layout_height="25dp"
+                android:layout_width="@dimen/value_25"
+                android:layout_height="@dimen/value_25"
                 android:src="@drawable/left_arr_3x"
                 android:layout_gravity="center"/>
             <TextView
@@ -41,17 +41,17 @@
         android:layout_height="100dp"
         android:orientation="horizontal"
         android:layout_gravity="center"
-        android:padding="5dp"
+        android:padding="@dimen/value_5"
         >
         <de.hdodenhof.circleimageview.CircleImageView
             xmlns:app="http://schemas.android.com/apk/res-auto"
-            android:layout_width="90dp"
-            android:layout_height="90dp"
-            android:padding="5dp"
+            android:layout_width="@dimen/value_90"
+            android:layout_height="@dimen/value_90"
+            android:padding="@dimen/value_5"
             android:src="@drawable/avtar"
             android:id="@+id/circleView"
             android:layout_gravity="center_horizontal"
-            app:civ_border_width="2dp"
+            app:civ_border_width="@dimen/value_2"
             app:civ_border_color="#FF000000"
             />
     </LinearLayout>
@@ -72,8 +72,8 @@
             android:id="@+id/selectCountry"
             >
             <ImageView
-                android:layout_width="25dp"
-                android:layout_height="25dp"
+                android:layout_width="@dimen/value_25"
+                android:layout_height="@dimen/value_25"
                 android:src="@drawable/country_3x"
                 android:layout_marginTop="@dimen/value_7"
                 />
@@ -91,8 +91,8 @@ android:enabled="false"
                 android:textColor="@color/colorBlack"
                 />
             <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
+                android:layout_width="@dimen/value_20"
+                android:layout_height="@dimen/value_20"
                 android:src="@drawable/right_arr_3x"
                 android:layout_gravity="center"
                 android:layout_alignParentRight="true"
@@ -103,9 +103,9 @@ android:enabled="false"
             android:layout_width="fill_parent"
             android:layout_height="1dp"
             android:background="#808080"
-            android:layout_marginLeft="40dp"
-            android:layout_marginRight="40dp"
-            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="@dimen/value_40"
+            android:layout_marginRight="@dimen/value_40"
+            android:layout_marginBottom="@dimen/value_5"
             />
         <RelativeLayout
             android:layout_width="match_parent"
@@ -115,8 +115,8 @@ android:enabled="false"
             android:layout_marginTop="@dimen/value_10"
             >
             <ImageView
-                android:layout_width="25dp"
-                android:layout_height="25dp"
+                android:layout_width="@dimen/value_25"
+                android:layout_height="@dimen/value_25"
                 android:src="@drawable/mobile_3x"
                 android:layout_marginTop="@dimen/value_5"
                 />
@@ -124,7 +124,7 @@ android:enabled="false"
             <EditText
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="40dp"
+                android:layout_marginLeft="@dimen/value_40"
                 android:hint="CC Mobile No"
                 android:textSize="@dimen/text_20"
                 android:backgroundTint="@android:color/transparent"
@@ -138,9 +138,9 @@ android:enabled="false"
             android:layout_width="fill_parent"
             android:layout_height="1dp"
             android:background="#808080"
-            android:layout_marginLeft="40dp"
-            android:layout_marginRight="40dp"
-            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="@dimen/value_40"
+            android:layout_marginRight="@dimen/value_40"
+            android:layout_marginBottom="@dimen/value_5"
             />
         <RelativeLayout
             android:layout_width="match_parent"
@@ -150,8 +150,8 @@ android:enabled="false"
             android:layout_marginTop="@dimen/value_10"
             >
             <ImageView
-                android:layout_width="25dp"
-                android:layout_height="25dp"
+                android:layout_width="@dimen/value_25"
+                android:layout_height="@dimen/value_25"
                 android:src="@drawable/occupation_3x"
                 android:layout_marginTop="@dimen/value_5"
                 />
@@ -172,9 +172,9 @@ android:enabled="false"
             android:layout_width="fill_parent"
             android:layout_height="1dp"
             android:background="#808080"
-            android:layout_marginLeft="40dp"
-            android:layout_marginRight="40dp"
-            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="@dimen/value_40"
+            android:layout_marginRight="@dimen/value_40"
+            android:layout_marginBottom="@dimen/value_5"
             />
         <RelativeLayout
             android:layout_width="match_parent"
@@ -185,8 +185,8 @@ android:enabled="false"
             android:id="@+id/rlAboutme"
             >
             <ImageView
-                android:layout_width="25dp"
-                android:layout_height="25dp"
+                android:layout_width="@dimen/value_25"
+                android:layout_height="@dimen/value_25"
                 android:src="@drawable/about_3x"
                 android:layout_marginTop="@dimen/value_5"
                 />
@@ -209,19 +209,19 @@ android:enabled="false"
             android:layout_width="fill_parent"
             android:layout_height="1dp"
             android:background="#808080"
-            android:layout_marginLeft="40dp"
-            android:layout_marginRight="40dp"
-            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="@dimen/value_40"
+            android:layout_marginRight="@dimen/value_40"
+            android:layout_marginBottom="@dimen/value_5"
             />
         <Button
             android:id="@+id/btn_Next"
             android:layout_width="match_parent"
-            android:layout_height="40dp"
+            android:layout_height="@dimen/value_40"
             android:layout_gravity="center"
-            android:layout_marginBottom="10dp"
-            android:layout_marginLeft="50dp"
-            android:layout_marginRight="50dp"
-            android:layout_marginTop="30dp"
+            android:layout_marginBottom="@dimen/value_10"
+            android:layout_marginLeft="@dimen/value_50"
+            android:layout_marginRight="@dimen/value_50"
+            android:layout_marginTop="@dimen/value_30"
             android:background="@drawable/button"
             android:text="Next"
             android:textAllCaps="false"

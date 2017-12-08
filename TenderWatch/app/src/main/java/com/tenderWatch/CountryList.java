@@ -51,7 +51,7 @@ public class CountryList extends AppCompatActivity {
     IndexingArrayAdapter adapter,bAdapter;
     Button btn_next;
     String alphabetS="";
-    LinearLayout lltext;
+    LinearLayout lltext,back;
     TextView txtSelectedContract;
     Intent intent;
     String check;
@@ -63,6 +63,7 @@ public class CountryList extends AppCompatActivity {
         edtSearch = (EditText) findViewById(R.id.edtSearch);
         lvCountry = (ListView) findViewById(R.id.lvCountry);
          lltext = (LinearLayout) findViewById(R.id.lltext);
+         back=(LinearLayout) findViewById(R.id.country_toolbar);
 
         sideSelector = (SideSelector) findViewById(R.id.side_selector);
         mAPIService = ApiUtils.getAPIService();
@@ -183,7 +184,14 @@ public class CountryList extends AppCompatActivity {
 
             }
         });
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                intent = new Intent(CountryList.this, SignUp.class);
 
+                startActivity(intent);
+            }
+        });
 
         lvCountry.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @SuppressLint("ResourceType")
