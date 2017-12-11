@@ -10,6 +10,8 @@ import android.widget.Toast;
 
 import com.tenderWatch.Login;
 
+import java.io.File;
+
 import static com.facebook.FacebookSdk.getApplicationContext;
 
 /**

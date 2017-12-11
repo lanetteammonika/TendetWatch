@@ -9,6 +9,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Environment;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -44,7 +45,11 @@ import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
+import com.tenderWatch.Models.CreateUser;
+import com.tenderWatch.Models.LoginPost;
+import com.tenderWatch.Models.Message;
 import com.tenderWatch.Retrofit.Api;
+import com.tenderWatch.Retrofit.ApiUtils;
 import com.tenderWatch.SharedPreference.SharedPreference;
 import com.tenderWatch.Validation.Validation;
 
@@ -53,12 +58,18 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.ProtocolException;
 import java.net.URL;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 public class SignUpSelection extends AppCompatActivity implements View.OnClickListener, GoogleApiClient.OnConnectionFailedListener {
@@ -72,7 +83,7 @@ public class SignUpSelection extends AppCompatActivity implements View.OnClickLi
     private LoginButton loginButton;
     private Button fb,signUP;
     private static final int RC_SIGN_IN = 007;
-
+    CreateUser user=new CreateUser();
     SharedPreference sp=new SharedPreference();
 
     private GoogleApiClient mGoogleApiClient;
@@ -274,6 +285,8 @@ public class SignUpSelection extends AppCompatActivity implements View.OnClickLi
         loginButton = (LoginButton) findViewById(R.id.signupfb_button);
         // btnlogin =(Button) findViewById(R.id.btn_login);
         //mAPIService = ApiUtils.getAPIService();
+        mAPIService = ApiUtils.getAPIService();
+
         FacebookSdk.sdkInitialize(getApplicationContext());
         callbackManager = CallbackManager.Factory.create();
         btnSignIn = (SignInButton) findViewById(R.id.signupgoogle_button);
@@ -353,7 +366,7 @@ public class SignUpSelection extends AppCompatActivity implements View.OnClickLi
             String personFamilyName = acct.getFamilyName();
             String personEmail = acct.getEmail();
             String personId = acct.getId();
-            Uri personPhoto = acct.getPhotoUrl();
+            final Uri personPhoto = acct.getPhotoUrl();
             txtEmail.setText(personEmail);
 
             String idToken = acct.getIdToken();
@@ -371,7 +384,7 @@ public class SignUpSelection extends AppCompatActivity implements View.OnClickLi
 //
 //                            intent.putExtra("bitmap",bitmap);
 //                            startActivity(intent);
-
+                            Picasso.with(SignUpSelection.this).load(personPhoto).into(target);
                         }
 
                         @Override
@@ -398,6 +411,28 @@ public class SignUpSelection extends AppCompatActivity implements View.OnClickLi
             handleSignInResult(result);
         }
     }
+    private Target target = new Target() {
+        @Override
+        public void onBitmapLoaded(final Bitmap bitmap, Picasso.LoadedFrom from) {
+            File file = new File(Environment.getExternalStorageDirectory().getPath()  + "/saved.jpg");
+            try {
+                file.createNewFile();
+                FileOutputStream ostream = new FileOutputStream(file);
+                bitmap.compress(Bitmap.CompressFormat.JPEG,100,ostream);
+                ostream.close();
+                user.setProfilePhoto(file);
+                // uploadImage(file);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public void onBitmapFailed(Drawable errorDrawable) {}
+
+        @Override
+        public void onPrepareLoad(Drawable placeHolderDrawable) {}
+    };
 
     @Override
     public void onClick(View v) {
@@ -411,11 +446,13 @@ public class SignUpSelection extends AppCompatActivity implements View.OnClickLi
                 break;
             case R.id.btn_client_signup:
                 if ( checkValidation () ){
-                    signup();
+                   checkEmail();
+                       // signup();
+                  //  }
 
                     //Toast.makeText(SignUpSelection.this, "Form contains not error", Toast.LENGTH_LONG).show();
                 }
-                else
+
                     //Toast.makeText(SignUpSelection.this, "Form contains error", Toast.LENGTH_LONG).show();
                 break;
             case R.id.client_signup_back:
@@ -429,24 +466,39 @@ public class SignUpSelection extends AppCompatActivity implements View.OnClickLi
                 break;
         }
     }
+
+    public void checkEmail() {
+        String email=txtEmail.getText().toString();
+        mAPIService.checkEmailExit(txtEmail.getText().toString(), sp.getPreferences(getApplicationContext(), "role")).enqueue(new Callback<Message>() {
+            @Override
+            public void onResponse(Call<Message> call, Response<Message> response) {
+               // if (response.isSuccessful()) {
+                        if(response.message().equals("Found")){
+                            sp.ShowDialog(SignUpSelection.this,"This Email already Register in application");
+                           txtEmail.setError("change Email");
+                            // break;
+                        }else{
+                            signup();
+                        }
+               /// }
+            }
+
+            @Override
+            public void onFailure(Call<Message> call, Throwable t) {
+                String email=txtEmail.getText().toString();
+
+            }
+        });
+    }
+
     private void signup() {
         String email=txtEmail.getText().toString();
         String password =txtPassword.getText().toString();
-        String confirmPassword =txtConfirmPassword.getText().toString();
-        if(!password.equals(confirmPassword)){
-            txtConfirmPassword.setError("confirm password does not match");
-        }
-        String role=sp.getPreferences(getApplicationContext(),"role");;
-        SharedPreference sp=new SharedPreference();
-        String deviceId =  sp.getPreferences(getApplicationContext(),"deviceId");
-        intent = new Intent(SignUpSelection.this, SignUp.class);
-        sp.setPreferences(SignUpSelection.this,"email",email);
-        sp.setPreferences(SignUpSelection.this,"password",password);
-        //intent.putExtra("email",email);
-        //intent.putExtra("password",password);
-        startActivity(intent);
+        user.setEmail(email);
+        user.setPassword(password);
 
-        //sendPost(email,password,role,deviceId);
+        intent = new Intent(SignUpSelection.this, SignUp.class);
+        startActivity(intent);
 
     }
     @Override

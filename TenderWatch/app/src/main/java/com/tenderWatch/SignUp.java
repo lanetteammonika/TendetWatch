@@ -38,6 +38,7 @@ import com.github.crazyorr.zoomcropimage.CropShape;
 import com.github.crazyorr.zoomcropimage.ZoomCropImageActivity;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
+import com.tenderWatch.Models.CreateUser;
 import com.tenderWatch.Models.Register;
 import com.tenderWatch.Retrofit.Api;
 import com.tenderWatch.Retrofit.ApiUtils;
@@ -74,6 +75,9 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener{
     String countryName,countryCode,txtaboutMe;
     Button btnSignUp;
     ArrayList<String> empNo;
+    CreateUser user=new CreateUser();
+    SharedPreference sp = new SharedPreference();
+    MultipartBody.Part email1,password1,country1,contactNo1,occupation1,aboutMe1,role1,deviceId1,image1;
     //TextView txtcountryCode;
     CircleImageView profileImg;
     private static final String TAG = SignUp.class.getSimpleName();
@@ -93,10 +97,18 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener{
     private Uri mPictureUri;
     private Api mAPIService;
     String URL = "https://www.w3schools.com/css/paris.jpg";
-
+    Bundle savedInstanceState;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+//        super.onSaveInstanceState(savedInstanceState);
+//        // Save UI state changes to the savedInstanceState.
+//        // This bundle will be passed to onCreate if the process is
+//        // killed and restarted.
+//        savedInstanceState.putBoolean("MyBoolean", true);
+//        savedInstanceState.putDouble("myDouble", 1.9);
+//        savedInstanceState.putInt("MyInt", 1);
+//        savedInstanceState.putString("MyString", "Welcome back to Android");
         setContentView(R.layout.activity_client_signup2);
 //        Intent init=getIntent();
 //        email=init.getStringExtra("email");
@@ -108,31 +120,7 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener{
      //   new DownloadImage().execute(URL);
        // show.getCharExtra()
 
-        mobileNo.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-               // Validation.isPhoneNumber(mobileNo,true);
-              String mobileNumber=  mobileNo.getText().toString();
-              mobileNumber=mobileNumber.split("-")[1];
-            int l=  mobileNumber.length();
-            if(l<10) {
-                mobileNo.setError("up to 10 digit");
-            }
-                if(l>10) {
-                    mobileNo.setError("up to 10 digit");
-                }
-            }
-        });
     }
 
     private void InitListener() {
@@ -176,6 +164,8 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener{
        }
     }
 
+
+
     @Override
     public void onClick(View v) {
         int id = v.getId();
@@ -183,17 +173,21 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener{
             case R.id.selectCountry:
                 intent = new Intent(SignUp.this, CountryList.class);
                 intent.putExtra("check","signup");
-                startActivity(intent);
+
+                startActivityForResult(intent, 1);
                 break;
             case R.id.edt_aboutme:
                 intent = new Intent(SignUp.this, AboutMe.class);
+
                 if(aboutMe.getText().toString().equals("About Me")){
                     intent.putExtra("about","About Me");
                 }else{
                     intent.putExtra("about",txtaboutMe);
                 }
-                startActivity(intent);
+
+                startActivityForResult(intent, 1);
                 break;
+
             case R.id.circleView:
                 SetProfile();
                 break;
@@ -209,12 +203,21 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener{
                 break;
             case R.id.btn_Next:
                 SendData();
+
+                if(sp.getPreferences(SignUp.this,"role").equals("contractor")){
+                    intent = new Intent(
+                            SignUp.this, CountryList.class);
+                    startActivity(intent);
+                }else{
+                    intent = new Intent(
+                            SignUp.this, Agreement.class);
+                    startActivity(intent);
+                }
                 break;
         }
     }
 
     private void SendData() {
-        SharedPreference sp = new SharedPreference();
 
         Intent init=getIntent();
        String email1=sp.getPreferences(SignUp.this,"email");
@@ -225,6 +228,13 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener{
        String aboutMe1=aboutMe.getText().toString();
        String deviceId = Settings.Secure.getString(getContentResolver(),Settings.Secure.ANDROID_ID);
        String role=sp.getPreferences(SignUp.this,"role");
+       user.setCountry(country1);
+       user.setContactNo(mobile);
+       user.setOccupation(occupation1);
+       user.setDeviceId(deviceId);
+       user.setRole(role);
+       user.setAboutMe(aboutMe1);
+
     }
 
     private Target target = new Target() {
@@ -236,7 +246,7 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener{
                 FileOutputStream ostream = new FileOutputStream(file);
                 bitmap.compress(Bitmap.CompressFormat.JPEG,100,ostream);
                 ostream.close();
-                uploadImage(file);
+               // uploadImage(file);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -271,17 +281,17 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener{
         // create RequestBody instance from file
         RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
 
-        MultipartBody.Part email =MultipartBody.Part.createFormData("email", "hgredgtsdfv@sdf.sd");
-        MultipartBody.Part password =MultipartBody.Part.createFormData("password", "dfdfcvds");
-        MultipartBody.Part country =MultipartBody.Part.createFormData("country","dfvgfd");
-        MultipartBody.Part contactNo =MultipartBody.Part.createFormData("contactNo", "+91-4567899632");
-        MultipartBody.Part occupation =MultipartBody.Part.createFormData("occupation", "fvfdvdfv");
-        MultipartBody.Part aboutMe =MultipartBody.Part.createFormData("aboutMe","dfvgdfvbdf");
-        MultipartBody.Part role =MultipartBody.Part.createFormData("role", "contractor");
-        MultipartBody.Part deviceId =MultipartBody.Part.createFormData("deviceId","sbdfbvcs214" );
-        MultipartBody.Part image =MultipartBody.Part.createFormData("image", file.getName(), requestFile);
+         email1 =MultipartBody.Part.createFormData("email", "hgsdfv@sdf.sd");
+         password1 =MultipartBody.Part.createFormData("password", "dfdfcvds");
+         country1 =MultipartBody.Part.createFormData("country","dfvgfd");
+        contactNo1 =MultipartBody.Part.createFormData("contactNo", "+91-4567899632");
+        occupation1 =MultipartBody.Part.createFormData("occupation", "fvfdvdfv");
+         aboutMe1 =MultipartBody.Part.createFormData("aboutMe","dfvgdfvbdf");
+         role1 =MultipartBody.Part.createFormData("role", "contractor");
+         deviceId1 =MultipartBody.Part.createFormData("deviceId","sbdfbvcs214" );
+         image1 =MultipartBody.Part.createFormData("image", file.getName(), requestFile);
 
-        Call<Register> resultCall = mAPIService.uploadImage(email,password,country,contactNo,occupation,aboutMe,role,deviceId,image);
+        Call<Register> resultCall = mAPIService.uploadImage(email1,password1,country1,contactNo1,occupation1,aboutMe1,role1,deviceId1,image1);
         resultCall.enqueue(new Callback<Register>() {
             @Override
             public void onResponse(Call<Register> call, Response<Register> response) {
@@ -389,11 +399,14 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener{
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
         switch (requestCode) {
+
             case REQUEST_CODE_SELECT_PICTURE:
                 switch (resultCode) {
                     case Activity.RESULT_OK:
 
+                       // result=data.getStringExtra("Country");
                         Uri selectedImageUri = null;
                         if (data != null) {
                             selectedImageUri = data.getData();
@@ -413,15 +426,55 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener{
                                     croppedPicture.getParent());   //optional
                             intent.putExtra(ZoomCropImageActivity.INTENT_EXTRA_FILE_NAME,
                                     croppedPicture.getName());   //optional
-                            uploadImage(croppedPicture);
+                            RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), croppedPicture);
+                            user.setProfilePhoto(croppedPicture);
+                            image1 =MultipartBody.Part.createFormData("image", croppedPicture.getName(), requestFile);
+
+                           // uploadImage(croppedPicture);
                         }
                         startActivityForResult(intent, REQUEST_CODE_CROP_PICTURE);
                         break;
                 }
                 break;
             case REQUEST_CODE_CROP_PICTURE:
+                if (requestCode == 1) {
+                    if(resultCode == Activity.RESULT_OK){
+//                        ArrayList<String> result=data.getStringArrayListExtra("Country");
+//
+                        if(data.getStringExtra("aboutMe")!=null){
+                            txtaboutMe=data.getStringExtra("aboutMe");
+                            if(txtaboutMe.equals("About Me")){
+                                aboutMe.setText(txtaboutMe);
+
+                            }else {
+                                if(txtaboutMe.length()>10) {
+                                    aboutMe.setText(txtaboutMe.substring(0, 10) + "....");
+                                }else{
+                                    aboutMe.setText(txtaboutMe);
+                                }
+                            }
+                        }
+                        if(data.getStringArrayListExtra("Country")!=null){
+                            //String AboutMe=data.getStringExtra("aboutMe");
+                            ArrayList<String> result=data.getStringArrayListExtra("Country");
+
+                            Log.i(TAG, String.valueOf(result));
+                        //if(empNo != null) {
+                            countryName = result.get(0).toString().split("~")[0];
+                            countryCode = result.get(0).toString().split("~")[1];
+                        //}
+                        country.setText(countryName);
+                        mobileNo.setText(countryCode+'-');
+                        }
+                    }
+                    if (resultCode == Activity.RESULT_CANCELED) {
+                        //Write your code if there's no result
+                    }
+                }
                 switch (resultCode) {
+
                     case ZoomCropImageActivity.CROP_SUCCEEDED:
+
                         if (data != null) {
                             Uri croppedPictureUri = data
                                     .getParcelableExtra(ZoomCropImageActivity.INTENT_EXTRA_URI);
@@ -429,6 +482,7 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener{
                             // workaround for ImageView to refresh cache
                             profileImg.setImageURI(null);
                             profileImg.setImageURI(croppedPictureUri);
+
 //                            Uri imageUri = intent.getData();
 try {
 

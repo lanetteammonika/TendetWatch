@@ -1,6 +1,7 @@
 package com.tenderWatch;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -114,9 +115,16 @@ public class AboutMe extends AppCompatActivity {
         txtSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                intent = new Intent(AboutMe.this, SignUp.class);
+                intent = new Intent(AboutMe.this,SignUp.class);
                 intent.putExtra("aboutMe",edtAbotMe.getText().toString());
-                startActivity(intent);
+                //                finish();;
+//                startActivity(intent);
+                setResult(Activity.RESULT_OK,intent);
+//                intent = new Intent(AboutMe.this, SignUp.class);
+//                intent.putExtra("aboutMe",edtAbotMe.getText().toString());
+//                startActivity(intent);
+                finish();
+
             }
         });
 

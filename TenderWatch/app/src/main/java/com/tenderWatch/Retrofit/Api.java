@@ -4,8 +4,10 @@ package com.tenderWatch.Retrofit;
  * Created by lcom48 on 25/11/17.
  */
 
+import com.tenderWatch.Models.GetCategory;
 import com.tenderWatch.Models.GetCountry;
 import com.tenderWatch.Models.LoginPost;
+import com.tenderWatch.Models.Message;
 import com.tenderWatch.Models.Register;
 
 import org.json.JSONArray;
@@ -66,8 +68,16 @@ public interface Api {
     @FormUrlEncoded
     Call<LoginPost> forgotPassword(@Field("email") String email,
                              @Field("role") String role);
+    @POST("auth/checkEmail")
+    @FormUrlEncoded
+    Call<Message> checkEmailExit(@Field("email") String email,
+                                 @Field("role") String role);
     @GET("auth/country")
     Call<ArrayList<GetCountry>> getCountryData();
+
+    @GET("auth/category")
+    Call<ArrayList<GetCategory>> getCategoryData();
+
     @Multipart
     @POST("auth/register")
     Call<Register> uploadImage(@Part MultipartBody.Part email,

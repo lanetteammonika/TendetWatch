@@ -1,6 +1,7 @@
 package com.tenderWatch;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -73,35 +74,8 @@ public class CountryList extends AppCompatActivity {
         lvCountry.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         Intent show = getIntent();
         check=show.getStringExtra("check");
-        if(!check.equals("signup")) {
-            final Dialog dialog = new Dialog(CountryList.this);
-            dialog.setContentView(R.layout.select_contract);
-            lltext.setVisibility(View.VISIBLE);
-            final TextView txtTrial = (TextView) dialog.findViewById(R.id.txt_trial);
-            TextView txtMonth = (TextView) dialog.findViewById(R.id.txt_month);
-            TextView txtYear = (TextView) dialog.findViewById(R.id.txt_year);
-            txtTrial.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    txtSelectedContract.setText("$0 / year");
-                    dialog.dismiss();
-                }
-            });
-            txtMonth.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    txtSelectedContract.setText("$15 / month");
-                    dialog.dismiss();
-                }
-            });
-            txtYear.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    txtSelectedContract.setText("$120 / year");
-                    dialog.dismiss();
-                }
-            });
-            dialog.show();
+        if(check == null) {
+          CallContractorSignUp();
         }
         mAPIService.getCountryData().enqueue(new Callback<ArrayList<GetCountry>>() {
             @Override
@@ -216,35 +190,52 @@ btn_next.setOnClickListener(new View.OnClickListener() {
         SharedPreference ss =new SharedPreference();
 
         HashMap<String, String> items=adapter.getallitems();
-       // String s = items.get(0).toString();
         for (Map.Entry<String, String> entry : items.entrySet()) {
-            //String listtttt = entry.getValue();
             a_country.add(entry.getValue());
-            // Do things with the list
         }
         if(txtSelectedContract.getText().toString().equals("$0 / year")){
-            if(a_country.size()>1){
-                if(!check.equals("signup")) {
-                    ss.ShowDialog(CountryList.this, "During Free Trial Period you can choose only 1 country");
-                }else{
-                    ss.ShowDialog(CountryList.this, "Choose one country");
+//            if(a_country.size()>1){
+//                if(check == null) {
+//                    ss.ShowDialog(CountryList.this, "During Free Trial Period you can choose only 1 country");
+//                }else{
+//                    ss.ShowDialog(CountryList.this, "Choose one country");
+//                }
+//            }
+//            else{
+                if(check == null) {
+                    intent = new Intent(CountryList.this, Category.class);
+                    intent.putExtra("CountryAtContractor", a_country);
+                    startActivity(intent);
+
+                    setResult(Activity.RESULT_OK, intent);
+                    finish();
+                }else {
+                    intent = new Intent(CountryList.this, SignUp.class);
+                    intent.putExtra("Country", a_country);
+
+//                finish();;
+//                startActivity(intent);
+                    setResult(Activity.RESULT_OK, intent);
+//
+//            intent = new Intent(CountryList.this, SignUp.class);
+//            intent.putExtra("Country",a_country);
+//            startActivity(intent);
+                    finish();
                 }
-            }
-            else{
-                //call intent
-
-                intent = new Intent(CountryList.this, SignUp.class);
-                intent.putExtra("Country",a_country);
-                startActivity(intent);
 
             }
-        }
+        //}
         else{
-            intent = new Intent(CountryList.this, SignUp.class);
+//            intent = new Intent(CountryList.this, SignUp.class);
+//            intent.putExtra("Country",a_country);
+//            startActivity(intent);
+//            finish();
+            intent = new Intent(CountryList.this, Category.class);
             intent.putExtra("Country",a_country);
-            startActivity(intent);
-
-
+//                finish();;
+//                startActivity(intent);
+            setResult(Activity.RESULT_OK,intent);
+            finish();
         }
 //        for(int y=0;y<items.size();y++){
 //            a_country.add(items.get(y).toString());
@@ -280,6 +271,37 @@ btn_next.setOnClickListener(new View.OnClickListener() {
         });
 
 
+    }
+
+    private void CallContractorSignUp() {
+        final Dialog dialog = new Dialog(CountryList.this);
+        dialog.setContentView(R.layout.select_contract);
+        lltext.setVisibility(View.VISIBLE);
+        final TextView txtTrial = (TextView) dialog.findViewById(R.id.txt_trial);
+        TextView txtMonth = (TextView) dialog.findViewById(R.id.txt_month);
+        TextView txtYear = (TextView) dialog.findViewById(R.id.txt_year);
+        txtTrial.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                txtSelectedContract.setText("$0 / year");
+                dialog.dismiss();
+            }
+        });
+        txtMonth.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                txtSelectedContract.setText("$15 / month");
+                dialog.dismiss();
+            }
+        });
+        txtYear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                txtSelectedContract.setText("$120 / year");
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
     }
 
     public boolean isEnabled(int position) {

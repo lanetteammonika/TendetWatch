@@ -41,5 +41,6 @@
     <dimen name="value_150">150dp</dimen>
     <dimen name="value_100">100dp</dimen>
     <dimen name="value_26">26dp</dimen>
+    <dimen name="text_18">18sp</dimen>
 
 </resources>
