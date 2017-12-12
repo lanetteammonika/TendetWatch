@@ -461,7 +461,7 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener{
                             Log.i(TAG, String.valueOf(result));
                         //if(empNo != null) {
                             countryName = result.get(0).toString().split("~")[0];
-                            countryCode = result.get(0).toString().split("~")[1];
+                            countryCode = result.get(0).toString().split("~")[1].split("~")[0];
                         //}
                         country.setText(countryName);
                         mobileNo.setText(countryCode+'-');

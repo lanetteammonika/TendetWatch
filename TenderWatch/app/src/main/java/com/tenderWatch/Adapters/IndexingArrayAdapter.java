@@ -71,7 +71,7 @@ public class IndexingArrayAdapter extends BaseAdapter implements SectionIndexer 
         }
 
         else {
-            checked.put(String.valueOf(i), String.valueOf(item.get(i).getTitle())+"~"+String.valueOf(item.get(i).getCode()));
+            checked.put(String.valueOf(i), String.valueOf(item.get(i).getTitle())+"~"+String.valueOf(item.get(i).getCode())+"~"+String.valueOf(item.get(i).getId()));
         }
     }
 

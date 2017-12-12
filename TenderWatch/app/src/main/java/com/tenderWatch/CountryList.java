@@ -90,8 +90,9 @@ public class CountryList extends AppCompatActivity {
                     String name = response.body().get(i).getCountryName().toString();
                     String flag = response.body().get(i).getImageString().toString();
                     String countryCode=response.body().get(i).getCountryCode().toString();
+                    String id=response.body().get(i).getId().toString();
                     String value = String.valueOf(name.charAt(0));
-                    alpha.add(name + '~' + countryCode+ '`' +flag);
+                    alpha.add(name+'~'+id + '~' + countryCode+ '`' +flag);
 
 
                     // }
@@ -100,9 +101,10 @@ public class CountryList extends AppCompatActivity {
                 Collections.sort(alpha);
                 for (int i = 0; i < Data.size(); i++) {
                     String name = alpha.get(i).split("~")[0];
-                    String countryCode = alpha.get(i).split("~")[1].split("`")[0];
+                    String id=alpha.get(i).split("~")[1].split("~")[0];
+                    String countryCode = alpha.get(i).split("~")[2].split("`")[0];
 
-                     String   flag=alpha.get(i).split("`")[1];
+                     String   flag=alpha.get(i).split("~")[2].split("`")[1];
 
                     String value = String.valueOf(name.charAt(0));
                     if (!list.contains(value)) {
@@ -115,9 +117,9 @@ public class CountryList extends AppCompatActivity {
                         alpha2.add(name);
 
                         //set Country Header (Like:-A,B,C,...)
-                        countryList.add(new SectionItem(value, "","",false));
+                        countryList.add(new SectionItem(value, "","","",false));
                         //set Country Name
-                        countryList.add(new EntryItem(name, flag,countryCode,false));
+                        countryList.add(new EntryItem(name, flag,countryCode,id,false));
 
                         //Log.i("array section-------",alpha.get(n).getTitle());
 
@@ -125,7 +127,7 @@ public class CountryList extends AppCompatActivity {
                         alpha2.add(name);
 
                         //set Country Name
-                        countryList.add(new EntryItem(name, flag,countryCode,false));
+                        countryList.add(new EntryItem(name, flag,countryCode,id,false));
                     }
                 }
 
@@ -187,11 +189,17 @@ btn_next.setOnClickListener(new View.OnClickListener() {
     @Override
     public void onClick(View v) {
         ArrayList<String> a_country = new ArrayList<String>();
+        ArrayList<String> a_countryID = new ArrayList<String>();
+
         SharedPreference ss =new SharedPreference();
 
         HashMap<String, String> items=adapter.getallitems();
         for (Map.Entry<String, String> entry : items.entrySet()) {
             a_country.add(entry.getValue());
+        }
+        HashMap<String, String> items2=adapter.getallitems();
+        for (Map.Entry<String, String> entry : items2.entrySet()) {
+            a_countryID.add(entry.getValue().split("~")[2]);
         }
         if(txtSelectedContract.getText().toString().equals("$0 / year")){
 //            if(a_country.size()>1){
@@ -204,7 +212,9 @@ btn_next.setOnClickListener(new View.OnClickListener() {
 //            else{
                 if(check == null) {
                     intent = new Intent(CountryList.this, Category.class);
-                    intent.putExtra("CountryAtContractor", a_country);
+                    intent.putExtra("CountryAtContractor", a_countryID);
+                    intent.putExtra("Country", a_country);
+
                     startActivity(intent);
 
                     setResult(Activity.RESULT_OK, intent);
@@ -323,6 +333,8 @@ btn_next.setOnClickListener(new View.OnClickListener() {
 
         String getCode();
 
+        String getId();
+
         boolean getSelected();
 
         void setSelected(boolean isSelected);
@@ -335,13 +347,15 @@ btn_next.setOnClickListener(new View.OnClickListener() {
         private final String title;
         private final String flag;
         private final String code;
+        private final String id;
 
         private boolean isSelected;
 
-        public SectionItem(String title, String flag, String code, boolean isSelected) {
+        public SectionItem(String title, String flag, String code,String id, boolean isSelected) {
             this.title = title;
             this.flag = flag;
             this.code = code;
+            this.id=id;
             this.isSelected = isSelected;
         }
 
@@ -352,6 +366,10 @@ btn_next.setOnClickListener(new View.OnClickListener() {
         @Override
         public String getCode() {
             return code;
+        }
+
+        public String getId() {
+            return id;
         }
 
         @Override
@@ -382,12 +400,14 @@ btn_next.setOnClickListener(new View.OnClickListener() {
         public final String title;
         private final String flag;
         private final String code;
+        private final String id;
         private boolean isSelected;
 
-        public EntryItem(String title, String flag, String code, boolean isSelected) {
+        public EntryItem(String title, String flag, String code,String id, boolean isSelected) {
             this.title = title;
             this.flag = flag;
             this.code = code;
+            this.id=id;
             this.isSelected = isSelected;
         }
 
@@ -406,6 +426,10 @@ btn_next.setOnClickListener(new View.OnClickListener() {
         @Override
         public String getCode() {
             return code;
+        }
+
+        public String getId() {
+            return id;
         }
 
         @Override

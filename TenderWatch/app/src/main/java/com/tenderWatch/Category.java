@@ -1,24 +1,34 @@
 package com.tenderWatch;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.tenderWatch.Adapters.ArrayAdapter;
 import com.tenderWatch.Adapters.IndexingArrayAdapter;
+import com.tenderWatch.Models.CreateUser;
 import com.tenderWatch.Models.GetCategory;
 import com.tenderWatch.Models.GetCountry;
 import com.tenderWatch.Retrofit.Api;
 import com.tenderWatch.Retrofit.ApiUtils;
+import com.tenderWatch.SharedPreference.SharedPreference;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -33,11 +43,19 @@ public class Category extends AppCompatActivity {
     private static final ArrayList<String> alpha = new ArrayList<String>();
     private static final ArrayList<String> alpha2 = new ArrayList<String>();
     public static final ArrayList<String> list = new ArrayList<String>();
+    public static final ArrayList<String> countryId = new ArrayList<String>();
+
     String alphabetS="";
     private static final ArrayList<Item> countryList = new ArrayList<Item>();
     ArrayAdapter bAdapter;
     public static char[] alphabetlist = new char[27];
-    ArrayList<String> empNo;
+    ArrayList<String> empNo,countryListName;
+    CreateUser user=new CreateUser();
+    Button btnCategory;
+    private static int p=0,k=0;
+public static HashMap<String, ArrayList<String>> map = new HashMap<String, ArrayList<String>>();
+    private static   ArrayList<String> a_category = new ArrayList<String>();
+    Intent intent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,14 +63,17 @@ public class Category extends AppCompatActivity {
         setContentView(R.layout.activity_category);
 
         lvCountry = (ListView) findViewById(R.id.lvCategory);
-
+        btnCategory=(Button) findViewById(R.id.btn_CategoryNext) ;
 
         sideSelector = (SideSelector) findViewById(R.id.category_side_selector);
         mAPIService = ApiUtils.getAPIService();
         lvCountry.setDivider(null);
+        lvCountry.clearChoices();;
         Intent show = getIntent();
 
         empNo = show.getStringArrayListExtra("CountryAtContractor");
+        countryListName=show.getStringArrayListExtra("Country");
+        user.setSelections(empNo.size());
         mAPIService.getCategoryData().enqueue(new Callback<ArrayList<GetCategory>>() {
             @Override
             public void onResponse(Call<ArrayList<GetCategory>> call, Response<ArrayList<GetCategory>> response) {
@@ -65,23 +86,27 @@ public class Category extends AppCompatActivity {
                     //JSONObject obj = array.getJSONObject(n);
                     String name = response.body().get(i).getCategoryName().toString();
                     String flag = response.body().get(i).getImgString().toString();
-
-                    alpha.add(name +'~'+flag);
+                    String id= response.body().get(i).getId().toString();
+                    alpha.add(name+'~'+id +'~'+flag);
 
 
                     // }
                 }
 
                 for(int y=0;y<empNo.size();y++){
-                    String categoryName=empNo.get(y).toString().split("~")[0];
+                    String categoryName=countryListName.get(y).toString().split("~")[0];
+                    String categoryId=countryListName.get(y).toString().split("~")[2];
+
                     String value = String.valueOf(categoryName.charAt(0));
-                    countryList.add(new SectionItem(categoryName, "",false));
+
+                    countryList.add(new SectionItem(categoryName, "",categoryId,categoryId,false));
 
                     for (int i = 0; i < Data.size(); i++) {
                         String name = alpha.get(i).split("~")[0];
                         //   String countryCode = alpha.get(i).split("~")[1].split("`")[0];
 
-                        String   flag=alpha.get(i).split("~")[1];
+                        String   id=alpha.get(i).split("~")[1];
+                        String   flag=alpha.get(i).split("~")[2];
 
                         //String value = String.valueOf(name.charAt(0));
                         if (!list.contains(value)) {
@@ -90,58 +115,25 @@ public class Category extends AppCompatActivity {
 
 
                             Log.i("array-------", String.valueOf(list));
-                            alpha2.add(categoryName);
+                            alpha2.add(value);
                             alpha2.add(name);
 
                             //set Country Header (Like:-A,B,C,...)
                             //set Country Name
-                            countryList.add(new EntryItem(name, flag,false));
+                            countryList.add(new EntryItem(name, flag,id,categoryId,false));
 
                             //Log.i("array section-------",alpha.get(n).getTitle());
 
                         } else {
+                          //  alpha2.add(name);
+
                             alpha2.add(name);
 
                             //set Country Name
-                            countryList.add(new EntryItem(name, flag,false));
+                            countryList.add(new EntryItem(name, flag,id,categoryId,false));
                         }
                     }
                 }
-
-
-
-
-               // Collections.sort(alpha);
-//                for (int i = 0; i < Data.size(); i++) {
-//                    String name = alpha.get(i).split("~")[0];
-//                 //   String countryCode = alpha.get(i).split("~")[1].split("`")[0];
-//
-//                    String   flag=alpha.get(i).split("~")[1];
-//
-//                    String value = String.valueOf(name.charAt(0));
-//                    if (!list.contains(value)) {
-//                        list.add(value);
-//                        alphabetS.concat(value);//alphabetlist.append(value);
-//
-//
-//                        Log.i("array-------", String.valueOf(list));
-//                        alpha2.add(value);
-//                        alpha2.add(name);
-//
-//                        //set Country Header (Like:-A,B,C,...)
-//                        countryList.add(new SectionItem(value, "",false));
-//                        //set Country Name
-//                        countryList.add(new EntryItem(name, flag,false));
-//
-//                        //Log.i("array section-------",alpha.get(n).getTitle());
-//
-//                    } else {
-//                        alpha2.add(name);
-//
-//                        //set Country Name
-//                        countryList.add(new EntryItem(name, flag,false));
-//                    }
-//                }
 
                 String str = list.toString().replaceAll(",", "");
                 char[] chars = str.toCharArray();
@@ -173,8 +165,57 @@ public class Category extends AppCompatActivity {
 
             }
         });
-        //btn_next = (Button) findViewById(R.id.btn_CountryNext);
+
+        lvCountry.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @SuppressLint("ResourceType")
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position,
+                                    long id) {
+                TextView tvItemTitle=(TextView) view.findViewById(R.id.tvItemTitle);
+                String value= (String) lvCountry.getItemAtPosition(position).toString();
+                String Country=tvItemTitle.getText().toString();
+                bAdapter.setItemSelected(position);
+                bAdapter.setCheckedItem(position);
+
+            }
+        });
+
+        btnCategory.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.N)
+            @Override
+            public void onClick(View v) {
+               // ArrayList<ArrayList<String>> main=new ArrayList<ArrayList<String>>();
+                SharedPreference ss =new SharedPreference();
+
+                HashMap<String, String> items=bAdapter.getallitems();
+
+
+                for (Map.Entry<String, String> entry : items.entrySet()) {
+
+                    populateMap(map, entry.getValue().split("~")[1],entry.getValue().split("~")[2]);
+
+                }
+                user.setSubscribe(map);
+                intent = new Intent(
+                        Category.this, Agreement.class);
+                startActivity(intent);
+            }
+        });
+
     }
+
+    void populateMap(HashMap<String, ArrayList<String>> map, String value, String key) {
+        ArrayList<String> myList;
+        if(!map.containsKey(key)) {
+            myList = new ArrayList<String>();
+            myList.add(value);
+            map.put(key, myList);
+        } else {
+            myList = map.get(key);
+            myList.add(value);
+        }
+    }
+
     public interface Item {
         boolean isSection();
 
@@ -182,7 +223,9 @@ public class Category extends AppCompatActivity {
 
         String getFlag();
 
+        String getId();
 
+        String getcountryId();
 
         boolean getSelected();
 
@@ -195,14 +238,16 @@ public class Category extends AppCompatActivity {
     public class SectionItem implements Item {
         private final String title;
         private final String flag;
-
+        private final String id;
+        private final String countryId;
 
         private boolean isSelected;
 
-        public SectionItem(String title, String flag, boolean isSelected) {
+        public SectionItem(String title, String flag,String id,String countryId, boolean isSelected) {
             this.title = title;
             this.flag = flag;
-
+            this.id = id;
+            this.countryId=countryId;
             this.isSelected = isSelected;
         }
 
@@ -210,8 +255,12 @@ public class Category extends AppCompatActivity {
             return flag;
         }
 
-
-
+        public String getId() {
+            return id;
+        }
+        public String getcountryId() {
+            return countryId;
+        }
         @Override
         public boolean getSelected() {
             return isSelected;
@@ -239,12 +288,15 @@ public class Category extends AppCompatActivity {
     public class EntryItem implements Item {
         public final String title;
         private final String flag;
+        private final String id;
+        private final String countryId;
         private boolean isSelected;
 
-        public EntryItem(String title, String flag, boolean isSelected) {
+        public EntryItem(String title, String flag,String id,String countryId, boolean isSelected) {
             this.title = title;
             this.flag = flag;
-
+            this.id=id;
+            this.countryId=countryId;
             this.isSelected = isSelected;
         }
 
@@ -260,6 +312,13 @@ public class Category extends AppCompatActivity {
             return flag;
         }
 
+        public String getId() {
+            return id;
+        }
+
+        public String getcountryId() {
+            return countryId;
+        }
 
         @Override
         public boolean getSelected() {

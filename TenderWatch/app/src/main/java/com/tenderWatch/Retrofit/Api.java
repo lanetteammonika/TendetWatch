@@ -90,6 +90,20 @@ public interface Api {
                                @Part MultipartBody.Part deviceId,
                                @Part MultipartBody.Part image
                                );
+    @Multipart
+    @POST("auth/register")
+    Call<Register> uploadContractor(@Part MultipartBody.Part email,
+                               @Part MultipartBody.Part password,
+                               @Part MultipartBody.Part country,
+                               @Part MultipartBody.Part contactNo,
+                               @Part MultipartBody.Part occupation,
+                               @Part MultipartBody.Part aboutMe,
+                               @Part MultipartBody.Part role,
+                               @Part MultipartBody.Part deviceId,
+                               @Part MultipartBody.Part image,
+                                    @Part MultipartBody.Part selections,
+                                     @Part MultipartBody.Part subscribe
+    );
 
 }
 

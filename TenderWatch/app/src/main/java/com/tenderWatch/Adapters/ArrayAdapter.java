@@ -75,7 +75,7 @@ public class ArrayAdapter extends BaseAdapter implements SectionIndexer {
         }
 
         else {
-            checked.put(String.valueOf(i), String.valueOf(item.get(i).getTitle()));
+            checked.put(String.valueOf(i), String.valueOf(item.get(i).getTitle())+"~"+String.valueOf(item.get(i).getId())+"~"+String.valueOf(item.get(i).getcountryId()));
         }
     }
 
@@ -85,7 +85,7 @@ public class ArrayAdapter extends BaseAdapter implements SectionIndexer {
     @Override
     public int getPositionForSection(int i) {
         //String indexer= String.valueOf(SideSelector.ALPHABET[i]);
-        String indexer = String.valueOf(list.get(i).charAt(i));
+        String indexer = String.valueOf(list.get(i));
         Log.d(TAG, "getPositionForSection " + i);
 
         int retval = alpha2.indexOf(indexer);
@@ -112,9 +112,9 @@ public class ArrayAdapter extends BaseAdapter implements SectionIndexer {
     }
 
     @Override
-    public long getItemId(int position) {
-        return position;
-    }
+    public long getItemId(int position) {  return position  ;}
+
+
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {

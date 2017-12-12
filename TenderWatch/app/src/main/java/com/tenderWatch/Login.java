@@ -181,15 +181,14 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
                 String accessToken= loginResult.getAccessToken().getToken();
                 String deviceId =Settings.Secure.getString(getContentResolver(),
                         Settings.Secure.ANDROID_ID);
-                savePostFB(accessToken, "contractor", deviceId);
+                savePostFB(accessToken, sp.getPreferences(Login.this,"role"), deviceId);
                 if(AccessToken.getCurrentAccessToken()!=null)
                 {
                     Log.v("User is login","YES");
 
                 }
                 sp.setPreferences(getApplicationContext(), "Login", "FBYES");
-                intent = new Intent(Login.this, Welcome.class);
-                startActivity(intent);
+
             }
 
             @Override
@@ -425,6 +424,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
         String role=newString;
         SharedPreference sp=new SharedPreference();
         String deviceId =  sp.getPreferences(getApplicationContext(),"deviceId");
+
         sendPost(email,password,role,deviceId);
 
     }

@@ -4,6 +4,8 @@ package com.tenderWatch.Models;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -27,14 +29,36 @@ public class CreateUser {
     static   private String contactNo;
 
     static   private String occupation;
-    static public String aboutMe;
+
+    static private String aboutMe;
 
     static   private String role;
 
     static   private String deviceId;
 
+    static  private int selections;
 
-        public String getPassword() {
+    static private HashMap<String, ArrayList<String>> subscribe;
+
+
+    public HashMap<String, ArrayList<String>> getSubscribe() {
+        return subscribe;
+    }
+
+    public void setSubscribe(HashMap<String, ArrayList<String>> subscribe) {
+        this.subscribe = subscribe;
+    }
+
+    public int getSelections() {
+        return selections;
+    }
+
+    public void setSelections(int selections) {
+        this.selections = selections;
+    }
+
+
+    public String getPassword() {
         return password;
     }
 

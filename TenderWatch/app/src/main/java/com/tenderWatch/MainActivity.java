@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -20,6 +21,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button btnContractor,btnClient;
     Intent intent;
     SharedPreference sp = new SharedPreference();
+    private static final String TAG = MainActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,8 +79,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(intent);
                 break;
             case R.id.btn_client:
-                intent = new Intent(MainActivity.this, Login.class);
-                sp.setPreferences(getApplicationContext(), "role", "client");
+              intent = new Intent(MainActivity.this, Login.class);
+                sp.setPreferences(MainActivity.this, "role", "client");
+                Log.i(TAG,"testing");
                 startActivity(intent);
                 break;
         }

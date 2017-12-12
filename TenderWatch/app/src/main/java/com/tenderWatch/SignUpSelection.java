@@ -95,6 +95,7 @@ public class SignUpSelection extends AppCompatActivity implements View.OnClickLi
     private ImageView imgProfilePic;
     private Api mAPIService;
     String newString, profilePicUrl;
+    Bitmap main;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -222,11 +223,12 @@ public class SignUpSelection extends AppCompatActivity implements View.OnClickLi
                                                     @Override
                                                     public void onBitmapLoaded (final Bitmap bitmap, Picasso.LoadedFrom from){
                                                         Log.v("Main", String.valueOf(bitmap));
-                                                        intent = new Intent(SignUpSelection.this, SignUp.class);
-
-                                                        intent.putExtra("bitmap",bitmap);
-                                                        startActivity(intent);
-
+//                                                        intent = new Intent(SignUpSelection.this, SignUp.class);
+//
+//                                                        intent.putExtra("bitmap",bitmap);
+//                                                        startActivity(intent);
+                                                            main=bitmap;
+                                                        Picasso.with(SignUpSelection.this).load(profilePicUrl).into(target);
                                                     }
 
                                                     @Override
@@ -240,6 +242,8 @@ public class SignUpSelection extends AppCompatActivity implements View.OnClickLi
 
                                                     }
                                                 });
+
+
 
                                         Log.i(TAG, profilePicUrl);
                                                                            }
@@ -384,7 +388,9 @@ public class SignUpSelection extends AppCompatActivity implements View.OnClickLi
 //
 //                            intent.putExtra("bitmap",bitmap);
 //                            startActivity(intent);
+                            main=bitmap;
                             Picasso.with(SignUpSelection.this).load(personPhoto).into(target);
+
                         }
 
                         @Override
@@ -498,6 +504,7 @@ public class SignUpSelection extends AppCompatActivity implements View.OnClickLi
         user.setPassword(password);
 
         intent = new Intent(SignUpSelection.this, SignUp.class);
+        intent.putExtra("bitmap",main);
         startActivity(intent);
 
     }

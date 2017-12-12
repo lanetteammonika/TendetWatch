@@ -14,8 +14,11 @@ import com.tenderWatch.Models.CreateUser;
 import com.tenderWatch.Models.Register;
 import com.tenderWatch.Retrofit.Api;
 import com.tenderWatch.Retrofit.ApiUtils;
+import com.tenderWatch.SharedPreference.SharedPreference;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -30,7 +33,8 @@ public class Agreement extends AppCompatActivity implements View.OnClickListener
     CreateUser user=new CreateUser();
     private static final String TAG = Agreement.class.getSimpleName();
     private Api mAPIService;
-    MultipartBody.Part email1,password1,country1,contactNo1,occupation1,aboutMe1,role1,deviceId1,image1;
+    MultipartBody.Part email1,password1,country1,selections1,subscribe1,contactNo1,occupation1,aboutMe1,role1,deviceId1,image1;
+    SharedPreference sp =new SharedPreference();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -137,7 +141,70 @@ public class Agreement extends AppCompatActivity implements View.OnClickListener
     }
     private void SignUpPost() {
         if(signUp.getAlpha()==1){
-            uploadImage();
+            if(sp.getPreferences(Agreement.this,"role").equals("contractor")){
+                uploadContractor();
+            }else {
+                uploadImage();
+
+            }
         }
+    }
+
+    private void uploadContractor() {
+        final ProgressDialog progressDialog;
+        progressDialog = new ProgressDialog(Agreement.this);
+        progressDialog.setMessage(getString(R.string.string_title_upload_progressbar_));
+        progressDialog.show();
+
+        //Create Upload Server Client
+        // ApiService service = RetroClient.getApiService();
+        // mAPIService = ApiUtils.getAPIService();
+
+        //File creating from selected URL
+        String imagePath="";
+        //File file = new File(imagePath);
+
+        // create RequestBody instance from file
+
+        String email=user.getEmail().toString();
+        String password=user.getPassword().toString();
+        String country=user.getCountry().toString();
+        String contact=user.getContactNo().toString();
+        String occupation=user.getOccupation().toString();
+        String aboutMe=user.getAboutMe().toString();
+        String role=user.getRole().toString();
+        String deviceId=user.getDeviceId().toString();
+        String selections= String.valueOf(user.getSelections());
+        HashMap<String, ArrayList<String>> subscribe=user.getSubscribe();
+        File file1=user.getProfilePhoto();
+
+        RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file1);
+
+        email1 = MultipartBody.Part.createFormData("email", email);
+        password1 =MultipartBody.Part.createFormData("password", password);
+        country1 =MultipartBody.Part.createFormData("country",country);
+        contactNo1 =MultipartBody.Part.createFormData("contactNo", contact);
+        occupation1 =MultipartBody.Part.createFormData("occupation", occupation);
+        aboutMe1 =MultipartBody.Part.createFormData("aboutMe",aboutMe);
+        role1 =MultipartBody.Part.createFormData("role", role);
+        deviceId1 =MultipartBody.Part.createFormData("deviceId",deviceId );
+        selections1 =MultipartBody.Part.createFormData("selections", selections);
+        subscribe1 =MultipartBody.Part.createFormData("subscribe", String.valueOf(subscribe));
+        image1 =MultipartBody.Part.createFormData("image", file1.getName(),requestFile);
+
+        Call<Register> resultCall = mAPIService.uploadContractor(email1,password1,country1,contactNo1,occupation1,aboutMe1,role1,deviceId1,image1,selections1,subscribe1);
+        resultCall.enqueue(new Callback<Register>() {
+            @Override
+            public void onResponse(Call<Register> call, Response<Register> response) {
+                Log.i(TAG,"response register-->");
+            }
+
+            @Override
+            public void onFailure(Call<Register> call, Throwable t) {
+                Log.i(TAG,"error register-->");
+
+            }
+        });
+
     }
 }
