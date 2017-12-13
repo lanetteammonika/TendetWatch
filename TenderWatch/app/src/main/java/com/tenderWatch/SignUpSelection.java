@@ -452,8 +452,8 @@ public class SignUpSelection extends AppCompatActivity implements View.OnClickLi
                 break;
             case R.id.btn_client_signup:
                 if ( checkValidation () ){
-                   checkEmail();
-                       // signup();
+                  // checkEmail();
+                        signup();
                   //  }
 
                     //Toast.makeText(SignUpSelection.this, "Form contains not error", Toast.LENGTH_LONG).show();
@@ -478,20 +478,31 @@ public class SignUpSelection extends AppCompatActivity implements View.OnClickLi
         mAPIService.checkEmailExit(txtEmail.getText().toString(), sp.getPreferences(getApplicationContext(), "role")).enqueue(new Callback<Message>() {
             @Override
             public void onResponse(Call<Message> call, Response<Message> response) {
-               // if (response.isSuccessful()) {
+              //  if (response.isSuccessful()) {
                         if(response.message().equals("Found")){
-                            sp.ShowDialog(SignUpSelection.this,"This Email already Register in application");
-                           txtEmail.setError("change Email");
+                          //  sp.ShowDialog(SignUpSelection.this,"This Email already Register in application");
+                         // else{
+                          //  }
+                            sp.ShowDialog(SignUpSelection.this,response.errorBody().source().toString().split("\"")[3]);
+
+                            txtEmail.setError("change Email");
                             // break;
                         }else{
+                            //sp.ShowDialog(SignUpSelection.this,response.errorBody().source().toString().split("\"")[3]);
+
                             signup();
                         }
-               /// }
+                //}else{
+                   // sp.ShowDialog(SignUpSelection.this,response.errorBody().source().toString().split("\"")[3]);
+
+               // }
             }
 
             @Override
             public void onFailure(Call<Message> call, Throwable t) {
                 String email=txtEmail.getText().toString();
+                sp.ShowDialog(SignUpSelection.this,"Server is down. Come back later!!");
+
 
             }
         });
@@ -500,12 +511,19 @@ public class SignUpSelection extends AppCompatActivity implements View.OnClickLi
     private void signup() {
         String email=txtEmail.getText().toString();
         String password =txtPassword.getText().toString();
-        user.setEmail(email);
-        user.setPassword(password);
+        String confirmPassword=txtConfirmPassword.getText().toString();
+        if(!confirmPassword.equals(password)){
+            sp.ShowDialog(SignUpSelection.this,"Confirm password does not match");
+            txtConfirmPassword.setText("");
+        }else{
+            user.setEmail(email);
+            user.setPassword(password);
 
-        intent = new Intent(SignUpSelection.this, SignUp.class);
-        intent.putExtra("bitmap",main);
-        startActivity(intent);
+            intent = new Intent(SignUpSelection.this, SignUp.class);
+            intent.putExtra("bitmap",main);
+            startActivity(intent);
+        }
+
 
     }
     @Override

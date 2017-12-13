@@ -1,6 +1,7 @@
 package com.tenderWatch;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,6 +10,7 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.tenderWatch.Models.CreateUser;
 import com.tenderWatch.Models.Register;
@@ -35,7 +37,8 @@ public class Agreement extends AppCompatActivity implements View.OnClickListener
     private Api mAPIService;
     MultipartBody.Part email1,password1,country1,selections1,subscribe1,contactNo1,occupation1,aboutMe1,role1,deviceId1,image1;
     SharedPreference sp =new SharedPreference();
-
+    Intent intent;
+LinearLayout back;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,6 +57,8 @@ public class Agreement extends AppCompatActivity implements View.OnClickListener
         mWebView.loadUrl("file:///android_res/raw/agreement.html");
         box=(ImageView) findViewById(R.id.box);
         boxChecked=(ImageView) findViewById(R.id.box_checked);
+        back=(LinearLayout) findViewById(R.id.agreement_back);
+
         signUp=(Button) findViewById(R.id.post_signup);
     }
 
@@ -61,6 +66,7 @@ public class Agreement extends AppCompatActivity implements View.OnClickListener
         box.setOnClickListener(this);
         boxChecked.setOnClickListener(this);
         signUp.setOnClickListener(this);
+        back.setOnClickListener(this);
     }
 
     @Override
@@ -79,6 +85,14 @@ public class Agreement extends AppCompatActivity implements View.OnClickListener
                 break;
             case R.id.post_signup:
                 SignUpPost();
+                break;
+            case R.id.agreement_back:
+                if(sp.getPreferences(Agreement.this,"role").equals("client")) {
+                    intent = new Intent(Agreement.this, SignUp.class);
+                }else{
+                    intent = new Intent(Agreement.this, Category.class);
+                }
+                startActivityForResult(intent,1);
                 break;
         }
     }
@@ -129,11 +143,22 @@ public class Agreement extends AppCompatActivity implements View.OnClickListener
             @Override
             public void onResponse(Call<Register> call, Response<Register> response) {
                 Log.i(TAG,"response register-->");
+                if(response.isSuccessful()) {
+                    // showResponse(response.body().toString());
+//                    intent = new Intent(Login.this, Welcome.class);
+//                    startActivity(intent);
+                    sp.ShowDialog(Agreement.this,"Successful Registration");
+
+                    //  Log.i(TAG, "post submitted to API." + response.body().toString());
+                }else{
+                    sp.ShowDialog(Agreement.this,response.errorBody().source().toString().split("\"")[3]);
+                }
             }
 
             @Override
             public void onFailure(Call<Register> call, Throwable t) {
                 Log.i(TAG,"error register-->");
+                sp.ShowDialog(Agreement.this,"Server is down. Come back later!!");
 
             }
         });
@@ -197,11 +222,22 @@ public class Agreement extends AppCompatActivity implements View.OnClickListener
             @Override
             public void onResponse(Call<Register> call, Response<Register> response) {
                 Log.i(TAG,"response register-->");
+                if(response.isSuccessful()) {
+                    // showResponse(response.body().toString());
+//                    intent = new Intent(Login.this, Welcome.class);
+//                    startActivity(intent);
+                    sp.ShowDialog(Agreement.this,"Successful Registration");
+
+                    Log.i(TAG, "post submitted to API." + response.body().toString());
+                }else{
+                    sp.ShowDialog(Agreement.this,response.errorBody().source().toString().split("\"")[3]);
+                }
             }
 
             @Override
             public void onFailure(Call<Register> call, Throwable t) {
                 Log.i(TAG,"error register-->");
+                sp.ShowDialog(Agreement.this,"Server is down. Come back later!!");
 
             }
         });

@@ -75,12 +75,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.btn_contractor:
                 intent = new Intent(MainActivity.this, Login.class);
                 sp.setPreferences(getApplicationContext(), "role", "contractor");
-               // intent.putExtra("Role", "contractor");
+                intent.putExtra("Role", "contractor");
                 startActivity(intent);
                 break;
             case R.id.btn_client:
               intent = new Intent(MainActivity.this, Login.class);
                 sp.setPreferences(MainActivity.this, "role", "client");
+                intent.putExtra("Role", "client");
                 Log.i(TAG,"testing");
                 startActivity(intent);
                 break;

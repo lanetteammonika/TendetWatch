@@ -38,6 +38,7 @@ import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.tasks.Task;
 import com.tenderWatch.Models.LoginPost;
+import com.tenderWatch.Models.Register;
 import com.tenderWatch.Retrofit.Api;
 import com.tenderWatch.Retrofit.ApiUtils;
 import com.tenderWatch.SharedPreference.SharedPreference;
@@ -68,6 +69,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
     private ImageView imgProfilePic;
     private Api mAPIService;
     String newString;
+    SharedPreference sp = new SharedPreference();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -181,7 +183,8 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
                 String accessToken= loginResult.getAccessToken().getToken();
                 String deviceId =Settings.Secure.getString(getContentResolver(),
                         Settings.Secure.ANDROID_ID);
-                savePostFB(accessToken, sp.getPreferences(Login.this,"role"), deviceId);
+                String role=newString;
+                savePostFB(accessToken,role , deviceId);
                 if(AccessToken.getCurrentAccessToken()!=null)
                 {
                     Log.v("User is login","YES");
@@ -248,60 +251,77 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
     }
 
     public void savePostFB(String idToken, String role,String deviceId) {
-        mAPIService.savePostFB(idToken,role,deviceId).enqueue(new Callback<LoginPost>() {
+        mAPIService.savePostFB(idToken,role,deviceId).enqueue(new Callback<Register>() {
             @Override
-            public void onResponse(Call<LoginPost> call, Response<LoginPost> response) {
+            public void onResponse(Call<Register> call, Response<Register> response) {
 
                 if(response.isSuccessful()) {
                     // showResponse(response.body().toString());
-                    intent = new Intent(Login.this, Welcome.class);
-                    startActivity(intent);
+//                    intent = new Intent(Login.this, Welcome.class);
+//                    startActivity(intent);
+                    sp.ShowDialog(Login.this,"Successful Login");
+
                     Log.i(TAG, "post submitted to API." + response.body().toString());
+                }else{
+                    sp.ShowDialog(Login.this,response.errorBody().source().toString().split("\"")[3]);
                 }
             }
 
             @Override
-            public void onFailure(Call<LoginPost> call, Throwable t) {
+            public void onFailure(Call<Register> call, Throwable t) {
+                sp.ShowDialog(Login.this,"Server is down. Come back later!!");
+
                 Log.e(TAG, "Unable to submit post to API.");
             }
         });
     }
 
     public void sendPostGoogle(String idToken, String role,String deviceId) {
-        mAPIService.savePostGoogle(idToken,role,deviceId).enqueue(new Callback<LoginPost>() {
+        mAPIService.savePostGoogle(idToken,role,deviceId).enqueue(new Callback<Register>() {
             @Override
-            public void onResponse(Call<LoginPost> call, Response<LoginPost> response) {
+            public void onResponse(Call<Register> call, Response<Register> response) {
 
                 if(response.isSuccessful()) {
                    // showResponse(response.body().toString());
-                    intent = new Intent(Login.this, Welcome.class);
-                    startActivity(intent);
+//                    intent = new Intent(Login.this, Welcome.class);
+//                    startActivity(intent);
+                    sp.ShowDialog(Login.this,"Successful Login");
+
                     Log.i(TAG, "post submitted to API." + response.body().toString());
+                }else{
+                    sp.ShowDialog(Login.this,response.errorBody().source().toString().split("\"")[3]);
                 }
             }
 
             @Override
-            public void onFailure(Call<LoginPost> call, Throwable t) {
+            public void onFailure(Call<Register> call, Throwable t) {
+                sp.ShowDialog(Login.this,"Server is down. Come back later!!");
+
                 Log.e(TAG, "Unable to submit post to API.");
             }
         });
     }
 
     public void sendPost(String email,String password, String role,String deviceId) {
-        mAPIService.savePost(email,password,role,deviceId).enqueue(new Callback<LoginPost>() {
+        mAPIService.savePost(email,password,role,deviceId).enqueue(new Callback<Register>() {
             @Override
-            public void onResponse(Call<LoginPost> call, Response<LoginPost> response) {
+            public void onResponse(Call<Register> call, Response<Register> response) {
 
                 if(response.isSuccessful()) {
                     // showResponse(response.body().toString());
-                    intent = new Intent(Login.this, Welcome.class);
-                    startActivity(intent);
+//                    intent = new Intent(Login.this, Welcome.class);
+//                    startActivity(intent);
+                    sp.ShowDialog(Login.this,"Successful Login");
+
                     Log.i(TAG, "post submitted to API." + response.body().toString());
+                }else{
+                    sp.ShowDialog(Login.this,response.errorBody().source().toString().split("\"")[3]);
                 }
             }
 
             @Override
-            public void onFailure(Call<LoginPost> call, Throwable t) {
+            public void onFailure(Call<Register> call, Throwable t) {
+                sp.ShowDialog(Login.this,"Server is down. Come back later!!");
                 Log.e(TAG, "Unable to submit post to API.");
             }
         });
@@ -319,7 +339,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
             String idToken = acct.getIdToken();
             String deviceId =Settings.Secure.getString(getContentResolver(),
                     Settings.Secure.ANDROID_ID);
-            sendPostGoogle(idToken, "contractor", deviceId);
+            sendPostGoogle(idToken, newString, deviceId);
             // Show signed-in UI.
             Log.d(TAG, "idToken:" + idToken);
 
@@ -388,7 +408,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
             case R.id.btn_login:
                 if ( checkValidation () ){
                     login();
-                    Toast.makeText(Login.this, "Form contains not error", Toast.LENGTH_LONG).show();
+                   // Toast.makeText(Login.this, "Form contains not error", Toast.LENGTH_LONG).show();
                 }
                 else
                     Toast.makeText(Login.this, "Form contains error", Toast.LENGTH_LONG).show();
@@ -421,8 +441,10 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
     private void login() {
         String email=txtEmail.getText().toString();
         String password =txtPassword.getText().toString();
-        String role=newString;
         SharedPreference sp=new SharedPreference();
+
+        //String role=sp.getPreferences(Login.this,"role");
+        String role=newString;
         String deviceId =  sp.getPreferences(getApplicationContext(),"deviceId");
 
         sendPost(email,password,role,deviceId);

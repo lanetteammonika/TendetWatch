@@ -5,6 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:layout_gravity="center"
+    android:gravity="center"
     android:layout_weight="1"
     tools:context="com.tenderWatch.MainActivity">
 
@@ -15,7 +17,7 @@
         android:layout_gravity="center"
         android:layout_marginTop="@dimen/value_10"
         android:layout_weight="0.5"
-        android:gravity="center|top"
+        android:gravity="center"
         android:orientation="vertical">
 
         <TextView
@@ -74,7 +76,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="0.5"
-        android:gravity="center|top"
+        android:gravity="center"
         android:orientation="vertical">
 
         <ImageView
@@ -100,7 +102,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/value_35"
             android:layout_gravity="center"
-            android:layout_marginBottom="@dimen/value_10"
+            android:layout_marginBottom="@dimen/value_15"
             android:layout_marginLeft="@dimen/value_50"
             android:layout_marginRight="@dimen/value_50"
             android:background="@drawable/button"

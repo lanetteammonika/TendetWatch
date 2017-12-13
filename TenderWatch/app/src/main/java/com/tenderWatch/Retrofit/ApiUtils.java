@@ -12,7 +12,7 @@ public class ApiUtils {
 //var BASE_URL: String = "http://lanetteam.com:4000/api/"
 //var BASE_URL: String = "http://192.168.200.46:4000/api/"
 
-    public static final String BASE_URL = "http://192.168.200.46:4000/api/";
+    public static final String BASE_URL = "http://52.66.136.45:4000/api/";
 
     public static Api getAPIService() {
 

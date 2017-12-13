@@ -51,9 +51,6 @@ public class IndexingArrayAdapter extends BaseAdapter implements SectionIndexer 
         holderSection = new ViewHolderSection();
     }
 
-
-
-
     public Object[] getSections() {
         String[] chars = new String[SideSelector.ALPHABET2.length];
         for (int i = 0; i < SideSelector.ALPHABET2.length; i++) {

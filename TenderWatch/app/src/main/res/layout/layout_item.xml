@@ -42,7 +42,7 @@
         android:layout_marginRight="@dimen/value_5"
         android:layout_marginTop="@dimen/value_10"
         android:src="@drawable/tick_3x"
-        android:visibility="invisible"
+        android:visibility="gone"
 
         android:layout_alignParentRight="true"/>
 </RelativeLayout>

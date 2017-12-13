@@ -50,17 +50,17 @@ public interface Api {
 //    Call<List<Hero>> getHeroes();
     @POST("auth/glogin")
     @FormUrlEncoded
-    Call<LoginPost> savePostGoogle(@Field("token") String idToken,
+    Call<Register> savePostGoogle(@Field("token") String idToken,
                              @Field("role") String role,
                              @Field("deviceId") String deviceId);
-    @POST("auth/faceplogin")
+    @POST("auth/facelogin")
     @FormUrlEncoded
-    Call<LoginPost> savePostFB(@Field("token") String idToken,
+    Call<Register> savePostFB(@Field("token") String idToken,
                              @Field("role") String role,
                              @Field("deviceId") String deviceId);
     @POST("auth/login")
     @FormUrlEncoded
-    Call<LoginPost> savePost(@Field("email") String email,
+    Call<Register> savePost(@Field("email") String email,
                                @Field("password") String password,
                                @Field("role") String role,
                                @Field("deviceId") String deviceId);

@@ -56,6 +56,8 @@ public class Category extends AppCompatActivity {
 public static HashMap<String, ArrayList<String>> map = new HashMap<String, ArrayList<String>>();
     private static   ArrayList<String> a_category = new ArrayList<String>();
     Intent intent;
+    SharedPreference sp=new SharedPreference();
+    LinearLayout back;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,9 +68,12 @@ public static HashMap<String, ArrayList<String>> map = new HashMap<String, Array
         btnCategory=(Button) findViewById(R.id.btn_CategoryNext) ;
 
         sideSelector = (SideSelector) findViewById(R.id.category_side_selector);
+        back=(LinearLayout) findViewById(R.id.category_toolbar);
+
         mAPIService = ApiUtils.getAPIService();
         lvCountry.setDivider(null);
         lvCountry.clearChoices();;
+
         Intent show = getIntent();
 
         empNo = show.getStringArrayListExtra("CountryAtContractor");
@@ -77,6 +82,12 @@ public static HashMap<String, ArrayList<String>> map = new HashMap<String, Array
         mAPIService.getCategoryData().enqueue(new Callback<ArrayList<GetCategory>>() {
             @Override
             public void onResponse(Call<ArrayList<GetCategory>> call, Response<ArrayList<GetCategory>> response) {
+
+                if(response.isSuccessful()) {
+                    // showResponse(response.body().toString());
+
+
+
                 Log.i("array-------", response.body().get(0).getCategoryName().toString());
 
                 Data = response.body();
@@ -157,10 +168,15 @@ public static HashMap<String, ArrayList<String>> map = new HashMap<String, Array
                 lvCountry.setTextFilterEnabled(true);
                 if (sideSelector != null)
                     sideSelector.setListView(lvCountry);
+                }else{
+                    sp.ShowDialog(Category.this,response.errorBody().source().toString().split("\"")[3]);
+                }
             }
 
             @Override
             public void onFailure(Call<ArrayList<GetCategory>> call, Throwable t) {
+                sp.ShowDialog(Category.this,"Server is down. Come back later!!");
+
                 Log.i(TAG, "post submitted to API.");
 
             }
@@ -202,8 +218,24 @@ public static HashMap<String, ArrayList<String>> map = new HashMap<String, Array
             }
         });
 
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                intent = new Intent(
+                        Category.this, CountryList.class);
+                startActivity(intent);
+            }
+        });
+
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == 1){
+
+        }
+    }
     void populateMap(HashMap<String, ArrayList<String>> map, String value, String key) {
         ArrayList<String> myList;
         if(!map.containsKey(key)) {

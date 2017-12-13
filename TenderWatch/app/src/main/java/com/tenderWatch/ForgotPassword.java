@@ -30,6 +30,8 @@ public class ForgotPassword extends AppCompatActivity implements View.OnClickLis
     private Api mAPIService;
     private LinearLayout back;
     Intent intent;
+    SharedPreference sp=new SharedPreference();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,7 +111,6 @@ public class ForgotPassword extends AppCompatActivity implements View.OnClickLis
         mAPIService.forgotPassword(email,role).enqueue(new Callback<LoginPost>() {
             @Override
             public void onResponse(Call<LoginPost> call, Response<LoginPost> response) {
-                SharedPreference sp=new SharedPreference();
 
                 if(response.isSuccessful()) {
                     // showResponse(response.body().toString());
@@ -117,13 +118,14 @@ public class ForgotPassword extends AppCompatActivity implements View.OnClickLis
                     sp.ShowDialog(ForgotPassword.this,"Your password is send in your registered EmailId");
                     //Log.i(TAG, "post submitted to API." + response.body().toString());
                 }else{
-                    sp.ShowDialog(ForgotPassword.this,"Error while sending password in your registered EmailId");
-
+                    sp.ShowDialog(ForgotPassword.this,response.errorBody().source().toString().split("\"")[3]);
                 }
             }
 
             @Override
             public void onFailure(Call<LoginPost> call, Throwable t) {
+                sp.ShowDialog(ForgotPassword.this,"Server is down. Come back later!!");
+
                 Log.e(TAG, "Unable to submit post to API.");
             }
         });

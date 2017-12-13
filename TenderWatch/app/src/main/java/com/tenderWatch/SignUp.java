@@ -202,18 +202,26 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener{
                 });
                 break;
             case R.id.btn_Next:
-                SendData();
 
-                if(sp.getPreferences(SignUp.this,"role").equals("contractor")){
-                    intent = new Intent(
-                            SignUp.this, CountryList.class);
-                    startActivity(intent);
-                }else{
-                    intent = new Intent(
-                            SignUp.this, Agreement.class);
-                    startActivity(intent);
-                }
+                CheckValidation();
+               // SendData();
+
+
                 break;
+        }
+    }
+
+    private void CheckValidation() {
+        if(!mobileNo.getText().toString().isEmpty() && !occupation.getText().toString().isEmpty()) {
+            if (mobileNo.getText().toString().split("-")[1].length() <10) {
+                sp.ShowDialog(SignUp.this, "Enter Mobiile number up to 10 digit");
+
+            } else {
+                SendData();
+            }
+        }else{
+            sp.ShowDialog(SignUp.this, "Enter Details");
+
         }
     }
 
@@ -233,7 +241,15 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener{
        user.setOccupation(occupation1);
        user.setDeviceId(deviceId);
        user.setRole(role);
-       user.setAboutMe(aboutMe1);
+        if(sp.getPreferences(SignUp.this,"role").equals("contractor")){
+            intent = new Intent(
+                    SignUp.this, CountryList.class);
+            startActivityForResult(intent,1);
+        }else{
+            intent = new Intent(
+                    SignUp.this, Agreement.class);
+            startActivityForResult(intent,1);
+        }
 
     }
 
@@ -453,6 +469,8 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener{
                                     aboutMe.setText(txtaboutMe);
                                 }
                             }
+                            user.setAboutMe(txtaboutMe);
+
                         }
                         if(data.getStringArrayListExtra("Country")!=null){
                             //String AboutMe=data.getStringExtra("aboutMe");

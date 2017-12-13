@@ -49,13 +49,15 @@ public class CountryList extends AppCompatActivity {
     //ArrayList list;
     public static final String JSON_STRING = "{\"employee\":{\"name\":\"Sachin\",\"salary\":56000}}";
     private SideSelector sideSelector = null;
-    IndexingArrayAdapter adapter,bAdapter;
+    IndexingArrayAdapter adapter;
     Button btn_next;
     String alphabetS="";
     LinearLayout lltext,back;
     TextView txtSelectedContract;
     Intent intent;
     String check;
+    SharedPreference sp=new SharedPreference();
+    int pos=0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,6 +79,7 @@ public class CountryList extends AppCompatActivity {
         if(check == null) {
           CallContractorSignUp();
         }
+
         mAPIService.getCountryData().enqueue(new Callback<ArrayList<GetCountry>>() {
             @Override
             public void onResponse(Call<ArrayList<GetCountry>> call, Response<ArrayList<GetCountry>> response) {
@@ -146,16 +149,30 @@ public class CountryList extends AppCompatActivity {
                 ss.setAlphabet(al);
                 alphabetlist = str.substring(1, str.length() - 1).replaceAll(" ", "").toCharArray();
                 // set adapter
-                adapter = new IndexingArrayAdapter(getApplicationContext(), R.id.lvCountry, countryList, alpha2, list,chars);
-
+               // adapter.
+                //adapter.clear();
+                //adapter=null;
+               // if(!adapter.isEmpty()) {
+                    adapter = new IndexingArrayAdapter(getApplicationContext(), R.id.lvCountry, countryList, alpha2, list, chars);
+               // }
+                lvCountry.clearChoices();
+               // lvCountry.rem
+                //lvCountry.setAdapter(null);
                 lvCountry.setAdapter(adapter);
+
+                lvCountry.clearChoices();
                 lvCountry.setTextFilterEnabled(true);
                 if (sideSelector != null)
                     sideSelector.setListView(lvCountry);
+                else{
+                    sp.ShowDialog(CountryList.this,response.errorBody().source().toString().split("\"")[3]);
+                }
             }
 
             @Override
             public void onFailure(Call<ArrayList<GetCountry>> call, Throwable t) {
+                sp.ShowDialog(CountryList.this,"Server is down. Come back later!!");
+
                 Log.i(TAG, "post submitted to API.");
 
             }
@@ -165,7 +182,7 @@ public class CountryList extends AppCompatActivity {
             public void onClick(View v) {
                 intent = new Intent(CountryList.this, SignUp.class);
 
-                startActivity(intent);
+                startActivityForResult(intent,1);
             }
         });
 
@@ -179,7 +196,7 @@ public class CountryList extends AppCompatActivity {
                 String Country=tvItemTitle.getText().toString();
                 adapter.setItemSelected(position);
                adapter.setCheckedItem(position);
-
+                pos=position;
             }
         });
         //IndexingArrayAdapter bAdapter = null;
@@ -201,30 +218,41 @@ btn_next.setOnClickListener(new View.OnClickListener() {
         for (Map.Entry<String, String> entry : items2.entrySet()) {
             a_countryID.add(entry.getValue().split("~")[2]);
         }
+
+//-adapter.isEmpty();
         if(txtSelectedContract.getText().toString().equals("$0 / year")){
-//            if(a_country.size()>1){
-//                if(check == null) {
-//                    ss.ShowDialog(CountryList.this, "During Free Trial Period you can choose only 1 country");
-//                }else{
-//                    ss.ShowDialog(CountryList.this, "Choose one country");
-//                }
-//            }
-//            else{
+            if(a_country.size()>1){
+                if(check == null) {
+                    ss.ShowDialog(CountryList.this, "During Free Trial Period you can choose only 1 country");
+                }else{
+                    ss.ShowDialog(CountryList.this, "Choose one country");
+                }
+            }
+            else{
                 if(check == null) {
                     intent = new Intent(CountryList.this, Category.class);
                     intent.putExtra("CountryAtContractor", a_countryID);
                     intent.putExtra("Country", a_country);
+                    adapter.setItemSelected(pos);
+                    //adapter.clearData();
+                    //startActivity(intent);
 
-                    startActivity(intent);
-
+                    countryList.clear();
+                    alpha2.clear();
+                    list.clear();
                     setResult(Activity.RESULT_OK, intent);
                     finish();
                 }else {
                     intent = new Intent(CountryList.this, SignUp.class);
                     intent.putExtra("Country", a_country);
+                    //adapter.clearData();
+                    adapter.setItemSelected(pos);
 
 //                finish();;
 //                startActivity(intent);
+                    countryList.clear();
+                    alpha2.clear();
+                    list.clear();
                     setResult(Activity.RESULT_OK, intent);
 //
 //            intent = new Intent(CountryList.this, SignUp.class);
@@ -234,19 +262,25 @@ btn_next.setOnClickListener(new View.OnClickListener() {
                 }
 
             }
-        //}
+        }
         else{
 //            intent = new Intent(CountryList.this, SignUp.class);
 //            intent.putExtra("Country",a_country);
 //            startActivity(intent);
 //            finish();
             intent = new Intent(CountryList.this, Category.class);
-            intent.putExtra("Country",a_country);
-//                finish();;
-//                startActivity(intent);
-            setResult(Activity.RESULT_OK,intent);
+            intent.putExtra("CountryAtContractor", a_countryID);
+            intent.putExtra("Country", a_country);
+            adapter.setItemSelected(pos);
+            //startActivity(intent);
+          ///  adapter.clearData();
+            countryList.clear();
+            alpha2.clear();
+            list.clear();
+            setResult(Activity.RESULT_OK, intent);
             finish();
         }
+
 //        for(int y=0;y<items.size();y++){
 //            a_country.add(items.get(y).toString());
 //        }
