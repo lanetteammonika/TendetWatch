@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
@@ -141,7 +142,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
             @Override
             public void afterTextChanged(Editable editable) {
 
-                Validation.isPassword(txtPassword,true);
+               // Validation.isPassword(txtPassword,true);
                 Log.i(TAG, "post submitted to API." +  Validation.isValidPassword(txtPassword.getText().toString()));
 
             }
@@ -183,7 +184,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
                 String accessToken= loginResult.getAccessToken().getToken();
                 String deviceId =Settings.Secure.getString(getContentResolver(),
                         Settings.Secure.ANDROID_ID);
-                String role=newString;
+                String role=sp.getPreferences(Login.this,"role");
                 savePostFB(accessToken,role , deviceId);
                 if(AccessToken.getCurrentAccessToken()!=null)
                 {
@@ -214,8 +215,8 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
 
        // if (!Validation.hasText(etNormalText)) ret = false;
         if (!Validation.isEmailAddress(txtEmail, true)) ret = false;
-        if (!Validation.isPassword(txtPassword, true)) ret = false;
-
+       if (!Validation.isPassword(txtPassword, true)) ret = false;
+        //if(txtPassword.getText().toString().isEmpty()) ret = false;
         return ret;
     }
 
@@ -239,14 +240,14 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
             // If the user has not previously signed in on this device or the sign-in has expired,
             // this asynchronous branch will attempt to sign in the user silently.  Cross-device
             // single sign-on will occur in this branch.
-            showProgressDialog();
-            opr.setResultCallback(new ResultCallback<GoogleSignInResult>() {
-                @Override
-                public void onResult(GoogleSignInResult googleSignInResult) {
-                    hideProgressDialog();
-                    handleSignInResult(googleSignInResult);
-                }
-            });
+            ///showProgressDialog();
+//            opr.setResultCallback(new ResultCallback<GoogleSignInResult>() {
+//                @Override
+//                public void onResult(GoogleSignInResult googleSignInResult) {
+//                    hideProgressDialog();
+//                    handleSignInResult(googleSignInResult);
+//                }
+//            });
         }
     }
 
@@ -332,18 +333,20 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
       //  GoogleSignInAccount account = completedTask.getResult(ApiException.class);
 //        String idToken = result.getIdToken();
 //
-        if (result.isSuccess()) {
-            SharedPreference sp = new SharedPreference();
-            sp.setPreferences(getApplicationContext(), "Login", "GOOGLEYES");
-            GoogleSignInAccount acct = result.getSignInAccount();
-            String idToken = acct.getIdToken();
-            String deviceId =Settings.Secure.getString(getContentResolver(),
-                    Settings.Secure.ANDROID_ID);
-            sendPostGoogle(idToken, newString, deviceId);
-            // Show signed-in UI.
-            Log.d(TAG, "idToken:" + idToken);
+        if(sp.getPreferences(Login.this,"Login") == null) {
+            if (result.isSuccess()) {
+                SharedPreference sp = new SharedPreference();
+                sp.setPreferences(getApplicationContext(), "Login", "GOOGLEYES");
+                GoogleSignInAccount acct = result.getSignInAccount();
+                String idToken = acct.getIdToken();
+                String deviceId = Settings.Secure.getString(getContentResolver(),
+                        Settings.Secure.ANDROID_ID);
+                String role = sp.getPreferences(Login.this, "role");
+                sendPostGoogle(idToken, role, deviceId);
+                // Show signed-in UI.
+                Log.d(TAG, "idToken:" + idToken);
 
-            // Signed in successfully, show authenticated UI.
+                // Signed in successfully, show authenticated UI.
 //            GoogleSignInAccount acct = result.getSignInAccount();
 //
 //            Log.e(TAG, "display name: " + acct.getDisplayName());
@@ -354,18 +357,19 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
 //
 //            Log.e(TAG, "Name: " + personName + ", email: " + email);
 
-            //txtName.setText(personName);
-            // txtEmail.setText(email);
+                //txtName.setText(personName);
+                // txtEmail.setText(email);
 //            Glide.with(getApplicationContext()).load(personPhotoUrl)
 //                    .thumbnail(0.5f)
 //                    .crossFade()
 //                    .diskCacheStrategy(DiskCacheStrategy.ALL)
 //                    .into(imgProfilePic);
-            //   updateUI(true);
-        } else {
-            // Signed out, show unauthenticated UI.
-            //  updateUI(false);
-            Log.e(TAG, "display name: ");
+                //   updateUI(true);
+            } else {
+                // Signed out, show unauthenticated UI.
+                //  updateUI(false);
+                Log.e(TAG, "display name: ");
+            }
         }
     }
 
@@ -408,20 +412,26 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
             case R.id.btn_login:
                 if ( checkValidation () ){
                     login();
-                   // Toast.makeText(Login.this, "Form contains not error", Toast.LENGTH_LONG).show();
+                    break;
+
+                    // Toast.makeText(Login.this, "Form contains not error", Toast.LENGTH_LONG).show();
                 }
-                else
-                    Toast.makeText(Login.this, "Form contains error", Toast.LENGTH_LONG).show();
+                //else
+                  //  Toast.makeText(Login.this, "Form contains error", Toast.LENGTH_LONG).show();
                 break;
             case R.id.create_account:
                 intent = new Intent(Login.this, SignUpSelection.class);
                 startActivity(intent);
+                overridePendingTransition(R.anim.enter, R.anim.exit);
+              //  overridePendingTransition(R.anim.left_to_right, R.anim.right_to_left);
                 break;
 
             case R.id.lbl_forgotPassword:
                 intent = new Intent(Login.this, ForgotPassword.class);
 
                 startActivity(intent);
+                overridePendingTransition(R.anim.enter, R.anim.exit);
+
                 break;
 
             case R.id.login_toolbar:
@@ -431,6 +441,8 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
                 intent = new Intent(Login.this, MainActivity.class);
 
                 startActivity(intent);
+                overridePendingTransition(R.anim.enter, R.anim.exit);
+
                 break;
 
             /// }
@@ -443,8 +455,8 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
         String password =txtPassword.getText().toString();
         SharedPreference sp=new SharedPreference();
 
-        //String role=sp.getPreferences(Login.this,"role");
-        String role=newString;
+        String role=sp.getPreferences(Login.this,"role");
+        //String role=newString;
         String deviceId =  sp.getPreferences(getApplicationContext(),"deviceId");
 
         sendPost(email,password,role,deviceId);
@@ -467,6 +479,28 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
         }
     }
 ///
+boolean doubleBackToExitPressedOnce = false;
+    @Override
+    public void onBackPressed() {
+        //Checking for fragment count on backstack
+        if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+            getSupportFragmentManager().popBackStack();
+        } else if (!doubleBackToExitPressedOnce) {
+            this.doubleBackToExitPressedOnce = true;
+            Toast.makeText(this,"Please click BACK again to exit.", Toast.LENGTH_SHORT).show();
+
+            new Handler().postDelayed(new Runnable() {
+
+                @Override
+                public void run() {
+                    doubleBackToExitPressedOnce = false;
+                }
+            }, 2000);
+        } else {
+            super.onBackPressed();
+            return;
+        }
+    }
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         Log.d(TAG, "onConnectionFailed:" + connectionResult);

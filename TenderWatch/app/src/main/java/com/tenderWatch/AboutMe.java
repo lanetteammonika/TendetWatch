@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -34,32 +35,11 @@ public class AboutMe extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about_me);
-//        toolbar = (Toolbar) findViewById(R.id.toolbar3);
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//            setActionBar(toolbar);
-//        }
-
         mToolbar = (Toolbar) findViewById(R.id.mtoolbar2);
         setSupportActionBar(mToolbar);
 
         setTitle(getString(R.string.app_name));
         mToolbar.setTitleTextColor(getResources().getColor(android.R.color.white));
-//        
-//        ActionBar mActionBar = getSupportActionBar();
-//        mActionBar.setDisplayShowHomeEnabled(false);
-//        mActionBar.setDisplayShowTitleEnabled(false);
-//        LayoutInflater mInflater = LayoutInflater.from(this);
-//
-//        View mCustomView = mInflater.inflate(R.layout.custom_actionbar, null);
-//        TextView mTitleTextView = (TextView) mCustomView.findViewById(R.id.txt_count);
-//        mTitleTextView.setText("My Own Title");
-//
-//        txtCount = (TextView) mCustomView
-//                .findViewById(R.id.txt_count);
-//        mActionBar.setCustomView(mCustomView);
-//        mActionBar.setDisplayShowCustomEnabled(true);
-//        mActionBar.
-       // getSupportActionBar().setDisplayShowCustomEnabled(true);
         edtAbotMe=(EditText) findViewById(R.id.txt_aboutme);
         txtCount=(TextView) findViewById(R.id.txt_count);
         txtSave=(TextView) findViewById(R.id.aboutme_save);
@@ -69,24 +49,12 @@ public class AboutMe extends AppCompatActivity {
         if(!AboutMe.equals("About Me")){
             edtAbotMe.setText(AboutMe);
         }
+        txtCount.setText("0");
+
+
         edtAbotMe.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-               //
-                if(s==" "){
-                    textCount=textCount+1;
-                }else{
-                    textCount=textCount+1;
-                }
-                String counttext= String.valueOf(textCount);
-
-                txtCount.setText(counttext);
-                if(textCount==1000){
-                    txtCount.setText(String.valueOf(textCount));
-                    SharedPreference ss= new SharedPreference();
-                    ss.ShowDialog(AboutMe.this,"Up tp 1000 Characters");
-                   // edtAbotMe.setFocusable(false);
-                }
             }
 
             @Override
@@ -96,7 +64,13 @@ public class AboutMe extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-
+                txtCount.setText(String.valueOf(edtAbotMe.getText().toString().length()));
+                if(txtCount.getText().toString().length()==1000){
+                    txtCount.setText(String.valueOf(textCount));
+                    SharedPreference ss= new SharedPreference();
+                    ss.ShowDialog(AboutMe.this,"Up tp 1000 Characters");
+                }
+                txtCount.setText(String.valueOf(edtAbotMe.getText().toString().length()));
             }
         });
         aboutmeBack.setOnClickListener(new View.OnClickListener() {
@@ -109,7 +83,9 @@ public class AboutMe extends AppCompatActivity {
                     intent.putExtra("aboutMe",AboutMe);
 
                 }
-                startActivity(intent);
+                setResult(Activity.RESULT_OK,intent);
+                finish();
+
             }
         });
         txtSave.setOnClickListener(new View.OnClickListener() {
@@ -117,14 +93,8 @@ public class AboutMe extends AppCompatActivity {
             public void onClick(View v) {
                 intent = new Intent(AboutMe.this,SignUp.class);
                 intent.putExtra("aboutMe",edtAbotMe.getText().toString());
-                //                finish();;
-//                startActivity(intent);
                 setResult(Activity.RESULT_OK,intent);
-//                intent = new Intent(AboutMe.this, SignUp.class);
-//                intent.putExtra("aboutMe",edtAbotMe.getText().toString());
-//                startActivity(intent);
                 finish();
-
             }
         });
 

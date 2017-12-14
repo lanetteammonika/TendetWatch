@@ -58,7 +58,8 @@ public static HashMap<String, ArrayList<String>> map = new HashMap<String, Array
     Intent intent;
     SharedPreference sp=new SharedPreference();
     LinearLayout back;
-
+TextView txtContract;
+String contract;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,7 +70,7 @@ public static HashMap<String, ArrayList<String>> map = new HashMap<String, Array
 
         sideSelector = (SideSelector) findViewById(R.id.category_side_selector);
         back=(LinearLayout) findViewById(R.id.category_toolbar);
-
+        txtContract=(TextView) findViewById(R.id.txt_selectedContractcategory);
         mAPIService = ApiUtils.getAPIService();
         lvCountry.setDivider(null);
         lvCountry.clearChoices();;
@@ -78,6 +79,8 @@ public static HashMap<String, ArrayList<String>> map = new HashMap<String, Array
 
         empNo = show.getStringArrayListExtra("CountryAtContractor");
         countryListName=show.getStringArrayListExtra("Country");
+        contract=show.getStringExtra("version");
+        txtContract.setText(contract);
         user.setSelections(empNo.size());
         mAPIService.getCategoryData().enqueue(new Callback<ArrayList<GetCategory>>() {
             @Override
@@ -211,10 +214,28 @@ public static HashMap<String, ArrayList<String>> map = new HashMap<String, Array
                     populateMap(map, entry.getValue().split("~")[1],entry.getValue().split("~")[2]);
 
                 }
-                user.setSubscribe(map);
-                intent = new Intent(
-                        Category.this, Agreement.class);
-                startActivity(intent);
+
+                if(txtContract.getText().toString().equals("Trial Version")){
+                   if( items.size()>1){
+                       ss.ShowDialog(Category.this,"During Free Trial Period you can choose only 1 category");
+                   }else{
+                       user.setSubscribe(map);
+                       intent = new Intent(
+                               Category.this, Agreement.class);
+                       startActivity(intent);
+                       finish();
+                   }
+                }else{
+                    user.setSubscribe(map);
+                    intent = new Intent(
+                            Category.this, Agreement.class);
+                    startActivity(intent);
+                    finish();
+                }
+
+
+
+
             }
         });
 

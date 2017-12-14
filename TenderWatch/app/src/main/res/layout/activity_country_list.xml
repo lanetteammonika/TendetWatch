@@ -68,7 +68,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="right"
-        android:text="$0 / year"
+        android:text="Trial Version"
         android:layout_marginRight="@dimen/value_20"
         android:textColor="@color/colorBlack"
         android:textSize="18sp"
@@ -126,8 +126,8 @@ android:choiceMode="singleChoice"
         android:layout_height="match_parent"
         android:layout_alignParentRight="true"
         android:layout_marginRight="@dimen/value_20"
-        android:layout_marginTop="@dimen/value_5"
-        android:layout_marginBottom="@dimen/value_5"
+        android:layout_marginTop="@dimen/value_45"
+        android:layout_marginBottom="@dimen/value_45"
         />
 
     <Button

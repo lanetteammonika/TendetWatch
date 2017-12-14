@@ -77,6 +77,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 sp.setPreferences(getApplicationContext(), "role", "contractor");
                 intent.putExtra("Role", "contractor");
                 startActivity(intent);
+                overridePendingTransition(R.anim.enter, R.anim.exit);
+
                 break;
             case R.id.btn_client:
               intent = new Intent(MainActivity.this, Login.class);
@@ -84,6 +86,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 intent.putExtra("Role", "client");
                 Log.i(TAG,"testing");
                 startActivity(intent);
+                overridePendingTransition(R.anim.enter, R.anim.exit);
+
                 break;
         }
     }

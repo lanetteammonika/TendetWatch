@@ -19,7 +19,7 @@ public class Validation {
         // Error Messages
         private static final String REQUIRED_MSG = "required";
         private static final String EMAIL_MSG = "invalid email";
-        private static final String PHONE_MSG = "##########";
+        private static final String PHONE_MSG = "#########";
     private static final String PASSWORD_MSG = "Enter password with 8 characters which contain at least one alphabet, one number and special character";
 
         // call this method when you need to check email validation

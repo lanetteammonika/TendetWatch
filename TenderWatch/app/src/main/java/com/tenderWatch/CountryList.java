@@ -57,6 +57,8 @@ public class CountryList extends AppCompatActivity {
     Intent intent;
     String check;
     SharedPreference sp=new SharedPreference();
+    ArrayList<String> a_country = new ArrayList<String>();
+
     int pos=0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -133,7 +135,7 @@ public class CountryList extends AppCompatActivity {
                         countryList.add(new EntryItem(name, flag,countryCode,id,false));
                     }
                 }
-
+alpha.clear();
                 String str = list.toString().replaceAll(",", "");
                 char[] chars = str.toCharArray();
                 Log.i(TAG, "post submitted to API."+chars);
@@ -181,8 +183,23 @@ public class CountryList extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 intent = new Intent(CountryList.this, SignUp.class);
+                countryList.clear();
+                alpha2.clear();
+                list.clear();
+                alpha.clear();
 
-                startActivityForResult(intent,1);
+                intent.putExtra("Country", a_country);
+                //adapter.clearData();
+                adapter.setItemSelected(pos);
+
+//                finish();;
+//                startActivity(intent);
+                countryList.clear();
+                alpha2.clear();
+                list.clear();
+                alpha.clear();
+                setResult(Activity.RESULT_OK, intent);
+                //startActivityForResult(intent,1);
             }
         });
 
@@ -205,7 +222,6 @@ public class CountryList extends AppCompatActivity {
 btn_next.setOnClickListener(new View.OnClickListener() {
     @Override
     public void onClick(View v) {
-        ArrayList<String> a_country = new ArrayList<String>();
         ArrayList<String> a_countryID = new ArrayList<String>();
 
         SharedPreference ss =new SharedPreference();
@@ -220,7 +236,7 @@ btn_next.setOnClickListener(new View.OnClickListener() {
         }
 
 //-adapter.isEmpty();
-        if(txtSelectedContract.getText().toString().equals("$0 / year")){
+        if(txtSelectedContract.getText().toString().equals("Trial Version")){
             if(a_country.size()>1){
                 if(check == null) {
                     ss.ShowDialog(CountryList.this, "During Free Trial Period you can choose only 1 country");
@@ -233,14 +249,15 @@ btn_next.setOnClickListener(new View.OnClickListener() {
                     intent = new Intent(CountryList.this, Category.class);
                     intent.putExtra("CountryAtContractor", a_countryID);
                     intent.putExtra("Country", a_country);
+                    intent.putExtra("version",txtSelectedContract.getText().toString());
                     adapter.setItemSelected(pos);
-                    //adapter.clearData();
-                    //startActivity(intent);
 
                     countryList.clear();
                     alpha2.clear();
                     list.clear();
-                    setResult(Activity.RESULT_OK, intent);
+                    alpha.clear();
+                    startActivity(intent);
+
                     finish();
                 }else {
                     intent = new Intent(CountryList.this, SignUp.class);
@@ -253,6 +270,7 @@ btn_next.setOnClickListener(new View.OnClickListener() {
                     countryList.clear();
                     alpha2.clear();
                     list.clear();
+                    alpha.clear();
                     setResult(Activity.RESULT_OK, intent);
 //
 //            intent = new Intent(CountryList.this, SignUp.class);
@@ -271,13 +289,17 @@ btn_next.setOnClickListener(new View.OnClickListener() {
             intent = new Intent(CountryList.this, Category.class);
             intent.putExtra("CountryAtContractor", a_countryID);
             intent.putExtra("Country", a_country);
+            intent.putExtra("version",txtSelectedContract.getText().toString());
+
             adapter.setItemSelected(pos);
-            //startActivity(intent);
+            //
           ///  adapter.clearData();
             countryList.clear();
             alpha2.clear();
             list.clear();
-            setResult(Activity.RESULT_OK, intent);
+            alpha.clear();
+            startActivity(intent);
+           // setResult(Activity.RESULT_OK, intent);
             finish();
         }
 
@@ -327,7 +349,7 @@ btn_next.setOnClickListener(new View.OnClickListener() {
         txtTrial.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                txtSelectedContract.setText("$0 / year");
+                txtSelectedContract.setText("Trial Version");
                 dialog.dismiss();
             }
         });

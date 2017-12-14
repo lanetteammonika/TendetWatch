@@ -63,7 +63,7 @@
             android:layout_marginTop="@dimen/value_5"
             />
         <TextView
-            android:id="@+id/txt_selectedContract"
+            android:id="@+id/txt_selectedContractcategory"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="right"
@@ -99,8 +99,8 @@
             android:layout_height="match_parent"
             android:layout_alignParentRight="true"
             android:layout_marginRight="@dimen/value_20"
-            android:layout_marginTop="@dimen/value_5"
-            android:layout_marginBottom="@dimen/value_5"
+            android:layout_marginTop="@dimen/value_45"
+            android:layout_marginBottom="@dimen/value_45"
             />
 
         <Button

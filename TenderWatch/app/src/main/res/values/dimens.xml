@@ -42,5 +42,10 @@
     <dimen name="value_100">100dp</dimen>
     <dimen name="value_26">26dp</dimen>
     <dimen name="text_18">18sp</dimen>
+    <dimen name="text_12">12sp</dimen>
+    <dimen name="value_400">400dp</dimen>
+    <dimen name="value_350">350dp</dimen>
+    <dimen name="value_340">340dp</dimen>
+    <dimen name="value_370">370dp</dimen>
 
 </resources>

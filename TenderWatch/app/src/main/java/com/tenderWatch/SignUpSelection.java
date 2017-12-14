@@ -323,14 +323,14 @@ public class SignUpSelection extends AppCompatActivity implements View.OnClickLi
             // If the user has not previously signed in on this device or the sign-in has expired,
             // this asynchronous branch will attempt to sign in the user silently.  Cross-device
             // single sign-on will occur in this branch.
-            showProgressDialog();
-            opr.setResultCallback(new ResultCallback<GoogleSignInResult>() {
-                @Override
-                public void onResult(GoogleSignInResult googleSignInResult) {
-                    hideProgressDialog();
-                    handleSignInResult(googleSignInResult);
-                }
-            });
+           // showProgressDialog();
+//            opr.setResultCallback(new ResultCallback<GoogleSignInResult>() {
+//                @Override
+//                public void onResult(GoogleSignInResult googleSignInResult) {
+//                    hideProgressDialog();
+//                    handleSignInResult(googleSignInResult);
+//                }
+//            });
         }
     }
 
@@ -360,51 +360,52 @@ public class SignUpSelection extends AppCompatActivity implements View.OnClickLi
     }
     private void handleSignInResult(GoogleSignInResult result) {
         Log.d(TAG, "handleSignInResult:" + result.isSuccess());
+       if(sp.getPreferences(SignUpSelection.this,"Login") == null) {
+            if (result.isSuccess()) {
+                SharedPreference sp = new SharedPreference();
+                sp.setPreferences(getApplicationContext(), "Login", "GOOGLEYES");
+                GoogleSignInAccount acct = result.getSignInAccount();
+                String personName = acct.getDisplayName();
+                String personGivenName = acct.getGivenName();
+                String personFamilyName = acct.getFamilyName();
+                String personEmail = acct.getEmail();
+                String personId = acct.getId();
+                final Uri personPhoto = acct.getPhotoUrl();
+                txtEmail.setText(personEmail);
 
-        if (result.isSuccess()) {
-            SharedPreference sp = new SharedPreference();
-            sp.setPreferences(getApplicationContext(), "Login", "GOOGLEYES");
-            GoogleSignInAccount acct = result.getSignInAccount();
-            String personName = acct.getDisplayName();
-            String personGivenName = acct.getGivenName();
-            String personFamilyName = acct.getFamilyName();
-            String personEmail = acct.getEmail();
-            String personId = acct.getId();
-            final Uri personPhoto = acct.getPhotoUrl();
-            txtEmail.setText(personEmail);
-
-            String idToken = acct.getIdToken();
-            String deviceId =Settings.Secure.getString(getContentResolver(),
-                    Settings.Secure.ANDROID_ID);
-            Log.d(TAG, "idToken:" + idToken);
-            Picasso.with(SignUpSelection.this)
-                    .load(personPhoto)
-                    .into(new Target() {
-                        @Override
-                        public void onBitmapLoaded (final Bitmap bitmap, Picasso.LoadedFrom from){
+                String idToken = acct.getIdToken();
+                String deviceId = Settings.Secure.getString(getContentResolver(),
+                        Settings.Secure.ANDROID_ID);
+                Log.d(TAG, "idToken:" + idToken);
+                Picasso.with(SignUpSelection.this)
+                        .load(personPhoto)
+                        .into(new Target() {
+                            @Override
+                            public void onBitmapLoaded(final Bitmap bitmap, Picasso.LoadedFrom from) {
             /* Save the bitmap or do something with it here */
-                            Log.v("Main", String.valueOf(bitmap));
+                                Log.v("Main", String.valueOf(bitmap));
 //                            intent = new Intent(SignUpSelection.this, SignUp.class);
 //
 //                            intent.putExtra("bitmap",bitmap);
 //                            startActivity(intent);
-                            main=bitmap;
-                            Picasso.with(SignUpSelection.this).load(personPhoto).into(target);
+                                main = bitmap;
+                                Picasso.with(SignUpSelection.this).load(personPhoto).into(target);
 
-                        }
+                            }
 
-                        @Override
-                        public void onBitmapFailed(Drawable errorDrawable) {
-                            Log.v("Main", "errrorrrr");
-                        }
+                            @Override
+                            public void onBitmapFailed(Drawable errorDrawable) {
+                                Log.v("Main", "errrorrrr");
+                            }
 
-                        @Override
-                        public void onPrepareLoad(Drawable placeHolderDrawable) {
+                            @Override
+                            public void onPrepareLoad(Drawable placeHolderDrawable) {
 
-                        }
-                    });
-        } else {
-            Log.e(TAG, "display name: ");
+                            }
+                        });
+            } else {
+                Log.e(TAG, "display name: ");
+            }
         }
     }
 
@@ -521,7 +522,10 @@ public class SignUpSelection extends AppCompatActivity implements View.OnClickLi
 
             intent = new Intent(SignUpSelection.this, SignUp.class);
             intent.putExtra("bitmap",main);
+            finish();
+
             startActivity(intent);
+
         }
 
 

@@ -2,15 +2,19 @@ package com.tenderWatch;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
+import android.view.ViewGroup;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.tenderWatch.Models.CreateUser;
 import com.tenderWatch.Models.Register;
@@ -38,7 +42,7 @@ public class Agreement extends AppCompatActivity implements View.OnClickListener
     MultipartBody.Part email1,password1,country1,selections1,subscribe1,contactNo1,occupation1,aboutMe1,role1,deviceId1,image1;
     SharedPreference sp =new SharedPreference();
     Intent intent;
-LinearLayout back;
+LinearLayout back,webLayout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,7 +51,28 @@ LinearLayout back;
         InitListener();
         Log.i(TAG, String.valueOf(user.getProfilePhoto()));
     }
+    boolean doubleBackToExitPressedOnce = false;
+    @Override
+    public void onBackPressed() {
+        //Checking for fragment count on backstack
+        if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+            getSupportFragmentManager().popBackStack();
+        } else if (!doubleBackToExitPressedOnce) {
+            this.doubleBackToExitPressedOnce = true;
+            Toast.makeText(this,"Please click BACK again to exit.", Toast.LENGTH_SHORT).show();
 
+            new Handler().postDelayed(new Runnable() {
+
+                @Override
+                public void run() {
+                    doubleBackToExitPressedOnce = false;
+                }
+            }, 2000);
+        } else {
+            super.onBackPressed();
+            return;
+        }
+    }
     private void InitView() {
         mAPIService = ApiUtils.getAPIService();
 
@@ -58,7 +83,18 @@ LinearLayout back;
         box=(ImageView) findViewById(R.id.box);
         boxChecked=(ImageView) findViewById(R.id.box_checked);
         back=(LinearLayout) findViewById(R.id.agreement_back);
+        webLayout=(LinearLayout) findViewById(R.id.weblayout);
+      //  LinearLayout layout = findViewById(R.id.numberPadLayout);
+// Gets the layout params that will allow you to resize the layout
+       ViewGroup.LayoutParams params = webLayout.getLayoutParams();
+// Changes the height and width to the specified *pixels*
+        params.height = Agreement.this.getResources().getDimensionPixelSize(R.dimen.value_340);
+        //params.width = 100;
+        webLayout.setLayoutParams(params);
 
+
+
+        ///int height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, <HEIGHT>,
         signUp=(Button) findViewById(R.id.post_signup);
     }
 

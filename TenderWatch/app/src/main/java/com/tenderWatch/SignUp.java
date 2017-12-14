@@ -140,6 +140,7 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener{
         btnSignUp=(Button) findViewById(R.id.btn_Next);
         occupation=(EditText) findViewById(R.id.occupation) ;
         Intent show = getIntent();
+       // if(show.getParcelableExtra("bitmap") !=null)
         Bitmap newimg=(Bitmap)show.getParcelableExtra("bitmap");
         if(newimg != null){
         profileImg.setImageBitmap(newimg);}
@@ -213,8 +214,8 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener{
 
     private void CheckValidation() {
         if(!mobileNo.getText().toString().isEmpty() && !occupation.getText().toString().isEmpty()) {
-            if (mobileNo.getText().toString().split("-")[1].length() <10) {
-                sp.ShowDialog(SignUp.this, "Enter Mobiile number up to 10 digit");
+            if (mobileNo.getText().toString().split("-")[1].length() <9) {
+                sp.ShowDialog(SignUp.this, "Enter Mobiile number up to 9 digit");
 
             } else {
                 SendData();
@@ -244,10 +245,14 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener{
         if(sp.getPreferences(SignUp.this,"role").equals("contractor")){
             intent = new Intent(
                     SignUp.this, CountryList.class);
+            finish();
+
             startActivityForResult(intent,1);
         }else{
             intent = new Intent(
                     SignUp.this, Agreement.class);
+            finish();
+
             startActivityForResult(intent,1);
         }
 

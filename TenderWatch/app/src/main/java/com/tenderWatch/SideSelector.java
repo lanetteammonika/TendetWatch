@@ -48,9 +48,11 @@ public class SideSelector extends View {
     private void init() {
         setBackgroundColor(0x44FFFFFF);
         paint = new Paint();
-        paint.setColor(Color.BLUE);
-        paint.setTextSize(18);
-        paint.setTextAlign(Paint.Align.CENTER);
+        paint.setColor(Color.BLACK);
+        int size = SideSelector.this.getResources().getDimensionPixelSize(R.dimen.text_12);
+        paint.setTextSize(size);
+        paint.setFakeBoldText(true);
+     //   paint.setTextAlign(Paint.Align.CENTER);
     }
 
     public void setListView(ListView _list) {
