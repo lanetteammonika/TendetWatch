@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_home"
+            android:icon="@drawable/home_3x"
+            android:title="Home" />
+        <item
+            android:id="@+id/nav_subscriptiondetails"
+            android:icon="@drawable/dollar_3x"
+            android:title="Subscription Details" />
+        <item
+            android:id="@+id/nav_editprofile"
+            android:icon="@drawable/userthree_3x"
+            android:title="Edit Profile" />
+        <item
+            android:id="@+id/nav_changepassword"
+            android:icon="@drawable/password_3x"
+            android:title="Change Password" />
+        <item
+            android:id="@+id/nav_favorites"
+            android:icon="@drawable/heart_3x"
+            android:title="Favorites" />
+        <item
+            android:id="@+id/nav_notifications"
+            android:icon="@drawable/bell_3x"
+            android:title="Notifications" />
+        <item
+            android:id="@+id/nav_contactsupportteam"
+            android:icon="@drawable/support_3x"
+            android:title="Contact Support Team" />
+        <item
+            android:id="@+id/nav_logout"
+            android:icon="@drawable/logout_3x"
+            android:title="Logout" />
+    </group>
+
+
+
+</menu>

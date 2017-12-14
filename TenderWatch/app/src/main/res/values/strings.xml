@@ -16,4 +16,8 @@
     <string name="title_activity_main2">Main2Activity</string>
     <string name="take_or_select_a_picture">take a picture</string>
     <string name="string_title_upload_progressbar_">upload image</string>
+    <string name="title_activity_main_drawer">MainDrawer</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
 </resources>
