@@ -1,13 +1,11 @@
-package com.tenderWatch.Drawer;
+package com.tenderWatch.ClientDrawer;
 
+
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
-import android.view.View;
-import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -16,8 +14,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.tenderWatch.Login;
-import com.tenderWatch.Models.Message;
+import com.tenderWatch.MainActivity;
 import com.tenderWatch.R;
 import com.tenderWatch.Retrofit.Api;
 import com.tenderWatch.Retrofit.ApiUtils;
@@ -28,21 +25,21 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainDrawer extends AppCompatActivity
+public class ClientDrawer extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     private Api mAPIService;
-    SharedPreference sp = new SharedPreference();
-    private static final String TAG = MainDrawer.class.getSimpleName();
+    SharedPreference sp=new SharedPreference();
+    private static final String TAG = ClientDrawer.class.getSimpleName();
+    Intent intent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main_drawer);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.drawertoolbar);
-        // getSupportActionBar().hide();//Ocultar ActivityBar anterior
+        setContentView(R.layout.activity_client_drawer);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.clienttoolbar);
 
-        //toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar); //NO PROBLEM !!!!
+        mAPIService = ApiUtils.getAPIService();
 
         //setActionBar(toolbar);
 
@@ -89,7 +86,6 @@ public class MainDrawer extends AppCompatActivity
 
         return super.onOptionsItemSelected(item);
     }
-
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -97,7 +93,6 @@ public class MainDrawer extends AppCompatActivity
         displaySelectedScreen(item.getItemId());
         return true;
     }
-
     private void displaySelectedScreen(int itemId) {
 
         //creating fragment object
@@ -127,8 +122,8 @@ public class MainDrawer extends AppCompatActivity
                 fragment = new ChangePassword();
                 break;
             case R.id.nav_logout:
-                Logout();
-                break;
+Logout();
+break;
         }
 
         //replacing the fragment
@@ -143,22 +138,29 @@ public class MainDrawer extends AppCompatActivity
     }
 
     private void Logout() {
-//        mAPIService = ApiUtils.getAPIService();
-//        String id = sp.getPreferences(MainDrawer.this, "id");
-//        String deviceId = sp.getPreferences(getApplicationContext(), "deviceId");
-//        String role = sp.getPreferences(MainDrawer.this, "role");
-//        mAPIService.logout(id, deviceId, role).enqueue(new Callback<ResponseBody>() {
-//            @Override
-//            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-//                Log.i(TAG, "post submitted to API." + response.body().toString());
-//
-//            }
-//
-//            @Override
-//            public void onFailure(Call<ResponseBody> call, Throwable t) {
-//                Log.i(TAG, "post submitted to API." + t);
-//
-//            }
-//        });
+        String token="Bearer "+sp.getPreferences(ClientDrawer.this,"token");
+        String deviceId = sp.getPreferences(getApplicationContext(), "deviceId");
+        String role=sp.getPreferences(ClientDrawer.this,"role");
+
+        mAPIService.logout(token,deviceId,role).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+               // Log.i(TAG, "post submitted to API." + response);
+                sp.removePreferences(ClientDrawer.this,"role");
+                sp.removePreferences(ClientDrawer.this,"email");
+                sp.removePreferences(ClientDrawer.this,"id");
+                sp.removePreferences(ClientDrawer.this,"profile");
+                intent=new Intent(ClientDrawer.this, MainActivity.class);
+                startActivity(intent);
+                overridePendingTransition(R.anim.enter, R.anim.exit);
+
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                //Log.i(TAG, "post submitted to API." + t);
+
+            }
+        });
     }
 }

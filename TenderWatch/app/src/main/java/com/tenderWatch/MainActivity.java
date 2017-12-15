@@ -18,7 +18,7 @@ import com.tenderWatch.SharedPreference.SharedPreference;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private TextView aboutapp;
     Context context;
-    private Button btnContractor,btnClient;
+    private Button btnContractor, btnClient;
     Intent intent;
     SharedPreference sp = new SharedPreference();
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        context=this;
+        context = this;
         InitView();
         InitListener();
 
@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.aboutapp:
-                final Dialog dialog=new Dialog(context, R.style.full_screen_dialog);
+                final Dialog dialog = new Dialog(context, R.style.full_screen_dialog);
                 dialog.setContentView(R.layout.aboutapp);
 
                 Button dismissButton = (Button) dialog.findViewById(R.id.button_close);
@@ -81,10 +81,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 break;
             case R.id.btn_client:
-              intent = new Intent(MainActivity.this, Login.class);
+                intent = new Intent(MainActivity.this, Login.class);
                 sp.setPreferences(MainActivity.this, "role", "client");
                 intent.putExtra("Role", "client");
-                Log.i(TAG,"testing");
+                Log.i(TAG, "testing");
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter, R.anim.exit);
 

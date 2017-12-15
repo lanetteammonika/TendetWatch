@@ -2,13 +2,11 @@ package com.tenderWatch;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -36,9 +34,8 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.OptionalPendingResult;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.tasks.Task;
-import com.tenderWatch.Models.LoginPost;
+import com.tenderWatch.ClientDrawer.ClientDrawer;
+import com.tenderWatch.Drawer.MainDrawer;
 import com.tenderWatch.Models.Register;
 import com.tenderWatch.Retrofit.Api;
 import com.tenderWatch.Retrofit.ApiUtils;
@@ -50,14 +47,13 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class Login extends AppCompatActivity implements View.OnClickListener, GoogleApiClient.OnConnectionFailedListener {
-    //LoginButton loginButton;
     Context context;
     Intent intent;
     private CallbackManager callbackManager;
     private static final String TAG = Login.class.getSimpleName();
-    private EditText txtEmail,txtPassword;
+    private EditText txtEmail, txtPassword;
     private LoginButton loginButton;
-    private TextView lblCreateAccount,lblForgotPassword;
+    private TextView lblCreateAccount, lblForgotPassword;
     private Button fb;
     private static final int RC_SIGN_IN = 007;
 
@@ -81,13 +77,13 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
         System.out.print("called");
         if (savedInstanceState == null) {
             Bundle extras = getIntent().getExtras();
-            if(extras == null) {
-                newString= null;
+            if (extras == null) {
+                newString = null;
             } else {
-                newString= extras.getString("Role");
+                newString = extras.getString("Role");
             }
         } else {
-            newString= (String) savedInstanceState.getSerializable("Role");
+            newString = (String) savedInstanceState.getSerializable("Role");
         }
         Init();
         InitListener();
@@ -97,7 +93,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
     private void Init() {
         fb = (Button) findViewById(R.id.fb);
         loginButton = (LoginButton) findViewById(R.id.login_button);
-        btnlogin =(Button) findViewById(R.id.btn_login);
+        btnlogin = (Button) findViewById(R.id.btn_login);
         mAPIService = ApiUtils.getAPIService();
         FacebookSdk.sdkInitialize(getApplicationContext());
         callbackManager = CallbackManager.Factory.create();
@@ -105,9 +101,9 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
         btngoogle = (Button) findViewById(R.id.google);
         txtEmail = (EditText) findViewById(R.id.txt_email);
         txtPassword = (EditText) findViewById(R.id.txt_password);
-        lblCreateAccount=(TextView) findViewById(R.id.create_account);
-        back=(LinearLayout) findViewById(R.id.login_toolbar);
-        lblForgotPassword=(TextView) findViewById(R.id.lbl_forgotPassword);
+        lblCreateAccount = (TextView) findViewById(R.id.create_account);
+        back = (LinearLayout) findViewById(R.id.login_toolbar);
+        lblForgotPassword = (TextView) findViewById(R.id.lbl_forgotPassword);
     }
 
     private void InitListener() {
@@ -125,7 +121,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
 
             @Override
             public void afterTextChanged(Editable editable) {
-                    Validation.isEmailAddress(txtEmail, true);
+                Validation.isEmailAddress(txtEmail, true);
             }
         });
         txtPassword.addTextChangedListener(new TextWatcher() {
@@ -142,8 +138,8 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
             @Override
             public void afterTextChanged(Editable editable) {
 
-               // Validation.isPassword(txtPassword,true);
-                Log.i(TAG, "post submitted to API." +  Validation.isValidPassword(txtPassword.getText().toString()));
+                // Validation.isPassword(txtPassword,true);
+                Log.i(TAG, "post submitted to API." + Validation.isValidPassword(txtPassword.getText().toString()));
 
             }
         });
@@ -154,24 +150,16 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
         back.setOnClickListener(this);
         lblForgotPassword.setOnClickListener(this);
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(getString(R.string.server_client_id))
-            .requestServerAuthCode(getString(R.string.server_client_id), false)
-            .requestEmail()
-            .build();
+                .requestIdToken(getString(R.string.server_client_id))
+                .requestServerAuthCode(getString(R.string.server_client_id), false)
+                .requestEmail()
+                .build();
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .enableAutoManage(this, this)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
-//        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-//                .requestEmail()
-//                .build();
-//        mGoogleApiClient = new GoogleApiClient.Builder(this)
-//                .addOnConnectionFailedListener(this)
-//                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
-//                .build();
 
-        // Customizing G+ button
         btnSignIn.setSize(SignInButton.SIZE_STANDARD);
         btnSignIn.setScopes(gso.getScopeArray());
         fb.setOnClickListener(this);
@@ -181,14 +169,13 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
             public void onSuccess(LoginResult loginResult) {
                 Log.d(TAG, String.valueOf(loginResult));
                 SharedPreference sp = new SharedPreference();
-                String accessToken= loginResult.getAccessToken().getToken();
-                String deviceId =Settings.Secure.getString(getContentResolver(),
+                String accessToken = loginResult.getAccessToken().getToken();
+                String deviceId = Settings.Secure.getString(getContentResolver(),
                         Settings.Secure.ANDROID_ID);
-                String role=sp.getPreferences(Login.this,"role");
-                savePostFB(accessToken,role , deviceId);
-                if(AccessToken.getCurrentAccessToken()!=null)
-                {
-                    Log.v("User is login","YES");
+                String role = sp.getPreferences(Login.this, "role");
+                savePostFB(accessToken, role, deviceId);
+                if (AccessToken.getCurrentAccessToken() != null) {
+                    Log.v("User is login", "YES");
 
                 }
                 sp.setPreferences(getApplicationContext(), "Login", "FBYES");
@@ -212,11 +199,8 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
 
     private boolean checkValidation() {
         boolean ret = true;
-
-       // if (!Validation.hasText(etNormalText)) ret = false;
         if (!Validation.isEmailAddress(txtEmail, true)) ret = false;
-       if (!Validation.isPassword(txtPassword, true)) ret = false;
-        //if(txtPassword.getText().toString().isEmpty()) ret = false;
+        if (!Validation.isPassword(txtPassword, true)) ret = false;
         return ret;
     }
 
@@ -251,78 +235,94 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
         }
     }
 
-    public void savePostFB(String idToken, String role,String deviceId) {
-        mAPIService.savePostFB(idToken,role,deviceId).enqueue(new Callback<Register>() {
+    public void savePostFB(String idToken, String role, String deviceId) {
+        mAPIService.savePostFB(idToken, role, deviceId).enqueue(new Callback<Register>() {
             @Override
             public void onResponse(Call<Register> call, Response<Register> response) {
 
-                if(response.isSuccessful()) {
-                    // showResponse(response.body().toString());
-//                    intent = new Intent(Login.this, Welcome.class);
-//                    startActivity(intent);
-                    sp.ShowDialog(Login.this,"Successful Login");
+                if (response.isSuccessful()) {
+                    String role = sp.getPreferences(Login.this, "role");
+                    if(role.equals("client")){
+                        intent = new Intent(Login.this, ClientDrawer.class);
 
+                    }else {
+                        intent = new Intent(Login.this, MainDrawer.class);
+                    }
+                    startActivity(intent);
                     Log.i(TAG, "post submitted to API." + response.body().toString());
-                }else{
-                    sp.ShowDialog(Login.this,response.errorBody().source().toString().split("\"")[3]);
+                } else {
+                    sp.ShowDialog(Login.this, response.errorBody().source().toString().split("\"")[3]);
                 }
             }
 
             @Override
             public void onFailure(Call<Register> call, Throwable t) {
-                sp.ShowDialog(Login.this,"Server is down. Come back later!!");
-
+                sp.ShowDialog(Login.this, "Server is down. Come back later!!");
                 Log.e(TAG, "Unable to submit post to API.");
             }
         });
     }
 
-    public void sendPostGoogle(String idToken, String role,String deviceId) {
-        mAPIService.savePostGoogle(idToken,role,deviceId).enqueue(new Callback<Register>() {
+    public void sendPostGoogle(String idToken, String role, String deviceId) {
+        mAPIService.savePostGoogle(idToken, role, deviceId).enqueue(new Callback<Register>() {
             @Override
             public void onResponse(Call<Register> call, Response<Register> response) {
 
-                if(response.isSuccessful()) {
-                   // showResponse(response.body().toString());
-//                    intent = new Intent(Login.this, Welcome.class);
-//                    startActivity(intent);
-                    sp.ShowDialog(Login.this,"Successful Login");
+                if (response.isSuccessful()) {
+                    String role = sp.getPreferences(Login.this, "role");
+                    if(role.equals("client")){
+                        intent = new Intent(Login.this, ClientDrawer.class);
 
+                    }else {
+                        intent = new Intent(Login.this, MainDrawer.class);
+                    }
+                    startActivity(intent);
                     Log.i(TAG, "post submitted to API." + response.body().toString());
-                }else{
-                    sp.ShowDialog(Login.this,response.errorBody().source().toString().split("\"")[3]);
+                } else {
+                    sp.ShowDialog(Login.this, response.errorBody().source().toString().split("\"")[3]);
                 }
             }
 
             @Override
             public void onFailure(Call<Register> call, Throwable t) {
-                sp.ShowDialog(Login.this,"Server is down. Come back later!!");
-
+                sp.ShowDialog(Login.this, "Server is down. Come back later!!");
                 Log.e(TAG, "Unable to submit post to API.");
             }
         });
     }
 
-    public void sendPost(String email,String password, String role,String deviceId) {
-        mAPIService.savePost(email,password,role,deviceId).enqueue(new Callback<Register>() {
+    public void sendPost(String email, String password, String role, String deviceId) {
+        mAPIService.savePost(email, password, role, deviceId).enqueue(new Callback<Register>() {
             @Override
             public void onResponse(Call<Register> call, Response<Register> response) {
 
-                if(response.isSuccessful()) {
-                    // showResponse(response.body().toString());
-//                    intent = new Intent(Login.this, Welcome.class);
-//                    startActivity(intent);
-                    sp.ShowDialog(Login.this,"Successful Login");
+                if (response.isSuccessful()) {
+                    String role = sp.getPreferences(Login.this, "role");
+                    String profile=response.body().getUser().getProfilePhoto().toString();
+                    String email=response.body().getUser().getEmail().toString();
+                    String id=response.body().getUser().getId().toString();
+                    String token=response.body().getToken().toString();
+                    sp.setPreferences(Login.this,"profile",profile);
+                    sp.setPreferences(Login.this,"email",email);
+                    sp.setPreferences(Login.this,"id",id);
+                    sp.setPreferences(Login.this,"token",token);
 
+                    if(role.equals("client")){
+                        intent = new Intent(Login.this, ClientDrawer.class);
+
+                    }else {
+                        intent = new Intent(Login.this, MainDrawer.class);
+                    }
+                    startActivity(intent);
                     Log.i(TAG, "post submitted to API." + response.body().toString());
-                }else{
-                    sp.ShowDialog(Login.this,response.errorBody().source().toString().split("\"")[3]);
+                } else {
+                    sp.ShowDialog(Login.this, response.errorBody().source().toString().split("\"")[3]);
                 }
             }
 
             @Override
             public void onFailure(Call<Register> call, Throwable t) {
-                sp.ShowDialog(Login.this,"Server is down. Come back later!!");
+                sp.ShowDialog(Login.this, "Server is down. Come back later!!");
                 Log.e(TAG, "Unable to submit post to API.");
             }
         });
@@ -330,47 +330,22 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
 
     private void handleSignInResult(GoogleSignInResult result) {
         Log.d(TAG, "handleSignInResult:" + result.isSuccess());
-      //  GoogleSignInAccount account = completedTask.getResult(ApiException.class);
-//        String idToken = result.getIdToken();
-//
-        if(sp.getPreferences(Login.this,"Login") == null) {
-            if (result.isSuccess()) {
-                SharedPreference sp = new SharedPreference();
-                sp.setPreferences(getApplicationContext(), "Login", "GOOGLEYES");
-                GoogleSignInAccount acct = result.getSignInAccount();
-                String idToken = acct.getIdToken();
-                String deviceId = Settings.Secure.getString(getContentResolver(),
-                        Settings.Secure.ANDROID_ID);
-                String role = sp.getPreferences(Login.this, "role");
-                sendPostGoogle(idToken, role, deviceId);
-                // Show signed-in UI.
-                Log.d(TAG, "idToken:" + idToken);
-
-                // Signed in successfully, show authenticated UI.
-//            GoogleSignInAccount acct = result.getSignInAccount();
-//
-//            Log.e(TAG, "display name: " + acct.getDisplayName());
-//
-//            String personName = acct.getDisplayName();
-//         //   String personPhotoUrl = acct.getPhotoUrl().toString();
-//            String email = acct.getEmail();
-//
-//            Log.e(TAG, "Name: " + personName + ", email: " + email);
-
-                //txtName.setText(personName);
-                // txtEmail.setText(email);
-//            Glide.with(getApplicationContext()).load(personPhotoUrl)
-//                    .thumbnail(0.5f)
-//                    .crossFade()
-//                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-//                    .into(imgProfilePic);
-                //   updateUI(true);
-            } else {
-                // Signed out, show unauthenticated UI.
-                //  updateUI(false);
-                Log.e(TAG, "display name: ");
-            }
+        //  if(sp.getPreferences(Login.this,"Login") == null) {
+        if (result.isSuccess()) {
+            SharedPreference sp = new SharedPreference();
+            sp.setPreferences(getApplicationContext(), "Login", "GOOGLEYES");
+            GoogleSignInAccount acct = result.getSignInAccount();
+            String idToken = acct.getIdToken();
+            String deviceId = Settings.Secure.getString(getContentResolver(),
+                    Settings.Secure.ANDROID_ID);
+            String role = sp.getPreferences(Login.this, "role");
+            sendPostGoogle(idToken, role, deviceId);
+            // Show signed-in UI.
+            Log.d(TAG, "idToken:" + idToken);
+        } else {
+            Log.e(TAG, "display name: ");
         }
+        //  }
     }
 
     @Override
@@ -382,21 +357,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
             handleSignInResult(result);
 
         }
-//        if (requestCode == RC_SIGN_IN) {
-//            // The Task returned from this call is always completed, no need to attach
-//            // a listener.
-//            Task<GoogleSignInAccount> task = Auth.GoogleSignInApi.getSignedInAccountFromIntent(data);
-//            handleSignInResult(task);
-//        }
-
     }
-
-
-
-
-
-//...
-
 
     @Override
     public void onClick(View view) {
@@ -406,61 +367,45 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
             case R.id.google:
                 signIn();
                 break;
+
             case R.id.fb:
                 loginButton.performClick();
                 break;
+
             case R.id.btn_login:
-                if ( checkValidation () ){
+                if (checkValidation()) {
                     login();
                     break;
-
-                    // Toast.makeText(Login.this, "Form contains not error", Toast.LENGTH_LONG).show();
                 }
-                //else
-                  //  Toast.makeText(Login.this, "Form contains error", Toast.LENGTH_LONG).show();
                 break;
+
             case R.id.create_account:
                 intent = new Intent(Login.this, SignUpSelection.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter, R.anim.exit);
-              //  overridePendingTransition(R.anim.left_to_right, R.anim.right_to_left);
                 break;
 
             case R.id.lbl_forgotPassword:
                 intent = new Intent(Login.this, ForgotPassword.class);
-
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter, R.anim.exit);
-
                 break;
 
             case R.id.login_toolbar:
-//               // back.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
                 intent = new Intent(Login.this, MainActivity.class);
-
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter, R.anim.exit);
-
                 break;
-
-            /// }
-                // });
         }
     }
 
     private void login() {
-        String email=txtEmail.getText().toString();
-        String password =txtPassword.getText().toString();
-        SharedPreference sp=new SharedPreference();
-
-        String role=sp.getPreferences(Login.this,"role");
-        //String role=newString;
-        String deviceId =  sp.getPreferences(getApplicationContext(),"deviceId");
-
-        sendPost(email,password,role,deviceId);
-
+        String email = txtEmail.getText().toString();
+        String password = txtPassword.getText().toString();
+        SharedPreference sp = new SharedPreference();
+        String role = sp.getPreferences(Login.this, "role");
+        String deviceId = sp.getPreferences(getApplicationContext(), "deviceId");
+        sendPost(email, password, role, deviceId);
     }
 
     private void showProgressDialog() {
@@ -478,8 +423,9 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
             mProgressDialog.hide();
         }
     }
-///
-boolean doubleBackToExitPressedOnce = false;
+
+    boolean doubleBackToExitPressedOnce = false;
+
     @Override
     public void onBackPressed() {
         //Checking for fragment count on backstack
@@ -487,7 +433,7 @@ boolean doubleBackToExitPressedOnce = false;
             getSupportFragmentManager().popBackStack();
         } else if (!doubleBackToExitPressedOnce) {
             this.doubleBackToExitPressedOnce = true;
-            Toast.makeText(this,"Please click BACK again to exit.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Please click BACK again to exit.", Toast.LENGTH_SHORT).show();
 
             new Handler().postDelayed(new Runnable() {
 
@@ -501,6 +447,7 @@ boolean doubleBackToExitPressedOnce = false;
             return;
         }
     }
+
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         Log.d(TAG, "onConnectionFailed:" + connectionResult);

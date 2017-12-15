@@ -10,9 +10,9 @@
             android:icon="@drawable/home_3x"
             android:title="Home" />
         <item
-            android:id="@+id/nav_subscriptiondetails"
-            android:icon="@drawable/dollar_3x"
-            android:title="Subscription Details" />
+            android:id="@+id/nav_uploadtender"
+            android:icon="@drawable/upload_3x"
+            android:title="Upload Tender" />
         <item
             android:id="@+id/nav_editprofile"
             android:icon="@drawable/userthree_3x"
@@ -21,10 +21,6 @@
             android:id="@+id/nav_changepassword"
             android:icon="@drawable/password_3x"
             android:title="Change Password" />
-        <item
-            android:id="@+id/nav_favorites"
-            android:icon="@drawable/heart_3x"
-            android:title="Favorites" />
         <item
             android:id="@+id/nav_notifications"
             android:icon="@drawable/bell_3x"

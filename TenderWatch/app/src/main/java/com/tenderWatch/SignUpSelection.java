@@ -79,12 +79,12 @@ public class SignUpSelection extends AppCompatActivity implements View.OnClickLi
     Button signUp;
     private CallbackManager callbackManager;
     private static final String TAG = SignUpSelection.class.getSimpleName();
-    private EditText txtEmail, txtPassword,txtConfirmPassword;
+    private EditText txtEmail, txtPassword, txtConfirmPassword;
     private LoginButton loginButton;
-    private Button fb,signUP;
+    private Button fb, signUP;
     private static final int RC_SIGN_IN = 007;
-    CreateUser user=new CreateUser();
-    SharedPreference sp=new SharedPreference();
+    CreateUser user = new CreateUser();
+    SharedPreference sp = new SharedPreference();
 
     private GoogleApiClient mGoogleApiClient;
     private ProgressDialog mProgressDialog;
@@ -153,9 +153,8 @@ public class SignUpSelection extends AppCompatActivity implements View.OnClickLi
 
             @Override
             public void afterTextChanged(Editable s) {
-                Validation.isPassword(txtPassword,true);
-                Log.i(TAG, "post submitted to API." +  Validation.isValidPassword(txtPassword.getText().toString()));
-
+                Validation.isPassword(txtPassword, true);
+                Log.i(TAG, "post submitted to API." + Validation.isValidPassword(txtPassword.getText().toString()));
             }
         });
 
@@ -172,13 +171,11 @@ public class SignUpSelection extends AppCompatActivity implements View.OnClickLi
 
             @Override
             public void afterTextChanged(Editable s) {
-                Validation.isPassword(txtConfirmPassword,true);
-                Log.i(TAG, "post submitted to API." +  Validation.isValidPassword(txtPassword.getText().toString()));
-
+                Validation.isPassword(txtConfirmPassword, true);
+                Log.i(TAG, "post submitted to API." + Validation.isValidPassword(txtPassword.getText().toString()));
             }
         });
 
-        //btnlogin.setOnClickListener(this);
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.server_client_id))
                 .requestServerAuthCode(getString(R.string.server_client_id), false)
@@ -221,13 +218,9 @@ public class SignUpSelection extends AppCompatActivity implements View.OnClickLi
                                                 .load(profilePicUrl)
                                                 .into(new Target() {
                                                     @Override
-                                                    public void onBitmapLoaded (final Bitmap bitmap, Picasso.LoadedFrom from){
+                                                    public void onBitmapLoaded(final Bitmap bitmap, Picasso.LoadedFrom from) {
                                                         Log.v("Main", String.valueOf(bitmap));
-//                                                        intent = new Intent(SignUpSelection.this, SignUp.class);
-//
-//                                                        intent.putExtra("bitmap",bitmap);
-//                                                        startActivity(intent);
-                                                            main=bitmap;
+                                                        main = bitmap;
                                                         Picasso.with(SignUpSelection.this).load(profilePicUrl).into(target);
                                                     }
 
@@ -242,17 +235,13 @@ public class SignUpSelection extends AppCompatActivity implements View.OnClickLi
 
                                                     }
                                                 });
-
-
-
                                         Log.i(TAG, profilePicUrl);
-                                                                           }
+                                    }
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 } catch (IOException e) {
                                     e.printStackTrace();
                                 }
-                                //setProfileToView(object);
                             }
                         });
                 Bundle parameters = new Bundle();
@@ -261,10 +250,8 @@ public class SignUpSelection extends AppCompatActivity implements View.OnClickLi
                 request.executeAsync();
                 String deviceId = Settings.Secure.getString(getContentResolver(),
                         Settings.Secure.ANDROID_ID);
-                //savePostFB(accessToken, "contractor", deviceId);
                 if (AccessToken.getCurrentAccessToken() != null) {
                     Log.v("User is login", "YES");
-
                 }
                 sp.setPreferences(getApplicationContext(), "Login", "FBYES");
             }
@@ -272,13 +259,11 @@ public class SignUpSelection extends AppCompatActivity implements View.OnClickLi
             @Override
             public void onCancel() {
                 Log.d(TAG, "onConnectionFailed:");
-                // info.setText("Login attempt canceled.");
             }
 
             @Override
             public void onError(FacebookException e) {
                 Log.d(TAG, "onConnectionFailed:");
-                //  info.setText("Login attempt failed.");
             }
         });
 
@@ -287,8 +272,6 @@ public class SignUpSelection extends AppCompatActivity implements View.OnClickLi
     private void InitView() {
         fb = (Button) findViewById(R.id.fbsignup);
         loginButton = (LoginButton) findViewById(R.id.signupfb_button);
-        // btnlogin =(Button) findViewById(R.id.btn_login);
-        //mAPIService = ApiUtils.getAPIService();
         mAPIService = ApiUtils.getAPIService();
 
         FacebookSdk.sdkInitialize(getApplicationContext());
@@ -297,10 +280,9 @@ public class SignUpSelection extends AppCompatActivity implements View.OnClickLi
         btngoogle = (Button) findViewById(R.id.googlesignup);
         txtEmail = (EditText) findViewById(R.id.signup_email);
         txtPassword = (EditText) findViewById(R.id.signup_password);
-        signUp=(Button) findViewById(R.id.btn_client_signup);
+        signUp = (Button) findViewById(R.id.btn_client_signup);
         txtConfirmPassword = (EditText) findViewById(R.id.signup_confirmpassword);
-        back=(LinearLayout) findViewById(R.id.client_signup_back);
-        // txtPassword = (EditText) findViewById(R.id.txt_password);
+        back = (LinearLayout) findViewById(R.id.client_signup_back);
     }
 
     private void signIn() {
@@ -323,7 +305,7 @@ public class SignUpSelection extends AppCompatActivity implements View.OnClickLi
             // If the user has not previously signed in on this device or the sign-in has expired,
             // this asynchronous branch will attempt to sign in the user silently.  Cross-device
             // single sign-on will occur in this branch.
-           // showProgressDialog();
+            // showProgressDialog();
 //            opr.setResultCallback(new ResultCallback<GoogleSignInResult>() {
 //                @Override
 //                public void onResult(GoogleSignInResult googleSignInResult) {
@@ -349,64 +331,60 @@ public class SignUpSelection extends AppCompatActivity implements View.OnClickLi
             mProgressDialog.hide();
         }
     }
+
     private boolean checkValidation() {
         boolean ret = true;
 
-        // if (!Validation.hasText(etNormalText)) ret = false;
         if (!Validation.isEmailAddress(txtEmail, true)) ret = false;
         if (!Validation.isPassword(txtPassword, true)) ret = false;
 
         return ret;
     }
+
     private void handleSignInResult(GoogleSignInResult result) {
         Log.d(TAG, "handleSignInResult:" + result.isSuccess());
-       if(sp.getPreferences(SignUpSelection.this,"Login") == null) {
-            if (result.isSuccess()) {
-                SharedPreference sp = new SharedPreference();
-                sp.setPreferences(getApplicationContext(), "Login", "GOOGLEYES");
-                GoogleSignInAccount acct = result.getSignInAccount();
-                String personName = acct.getDisplayName();
-                String personGivenName = acct.getGivenName();
-                String personFamilyName = acct.getFamilyName();
-                String personEmail = acct.getEmail();
-                String personId = acct.getId();
-                final Uri personPhoto = acct.getPhotoUrl();
-                txtEmail.setText(personEmail);
+        // if(sp.getPreferences(SignUpSelection.this,"Login") == null) {
+        if (result.isSuccess()) {
+            SharedPreference sp = new SharedPreference();
+            sp.setPreferences(getApplicationContext(), "Login", "GOOGLEYES");
+            GoogleSignInAccount acct = result.getSignInAccount();
+            String personName = acct.getDisplayName();
+            String personGivenName = acct.getGivenName();
+            String personFamilyName = acct.getFamilyName();
+            String personEmail = acct.getEmail();
+            String personId = acct.getId();
+            final Uri personPhoto = acct.getPhotoUrl();
+            txtEmail.setText(personEmail);
 
-                String idToken = acct.getIdToken();
-                String deviceId = Settings.Secure.getString(getContentResolver(),
-                        Settings.Secure.ANDROID_ID);
-                Log.d(TAG, "idToken:" + idToken);
-                Picasso.with(SignUpSelection.this)
-                        .load(personPhoto)
-                        .into(new Target() {
-                            @Override
-                            public void onBitmapLoaded(final Bitmap bitmap, Picasso.LoadedFrom from) {
+            String idToken = acct.getIdToken();
+            String deviceId = Settings.Secure.getString(getContentResolver(),
+                    Settings.Secure.ANDROID_ID);
+            Log.d(TAG, "idToken:" + idToken);
+            Picasso.with(SignUpSelection.this)
+                    .load(personPhoto)
+                    .into(new Target() {
+                        @Override
+                        public void onBitmapLoaded(final Bitmap bitmap, Picasso.LoadedFrom from) {
             /* Save the bitmap or do something with it here */
-                                Log.v("Main", String.valueOf(bitmap));
-//                            intent = new Intent(SignUpSelection.this, SignUp.class);
-//
-//                            intent.putExtra("bitmap",bitmap);
-//                            startActivity(intent);
-                                main = bitmap;
-                                Picasso.with(SignUpSelection.this).load(personPhoto).into(target);
+                            Log.v("Main", String.valueOf(bitmap));
+                            main = bitmap;
+                            Picasso.with(SignUpSelection.this).load(personPhoto).into(target);
+                        }
 
-                            }
+                        @Override
+                        public void onBitmapFailed(Drawable errorDrawable) {
+                            Log.v("Main", "errrorrrr");
+                        }
 
-                            @Override
-                            public void onBitmapFailed(Drawable errorDrawable) {
-                                Log.v("Main", "errrorrrr");
-                            }
+                        @Override
+                        public void onPrepareLoad(Drawable placeHolderDrawable) {
 
-                            @Override
-                            public void onPrepareLoad(Drawable placeHolderDrawable) {
-
-                            }
-                        });
-            } else {
-                Log.e(TAG, "display name: ");
-            }
+                        }
+                    });
+        } else {
+            Log.e(TAG, "display name: ");
         }
+        //}
     }
 
     @Override
@@ -418,27 +396,30 @@ public class SignUpSelection extends AppCompatActivity implements View.OnClickLi
             handleSignInResult(result);
         }
     }
+
     private Target target = new Target() {
         @Override
         public void onBitmapLoaded(final Bitmap bitmap, Picasso.LoadedFrom from) {
-            File file = new File(Environment.getExternalStorageDirectory().getPath()  + "/saved.jpg");
+            File file = new File(Environment.getExternalStorageDirectory().getPath() + "/saved.jpg");
             try {
                 file.createNewFile();
                 FileOutputStream ostream = new FileOutputStream(file);
-                bitmap.compress(Bitmap.CompressFormat.JPEG,100,ostream);
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, ostream);
                 ostream.close();
                 user.setProfilePhoto(file);
-                // uploadImage(file);
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
 
         @Override
-        public void onBitmapFailed(Drawable errorDrawable) {}
+        public void onBitmapFailed(Drawable errorDrawable) {
+        }
 
         @Override
-        public void onPrepareLoad(Drawable placeHolderDrawable) {}
+        public void onPrepareLoad(Drawable placeHolderDrawable) {
+        }
     };
 
     @Override
@@ -452,15 +433,15 @@ public class SignUpSelection extends AppCompatActivity implements View.OnClickLi
                 loginButton.performClick();
                 break;
             case R.id.btn_client_signup:
-                if ( checkValidation () ){
-                  // checkEmail();
-                        signup();
-                  //  }
+                if (checkValidation()) {
+                    checkEmail();
+                    // signup();
+                    //}
 
                     //Toast.makeText(SignUpSelection.this, "Form contains not error", Toast.LENGTH_LONG).show();
                 }
 
-                    //Toast.makeText(SignUpSelection.this, "Form contains error", Toast.LENGTH_LONG).show();
+                //Toast.makeText(SignUpSelection.this, "Form contains error", Toast.LENGTH_LONG).show();
                 break;
             case R.id.client_signup_back:
                 back.setOnClickListener(new View.OnClickListener() {
@@ -475,34 +456,34 @@ public class SignUpSelection extends AppCompatActivity implements View.OnClickLi
     }
 
     public void checkEmail() {
-        String email=txtEmail.getText().toString();
+        String email = txtEmail.getText().toString();
         mAPIService.checkEmailExit(txtEmail.getText().toString(), sp.getPreferences(getApplicationContext(), "role")).enqueue(new Callback<Message>() {
             @Override
             public void onResponse(Call<Message> call, Response<Message> response) {
-              //  if (response.isSuccessful()) {
-                        if(response.message().equals("Found")){
-                          //  sp.ShowDialog(SignUpSelection.this,"This Email already Register in application");
-                         // else{
-                          //  }
-                            sp.ShowDialog(SignUpSelection.this,response.errorBody().source().toString().split("\"")[3]);
+                //  if (response.isSuccessful()) {
+                if (response.message().equals("Found")) {
+                    //  sp.ShowDialog(SignUpSelection.this,"This Email already Register in application");
+                    // else{
+                    //  }
+                    sp.ShowDialog(SignUpSelection.this, response.errorBody().source().toString().split("\"")[3]);
 
-                            txtEmail.setError("change Email");
-                            // break;
-                        }else{
-                            //sp.ShowDialog(SignUpSelection.this,response.errorBody().source().toString().split("\"")[3]);
+                    txtEmail.setError("change Email");
+                    // break;
+                } else {
+                    //sp.ShowDialog(SignUpSelection.this,response.errorBody().source().toString().split("\"")[3]);
 
-                            signup();
-                        }
+                    signup();
+                }
                 //}else{
-                   // sp.ShowDialog(SignUpSelection.this,response.errorBody().source().toString().split("\"")[3]);
+                // sp.ShowDialog(SignUpSelection.this,response.errorBody().source().toString().split("\"")[3]);
 
-               // }
+                // }
             }
 
             @Override
             public void onFailure(Call<Message> call, Throwable t) {
-                String email=txtEmail.getText().toString();
-                sp.ShowDialog(SignUpSelection.this,"Server is down. Come back later!!");
+                String email = txtEmail.getText().toString();
+                sp.ShowDialog(SignUpSelection.this, "Server is down. Come back later!!");
 
 
             }
@@ -510,18 +491,18 @@ public class SignUpSelection extends AppCompatActivity implements View.OnClickLi
     }
 
     private void signup() {
-        String email=txtEmail.getText().toString();
-        String password =txtPassword.getText().toString();
-        String confirmPassword=txtConfirmPassword.getText().toString();
-        if(!confirmPassword.equals(password)){
-            sp.ShowDialog(SignUpSelection.this,"Confirm password does not match");
+        String email = txtEmail.getText().toString();
+        String password = txtPassword.getText().toString();
+        String confirmPassword = txtConfirmPassword.getText().toString();
+        if (!confirmPassword.equals(password)) {
+            sp.ShowDialog(SignUpSelection.this, "Confirm password does not match");
             txtConfirmPassword.setText("");
-        }else{
+        } else {
             user.setEmail(email);
             user.setPassword(password);
 
             intent = new Intent(SignUpSelection.this, SignUp.class);
-            intent.putExtra("bitmap",main);
+            intent.putExtra("bitmap", main);
             finish();
 
             startActivity(intent);
@@ -530,6 +511,7 @@ public class SignUpSelection extends AppCompatActivity implements View.OnClickLi
 
 
     }
+
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         Log.d(TAG, "onConnectionFailed:" + connectionResult);

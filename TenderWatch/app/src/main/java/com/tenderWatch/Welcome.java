@@ -25,6 +25,7 @@ public class Welcome extends AppCompatActivity implements View.OnClickListener, 
     private Button btnLogin;
     Context context;
     Intent intent;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,10 +40,11 @@ public class Welcome extends AppCompatActivity implements View.OnClickListener, 
                 .build();
         btnLogin = (Button) findViewById(R.id.btn_logout);
         btnLogin.setOnClickListener(this);
-        context=getApplicationContext();
+        context = getApplicationContext();
 
 
     }
+
     private void signOutGoogle() {
         Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
                 new ResultCallback<Status>() {
@@ -56,6 +58,7 @@ public class Welcome extends AppCompatActivity implements View.OnClickListener, 
         intent = new Intent(Welcome.this, MainActivity.class);
         startActivity(intent);
     }
+
     private void signOutFB() {
         LoginManager.getInstance().logOut();
         intent = new Intent(Welcome.this, MainActivity.class);
@@ -67,15 +70,15 @@ public class Welcome extends AppCompatActivity implements View.OnClickListener, 
         int id = view.getId();
         switch (id) {
             case R.id.btn_logout:
-               // signIn();
-                SharedPreference sp=new SharedPreference();
-               // sp.setPreferences(getApplicationContext(),"Login","YES");
-                String login=sp.getPreferences(getApplicationContext(),"Login");
+                // signIn();
+                SharedPreference sp = new SharedPreference();
+                // sp.setPreferences(getApplicationContext(),"Login","YES");
+                String login = sp.getPreferences(getApplicationContext(), "Login");
 
-                if(login.equals("FBYES")){
+                if (login.equals("FBYES")) {
                     signOutFB();
                 }
-                if(login.equals("GOOGLEYES")){
+                if (login.equals("GOOGLEYES")) {
                     signOutGoogle();
                 }
 

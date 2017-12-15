@@ -19,9 +19,6 @@ import java.util.ArrayList;
 
 public class SideSelector extends View {
     private static String TAG = SideSelector.class.getCanonicalName();
-    //public static char[] ALPHABET2 =CountryList.alphabetlist;
-//    public static char[] ALPHABET2 = new char[]{'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
-//            'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'Y','X', 'Z', 'Å'};
     public static char[] ALPHABET2;
     public static final int BOTTOM_PADDING = 10;
 
@@ -52,7 +49,7 @@ public class SideSelector extends View {
         int size = SideSelector.this.getResources().getDimensionPixelSize(R.dimen.text_12);
         paint.setTextSize(size);
         paint.setFakeBoldText(true);
-     //   paint.setTextAlign(Paint.Align.CENTER);
+        //   paint.setTextAlign(Paint.Align.CENTER);
     }
 
     public void setListView(ListView _list) {
@@ -85,8 +82,9 @@ public class SideSelector extends View {
         }
         return true;
     }
-    public void setAlphabet(char[] chars){
-        ALPHABET2=chars;
+
+    public void setAlphabet(char[] chars) {
+        ALPHABET2 = chars;
         init();
     }
 

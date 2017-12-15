@@ -14,7 +14,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppThemeAction">
         <activity android:name=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity
             android:name=".Login"
@@ -54,12 +58,12 @@
         <activity
             android:name=".Drawer.MainDrawer"
             android:label="@string/title_activity_main_drawer"
+            android:theme="@style/AppThemeAction"></activity>
+        <activity
+            android:name=".ClientDrawer.ClientDrawer"
+            android:label="@string/title_activity_client_drawer"
             android:theme="@style/AppThemeAction">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
     </application>
 

@@ -26,6 +26,13 @@ public class SharedPreference {
         prefsEditor.putString(key, value);
         prefsEditor.commit();
     }
+    public static void removePreferences(Context context, String key) {
+        SharedPreferences appSharedPrefs = PreferenceManager
+                .getDefaultSharedPreferences(context);
+        SharedPreferences.Editor prefsEditor = appSharedPrefs.edit();
+        prefsEditor.remove(key);
+        prefsEditor.commit();
+    }
 
     /**
      * This method is used to get shared object
@@ -59,9 +66,6 @@ public class SharedPreference {
                       //  Toast.makeText(getApplicationContext(),"Yes is clicked",Toast.LENGTH_LONG).show();
                     }
                 });
-
-        //.setTextColor(neededColor);
-
 
         builder.show();
     }

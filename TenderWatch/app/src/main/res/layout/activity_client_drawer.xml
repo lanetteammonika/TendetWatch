@@ -6,22 +6,22 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:openDrawer="start"
-    android:background="@color/colorWhite">
+    android:background="@color/colorWhite"
+    tools:openDrawer="start">
 
     <include
-        layout="@layout/app_bar_main_drawer"
+        layout="@layout/app_bar_client_drawer"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
     <android.support.design.widget.NavigationView
         android:id="@+id/nav_view"
+        android:background="@color/colorWhite"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
-        android:background="@color/colorWhite"
-        app:headerLayout="@layout/nav_header_main_drawer"
-        app:menu="@menu/activity_main_drawer_drawer" />
+        app:headerLayout="@layout/nav_header_client_drawer"
+        app:menu="@menu/activity_client_drawer_drawer" />
 
 </android.support.v4.widget.DrawerLayout>
