@@ -241,6 +241,8 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
             public void onResponse(Call<Register> call, Response<Register> response) {
 
                 if (response.isSuccessful()) {
+                    sp.setPreferencesObject(Login.this,response.body().getUser());
+                    Object user=sp.getPreferencesObject(Login.this);
                     String role = sp.getPreferences(Login.this, "role");
                     if(role.equals("client")){
                         intent = new Intent(Login.this, ClientDrawer.class);
@@ -269,6 +271,8 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
             public void onResponse(Call<Register> call, Response<Register> response) {
 
                 if (response.isSuccessful()) {
+                    sp.setPreferencesObject(Login.this,response.body().getUser());
+                    Object user=sp.getPreferencesObject(Login.this);
                     String role = sp.getPreferences(Login.this, "role");
                     if(role.equals("client")){
                         intent = new Intent(Login.this, ClientDrawer.class);
@@ -297,6 +301,8 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
             public void onResponse(Call<Register> call, Response<Register> response) {
 
                 if (response.isSuccessful()) {
+                    sp.setPreferencesObject(Login.this,response.body().getUser());
+                    Object user=sp.getPreferencesObject(Login.this);
                     String role = sp.getPreferences(Login.this, "role");
                     String profile=response.body().getUser().getProfilePhoto().toString();
                     String email=response.body().getUser().getEmail().toString();
@@ -314,6 +320,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
                         intent = new Intent(Login.this, MainDrawer.class);
                     }
                     startActivity(intent);
+                    finish();
                     Log.i(TAG, "post submitted to API." + response.body().toString());
                 } else {
                     sp.ShowDialog(Login.this, response.errorBody().source().toString().split("\"")[3]);
@@ -426,27 +433,27 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
 
     boolean doubleBackToExitPressedOnce = false;
 
-    @Override
-    public void onBackPressed() {
-        //Checking for fragment count on backstack
-        if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
-            getSupportFragmentManager().popBackStack();
-        } else if (!doubleBackToExitPressedOnce) {
-            this.doubleBackToExitPressedOnce = true;
-            Toast.makeText(this, "Please click BACK again to exit.", Toast.LENGTH_SHORT).show();
-
-            new Handler().postDelayed(new Runnable() {
-
-                @Override
-                public void run() {
-                    doubleBackToExitPressedOnce = false;
-                }
-            }, 2000);
-        } else {
-            super.onBackPressed();
-            return;
-        }
-    }
+//    @Override
+//    public void onBackPressed() {
+//        //Checking for fragment count on backstack
+//        if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+//            getSupportFragmentManager().popBackStack();
+//        } else if (!doubleBackToExitPressedOnce) {
+//            this.doubleBackToExitPressedOnce = true;
+//            Toast.makeText(this, "Please click BACK again to exit.", Toast.LENGTH_SHORT).show();
+//
+//            new Handler().postDelayed(new Runnable() {
+//
+//                @Override
+//                public void run() {
+//                    doubleBackToExitPressedOnce = false;
+//                }
+//            }, 2000);
+//        } else {
+//            super.onBackPressed();
+//            return;
+//        }
+//    }
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {

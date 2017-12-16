@@ -188,11 +188,13 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener {
         String occupation1 = occupation.getText().toString();
         String deviceId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
         String role = sp.getPreferences(SignUp.this, "role");
+
         user.setCountry(country1);
         user.setContactNo(mobile);
         user.setOccupation(occupation1);
         user.setDeviceId(deviceId);
         user.setRole(role);
+
         if (sp.getPreferences(SignUp.this, "role").equals("contractor")) {
             intent = new Intent(
                     SignUp.this, CountryList.class);

@@ -39,7 +39,7 @@
             android:layout_marginLeft="@dimen/value_40"
             android:layout_marginRight="@dimen/value_40"
             android:layout_marginTop="@dimen/value_10"
-            android:id="@+id/selectCountry"
+            android:id="@+id/edit_rlselectCountry"
             >
             <ImageView
                 android:layout_width="@dimen/value_25"
@@ -184,7 +184,7 @@
             android:layout_marginBottom="@dimen/value_5"
             />
         <Button
-            android:id="@+id/edit_btn_Next"
+            android:id="@+id/edit_btn_Update"
             android:layout_width="match_parent"
             android:layout_height="@dimen/value_40"
             android:layout_gravity="center"
@@ -193,7 +193,7 @@
             android:layout_marginRight="@dimen/value_50"
             android:layout_marginTop="@dimen/value_30"
             android:background="@drawable/button"
-            android:text="Next"
+            android:text="Update"
             android:textAllCaps="false"
             android:textColor="@color/colorWhite"
             android:textSize="20sp" />

@@ -10,6 +10,8 @@ import com.tenderWatch.Models.GetCountry;
 import com.tenderWatch.Models.LoginPost;
 import com.tenderWatch.Models.Message;
 import com.tenderWatch.Models.Register;
+import com.tenderWatch.Models.Success;
+import com.tenderWatch.Models.User;
 import com.tenderWatch.SharedPreference.SharedPreference;
 
 import org.json.JSONArray;
@@ -125,6 +127,25 @@ public interface Api {
             @Header("role") String role
     );
 
+    @Multipart
+    @POST("users/{userId}")
+    Call<User> UpdateUser(
+            @Header("Authorization") String token,
+            @Path("userId") String userId,
+            @Part MultipartBody.Part country,
+            @Part MultipartBody.Part contactNo,
+            @Part MultipartBody.Part occupation,
+            @Part MultipartBody.Part aboutMe,
+            @Part MultipartBody.Part image
+    );
 
+    @POST("users/changePassword/{userId}")
+    @FormUrlEncoded
+    Call<Success> ChangePassword(
+            @Header("Authorization") String token,
+            @Path("userId") String userId,
+            @Field("oldPassword") String oldPassword,
+            @Field("newPassword") String newPassword
+    );
 }
 
