@@ -53,5 +53,11 @@
     <dimen name="nav_header_vertical_spacing">8dp</dimen>
     <dimen name="nav_header_height">176dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
+    <dimen name="margin_left_list_item">20dp</dimen>
+    <dimen name="margin_top_list_item">-200dp</dimen>
+    <dimen name="margin_right_list_item">20dp</dimen>
+    <dimen name="margin_bottom_list_item">0dp</dimen>
+    <dimen name="text_11">11sp</dimen>
+    <dimen name="value_70">70dp</dimen>
 
 </resources>

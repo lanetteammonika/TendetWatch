@@ -86,7 +86,7 @@
                 android:text="Country"
                 android:textSize="@dimen/text_20"
                 android:backgroundTint="@android:color/transparent"
-android:enabled="false"
+                android:enabled="false"
                 android:singleLine="true"
                 android:textColor="@color/colorBlack"
                 />

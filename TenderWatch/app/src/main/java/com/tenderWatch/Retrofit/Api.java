@@ -11,6 +11,7 @@ import com.tenderWatch.Models.LoginPost;
 import com.tenderWatch.Models.Message;
 import com.tenderWatch.Models.Register;
 import com.tenderWatch.Models.Success;
+import com.tenderWatch.Models.Tender;
 import com.tenderWatch.Models.User;
 import com.tenderWatch.SharedPreference.SharedPreference;
 
@@ -146,6 +147,10 @@ public interface Api {
             @Path("userId") String userId,
             @Field("oldPassword") String oldPassword,
             @Field("newPassword") String newPassword
+    );
+    @POST("tender/getTenders")
+    Call<Tender> getAllTender(
+            @Header("Authorization") String token
     );
 }
 

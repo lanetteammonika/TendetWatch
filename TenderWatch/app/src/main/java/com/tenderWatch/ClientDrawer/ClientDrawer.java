@@ -118,7 +118,7 @@ public class ClientDrawer extends AppCompatActivity
                 fragment = new ChangePassword();
                 break;
             case R.id.nav_notifications:
-                fragment = new ChangePassword();
+                fragment = new TenderList();
                 break;
             case R.id.nav_contactsupportteam:
                 fragment = new ChangePassword();

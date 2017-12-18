@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:padding="5dip"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content">
+
+    <com.tenderWatch.Validation.MyScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/home_scroll">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+    <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/textview_design"
+            android:padding="@dimen/value_5"
+            >
+
+
+            <TextView
+                android:id="@+id/txt_home_country_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_15"
+                android:text="Select Country"
+                android:textColor="@color/colorBlack"
+                android:layout_marginRight="@dimen/value_20"
+                android:singleLine="true"/>
+            <FrameLayout
+                android:id="@+id/FrameLayout1"
+                android:layout_width="@dimen/value_20"
+                android:layout_height="@dimen/value_20"
+                android:layout_alignParentRight="true"
+                >
+            <ImageView
+                android:id="@+id/down_arrow"
+                android:layout_width="@dimen/value_15"
+                android:layout_height="@dimen/value_15"
+                android:src="@drawable/sort_down_filled"
+                />
+                <ImageView
+                    android:id="@+id/up_arrow"
+                    android:layout_width="@dimen/value_15"
+                    android:layout_height="@dimen/value_15"
+                    android:src="@drawable/sort_up_filled"
+                   android:visibility="gone"
+                    />
+            </FrameLayout>
+        </RelativeLayout>
+
+    <LinearLayout
+    android:id="@+id/country_home"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/listview_border"
+    android:visibility="gone"
+    android:layout_marginBottom="@dimen/value_2"
+    >
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="@dimen/value_5"
+        >
+        <EditText
+            android:id="@+id/edtSearch"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/value_35"
+            android:gravity="center_vertical"
+            android:nextFocusUp="@id/edtSearch"
+            android:nextFocusLeft="@id/edtSearch"
+            android:singleLine="true"
+
+            android:background="@drawable/searchbox"
+            android:textSize="15sp"
+            />
+        <ImageView
+            android:layout_width="20sp"
+            android:layout_height="20sp"
+            android:layout_marginTop="@dimen/value_8"
+            android:layout_alignTop="@+id/edtSearch"
+            android:layout_centerHorizontal="true"
+            android:src="@android:drawable/ic_menu_search" />
+
+    </RelativeLayout>
+    <ListView
+        android:id="@+id/spinner"
+        android:layout_width="fill_parent"
+        android:layout_height="200dp"
+        android:visibility="visible"
+        />
+</LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/textview_design"
+        android:padding="@dimen/value_5"
+        android:layout_marginTop="@dimen/value_15"
+        >
+
+
+        <TextView
+            android:id="@+id/txt_contact_category_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_15"
+            android:text="Select Category"
+            android:textColor="@color/colorBlack"
+            android:layout_marginRight="@dimen/value_20"
+            android:singleLine="true"/>
+        <FrameLayout
+            android:id="@+id/FrameLayout2"
+            android:layout_width="@dimen/value_20"
+            android:layout_height="@dimen/value_20"
+            android:layout_alignParentRight="true"
+            >
+            <ImageView
+                android:id="@+id/down_arrow2"
+                android:layout_width="@dimen/value_15"
+                android:layout_height="@dimen/value_15"
+                android:src="@drawable/sort_down_filled"
+                />
+            <ImageView
+                android:id="@+id/up_arrow2"
+                android:layout_width="@dimen/value_15"
+                android:layout_height="@dimen/value_15"
+                android:src="@drawable/sort_up_filled"
+                android:visibility="gone"
+                />
+        </FrameLayout>
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/category_home"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/listview_border"
+        android:visibility="gone"
+        android:layout_marginBottom="@dimen/value_2"
+        >
+    <ListView
+        android:id="@+id/spinner3"
+        android:layout_width="fill_parent"
+        android:layout_height="200dp"
+        android:visibility="visible"
+        />
+    </LinearLayout>
+        <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="@dimen/value_15">
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="City"
+            android:singleLine="true"
+            android:background="@drawable/edittext_design"
+            android:padding="@dimen/value_5"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="@dimen/value_15">
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Tender Title"
+            android:singleLine="true"
+            android:background="@drawable/edittext_design"
+            android:padding="@dimen/value_5"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="@dimen/value_15"
+       >
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Tender Description"
+            android:lines="5"
+            android:gravity="top"
+            android:background="@drawable/edittext_design"
+            android:padding="@dimen/value_5"/>
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/textview_design"
+        android:padding="@dimen/value_5"
+        android:layout_marginTop="@dimen/value_15"
+        >
+
+
+        <TextView
+            android:id="@+id/txt_password3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_12"
+            android:textColor="@color/colorBlack"
+            android:text="How Should Contractor Apply For This Tender"
+            android:singleLine="true"/>
+        <FrameLayout
+            android:id="@+id/FrameLayout3"
+            android:layout_width="@dimen/value_20"
+            android:layout_height="@dimen/value_20"
+            android:layout_alignParentRight="true"
+            >
+            <ImageView
+                android:id="@+id/down_arrow3"
+                android:layout_width="@dimen/value_15"
+                android:layout_height="@dimen/value_15"
+                android:src="@drawable/sort_down_filled"
+                />
+            <ImageView
+                android:id="@+id/up_arrow3"
+                android:layout_width="@dimen/value_15"
+                android:layout_height="@dimen/value_15"
+                android:src="@drawable/sort_up_filled"
+                android:visibility="gone"
+                />
+        </FrameLayout>
+    </RelativeLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="@dimen/value_15"
+        android:background="@drawable/edittext_design"
+        android:gravity="center"
+        >
+        <ImageView
+            android:layout_gravity="center"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:padding="@dimen/value_2"
+            android:src="@drawable/tender_place"/>
+    </LinearLayout>
+    </LinearLayout>
+</com.tenderWatch.Validation.MyScrollView>
+</LinearLayout>

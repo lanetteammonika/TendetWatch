@@ -15,6 +15,7 @@
         android:theme="@style/AppThemeAction">
         <activity android:name=".MainActivity">
 
+
         </activity>
         <activity
             android:name=".Login"
@@ -64,7 +65,7 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
+              </activity>
     </application>
 
 </manifest>
