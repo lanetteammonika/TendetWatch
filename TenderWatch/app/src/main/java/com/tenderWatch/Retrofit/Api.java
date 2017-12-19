@@ -12,6 +12,7 @@ import com.tenderWatch.Models.Message;
 import com.tenderWatch.Models.Register;
 import com.tenderWatch.Models.Success;
 import com.tenderWatch.Models.Tender;
+import com.tenderWatch.Models.UploadTender;
 import com.tenderWatch.Models.User;
 import com.tenderWatch.SharedPreference.SharedPreference;
 
@@ -149,8 +150,25 @@ public interface Api {
             @Field("newPassword") String newPassword
     );
     @POST("tender/getTenders")
-    Call<Tender> getAllTender(
+    Call<ArrayList<Tender>> getAllTender(
             @Header("Authorization") String token
+    );
+
+    @Multipart
+    @POST("tender")
+    Call<UploadTender> uploadTender(
+            @Header("Authorization") String token,
+            @Part MultipartBody.Part email,
+            @Part MultipartBody.Part tenderName,
+            @Part MultipartBody.Part city,
+            @Part MultipartBody.Part description,
+            @Part MultipartBody.Part contactNo,
+            @Part MultipartBody.Part landlineNo,
+            @Part MultipartBody.Part address,
+            @Part MultipartBody.Part country,
+            @Part MultipartBody.Part category,
+            @Part MultipartBody.Part isFollowTender,
+            @Part MultipartBody.Part image
     );
 }
 

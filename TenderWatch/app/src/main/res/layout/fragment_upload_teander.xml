@@ -159,6 +159,7 @@
         android:orientation="horizontal"
         android:layout_marginTop="@dimen/value_15">
         <EditText
+            android:id="@+id/home_city"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="City"
@@ -173,6 +174,7 @@
         android:orientation="horizontal"
         android:layout_marginTop="@dimen/value_15">
         <EditText
+            android:id="@+id/home_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Tender Title"
@@ -187,6 +189,7 @@
         android:layout_marginTop="@dimen/value_15"
        >
         <EditText
+            android:id="@+id/home_address"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Tender Description"
@@ -243,12 +246,32 @@
         android:gravity="center"
         >
         <ImageView
+            android:id="@+id/tender_image"
             android:layout_gravity="center"
-            android:layout_width="150dp"
+            android:layout_width="match_parent"
             android:layout_height="150dp"
             android:padding="@dimen/value_2"
             android:src="@drawable/tender_place"/>
     </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/value_40"
+                android:orientation="horizontal"
+                android:layout_marginRight="@dimen/value_40"
+                android:layout_marginLeft="@dimen/value_40"
+                android:layout_marginTop="@dimen/value_10">
+                <Button
+                    android:id="@+id/btn_uploadTender"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/value_35"
+                    android:background="@drawable/button"
+                    android:layout_gravity="center"
+                    android:text="Upload Tender"
+                    android:textSize="@dimen/text_20"
+                    android:textAllCaps="false"
+                    android:textColor="@color/colorWhite"
+                    />
+            </LinearLayout>
     </LinearLayout>
 </com.tenderWatch.Validation.MyScrollView>
 </LinearLayout>

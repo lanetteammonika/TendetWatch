@@ -103,7 +103,7 @@ public class ClientDrawer extends AppCompatActivity
         //initializing the fragment object which is selected
         switch (itemId) {
             case R.id.nav_home:
-                fragment = new Home();
+                fragment = new TenderList();
                 break;
             case R.id.nav_subscriptiondetails:
                 fragment = new EditProfile();

@@ -88,5 +88,5 @@ public class SharedPreference {
 
         builder.show();
     }
-
+   // public  void ShowAlert(Context con)
 }

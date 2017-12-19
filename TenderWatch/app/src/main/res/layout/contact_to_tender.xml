@@ -56,12 +56,23 @@
             android:src="@drawable/mobile_3x"
             android:layout_marginTop="@dimen/value_7"
             />
-
+        <TextView
+            android:id="@+id/contact_code"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_15"
+            android:text=""
+            android:textColor="@color/colorBlack"
+            android:layout_marginLeft="@dimen/value_30"
+            android:gravity="center"
+            android:layout_marginTop="15dp"
+            />
         <EditText
+            android:layout_toRightOf="@+id/contact_code"
+
             android:id="@+id/contact_mobile"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/value_30"
             android:hint="Mobile Number"
             android:textSize="@dimen/text_20"
             android:backgroundTint="@android:color/transparent"
@@ -83,6 +94,7 @@
         android:layout_marginLeft="@dimen/value_30"
         android:layout_marginRight="@dimen/value_30"
         android:layout_marginTop="@dimen/value_10"
+        android:layout_gravity="center"
         >
         <ImageView
             android:layout_width="@dimen/value_25"
@@ -99,7 +111,6 @@
             android:hint="Landline Number"
             android:textSize="@dimen/text_20"
             android:backgroundTint="@android:color/transparent"
-            android:enabled="false"
             android:singleLine="true"
             android:textColor="@color/colorBlack"
             />
@@ -128,14 +139,13 @@
             />
 
         <EditText
-            android:id="@+id/country"
+            android:id="@+id/contact_address"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/value_30"
             android:hint="Address"
             android:textSize="@dimen/text_20"
             android:backgroundTint="@android:color/transparent"
-            android:enabled="false"
             android:singleLine="true"
             android:textColor="@color/colorBlack"
             />
