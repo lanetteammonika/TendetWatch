@@ -1,11 +1,14 @@
 package com.tenderWatch.Models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.List;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Tender {
+public class Tender implements Parcelable {
 
     @SerializedName("_id")
     @Expose
@@ -134,6 +137,44 @@ public class Tender {
         this.expiryDate = expiryDate;
         this.tenderPhoto = tenderPhoto;
     }
+
+    protected Tender(Parcel in) {
+        id = in.readString();
+        tenderUploader = in.readString();
+        email = in.readString();
+        tenderName = in.readString();
+        city = in.readString();
+        description = in.readString();
+        contactNo = in.readString();
+        landlineNo = in.readString();
+        address = in.readString();
+        country = in.readString();
+        category = in.readString();
+        if (in.readByte() == 0) {
+            v = null;
+        } else {
+            v = in.readLong();
+        }
+        byte tmpIsFollowTender = in.readByte();
+        isFollowTender = tmpIsFollowTender == 0 ? null : tmpIsFollowTender == 1;
+        createdAt = in.readString();
+        byte tmpIsActive = in.readByte();
+        isActive = tmpIsActive == 0 ? null : tmpIsActive == 1;
+        expiryDate = in.readString();
+        tenderPhoto = in.readString();
+    }
+
+    public static final Creator<Tender> CREATOR = new Creator<Tender>() {
+        @Override
+        public Tender createFromParcel(Parcel in) {
+            return new Tender(in);
+        }
+
+        @Override
+        public Tender[] newArray(int size) {
+            return new Tender[size];
+        }
+    };
 
     public String getId() {
         return id;
@@ -319,4 +360,35 @@ public class Tender {
         this.tenderPhoto = tenderPhoto;
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeStringArray(new String[] {this.id,
+                this.tenderUploader,
+                this.email ,
+        this.tenderName ,
+        this.city ,
+        this.description,
+        this.contactNo,
+        this.landlineNo ,
+        this.address ,
+        this.country ,
+        this.category ,
+                String.valueOf(this.v),
+                (String) this.subscriber,
+                (String) this.amendRead,
+                String.valueOf(this.interested),
+                String.valueOf(this.readby),
+                String.valueOf(this.favorite),
+                String.valueOf(this.disabled),
+                String.valueOf(this.isFollowTender),
+        this.createdAt,
+                String.valueOf(this.isActive),
+        this.expiryDate ,
+        this.tenderPhoto });
+    }
 }

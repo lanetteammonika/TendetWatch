@@ -3,19 +3,20 @@ package com.tenderWatch.ClientDrawer;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -24,7 +25,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.ScrollView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -56,11 +57,10 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 /**
- * Created by lcom48 on 14/12/17.
+ * Created by lcom48 on 20/12/17.
  */
 
-public class Home extends Fragment implements AdapterView.OnItemSelectedListener {
-
+public class EditTender extends Fragment {
     Api mApiService;
     private static final ArrayList<String> alpha = new ArrayList<String>();
     private static final ArrayList<String> countryName = new ArrayList<String>();
@@ -89,9 +89,12 @@ public class Home extends Fragment implements AdapterView.OnItemSelectedListener
 
     private static final int REQUEST_CODE_SELECT_PICTURE = 0;
     private static final int REQUEST_CODE_CROP_PICTURE = 1;
+    Tender object;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        //returning our layout file
+        //change R.layout.yourlayoutfilename for each of your fragments
         return inflater.inflate(R.layout.fragment_upload_teander, container, false);
     }
 
@@ -99,8 +102,8 @@ public class Home extends Fragment implements AdapterView.OnItemSelectedListener
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        //you can set the title for your toolbar here for different fragments different titles
-        getActivity().setTitle("Home");
+
+        mApiService= ApiUtils.getAPIService();
         spinner = (ListView) view.findViewById(R.id.spinner);
         spinner2 = (ListView) view.findViewById(R.id.spinner3);
 
@@ -123,9 +126,24 @@ public class Home extends Fragment implements AdapterView.OnItemSelectedListener
         country = (TextView) view.findViewById(R.id.txt_home_country_name);
         category = (TextView) view.findViewById(R.id.txt_contact_category_name);
         mApiService = ApiUtils.getAPIService();
-        spinner.setOnItemSelectedListener(this);
         scrollView = (MyScrollView) view.findViewById(R.id.home_scroll);
+        Bundle args = getArguments();
+        if (args != null) {
+            object = args.getParcelable("object");
+        } else {
+            Log.w("GetObject", "Arguments expected, but missing");
+        }
+        getActivity().setTitle("Edit Tender");
 
+        FGetAllCountry(view);
+        FGetCategory(view);
+        city.setText(object.getCity().toString());
+        title.setText(object.getTenderName().toString());
+        description.setText(object.getDescription().toString());
+if(!object.getTenderPhoto().toString().equals("")){
+    Bitmap temp=StringToBitMap(object.getTenderPhoto().toString());
+    tenderImage.setImageBitmap(temp);
+}
 
         tenderImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -198,7 +216,7 @@ public class Home extends Fragment implements AdapterView.OnItemSelectedListener
             @SuppressLint("NewApi")
             @Override
             public void onClick(View v) {
-                if (countryname == null || countryname == null) {
+                if (country.getText().toString().equals("") || category.getText().toString().equals("")) {
                     sp.ShowDialog(getActivity(), "First Select Country and Category");
                 } else {
                     final Dialog dialog = new Dialog(getActivity());
@@ -210,8 +228,42 @@ public class Home extends Fragment implements AdapterView.OnItemSelectedListener
                     final EditText address = (EditText) dialog.findViewById(R.id.contact_address);
                     final ImageView box = (ImageView) dialog.findViewById(R.id.home_box);
                     final ImageView boxright = (ImageView) dialog.findViewById(R.id.home_box_checked);
-                    final TextView code=(TextView) dialog.findViewById(R.id.contact_code);
+                    TextView code=(TextView) dialog.findViewById(R.id.contact_code);
+                    if(object.getContactNo().toString().equals("")){
+                        mobile.setText("");
+                    }else{
+                        //code.setText(object.getContactNo().toString().split("-")[0]);
+                        mobile.setText(object.getContactNo().toString());}
 
+                    if(object.getLandlineNo().toString().equals("")){
+                        landline.setText("");
+                    }else{
+                        landline.setText(object.getLandlineNo().toString());
+                    }
+
+                    if(object.getEmail().toString().equals("")){
+                        email2.setText("");
+                    }else{
+                        email2.setText(object.getEmail().toString());
+                    }
+
+                    if(object.getAddress().toString().equals("")){
+                        address.setText("");
+                    }else{
+                        address.setText(object.getAddress().toString());
+                    }
+
+                    if(object.getIsFollowTender()){
+                        boxright.setVisibility(View.VISIBLE);
+                        box.setVisibility(View.GONE);
+                        dismissButton.setAlpha((float) 1);
+                        follow = "true";
+                    }else{
+                        boxright.setVisibility(View.GONE);
+                        box.setVisibility(View.VISIBLE);
+                        dismissButton.setAlpha((float) 0.7);
+                        follow = "false";
+                    }
 
                     box.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -232,7 +284,7 @@ public class Home extends Fragment implements AdapterView.OnItemSelectedListener
                         }
                     });
 
-                    code.setText("+" + countryCode + "-");
+                    //code.setText("+" + countryCode + "-");
                     dismissButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -247,7 +299,7 @@ public class Home extends Fragment implements AdapterView.OnItemSelectedListener
                                     String a = address.getText().toString() != "" ? address.getText().toString() : "";
 
                                     email1 = MultipartBody.Part.createFormData("email", e);
-                                    contactNo1 = MultipartBody.Part.createFormData("contactNo", code+m);
+                                    contactNo1 = MultipartBody.Part.createFormData("contactNo", m);
                                     landlineNo1 = MultipartBody.Part.createFormData("landlineNo", l);
                                     address1 = MultipartBody.Part.createFormData("address", a);
                                     dialog.dismiss();
@@ -299,8 +351,86 @@ public class Home extends Fragment implements AdapterView.OnItemSelectedListener
                 down_arrow2.setVisibility(View.VISIBLE);
             }
         });
+    }
+
+    private void FGetCategory(final View v) {
+        final View v1 = v;
+        mApiService.getCategoryData().enqueue(new Callback<ArrayList<GetCategory>>() {
+            @Override
+            public void onResponse(Call<ArrayList<GetCategory>> call, Response<ArrayList<GetCategory>> response) {
+                Data2 = response.body();
+                for (int i = 0; i < Data2.size(); i++) {
+                    alpha2.add(response.body().get(i).getCategoryName().toString() + "~" + response.body().get(i).getImgString().toString());
+                    categoryName.add(response.body().get(i).getCategoryName().toString() + "~" + response.body().get(i).getId().toString());
+
+                    // CountryFlag.add(response.body().get(i).getImageString().toString());
+                }
+                //Collections.sort(alpha);
+                for (int i = 0; i < Data2.size(); i++) {
+                    if(categoryName.get(i).split("~")[1].toString().equals(object.getCategory().toString())){
+
+                       // categoryName1=response.body().get(i).getCategoryName().toString();
+
+                            category.setText(response.body().get(i).getCategoryName().toString());
+
+                        break;
+                    }
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<GetCategory>> call, Throwable t) {
+
+            }
+        });
+    }
+
+    private void FGetAllCountry(final View v) {
+        final View v1 = v;
+        mApiService.getCountryData().enqueue(new Callback<ArrayList<GetCountry>>() {
+            @Override
+            public void onResponse(Call<ArrayList<GetCountry>> call, Response<ArrayList<GetCountry>> response) {
+                Data = response.body();
+                for (int i = 0; i < Data.size(); i++) {
+                    alpha.add(response.body().get(i).getCountryName().toString() + "~" + response.body().get(i).getImageString().toString());
+                    countryName.add(response.body().get(i).getCountryName().toString() + "~" + response.body().get(i).getCountryCode().toString() + "~" + response.body().get(i).getId().toString());
+
+                    // CountryFlag.add(response.body().get(i).getImageString().toString());
+                }
+                Collections.sort(alpha);
+                Collections.sort(countryName);
+                for (int i = 0; i < Data2.size(); i++) {
+                    if(countryName.get(i).split("~")[2].toString().equals(object.getCountry().toString())){
+                        //flag=response.body().get(i).getImageString().toString();
+                     //   countryName1=response.body().get(i).getCountryName().toString();
+                        country.setText(response.body().get(i).getCountryName().toString());
+                      //  Bflag = StringToBitMap(flag);
+                      //  flag3.setImageBitmap(Bflag);
+                        break;
+                    }
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<GetCountry>> call, Throwable t) {
+
+            }
+        });
 
     }
+    public Bitmap StringToBitMap(String encodedString) {
+        try {
+            byte[] encodeByte = Base64.decode(encodedString, Base64.DEFAULT);
+            Bitmap bitmap = BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
+            return bitmap;
+        } catch (Exception e) {
+            e.getMessage();
+            return null;
+        }
+    }
+
     public static File createPictureFile(String fileName) {
         // To be safe, you should check that the SDCard is mounted
         // using Environment.getExternalStorageState() before doing this.
@@ -319,6 +449,7 @@ public class Home extends Fragment implements AdapterView.OnItemSelectedListener
 
         return picture;
     }
+
     private void SetProfile() {
         Intent pickIntent = new Intent(Intent.ACTION_GET_CONTENT);
         pickIntent.setType("image/*");
@@ -351,7 +482,7 @@ public class Home extends Fragment implements AdapterView.OnItemSelectedListener
         String token="Bearer " +sp.getPreferences(getActivity(),"token");
         //File file1= new File("");
 
-       // RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file1);
+        // RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file1);
 
         if(image1==null) {
             image1 = MultipartBody.Part.createFormData("image", "");
@@ -428,21 +559,6 @@ public class Home extends Fragment implements AdapterView.OnItemSelectedListener
         });
     }
 
-    @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        if (parent.getItemAtPosition(position) != null) {
-            String item = parent.getItemAtPosition(position).toString();
-
-            // Showing selected spinner item
-            Toast.makeText(parent.getContext(), "Selected: " + item, Toast.LENGTH_LONG).show();
-        }
-
-    }
-
-    @Override
-    public void onNothingSelected(AdapterView<?> parent) {
-
-    }
 
 
     @Override
@@ -506,8 +622,6 @@ public class Home extends Fragment implements AdapterView.OnItemSelectedListener
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
-
-
                         }
                         break;
                     case ZoomCropImageActivity.CROP_CANCELLED:

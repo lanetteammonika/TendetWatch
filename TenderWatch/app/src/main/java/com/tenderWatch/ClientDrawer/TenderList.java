@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.icu.text.SimpleDateFormat;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
@@ -30,6 +31,7 @@ import com.tenderWatch.SharedPreference.SharedPreference;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -66,6 +68,8 @@ public class TenderList extends Fragment {
         GetAllTender();
         list_tender=(ListView) view.findViewById(R.id.list_tender);
         final Fragment fragment2 = new Home();
+        final Fragment fragment3 = new PreviewTender();
+
         FragmentManager fragmentManager = getFragmentManager();
         final FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
@@ -85,7 +89,8 @@ public class TenderList extends Fragment {
             @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Object tender=allTender.get(position);
+
+                Tender tender=allTender.get(position);
                 Date startDateValue = null,endDateValue = null;
                 try {
                     startDateValue = new SimpleDateFormat("yyyy-MM-dd").parse(allTender.get(position).getCreatedAt().split("T")[0]);
@@ -105,11 +110,20 @@ public class TenderList extends Fragment {
                 long days = (hours / 24) + 1;
                 Log.d("days", "" + days);
                 Log.i(TAG, "post submitted to API." + tender.toString());
+                Bundle arguments = new Bundle();
+
+                arguments.putParcelable( "object" , tender);
+
+                arguments.putString("day", String.valueOf(days));
+                fragment3.setArguments(arguments);
+                fragmentTransaction.replace(R.id.content_frame, fragment3);
+                fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.commit();
 
             }
         });
         //you can set the title for your toolbar here for different fragments different titles
-        getActivity().setTitle("Edit Profile");
+        getActivity().setTitle("Tender Watch");
     }
 
     private void GetAllTender() {

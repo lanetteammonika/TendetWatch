@@ -56,6 +56,7 @@ public class ClientDrawer extends AppCompatActivity
 
         displaySelectedScreen(R.id.nav_home);
     }
+
 //
 //    @Override
 //    public void onBackPressed() {
