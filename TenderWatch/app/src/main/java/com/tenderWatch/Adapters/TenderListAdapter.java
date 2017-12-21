@@ -43,7 +43,11 @@ public class TenderListAdapter extends BaseAdapter {
         this.context=context;
         this.tenderList=tenderList;
     }
-
+    public void updateReceiptsList(ArrayList<Tender> tenderList) {
+        this.tenderList.clear();
+        this.tenderList.addAll(tenderList);
+        this.notifyDataSetChanged();
+    }
     @Override
     public int getCount() {
         return tenderList.size();

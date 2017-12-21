@@ -1,5 +1,6 @@
 package com.tenderWatch.Drawer;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -16,8 +17,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.tenderWatch.Login;
-import com.tenderWatch.Models.Message;
+import com.tenderWatch.MainActivity;
 import com.tenderWatch.R;
 import com.tenderWatch.Retrofit.Api;
 import com.tenderWatch.Retrofit.ApiUtils;
@@ -33,18 +33,15 @@ public class MainDrawer extends AppCompatActivity
     private Api mAPIService;
     SharedPreference sp = new SharedPreference();
     private static final String TAG = MainDrawer.class.getSimpleName();
+    Intent intent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_drawer);
         Toolbar toolbar = (Toolbar) findViewById(R.id.drawertoolbar);
-        // getSupportActionBar().hide();//Ocultar ActivityBar anterior
-
-        //toolbar = (Toolbar) findViewById(R.id.toolbar);
+        mAPIService= ApiUtils.getAPIService();
         setSupportActionBar(toolbar); //NO PROBLEM !!!!
-
-        //setActionBar(toolbar);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -143,22 +140,31 @@ public class MainDrawer extends AppCompatActivity
     }
 
     private void Logout() {
-//        mAPIService = ApiUtils.getAPIService();
-//        String id = sp.getPreferences(MainDrawer.this, "id");
-//        String deviceId = sp.getPreferences(getApplicationContext(), "deviceId");
-//        String role = sp.getPreferences(MainDrawer.this, "role");
-//        mAPIService.logout(id, deviceId, role).enqueue(new Callback<ResponseBody>() {
-//            @Override
-//            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-//                Log.i(TAG, "post submitted to API." + response.body().toString());
-//
-//            }
-//
-//            @Override
-//            public void onFailure(Call<ResponseBody> call, Throwable t) {
-//                Log.i(TAG, "post submitted to API." + t);
-//
-//            }
-//        });
+        String token="Bearer "+sp.getPreferences(MainDrawer.this,"token");
+        String deviceId = sp.getPreferences(MainDrawer.this, "deviceId");
+        String role=sp.getPreferences(MainDrawer.this,"role");
+
+        mAPIService.logout(token,deviceId,role).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                // Log.i(TAG, "post submitted to API." + response);
+                sp.removePreferences(MainDrawer.this,"role");
+                sp.removePreferences(MainDrawer.this,"email");
+                sp.removePreferences(MainDrawer.this,"id");
+                sp.removePreferences(MainDrawer.this,"profile");
+                sp.removePreferences(MainDrawer.this,"MyObject");
+
+                intent=new Intent(MainDrawer.this, MainActivity.class);
+                startActivity(intent);
+                overridePendingTransition(R.anim.enter, R.anim.exit);
+                finish();
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.i(TAG, "post submitted to API." + t);
+
+            }
+        });
     }
 }

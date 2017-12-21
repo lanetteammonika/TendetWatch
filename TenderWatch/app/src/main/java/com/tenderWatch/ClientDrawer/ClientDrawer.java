@@ -43,8 +43,6 @@ public class ClientDrawer extends AppCompatActivity
         setSupportActionBar(toolbar); //NO PROBLEM !!!!
         mAPIService = ApiUtils.getAPIService();
 
-        //setActionBar(toolbar);
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -56,17 +54,6 @@ public class ClientDrawer extends AppCompatActivity
 
         displaySelectedScreen(R.id.nav_home);
     }
-
-//
-//    @Override
-//    public void onBackPressed() {
-//        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-//        if (drawer.isDrawerOpen(GravityCompat.START)) {
-//            drawer.closeDrawer(GravityCompat.START);
-//        } else {
-//            super.onBackPressed();
-//        }
-//    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -106,8 +93,8 @@ public class ClientDrawer extends AppCompatActivity
             case R.id.nav_home:
                 fragment = new TenderList();
                 break;
-            case R.id.nav_subscriptiondetails:
-                fragment = new EditProfile();
+            case R.id.nav_uploadtender:
+                fragment = new Home();
                 break;
             case R.id.nav_editprofile:
                 fragment = new EditProfile();
@@ -120,9 +107,6 @@ public class ClientDrawer extends AppCompatActivity
                 break;
             case R.id.nav_notifications:
                 fragment = new TenderList();
-                break;
-            case R.id.nav_contactsupportteam:
-                fragment = new ChangePassword();
                 break;
             case R.id.nav_logout:
                 Logout();
@@ -153,9 +137,12 @@ public class ClientDrawer extends AppCompatActivity
                 sp.removePreferences(ClientDrawer.this,"email");
                 sp.removePreferences(ClientDrawer.this,"id");
                 sp.removePreferences(ClientDrawer.this,"profile");
+                sp.removePreferences(ClientDrawer.this,"MyObject");
+
                 intent=new Intent(ClientDrawer.this, MainActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter, R.anim.exit);
+                finish();
 
             }
 

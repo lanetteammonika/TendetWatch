@@ -103,7 +103,6 @@
         android:layout_marginTop="@dimen/value_15"
         >
 
-
         <TextView
             android:id="@+id/txt_contact_category_name"
             android:layout_width="match_parent"

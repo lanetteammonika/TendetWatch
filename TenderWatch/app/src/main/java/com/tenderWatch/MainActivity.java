@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -12,7 +13,11 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.tenderWatch.ClientDrawer.ClientDrawer;
+import com.tenderWatch.ClientDrawer.TenderList;
+import com.tenderWatch.Models.User;
 import com.tenderWatch.SharedPreference.SharedPreference;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
@@ -22,6 +27,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     Intent intent;
     SharedPreference sp = new SharedPreference();
     private static final String TAG = MainActivity.class.getSimpleName();
+    Object user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +36,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         context = this;
         InitView();
         InitListener();
-
+        user=sp.getPreferencesObject(MainActivity.this);
+        if(user!= null){
+            intent = new Intent(MainActivity.this, ClientDrawer.class);
+            sp.setPreferences(MainActivity.this, "role",((User) user).getRole().toString());
+           // intent.putExtra("Role", "client");
+            Log.i(TAG, "testing");
+            startActivity(intent);
+            overridePendingTransition(R.anim.enter, R.anim.exit);
+        }
 
     }
 
@@ -90,5 +104,30 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 break;
         }
+    }
+
+    boolean doubleBackToExitPressedOnce = true;
+
+    @Override
+    public void onBackPressed() {
+        // Checking for fragment count on backstack
+        if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+            getSupportFragmentManager().popBackStack();
+        } else if (!doubleBackToExitPressedOnce) {
+            this.doubleBackToExitPressedOnce = true;
+            Toast.makeText(this, "Please click BACK again to exit.", Toast.LENGTH_SHORT).show();
+
+            new Handler().postDelayed(new Runnable() {
+
+                @Override
+                public void run() {
+                    doubleBackToExitPressedOnce = false;
+                }
+            }, 2000);
+        } else {
+            super.onBackPressed();
+            return;
+        }
+        //finish();
     }
 }
