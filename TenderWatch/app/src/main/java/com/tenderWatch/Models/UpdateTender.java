@@ -1,21 +1,22 @@
 package com.tenderWatch.Models;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
-import java.util.List;
-
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Tender implements Parcelable {
+import java.util.List;
+
+/**
+ * Created by lcom48 on 21/12/17.
+ */
+
+public class UpdateTender {
 
     @SerializedName("_id")
     @Expose
     private String id;
     @SerializedName("tenderUploader")
     @Expose
-    private String tenderUploader;
+    private TenderUploader tenderUploader;
     @SerializedName("email")
     @Expose
     private String email;
@@ -45,13 +46,13 @@ public class Tender implements Parcelable {
     private String category;
     @SerializedName("__v")
     @Expose
-    private Long v;
+    private Integer v;
     @SerializedName("subscriber")
     @Expose
     private Object subscriber;
     @SerializedName("amendRead")
     @Expose
-    private Object amendRead;
+    private List<Object> amendRead = null;
     @SerializedName("interested")
     @Expose
     private List<Object> interested = null;
@@ -80,102 +81,6 @@ public class Tender implements Parcelable {
     @Expose
     private String tenderPhoto;
 
-    /**
-     * No args constructor for use in serialization
-     */
-    public Tender() {
-    }
-
-    /**
-     * @param expiryDate
-     * @param tenderUploader
-     * @param favorite
-     * @param landlineNo
-     * @param interested
-     * @param city
-     * @param country
-     * @param isActive
-     * @param id
-     * @param v
-     * @param category
-     * @param tenderPhoto
-     * @param amendRead
-     * @param email
-     * @param address
-     * @param createdAt
-     * @param readby
-     * @param description
-     * @param tenderName
-     * @param contactNo
-     * @param subscriber
-     * @param disabled
-     * @param isFollowTender
-     */
-    public Tender(String id, String tenderUploader, String email, String tenderName, String city, String description, String contactNo, String landlineNo, String address, String country, String category, Long v, Object subscriber, Object amendRead, List<Object> interested, List<Object> readby, List<Object> favorite, List<Object> disabled, Boolean isFollowTender, String createdAt, Boolean isActive, String expiryDate, String tenderPhoto) {
-        super();
-        this.id = id;
-        this.tenderUploader = tenderUploader;
-        this.email = email;
-        this.tenderName = tenderName;
-        this.city = city;
-        this.description = description;
-        this.contactNo = contactNo;
-        this.landlineNo = landlineNo;
-        this.address = address;
-        this.country = country;
-        this.category = category;
-        this.v = v;
-        this.subscriber = subscriber;
-        this.amendRead = amendRead;
-        this.interested = interested;
-        this.readby = readby;
-        this.favorite = favorite;
-        this.disabled = disabled;
-        this.isFollowTender = isFollowTender;
-        this.createdAt = createdAt;
-        this.isActive = isActive;
-        this.expiryDate = expiryDate;
-        this.tenderPhoto = tenderPhoto;
-    }
-
-    protected Tender(Parcel in) {
-        id = in.readString();
-        tenderUploader = in.readString();
-        email = in.readString();
-        tenderName = in.readString();
-        city = in.readString();
-        description = in.readString();
-        contactNo = in.readString();
-        landlineNo = in.readString();
-        address = in.readString();
-        country = in.readString();
-        category = in.readString();
-        if (in.readByte() == 0) {
-            v = null;
-        } else {
-            v = in.readLong();
-        }
-        byte tmpIsFollowTender = in.readByte();
-        isFollowTender = tmpIsFollowTender == 0 ? null : tmpIsFollowTender == 1;
-        createdAt = in.readString();
-        byte tmpIsActive = in.readByte();
-        isActive = tmpIsActive == 0 ? null : tmpIsActive == 1;
-        expiryDate = in.readString();
-        tenderPhoto = in.readString();
-    }
-
-    public static final Creator<Tender> CREATOR = new Creator<Tender>() {
-        @Override
-        public Tender createFromParcel(Parcel in) {
-            return new Tender(in);
-        }
-
-        @Override
-        public Tender[] newArray(int size) {
-            return new Tender[size];
-        }
-    };
-
     public String getId() {
         return id;
     }
@@ -184,11 +89,11 @@ public class Tender implements Parcelable {
         this.id = id;
     }
 
-    public String getTenderUploader() {
+    public TenderUploader getTenderUploader() {
         return tenderUploader;
     }
 
-    public void setTenderUploader(String tenderUploader) {
+    public void setTenderUploader(TenderUploader tenderUploader) {
         this.tenderUploader = tenderUploader;
     }
 
@@ -264,11 +169,11 @@ public class Tender implements Parcelable {
         this.category = category;
     }
 
-    public Long getV() {
+    public Integer getV() {
         return v;
     }
 
-    public void setV(Long v) {
+    public void setV(Integer v) {
         this.v = v;
     }
 
@@ -280,11 +185,11 @@ public class Tender implements Parcelable {
         this.subscriber = subscriber;
     }
 
-    public Object getAmendRead() {
+    public List<Object> getAmendRead() {
         return amendRead;
     }
 
-    public void setAmendRead(Object amendRead) {
+    public void setAmendRead(List<Object> amendRead) {
         this.amendRead = amendRead;
     }
 
@@ -360,35 +265,4 @@ public class Tender implements Parcelable {
         this.tenderPhoto = tenderPhoto;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeStringArray(new String[] {this.id,
-                this.tenderUploader,
-                this.email ,
-        this.tenderName ,
-        this.city ,
-        this.description,
-        this.contactNo,
-        this.landlineNo ,
-        this.address ,
-        this.country ,
-        this.category ,
-                String.valueOf(this.v),
-                String.valueOf(this.subscriber),
-                String.valueOf(this.amendRead),
-                String.valueOf(this.interested),
-                String.valueOf(this.readby),
-                String.valueOf(this.favorite),
-                String.valueOf(this.disabled),
-                String.valueOf(this.isFollowTender),
-        this.createdAt,
-                String.valueOf(this.isActive),
-        this.expiryDate ,
-        this.tenderPhoto });
-    }
 }

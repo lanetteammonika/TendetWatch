@@ -3,6 +3,7 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
+    android:padding="@dimen/value_5"
     >
     <ScrollView
         android:layout_width="match_parent"
@@ -22,7 +23,8 @@
             android:id="@+id/preview_tender_image"
             android:layout_width="180dp"
             android:layout_height="180dp"
-            android:src="@drawable/avtar" />
+            android:src="@drawable/avtar"
+            android:scaleType="fitXY"/>
     </LinearLayout>
 
     <LinearLayout

@@ -154,6 +154,10 @@ public class Home extends Fragment implements AdapterView.OnItemSelectedListener
             @Override
             public void onClick(View v) {
                 CallApi();
+                alpha.clear();
+                alpha2.clear();
+                countryName.clear();
+                categoryName.clear();
             }
         });
 
@@ -233,6 +237,7 @@ public class Home extends Fragment implements AdapterView.OnItemSelectedListener
                     });
 
                     code.setText("+" + countryCode + "-");
+
                     dismissButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -247,7 +252,7 @@ public class Home extends Fragment implements AdapterView.OnItemSelectedListener
                                     String a = address.getText().toString() != "" ? address.getText().toString() : "";
 
                                     email1 = MultipartBody.Part.createFormData("email", e);
-                                    contactNo1 = MultipartBody.Part.createFormData("contactNo", code+m);
+                                    contactNo1 = MultipartBody.Part.createFormData("contactNo", "+" + countryCode + "-"+m);
                                     landlineNo1 = MultipartBody.Part.createFormData("landlineNo", l);
                                     address1 = MultipartBody.Part.createFormData("address", a);
                                     dialog.dismiss();
@@ -266,7 +271,10 @@ public class Home extends Fragment implements AdapterView.OnItemSelectedListener
             }
         });
 
-
+        alpha.clear();
+        alpha2.clear();
+        countryName.clear();
+        categoryName.clear();
         GetAllCountry(view);
         GetCategory(view);
 
@@ -466,7 +474,6 @@ public class Home extends Fragment implements AdapterView.OnItemSelectedListener
                         intent.putExtra(ZoomCropImageActivity.INTENT_EXTRA_URI, selectedImageUri);
                         intent.putExtra(ZoomCropImageActivity.INTENT_EXTRA_OUTPUT_WIDTH, PICTURE_WIDTH);
                         intent.putExtra(ZoomCropImageActivity.INTENT_EXTRA_OUTPUT_HEIGHT, PICTURE_HEIGHT);
-
                         intent.putExtra(ZoomCropImageActivity.INTENT_EXTRA_CROP_SHAPE, CropShape.SHAPE_RECTANGLE);   //optional
                         File croppedPicture = createPictureFile("cropped.png");
                         if (croppedPicture != null) {

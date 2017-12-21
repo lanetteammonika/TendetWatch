@@ -3,7 +3,8 @@
     android:orientation="vertical"
     android:padding="5dip"
     android:layout_width="fill_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    >
 
     <com.tenderWatch.Validation.MyScrollView
         android:layout_width="match_parent"
@@ -20,8 +21,6 @@
             android:background="@drawable/textview_design"
             android:padding="@dimen/value_5"
             >
-
-
             <TextView
                 android:id="@+id/txt_home_country_name"
                 android:layout_width="match_parent"
@@ -76,7 +75,6 @@
             android:nextFocusUp="@id/edtSearch"
             android:nextFocusLeft="@id/edtSearch"
             android:singleLine="true"
-
             android:background="@drawable/searchbox"
             android:textSize="15sp"
             />
@@ -249,9 +247,10 @@
             android:id="@+id/tender_image"
             android:layout_gravity="center"
             android:layout_width="match_parent"
-            android:layout_height="150dp"
+            android:layout_height="180dp"
             android:padding="@dimen/value_2"
-            android:src="@drawable/tender_place"/>
+            android:src="@drawable/tender_place"
+            />
     </LinearLayout>
             <LinearLayout
                 android:layout_width="match_parent"

@@ -4,6 +4,9 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
+import android.icu.text.SimpleDateFormat;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,7 +23,9 @@ import com.tenderWatch.Models.Tender;
 import com.tenderWatch.R;
 import com.tenderWatch.SignUpSelection;
 
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Locale;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -54,6 +59,7 @@ public class TenderListAdapter extends BaseAdapter {
         return 0;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -77,23 +83,36 @@ public class TenderListAdapter extends BaseAdapter {
                         @Override
                         public void onBitmapFailed(Drawable errorDrawable) {
                             Log.v("Main", "errrorrrr");
-
                         }
 
                         @Override
                         public void onPrepareLoad(Drawable placeHolderDrawable) {
-
                         }
                     });
           //  Log.i(TAG, profilePicUrl);
         //}
-
         }
+        Date startDateValue = null,endDateValue = null;
+        try {
+            startDateValue = new SimpleDateFormat("yyyy-MM-dd").parse(tenderList.get(position).getCreatedAt().split("T")[0]);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        try {
+            endDateValue = new SimpleDateFormat("yyyy-MM-dd").parse(tenderList.get(position).getExpiryDate().split("T")[0]);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        //Date endDateValue = new Date(allTender.get(position).getExpiryDate().split("T")[0]);
+        long diff = endDateValue.getTime() - startDateValue.getTime();
+        long seconds = diff / 1000;
+        long minutes = seconds / 60;
+        long hours = minutes / 60;
+        long days = (hours / 24) + 1;
+        Log.d("days", "" + days);
         txtTenderName.setText(tenderList.get(position).getTenderName().toString());
         txtTenderTitle.setText(tenderList.get(position).getTenderName().toString());
-
-        txtTenderExpDate.setText(tenderList.get(position).getExpiryDate().toString());
-
+        txtTenderExpDate.setText(days+" days");
         return convertView;
     }
 

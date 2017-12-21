@@ -2,6 +2,7 @@ package com.tenderWatch.ClientDrawer;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -17,6 +18,8 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 import com.tenderWatch.Adapters.CustomList;
 import com.tenderWatch.Models.GetCategory;
 import com.tenderWatch.Models.GetCountry;
@@ -24,11 +27,13 @@ import com.tenderWatch.Models.Tender;
 import com.tenderWatch.R;
 import com.tenderWatch.Retrofit.Api;
 import com.tenderWatch.Retrofit.ApiUtils;
+import com.tenderWatch.SharedPreference.SharedPreference;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -49,11 +54,12 @@ public class PreviewTender extends Fragment {
     Tender object;
     String day,flag,countryName1,categoryName1;
     Bitmap Bflag;
-    ImageView flag3;
+    ImageView flag3,imagetender;
 
     TextView tenderTitle,Country,Category,ExpDay,Description,City,Contact,LandLine,Email,Address;
     RelativeLayout rlEmail,rlContact,rlLandline,rlAddress;
     Button removeTender,editTender;
+    SharedPreference sp=new SharedPreference();
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -87,6 +93,7 @@ public class PreviewTender extends Fragment {
         rlEmail=(RelativeLayout) view.findViewById(R.id.rl_preview_email);
         removeTender=(Button) view.findViewById(R.id.remove_tender);
         editTender=(Button) view.findViewById(R.id.edit_tender);
+        imagetender=(ImageView) view.findViewById(R.id.preview_tender_image);
 
 
         editTender.setOnClickListener(new View.OnClickListener() {
@@ -104,12 +111,61 @@ public class PreviewTender extends Fragment {
             }
         });
 
+        removeTender.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String token="Bearer "+sp.getPreferences(getActivity(),"token");
+                String id=object.getId().toString();
+                mApiService.removeTender(token,id).enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        Log.i(TAG,"response---"+response.body());
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        Log.i(TAG,"response---"+t);
+
+                    }
+                });
+
+            }
+        });
+
+
         Bundle args = getArguments();
         if (args != null) {
             object = args.getParcelable("object");
             day=args.getString("day");
         } else {
             Log.w("GetObject", "Arguments expected, but missing");
+        }
+        if(!object.getTenderPhoto().toString().equals("")){
+            Picasso.with(getActivity())
+                    .load(object.getTenderPhoto().toString())
+                    .into(new Target() {
+                        @Override
+                        public void onBitmapLoaded(final Bitmap bitmap, Picasso.LoadedFrom from) {
+                            Log.v("Main", String.valueOf(bitmap));
+                            // main = bitmap;
+                            imagetender.setImageBitmap(bitmap);
+                          //  imagetender.getLayoutParams().height = 300;
+                            //imagetender.getLayoutParams().width = 100;
+                        }
+
+                        @Override
+                        public void onBitmapFailed(Drawable errorDrawable) {
+                            Log.v("Main", "errrorrrr");
+
+                        }
+
+                        @Override
+                        public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+                        }
+                    });
+
         }
         GetCategory(view);
         GetAllCountry(view);

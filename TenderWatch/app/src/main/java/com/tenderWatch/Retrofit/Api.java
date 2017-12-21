@@ -12,6 +12,7 @@ import com.tenderWatch.Models.Message;
 import com.tenderWatch.Models.Register;
 import com.tenderWatch.Models.Success;
 import com.tenderWatch.Models.Tender;
+import com.tenderWatch.Models.UpdateTender;
 import com.tenderWatch.Models.UploadTender;
 import com.tenderWatch.Models.User;
 import com.tenderWatch.SharedPreference.SharedPreference;
@@ -37,6 +38,7 @@ import retrofit2.http.Header;
 import retrofit2.http.Multipart;
 import retrofit2.http.OPTIONS;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Part;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
@@ -170,5 +172,31 @@ public interface Api {
             @Part MultipartBody.Part isFollowTender,
             @Part MultipartBody.Part image
     );
+    @Multipart
+    @PUT("tender/{tenderDetailId}")
+    Call<UpdateTender> updateTender(
+            @Header("Authorization") String token,
+            @Path("tenderDetailId") String id,
+            @Part MultipartBody.Part email,
+            @Part MultipartBody.Part tenderName,
+            @Part MultipartBody.Part city,
+            @Part MultipartBody.Part description,
+            @Part MultipartBody.Part contactNo,
+            @Part MultipartBody.Part landlineNo,
+            @Part MultipartBody.Part address,
+            @Part MultipartBody.Part country,
+            @Part MultipartBody.Part category,
+            @Part MultipartBody.Part isFollowTender,
+            @Part MultipartBody.Part image
+    );
+
+    @DELETE("tender/{tenderDetailId}")
+    Call<ResponseBody> removeTender(
+            @Header("Authorization") String token,
+            @Path("tenderDetailId") String id
+
+    );
+
+
 }
 

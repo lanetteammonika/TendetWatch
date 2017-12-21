@@ -6,6 +6,7 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -14,6 +15,8 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -31,17 +34,22 @@ import android.widget.Toast;
 
 import com.github.crazyorr.zoomcropimage.CropShape;
 import com.github.crazyorr.zoomcropimage.ZoomCropImageActivity;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 import com.tenderWatch.Adapters.CustomList;
 import com.tenderWatch.BuildConfig;
 import com.tenderWatch.Models.GetCategory;
 import com.tenderWatch.Models.GetCountry;
 import com.tenderWatch.Models.Tender;
+import com.tenderWatch.Models.UpdateTender;
 import com.tenderWatch.Models.UploadTender;
 import com.tenderWatch.R;
 import com.tenderWatch.Retrofit.Api;
 import com.tenderWatch.Retrofit.ApiUtils;
 import com.tenderWatch.SharedPreference.SharedPreference;
+import com.tenderWatch.SignUpSelection;
 import com.tenderWatch.Validation.MyScrollView;
+import com.tenderWatch.Validation.Validation;
 
 import java.io.File;
 import java.io.IOException;
@@ -67,6 +75,11 @@ public class EditTender extends Fragment {
 
     private static final ArrayList<String> alpha2 = new ArrayList<String>();
     private static final ArrayList<String> categoryName = new ArrayList<String>();
+    private static final ArrayList<String> falpha = new ArrayList<String>();
+    private static final ArrayList<String> fcountryName = new ArrayList<String>();
+
+    private static final ArrayList<String> falpha2 = new ArrayList<String>();
+    private static final ArrayList<String> fcategoryName = new ArrayList<String>();
     private static final String TAG = Home.class.getSimpleName();
     private List Data, Data2;
     CustomList countryAdapter, categoryAdapter;
@@ -74,10 +87,10 @@ public class EditTender extends Fragment {
     ImageView down_arrow, up_arrow, down_arrow2, up_arrow2, down_arrow3, up_arrow3,tenderImage;
     LinearLayout country_home, category_home;
     TextView country, category;
-    String countryCode, categoryname, countryname, follow = "false";
+    String countryCode, categoryname, countryname, follow = "false",id;
     SharedPreference sp = new SharedPreference();
     MyScrollView scrollView;
-    MultipartBody.Part name1, email1, countryId1,image1, categoryId1, landlineNo1, contactNo1, city1, description1, address1, isFollowTendeer1, tenderPhono1;
+    MultipartBody.Part name1, id1, email1, countryId1,image1, categoryId1, landlineNo1, contactNo1, city1, description1, address1, isFollowTendeer1, tenderPhono1;
     EditText city,title,description;
     Button btnUploadTender;
     private Uri mPictureUri;
@@ -134,16 +147,38 @@ public class EditTender extends Fragment {
             Log.w("GetObject", "Arguments expected, but missing");
         }
         getActivity().setTitle("Edit Tender");
-
+        id=object.getId().toString();
         FGetAllCountry(view);
         FGetCategory(view);
         city.setText(object.getCity().toString());
         title.setText(object.getTenderName().toString());
         description.setText(object.getDescription().toString());
-if(!object.getTenderPhoto().toString().equals("")){
-    Bitmap temp=StringToBitMap(object.getTenderPhoto().toString());
-    tenderImage.setImageBitmap(temp);
-}
+        String cid=object.getCountry().toString();
+                String caid=object.getCategory().toString();
+
+        if(!object.getTenderPhoto().toString().equals("")){
+            Picasso.with(getActivity())
+                    .load(object.getTenderPhoto().toString())
+                    .into(new Target() {
+                        @Override
+                        public void onBitmapLoaded(final Bitmap bitmap, Picasso.LoadedFrom from) {
+                            Log.v("Main", String.valueOf(bitmap));
+                           // main = bitmap;
+                            tenderImage.setImageBitmap(bitmap);
+                        }
+
+                        @Override
+                        public void onBitmapFailed(Drawable errorDrawable) {
+                            Log.v("Main", "errrorrrr");
+
+                        }
+
+                        @Override
+                        public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+                        }
+                    });
+        }
 
         tenderImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -163,7 +198,6 @@ if(!object.getTenderPhoto().toString().equals("")){
                 up_arrow2.setVisibility(View.GONE);
                 down_arrow2.setVisibility(View.VISIBLE);
                 scrollView.setScrolling(false);
-                // homeScroll.setScrollbarFadingEnabled(false);
             }
         });
 
@@ -172,6 +206,14 @@ if(!object.getTenderPhoto().toString().equals("")){
             @Override
             public void onClick(View v) {
                 CallApi();
+                alpha.clear();
+                alpha2.clear();
+                countryName.clear();
+                categoryName.clear();
+                falpha.clear();
+                falpha2.clear();
+                fcountryName.clear();
+                fcategoryName.clear();
             }
         });
 
@@ -283,8 +325,47 @@ if(!object.getTenderPhoto().toString().equals("")){
                             follow = "false";
                         }
                     });
+                    if (countryCode != null) {
 
-                    //code.setText("+" + countryCode + "-");
+                        code.setText("+" + countryCode + "-");
+                        mobile.setText("");
+                    }
+
+                    email2.addTextChangedListener(new TextWatcher() {
+                        @Override
+                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                        }
+
+                        @Override
+                        public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                        }
+
+                        @Override
+                        public void afterTextChanged(Editable s) {
+                            Validation.isEmailAddress(email2,true);
+
+                        }
+                    });
+                    mobile.addTextChangedListener(new TextWatcher() {
+                        @Override
+                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                        }
+
+                        @Override
+                        public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                        }
+
+                        @Override
+                        public void afterTextChanged(Editable s) {
+                            Validation.isPhoneNumber(mobile,true);
+
+                        }
+                    });
+
                     dismissButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -293,6 +374,7 @@ if(!object.getTenderPhoto().toString().equals("")){
                                 if (email2.getText().toString().equals("") && mobile.getText().toString().equals("") && address.getText().toString().equals("") && landline.getText().toString().equals("")) {
                                     sp.ShowDialog(getActivity(), "please fill at least one information");
                                 } else {
+
                                     String e = email2.getText().toString() != "" ? email2.getText().toString() : "";
                                     String m = mobile.getText().toString() != "" ? mobile.getText().toString() : "";
                                     String l = landline.getText().toString() != "" ? landline.getText().toString() : "";
@@ -318,7 +400,10 @@ if(!object.getTenderPhoto().toString().equals("")){
             }
         });
 
-
+        alpha.clear();
+        alpha2.clear();
+        countryName.clear();
+        categoryName.clear();
         GetAllCountry(view);
         GetCategory(view);
 
@@ -360,16 +445,17 @@ if(!object.getTenderPhoto().toString().equals("")){
             public void onResponse(Call<ArrayList<GetCategory>> call, Response<ArrayList<GetCategory>> response) {
                 Data2 = response.body();
                 for (int i = 0; i < Data2.size(); i++) {
-                    alpha2.add(response.body().get(i).getCategoryName().toString() + "~" + response.body().get(i).getImgString().toString());
-                    categoryName.add(response.body().get(i).getCategoryName().toString() + "~" + response.body().get(i).getId().toString());
+                    falpha2.add(response.body().get(i).getCategoryName().toString() + "~" + response.body().get(i).getImgString().toString());
+                    fcategoryName.add(response.body().get(i).getCategoryName().toString() + "~" + response.body().get(i).getId().toString());
 
                     // CountryFlag.add(response.body().get(i).getImageString().toString());
                 }
                 //Collections.sort(alpha);
                 for (int i = 0; i < Data2.size(); i++) {
-                    if(categoryName.get(i).split("~")[1].toString().equals(object.getCategory().toString())){
+                    if(fcategoryName.get(i).split("~")[1].toString().equals(object.getCategory().toString())){
 
                        // categoryName1=response.body().get(i).getCategoryName().toString();
+                       // categoryId1 = MultipartBody.Part.createFormData("country",response.body().get(i).getId().toString());
 
                             category.setText(response.body().get(i).getCategoryName().toString());
 
@@ -393,17 +479,19 @@ if(!object.getTenderPhoto().toString().equals("")){
             public void onResponse(Call<ArrayList<GetCountry>> call, Response<ArrayList<GetCountry>> response) {
                 Data = response.body();
                 for (int i = 0; i < Data.size(); i++) {
-                    alpha.add(response.body().get(i).getCountryName().toString() + "~" + response.body().get(i).getImageString().toString());
-                    countryName.add(response.body().get(i).getCountryName().toString() + "~" + response.body().get(i).getCountryCode().toString() + "~" + response.body().get(i).getId().toString());
+                    falpha.add(response.body().get(i).getCountryName().toString() + "~" + response.body().get(i).getImageString().toString());
+                    fcountryName.add(response.body().get(i).getCountryName().toString() + "~" + response.body().get(i).getCountryCode().toString() + "~" + response.body().get(i).getId().toString());
 
                     // CountryFlag.add(response.body().get(i).getImageString().toString());
                 }
-                Collections.sort(alpha);
-                Collections.sort(countryName);
+                Collections.sort(falpha);
+                Collections.sort(fcountryName);
                 for (int i = 0; i < Data2.size(); i++) {
-                    if(countryName.get(i).split("~")[2].toString().equals(object.getCountry().toString())){
+                    if(fcountryName.get(i).split("~")[2].toString().equals(object.getCountry().toString())){
                         //flag=response.body().get(i).getImageString().toString();
                      //   countryName1=response.body().get(i).getCountryName().toString();
+                       // countryId1 = MultipartBody.Part.createFormData("country", response.body().get(i).getId().toString());
+
                         country.setText(response.body().get(i).getCountryName().toString());
                       //  Bflag = StringToBitMap(flag);
                       //  flag3.setImageBitmap(Bflag);
@@ -419,16 +507,6 @@ if(!object.getTenderPhoto().toString().equals("")){
             }
         });
 
-    }
-    public Bitmap StringToBitMap(String encodedString) {
-        try {
-            byte[] encodeByte = Base64.decode(encodedString, Base64.DEFAULT);
-            Bitmap bitmap = BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
-            return bitmap;
-        } catch (Exception e) {
-            e.getMessage();
-            return null;
-        }
     }
 
     public static File createPictureFile(String fileName) {
@@ -467,7 +545,6 @@ if(!object.getTenderPhoto().toString().equals("")){
         startActivityForResult(chooserIntent, REQUEST_CODE_SELECT_PICTURE);
     }
 
-
     private void CallApi() {
         String City=city.getText().toString();
         String Title=title.getText().toString();
@@ -480,6 +557,7 @@ if(!object.getTenderPhoto().toString().equals("")){
             description1=MultipartBody.Part.createFormData("description",Des);
         }
         String token="Bearer " +sp.getPreferences(getActivity(),"token");
+        id=object.getId().toString();
         //File file1= new File("");
 
         // RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file1);
@@ -488,11 +566,12 @@ if(!object.getTenderPhoto().toString().equals("")){
             image1 = MultipartBody.Part.createFormData("image", "");
         }
         isFollowTendeer1=MultipartBody.Part.createFormData("isFollowTender","true");
-
-        mApiService.uploadTender(token,email1,name1,city1,description1,contactNo1,landlineNo1,address1,countryId1,categoryId1,isFollowTendeer1,image1)
-                .enqueue(new Callback<UploadTender>() {
+        countryId1 = MultipartBody.Part.createFormData("country", object.getCountry().toString());
+        categoryId1 = MultipartBody.Part.createFormData("category", object.getCategory().toString());
+        mApiService.updateTender(token,id,email1,name1,city1,description1,contactNo1,landlineNo1,address1,countryId1,categoryId1,isFollowTendeer1,image1)
+                .enqueue(new Callback<UpdateTender>() {
                     @Override
-                    public void onResponse(Call<UploadTender> call, Response<UploadTender> response) {
+                    public void onResponse(Call<UpdateTender> call, Response<UpdateTender> response) {
 
 
                         Log.i(TAG,"response---"+response.body());
@@ -500,7 +579,7 @@ if(!object.getTenderPhoto().toString().equals("")){
                     }
 
                     @Override
-                    public void onFailure(Call<UploadTender> call, Throwable t) {
+                    public void onFailure(Call<UpdateTender> call, Throwable t) {
                         Log.i(TAG,"response---"+t);
 
                     }

@@ -37,8 +37,8 @@ public class ArrayAdapter extends BaseAdapter implements SectionIndexer {
 
     private ArrayList<String> alpha2, list;
     private int textViewResourceId;
-   ViewHolder holder;
-   ViewHolderSection holderSection;
+    ViewHolder holder;
+    ViewHolderSection holderSection;
     int position;
     private static final String TAG = "IndexingArrayAdapter";
     char[] chars;
