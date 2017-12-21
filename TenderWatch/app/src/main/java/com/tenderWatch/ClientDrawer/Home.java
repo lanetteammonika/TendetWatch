@@ -13,6 +13,8 @@ import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -41,6 +43,7 @@ import com.tenderWatch.Retrofit.Api;
 import com.tenderWatch.Retrofit.ApiUtils;
 import com.tenderWatch.SharedPreference.SharedPreference;
 import com.tenderWatch.Validation.MyScrollView;
+import com.tenderWatch.Validation.Validation;
 
 import java.io.File;
 import java.io.IOException;
@@ -235,7 +238,40 @@ public class Home extends Fragment implements AdapterView.OnItemSelectedListener
                             follow = "false";
                         }
                     });
+                    email2.addTextChangedListener(new TextWatcher() {
+                        @Override
+                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
+                        }
+
+                        @Override
+                        public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                        }
+
+                        @Override
+                        public void afterTextChanged(Editable s) {
+                            Validation.isEmailAddress(email2,true);
+
+                        }
+                    });
+                    mobile.addTextChangedListener(new TextWatcher() {
+                        @Override
+                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                        }
+
+                        @Override
+                        public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                        }
+
+                        @Override
+                        public void afterTextChanged(Editable s) {
+                            Validation.isPhoneNumber(mobile,true);
+
+                        }
+                    });
                     code.setText("+" + countryCode + "-");
 
                     dismissButton.setOnClickListener(new View.OnClickListener() {
