@@ -10,6 +10,7 @@ import com.tenderWatch.Models.GetCountry;
 import com.tenderWatch.Models.LoginPost;
 import com.tenderWatch.Models.Message;
 import com.tenderWatch.Models.Register;
+import com.tenderWatch.Models.SubScriptionResponse;
 import com.tenderWatch.Models.Success;
 import com.tenderWatch.Models.Tender;
 import com.tenderWatch.Models.UpdateTender;
@@ -197,6 +198,10 @@ public interface Api {
 
     );
 
+    @GET("service/userServices")
+    Call<SubScriptionResponse> getSubscriptionDetails(
+            @Header("Authorization") String token
+    );
 
 }
 

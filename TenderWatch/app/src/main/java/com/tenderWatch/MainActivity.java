@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.tenderWatch.ClientDrawer.ClientDrawer;
 import com.tenderWatch.ClientDrawer.TenderList;
+import com.tenderWatch.Drawer.MainDrawer;
 import com.tenderWatch.Models.User;
 import com.tenderWatch.SharedPreference.SharedPreference;
 
@@ -38,7 +39,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         InitListener();
         user=sp.getPreferencesObject(MainActivity.this);
         if(user!= null){
-            intent = new Intent(MainActivity.this, ClientDrawer.class);
+            String role=sp.getPreferences(MainActivity.this,"role");
+            if(role.equals("client")) {
+                intent = new Intent(MainActivity.this, ClientDrawer.class);
+            }else{
+                intent = new Intent(MainActivity.this, MainDrawer.class);
+            }
             sp.setPreferences(MainActivity.this, "role",((User) user).getRole().toString());
            // intent.putExtra("Role", "client");
             Log.i(TAG, "testing");

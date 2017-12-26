@@ -38,6 +38,7 @@ import org.json.JSONObject;
 import java.io.Serializable;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
 import okhttp3.ResponseBody;
@@ -140,7 +141,6 @@ public class TenderList extends Fragment {
                 intent.putExtra("data",jsonString);
                 startActivity(intent);
 
-
             }
         });
         //you can set the title for your toolbar here for different fragments different titles
@@ -153,9 +153,11 @@ public class TenderList extends Fragment {
             @Override
             public void onResponse(Call<ArrayList<Tender>> call, Response<ArrayList<Tender>> response) {
                // Log.i(TAG, "post submitted to API." + response.body());
-                allTender=response.body();
-                adapter=new TenderListAdapter(getActivity(),response.body());
-                list_tender.setAdapter(adapter);
+                if(response.body()!=null) {
+                    allTender = response.body();
+                    adapter = new TenderListAdapter(getActivity(), response.body());
+                    list_tender.setAdapter(adapter);
+                }
             }
 
             @Override
@@ -188,7 +190,7 @@ public class TenderList extends Fragment {
                         fragmentTransaction.replace(R.id.content_frame, fragment3);
                         //fragmentTransaction.addToBackStack(null);
                         fragmentTransaction.commit();
-                            alertDialog.dismiss();
+                        alertDialog.dismiss();
                     }
 
                     @Override
@@ -211,7 +213,6 @@ public class TenderList extends Fragment {
                 final Fragment fragment3 = new EditTender();
                 FragmentManager fragmentManager = getFragmentManager();
                 final FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
 
                 Date startDateValue = null,endDateValue = null;
                 try {

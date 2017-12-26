@@ -16,6 +16,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.tenderWatch.MainActivity;
 import com.tenderWatch.R;
@@ -34,6 +35,7 @@ public class MainDrawer extends AppCompatActivity
     SharedPreference sp = new SharedPreference();
     private static final String TAG = MainDrawer.class.getSimpleName();
     Intent intent;
+    MenuItem menu2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,7 +70,11 @@ public class MainDrawer extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        //getMenuInflater().inflate(R.menu.main_drawer, menu);
+        getMenuInflater().inflate(R.menu.main_drawer, menu);
+        menu2 = menu.findItem(R.id.menu_item);
+        menu2.setVisible(false);
+
+        // getMenuInflater().inflate(R.menu.main_drawer, menu);
         return true;
     }
 
@@ -80,7 +86,9 @@ public class MainDrawer extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.menu_item) {
+            Toast.makeText(getApplicationContext(), "Your toast message.",
+                    Toast.LENGTH_SHORT).show();
             return true;
         }
 
@@ -106,7 +114,8 @@ public class MainDrawer extends AppCompatActivity
                 fragment = new Home();
                 break;
             case R.id.nav_subscriptiondetails:
-                fragment = new EditProfile();
+                menu2.setVisible(true);
+                fragment = new SubScription();
                 break;
             case R.id.nav_editprofile:
                 fragment = new EditProfile();
@@ -153,6 +162,7 @@ public class MainDrawer extends AppCompatActivity
                 sp.removePreferences(MainDrawer.this,"id");
                 sp.removePreferences(MainDrawer.this,"profile");
                 sp.removePreferences(MainDrawer.this,"MyObject");
+                sp.removePreferences(MainDrawer.this,"token");
 
                 intent=new Intent(MainDrawer.this, MainActivity.class);
                 startActivity(intent);

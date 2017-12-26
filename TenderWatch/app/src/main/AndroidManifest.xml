@@ -70,7 +70,8 @@
         <activity
             android:name=".EditTenderDetail"
             android:label="@string/title_activity_edit_tender_detail"
-            android:theme="@style/AppThemeAction"></activity>
+            android:theme="@style/AppThemeAction" />
+        <activity android:name=".SubscriptionDetail"></activity>
     </application>
 
 </manifest>

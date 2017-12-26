@@ -25,6 +25,7 @@ import com.tenderWatch.SignUpSelection;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -96,9 +97,13 @@ public class TenderListAdapter extends BaseAdapter {
           //  Log.i(TAG, profilePicUrl);
         //}
         }
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        String formattedDate = df.format(c.getTime());
         Date startDateValue = null,endDateValue = null;
         try {
-            startDateValue = new SimpleDateFormat("yyyy-MM-dd").parse(tenderList.get(position).getCreatedAt().split("T")[0]);
+              startDateValue = new SimpleDateFormat("yyyy-MM-dd").parse(formattedDate);
+            //  startDateValue = new SimpleDateFormat("yyyy-MM-dd").parse(tenderList.get(position).getCreatedAt().split("T")[0]);
         } catch (ParseException e) {
             e.printStackTrace();
         }
