@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:orientation="horizontal"
+    android:layout_height="wrap_content"
+    >
+<LinearLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_weight="0.009"
+    android:layout_gravity="center"
+    >
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:layout_width="@dimen/value_70"
+        android:layout_height="@dimen/value_70"
+        android:padding="@dimen/value_5"
+        android:src="@drawable/avtar"
+        android:id="@+id/tender_image2"
+        android:layout_gravity="center_horizontal"
+        />
+</LinearLayout>
+
+    <LinearLayout
+        android:layout_width="@dimen/value_90"
+        android:layout_height="@dimen/value_90"
+        android:layout_weight="0.991"
+        android:orientation="horizontal"
+        android:layout_marginLeft="@dimen/value_10">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="center"
+            >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Name:"
+                android:textSize="@dimen/text_15"
+                android:textColor="@color/colorBlack"
+                android:id="@+id/tender_name"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Title:"
+                android:textSize="@dimen/text_15"
+                android:textColor="@color/colorBlack"
+                android:layout_marginTop="@dimen/value_2"
+                android:id="@+id/tender_title"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Exp_Day:"
+                android:textSize="@dimen/text_15"
+                android:textColor="@color/colorBlack"
+                android:layout_marginTop="@dimen/value_2"
+                android:id="@+id/tender_expdate"
+                />
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            >
+
+        <ImageView
+            android:layout_width="@dimen/value_20"
+            android:layout_height="@dimen/value_20"
+            android:layout_alignParentRight="true"
+            android:layout_gravity="center"
+            android:layout_marginRight="@dimen/value_10"
+            android:src="@drawable/right_arr_3x" />
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+</LinearLayout>
