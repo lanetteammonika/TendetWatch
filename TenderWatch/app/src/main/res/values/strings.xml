@@ -22,4 +22,6 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="title_activity_client_drawer">ClientDrawer</string>
     <string name="spinner_prompt">fgdgdf</string>
+    <string name="title_activity_preview_tender_detail">PreviewTenderDetail</string>
+    <string name="title_activity_edit_tender_detail">EditTenderDetail</string>
 </resources>

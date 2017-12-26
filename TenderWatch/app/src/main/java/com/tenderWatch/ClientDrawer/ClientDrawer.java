@@ -108,6 +108,9 @@ public class ClientDrawer extends AppCompatActivity
             case R.id.nav_notifications:
                 fragment = new TenderList();
                 break;
+            case R.id.nav_contactsupportteam:
+                fragment = new Support();
+                break;
             case R.id.nav_logout:
                 Logout();
                 break;

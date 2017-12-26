@@ -21,10 +21,12 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.google.gson.Gson;
 import com.tenderWatch.Adapters.IndexingArrayAdapter;
 import com.tenderWatch.Adapters.TenderListAdapter;
 import com.tenderWatch.Login;
 import com.tenderWatch.Models.Tender;
+import com.tenderWatch.PreviewTenderDetail;
 import com.tenderWatch.R;
 import com.tenderWatch.Retrofit.Api;
 import com.tenderWatch.Retrofit.ApiUtils;
@@ -122,15 +124,22 @@ public class TenderList extends Fragment {
                 long days = (hours / 24) + 1;
                 Log.d("days", "" + days);
                 Log.i(TAG, "post submitted to API." + tender.toString());
-                Bundle arguments = new Bundle();
+//                Bundle arguments = new Bundle();
+//
+//                arguments.putParcelable( "object" , tender);
+//
+//                arguments.putString("day", String.valueOf(days));
+//                fragment3.setArguments(arguments);
+//                fragmentTransaction.replace(R.id.content_frame, fragment3);
+//                fragmentTransaction.addToBackStack(null);
+//                fragmentTransaction.commit();
+                Gson gson = new Gson();
+                String jsonString = gson.toJson(tender);
 
-                arguments.putParcelable( "object" , tender);
+                Intent intent = new Intent(getActivity(),PreviewTenderDetail.class);
+                intent.putExtra("data",jsonString);
+                startActivity(intent);
 
-                arguments.putString("day", String.valueOf(days));
-                fragment3.setArguments(arguments);
-                fragmentTransaction.replace(R.id.content_frame, fragment3);
-                fragmentTransaction.addToBackStack(null);
-                fragmentTransaction.commit();
 
             }
         });
