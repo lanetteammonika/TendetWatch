@@ -48,20 +48,20 @@ public class SubScription extends Fragment {
         mWebView.setBackgroundColor(Color.TRANSPARENT);
 
         String token = "Bearer " + sp.getPreferences(getActivity(), "token");
-        mAPIServices.getSubscriptionDetails(token).enqueue(new Callback<SubScriptionResponse>() {
-            @Override
-            public void onResponse(Call<SubScriptionResponse> call, Response<SubScriptionResponse> response) {
-                Log.i(TAG, "post submitted to API." + response);
-              mWebView.loadUrl("http://docs.google.com/gview?embedded=true&url="+response.body().getInvoiceURL().toString());
-
-                //  new DownloadTask(getActivity(), response.body().getInvoiceURL().toString());
-            }
-
-            @Override
-            public void onFailure(Call<SubScriptionResponse> call, Throwable t) {
-                Log.i(TAG, "post submitted to API." + t);
-            }
-        });
+//        mAPIServices.getSubscriptionDetails(token).enqueue(new Callback<SubScriptionResponse>() {
+//            @Override
+//            public void onResponse(Call<SubScriptionResponse> call, Response<SubScriptionResponse> response) {
+//                Log.i(TAG, "post submitted to API." + response);
+//              mWebView.loadUrl("http://docs.google.com/gview?embedded=true&url="+response.body().getInvoiceURL().toString());
+//
+//                //  new DownloadTask(getActivity(), response.body().getInvoiceURL().toString());
+//            }
+//
+//            @Override
+//            public void onFailure(Call<SubScriptionResponse> call, Throwable t) {
+//                Log.i(TAG, "post submitted to API." + t);
+//            }
+//        });
     }
 }
 

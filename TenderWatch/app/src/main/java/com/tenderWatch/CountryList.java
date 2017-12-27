@@ -52,10 +52,10 @@ public class CountryList extends AppCompatActivity {
     IndexingArrayAdapter adapter;
     Button btn_next;
     String alphabetS = "";
-    LinearLayout lltext, back;
+    LinearLayout lltext, back,subscription;
     TextView txtSelectedContract;
     Intent intent;
-    String check;
+    String check,s;
     SharedPreference sp = new SharedPreference();
     ArrayList<String> a_country = new ArrayList<String>();
 
@@ -70,6 +70,7 @@ public class CountryList extends AppCompatActivity {
         lvCountry = (ListView) findViewById(R.id.lvCountry);
         lltext = (LinearLayout) findViewById(R.id.lltext);
         back = (LinearLayout) findViewById(R.id.country_toolbar);
+        subscription=(LinearLayout) findViewById(R.id.subscription);
 
         sideSelector = (SideSelector) findViewById(R.id.side_selector);
         mAPIService = ApiUtils.getAPIService();
@@ -79,8 +80,14 @@ public class CountryList extends AppCompatActivity {
         lvCountry.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         Intent show = getIntent();
         check = show.getStringExtra("check");
+         s=show.getStringExtra("sub");
         if (check == null) {
             CallContractorSignUp();
+        }
+        if(s!=null){
+            subscription.setVisibility(View.VISIBLE);
+            back.setVisibility(View.GONE);
+            txtSelectedContract.setVisibility(View.GONE);
         }
 
         mAPIService.getCountryData().enqueue(new Callback<ArrayList<GetCountry>>() {
@@ -298,6 +305,9 @@ public class CountryList extends AppCompatActivity {
         final TextView txtTrial = (TextView) dialog.findViewById(R.id.txt_trial);
         TextView txtMonth = (TextView) dialog.findViewById(R.id.txt_month);
         TextView txtYear = (TextView) dialog.findViewById(R.id.txt_year);
+        if(s!=null){
+            txtTrial.setVisibility(View.GONE);
+        }
         txtTrial.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -344,7 +354,7 @@ public class CountryList extends AppCompatActivity {
     /**
      * Section Item
      */
-    public class SectionItem implements Item {
+    public static class SectionItem implements Item {
         private final String title;
         private final String flag;
         private final String code;
@@ -397,7 +407,7 @@ public class CountryList extends AppCompatActivity {
     /**
      * Entry Item
      */
-    public class EntryItem implements Item {
+    public static class EntryItem implements Item {
         public final String title;
         private final String flag;
         private final String code;

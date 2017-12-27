@@ -13,17 +13,16 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppThemeAction">
-        <activity android:name=".MainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+        <meta-data
+        android:name="com.google.android.gms.wallet.api.enabled"
+        android:value="true" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+        <activity android:name=".MainActivity" />
         <activity
             android:name=".Login"
             android:label="@string/title_activity_login"
             android:theme="@style/AppThemeAction" />
+
 
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
@@ -71,7 +70,18 @@
             android:name=".EditTenderDetail"
             android:label="@string/title_activity_edit_tender_detail"
             android:theme="@style/AppThemeAction" />
-        <activity android:name=".SubscriptionDetail"></activity>
+        <activity android:name=".SubscriptionDetail" />
+        <activity android:name=".Paypaldemo">
+
+        </activity>
+        <activity android:name=".ConfirmationActivity" />
+        <activity android:name=".GooglePay">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

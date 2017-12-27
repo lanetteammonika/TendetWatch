@@ -46,7 +46,7 @@ public class SideSelector extends View {
         setBackgroundColor(0x44FFFFFF);
         paint = new Paint();
         paint.setColor(Color.BLACK);
-        int size = SideSelector.this.getResources().getDimensionPixelSize(R.dimen.text_12);
+        int size = SideSelector.this.getResources().getDimensionPixelSize(R.dimen.text_10);
         paint.setTextSize(size);
         paint.setFakeBoldText(true);
         //   paint.setTextAlign(Paint.Align.CENTER);
