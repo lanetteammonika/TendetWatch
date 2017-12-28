@@ -14,8 +14,10 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.tenderWatch.ClientDrawer.Support;
 import com.tenderWatch.CountryList;
 import com.tenderWatch.MainActivity;
+import com.tenderWatch.Models.User;
 import com.tenderWatch.R;
 import com.tenderWatch.Retrofit.Api;
 import com.tenderWatch.Retrofit.ApiUtils;
@@ -132,7 +134,7 @@ public class MainDrawer extends AppCompatActivity
                 fragment = new ChangePassword();
                 break;
             case R.id.nav_contactsupportteam:
-                fragment = new ChangePassword();
+                fragment = new Support();
                 break;
             case R.id.nav_logout:
                 Logout();
@@ -152,9 +154,9 @@ public class MainDrawer extends AppCompatActivity
 
     private void Logout() {
         String token="Bearer "+sp.getPreferences(MainDrawer.this,"token");
-        String deviceId = sp.getPreferences(MainDrawer.this, "deviceId");
+        User u = (User) sp.getPreferencesObject(MainDrawer.this);
         String role=sp.getPreferences(MainDrawer.this,"role");
-
+        String deviceId=u.getDeviceId().toString();
         mAPIService.logout(token,deviceId,role).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {

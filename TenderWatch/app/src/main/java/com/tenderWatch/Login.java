@@ -34,6 +34,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.OptionalPendingResult;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.tenderWatch.ClientDrawer.ClientDrawer;
 import com.tenderWatch.Drawer.MainDrawer;
 import com.tenderWatch.Models.Register;
@@ -168,8 +169,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
                 Log.d(TAG, String.valueOf(loginResult));
                 SharedPreference sp = new SharedPreference();
                 String accessToken = loginResult.getAccessToken().getToken();
-                String deviceId = Settings.Secure.getString(getContentResolver(),
-                        Settings.Secure.ANDROID_ID);
+                String deviceId = FirebaseInstanceId.getInstance().getToken();
                 String role = sp.getPreferences(Login.this, "role");
                 savePostFB(accessToken, role, deviceId);
                 if (AccessToken.getCurrentAccessToken() != null) {
@@ -341,8 +341,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
             sp.setPreferences(getApplicationContext(), "Login", "GOOGLEYES");
             GoogleSignInAccount acct = result.getSignInAccount();
             String idToken = acct.getIdToken();
-            String deviceId = Settings.Secure.getString(getContentResolver(),
-                    Settings.Secure.ANDROID_ID);
+            String deviceId = FirebaseInstanceId.getInstance().getToken();
             String role = sp.getPreferences(Login.this, "role");
             sendPostGoogle(idToken, role, deviceId);
             // Show signed-in UI.
@@ -409,7 +408,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
         String password = txtPassword.getText().toString();
         SharedPreference sp = new SharedPreference();
         String role = sp.getPreferences(Login.this, "role");
-        String deviceId = sp.getPreferences(getApplicationContext(), "deviceId");
+        String deviceId = FirebaseInstanceId.getInstance().getToken();
         sendPost(email, password, role, deviceId);
     }
 

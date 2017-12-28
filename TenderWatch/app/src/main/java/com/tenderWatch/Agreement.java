@@ -15,6 +15,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.gson.Gson;
 import com.tenderWatch.ClientDrawer.ClientDrawer;
 import com.tenderWatch.Drawer.MainDrawer;
 import com.tenderWatch.Models.CreateUser;
@@ -40,7 +42,7 @@ public class Agreement extends AppCompatActivity implements View.OnClickListener
     CreateUser user = new CreateUser();
     private static final String TAG = Agreement.class.getSimpleName();
     private Api mAPIService;
-    MultipartBody.Part email1, password1, country1, selections1, subscribe1, contactNo1, occupation1, aboutMe1, role1, deviceId1, image1;
+    MultipartBody.Part selections1,email1, password1, country1, deviceType1, subscribe1, contactNo1, occupation1, aboutMe1, role1, deviceId1, image1;
     SharedPreference sp = new SharedPreference();
     Intent intent;
     LinearLayout back, webLayout;
@@ -151,6 +153,7 @@ public class Agreement extends AppCompatActivity implements View.OnClickListener
         String role = user.getRole().toString();
         String deviceId = user.getDeviceId().toString();
         File file1 = user.getProfilePhoto();
+        String regId = FirebaseInstanceId.getInstance().getToken();
 
         RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file1);
 
@@ -161,10 +164,11 @@ public class Agreement extends AppCompatActivity implements View.OnClickListener
         occupation1 = MultipartBody.Part.createFormData("occupation", occupation);
         aboutMe1 = MultipartBody.Part.createFormData("aboutMe", aboutMe);
         role1 = MultipartBody.Part.createFormData("role", role);
-        deviceId1 = MultipartBody.Part.createFormData("deviceId", deviceId);
+        deviceId1 = MultipartBody.Part.createFormData("deviceId", regId);
+        deviceType1 = MultipartBody.Part.createFormData("deviceType", "ANDROID");
         image1 = MultipartBody.Part.createFormData("image", file1.getName(), requestFile);
 
-        Call<Register> resultCall = mAPIService.uploadImage(email1, password1, country1, contactNo1, occupation1, aboutMe1, role1, deviceId1, image1);
+        Call<Register> resultCall = mAPIService.uploadImage(email1, password1, country1, contactNo1, occupation1, aboutMe1, role1, deviceId1, deviceType1, image1);
         resultCall.enqueue(new Callback<Register>() {
             @Override
             public void onResponse(Call<Register> call, Response<Register> response) {
@@ -212,13 +216,12 @@ public class Agreement extends AppCompatActivity implements View.OnClickListener
         String occupation = user.getOccupation().toString();
         String aboutMe = user.getAboutMe().toString();
         String role = user.getRole().toString();
-        String deviceId = user.getDeviceId().toString();
+        String deviceId = FirebaseInstanceId.getInstance().getToken();
         String selections = String.valueOf(user.getSelections());
         HashMap<String, ArrayList<String>> subscribe = user.getSubscribe();
         File file1 = user.getProfilePhoto();
 
         RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file1);
-
         email1 = MultipartBody.Part.createFormData("email", email);
         password1 = MultipartBody.Part.createFormData("password", password);
         country1 = MultipartBody.Part.createFormData("country", country);
@@ -227,11 +230,12 @@ public class Agreement extends AppCompatActivity implements View.OnClickListener
         aboutMe1 = MultipartBody.Part.createFormData("aboutMe", aboutMe);
         role1 = MultipartBody.Part.createFormData("role", role);
         deviceId1 = MultipartBody.Part.createFormData("deviceId", deviceId);
-        selections1 = MultipartBody.Part.createFormData("selections", selections);
-        subscribe1 = MultipartBody.Part.createFormData("subscribe", String.valueOf(subscribe));
+        subscribe1 = MultipartBody.Part.createFormData("subscribe", selections);
+        selections1 = MultipartBody.Part.createFormData("selections",new Gson().toJson(subscribe));
         image1 = MultipartBody.Part.createFormData("image", file1.getName(), requestFile);
+        deviceType1 = MultipartBody.Part.createFormData("deviceType", "ANDROID");
 
-        Call<Register> resultCall = mAPIService.uploadContractor(email1, password1, country1, contactNo1, occupation1, aboutMe1, role1, deviceId1, image1, selections1, subscribe1);
+        Call<Register> resultCall = mAPIService.uploadContractor(email1, password1, country1, contactNo1, occupation1, aboutMe1, role1, deviceId1, image1, deviceType1, subscribe1, selections1);
         resultCall.enqueue(new Callback<Register>() {
             @Override
             public void onResponse(Call<Register> call, Response<Register> response) {

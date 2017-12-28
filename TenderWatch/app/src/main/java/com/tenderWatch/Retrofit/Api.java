@@ -23,6 +23,7 @@ import org.json.JSONObject;
 
 import java.lang.annotation.Retention;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.xml.transform.Result;
@@ -41,6 +42,7 @@ import retrofit2.http.OPTIONS;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Part;
+import retrofit2.http.PartMap;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
@@ -70,27 +72,32 @@ public interface Api {
     @POST("auth/glogin")
     @FormUrlEncoded
     Call<Register> savePostGoogle(@Field("token") String idToken,
-                             @Field("role") String role,
-                             @Field("deviceId") String deviceId);
+                                  @Field("role") String role,
+                                  @Field("deviceId") String deviceId);
+
     @POST("auth/facelogin")
     @FormUrlEncoded
     Call<Register> savePostFB(@Field("token") String idToken,
-                             @Field("role") String role,
-                             @Field("deviceId") String deviceId);
+                              @Field("role") String role,
+                              @Field("deviceId") String deviceId);
+
     @POST("auth/login")
     @FormUrlEncoded
     Call<Register> savePost(@Field("email") String email,
-                               @Field("password") String password,
-                               @Field("role") String role,
-                               @Field("deviceId") String deviceId);
+                            @Field("password") String password,
+                            @Field("role") String role,
+                            @Field("deviceId") String deviceId);
+
     @POST("auth/forgot")
     @FormUrlEncoded
     Call<LoginPost> forgotPassword(@Field("email") String email,
-                             @Field("role") String role);
+                                   @Field("role") String role);
+
     @POST("auth/checkEmail")
     @FormUrlEncoded
     Call<Message> checkEmailExit(@Field("email") String email,
                                  @Field("role") String role);
+
     @GET("auth/country")
     Call<ArrayList<GetCountry>> getCountryData();
 
@@ -107,29 +114,33 @@ public interface Api {
                                @Part MultipartBody.Part aboutMe,
                                @Part MultipartBody.Part role,
                                @Part MultipartBody.Part deviceId,
+                               @Part MultipartBody.Part deviceType,
                                @Part MultipartBody.Part image
-                               );
+    );
+
     @Multipart
     @POST("auth/register")
     Call<Register> uploadContractor(@Part MultipartBody.Part email,
-                               @Part MultipartBody.Part password,
-                               @Part MultipartBody.Part country,
-                               @Part MultipartBody.Part contactNo,
-                               @Part MultipartBody.Part occupation,
-                               @Part MultipartBody.Part aboutMe,
-                               @Part MultipartBody.Part role,
-                               @Part MultipartBody.Part deviceId,
-                               @Part MultipartBody.Part image,
+                                    @Part MultipartBody.Part password,
+                                    @Part MultipartBody.Part country,
+                                    @Part MultipartBody.Part contactNo,
+                                    @Part MultipartBody.Part occupation,
+                                    @Part MultipartBody.Part aboutMe,
+                                    @Part MultipartBody.Part role,
+                                    @Part MultipartBody.Part deviceId,
+                                    @Part MultipartBody.Part image,
+                                    @Part MultipartBody.Part deviceType,
                                     @Part MultipartBody.Part selections,
-                                     @Part MultipartBody.Part subscribe
+                                    @Part MultipartBody.Part subscribe
     );
 
 
-    @DELETE("users")
+    @POST("users")
+    @FormUrlEncoded
     Call<ResponseBody> logout(
             @Header("Authorization") String token,
-            @Header("deviceId") String deviceId,
-            @Header("role") String role
+            @Field("deviceId") String deviceId,
+            @Field("role") String role
     );
 
     @Multipart
@@ -152,6 +163,7 @@ public interface Api {
             @Field("oldPassword") String oldPassword,
             @Field("newPassword") String newPassword
     );
+
     @POST("tender/getTenders")
     Call<ArrayList<Tender>> getAllTender(
             @Header("Authorization") String token
@@ -173,6 +185,7 @@ public interface Api {
             @Part MultipartBody.Part isFollowTender,
             @Part MultipartBody.Part image
     );
+
     @Multipart
     @PUT("tender/{tenderDetailId}")
     Call<UpdateTender> updateTender(

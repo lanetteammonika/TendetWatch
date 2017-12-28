@@ -402,9 +402,7 @@ public class EditTenderDetail extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String id1 = categoryName.get(position).split("~")[1];
-
                 categoryId1 = MultipartBody.Part.createFormData("category", id1);
-
                 categoryname = alpha2.get(position).split("~")[0];
                 category.setText(categoryname);
                 category_home.setVisibility(View.GONE);
@@ -501,7 +499,7 @@ public class EditTenderDetail extends AppCompatActivity {
 
         startActivityForResult(chooserIntent, REQUEST_CODE_SELECT_PICTURE);
     }
-
+//-working on add subscription,-Research for Payment with paypal in android,-starting integrating payment with paypal in application.
     private void CallApi() {
         String City=city.getText().toString();
         String Title=title.getText().toString();

@@ -14,15 +14,20 @@
         android:supportsRtl="true"
         android:theme="@style/AppThemeAction">
         <meta-data
-        android:name="com.google.android.gms.wallet.api.enabled"
-        android:value="true" />
+            android:name="com.google.android.gms.wallet.api.enabled"
+            android:value="true" />
 
-        <activity android:name=".MainActivity" />
+        <activity android:name=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".Login"
             android:label="@string/title_activity_login"
             android:theme="@style/AppThemeAction" />
-
 
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
@@ -70,16 +75,23 @@
             android:label="@string/title_activity_edit_tender_detail"
             android:theme="@style/AppThemeAction" />
         <activity android:name=".SubscriptionDetail" />
-        <activity android:name=".Paypaldemo">
-
-        </activity>
+        <activity android:name=".Paypaldemo"></activity>
         <activity android:name=".ConfirmationActivity" />
-        <activity android:name=".GooglePay">
+        <activity android:name=".GooglePay"></activity>
+        <!-- Firebase Notifications -->
+        <service android:name=".service.MyFirebaseMessagingService">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
+        </service>
+        <service android:name=".service.MyFirebaseInstanceIDService">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
+            </intent-filter>
+        </service>
+        <!-- ./Firebase Notifications -->
+        <activity android:name=".Main2Activity">
+
         </activity>
     </application>
 
