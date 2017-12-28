@@ -70,7 +70,6 @@ public class Category extends AppCompatActivity {
         mAPIService = ApiUtils.getAPIService();
         lvCountry.setDivider(null);
         lvCountry.clearChoices();
-        ;
 
         Intent show = getIntent();
 
@@ -85,61 +84,37 @@ public class Category extends AppCompatActivity {
             public void onResponse(Call<ArrayList<GetCategory>> call, Response<ArrayList<GetCategory>> response) {
 
                 if (response.isSuccessful()) {
-                    // showResponse(response.body().toString());
-
-
                     Log.i("array-------", response.body().get(0).getCategoryName().toString());
-
                     Data = response.body();
-
-
                     for (int i = 0; i < Data.size(); i++) {
-                        //JSONObject obj = array.getJSONObject(n);
                         String name = response.body().get(i).getCategoryName().toString();
                         String flag = response.body().get(i).getImgString().toString();
                         String id = response.body().get(i).getId().toString();
                         alpha.add(name + '~' + id + '~' + flag);
-
-
-                        // }
                     }
 
                     for (int y = 0; y < empNo.size(); y++) {
                         String categoryName = countryListName.get(y).toString().split("~")[0];
                         String categoryId = countryListName.get(y).toString().split("~")[2];
-
                         String value = String.valueOf(categoryName.charAt(0));
 
                         countryList.add(new SectionItem(categoryName, "", categoryId, categoryId, false));
 
                         for (int i = 0; i < Data.size(); i++) {
                             String name = alpha.get(i).split("~")[0];
-                            //   String countryCode = alpha.get(i).split("~")[1].split("`")[0];
-
                             String id = alpha.get(i).split("~")[1];
                             String flag = alpha.get(i).split("~")[2];
-
-                            //String value = String.valueOf(name.charAt(0));
                             if (!list.contains(value)) {
                                 list.add(value);
                                 alphabetS.concat(value);//alphabetlist.append(value);
-
-
                                 Log.i("array-------", String.valueOf(list));
                                 alpha2.add(value);
                                 alpha2.add(name);
-
                                 //set Country Header (Like:-A,B,C,...)
                                 //set Country Name
                                 countryList.add(new EntryItem(name, flag, id, categoryId, false));
-
-                                //Log.i("array section-------",alpha.get(n).getTitle());
-
                             } else {
-                                //  alpha2.add(name);
-
                                 alpha2.add(name);
-
                                 //set Country Name
                                 countryList.add(new EntryItem(name, flag, id, categoryId, false));
                             }
@@ -187,9 +162,6 @@ public class Category extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position,
                                     long id) {
-                TextView tvItemTitle = (TextView) view.findViewById(R.id.tvItemTitle);
-                String value = (String) lvCountry.getItemAtPosition(position).toString();
-                String Country = tvItemTitle.getText().toString();
                 bAdapter.setItemSelected(position);
                 bAdapter.setCheckedItem(position);
 
@@ -200,11 +172,8 @@ public class Category extends AppCompatActivity {
             @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onClick(View v) {
-                // ArrayList<ArrayList<String>> main=new ArrayList<ArrayList<String>>();
                 SharedPreference ss = new SharedPreference();
-
                 HashMap<String, String> items = bAdapter.getallitems();
-
 
                 for (Map.Entry<String, String> entry : items.entrySet()) {
 

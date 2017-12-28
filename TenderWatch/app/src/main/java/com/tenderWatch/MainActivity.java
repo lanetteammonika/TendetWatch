@@ -134,6 +134,5 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             super.onBackPressed();
             return;
         }
-        //finish();
     }
 }

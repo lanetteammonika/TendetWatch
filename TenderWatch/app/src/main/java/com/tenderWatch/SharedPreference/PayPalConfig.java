@@ -6,5 +6,4 @@ package com.tenderWatch.SharedPreference;
 
 public class PayPalConfig {
     public static final String PAYPAL_CLIENT_ID = "AdYtcg05haUBRoc5ljmkM-tBorYLNvLem5Iy6UD6Sf-8wAV_uUpKkOwvXeuIn3-m1lkfmAHzLchxod_r";
-    
 }

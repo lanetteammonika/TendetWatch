@@ -393,9 +393,6 @@ public class Home extends Fragment implements AdapterView.OnItemSelectedListener
             description1=MultipartBody.Part.createFormData("description",Des);
         }
         String token="Bearer " +sp.getPreferences(getActivity(),"token");
-        //File file1= new File("");
-
-       // RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file1);
 
         if(image1==null) {
             image1 = MultipartBody.Part.createFormData("image", "");
@@ -430,12 +427,8 @@ public class Home extends Fragment implements AdapterView.OnItemSelectedListener
                 for (int i = 0; i < Data2.size(); i++) {
                     alpha2.add(response.body().get(i).getCategoryName().toString() + "~" + response.body().get(i).getImgString().toString());
                     categoryName.add(response.body().get(i).getCategoryName().toString() + "~" + response.body().get(i).getId().toString());
-
-                    // CountryFlag.add(response.body().get(i).getImageString().toString());
-                }
-                //Collections.sort(alpha);
+               }
                 categoryAdapter = new CustomList(getContext(), alpha2);
-
                 spinner2.setAdapter(categoryAdapter);
             }
 
@@ -455,8 +448,6 @@ public class Home extends Fragment implements AdapterView.OnItemSelectedListener
                 for (int i = 0; i < Data.size(); i++) {
                     alpha.add(response.body().get(i).getCountryName().toString() + "~" + response.body().get(i).getImageString().toString());
                     countryName.add(response.body().get(i).getCountryName().toString() + "~" + response.body().get(i).getCountryCode().toString() + "~" + response.body().get(i).getId().toString());
-
-                    // CountryFlag.add(response.body().get(i).getImageString().toString());
                 }
                 Collections.sort(alpha);
                 Collections.sort(countryName);

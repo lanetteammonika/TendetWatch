@@ -81,7 +81,6 @@ public class ForgotPassword extends AppCompatActivity implements View.OnClickLis
                     @Override
                     public void onClick(View v) {
                         intent = new Intent(ForgotPassword.this, Login.class);
-
                         startActivity(intent);
                     }
                 });

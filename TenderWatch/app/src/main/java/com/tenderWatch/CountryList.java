@@ -94,11 +94,9 @@ public class CountryList extends AppCompatActivity {
             @Override
             public void onResponse(Call<ArrayList<GetCountry>> call, Response<ArrayList<GetCountry>> response) {
                 Log.i("array-------", response.body().get(0).getCountryName().toString());
-
                 Data = response.body();
 
-
-                for (int i = 0; i < Data.size(); i++) {
+               for (int i = 0; i < Data.size(); i++) {
                     String name = response.body().get(i).getCountryName().toString();
                     String flag = response.body().get(i).getImageString().toString();
                     String countryCode = response.body().get(i).getCountryCode().toString();
@@ -185,7 +183,6 @@ public class CountryList extends AppCompatActivity {
                 list.clear();
                 alpha.clear();
                 setResult(Activity.RESULT_OK, intent);
-                //startActivityForResult(intent,1);
             }
         });
 
@@ -194,9 +191,6 @@ public class CountryList extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position,
                                     long id) {
-                TextView tvItemTitle = (TextView) view.findViewById(R.id.tvItemTitle);
-                String value = (String) lvCountry.getItemAtPosition(position).toString();
-                String Country = tvItemTitle.getText().toString();
                 adapter.setItemSelected(position);
                 adapter.setCheckedItem(position);
                 pos = position;
@@ -265,7 +259,6 @@ public class CountryList extends AppCompatActivity {
                     list.clear();
                     alpha.clear();
                     startActivity(intent);
-                    // setResult(Activity.RESULT_OK, intent);
                     finish();
                 }
             }

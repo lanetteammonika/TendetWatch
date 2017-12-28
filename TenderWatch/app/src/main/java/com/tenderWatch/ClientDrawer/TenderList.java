@@ -24,6 +24,7 @@ import android.widget.ListView;
 import com.google.gson.Gson;
 import com.tenderWatch.Adapters.IndexingArrayAdapter;
 import com.tenderWatch.Adapters.TenderListAdapter;
+import com.tenderWatch.EditTenderDetail;
 import com.tenderWatch.Login;
 import com.tenderWatch.Models.Tender;
 import com.tenderWatch.PreviewTenderDetail;
@@ -75,7 +76,6 @@ public class TenderList extends Fragment {
         GetAllTender();
         list_tender=(ListView) view.findViewById(R.id.list_tender);
         final Fragment fragment2 = new Home();
-        final Fragment fragment3 = new PreviewTender();
 
         FragmentManager fragmentManager = getFragmentManager();
         final FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -87,15 +87,12 @@ public class TenderList extends Fragment {
                 fragmentTransaction.replace(R.id.content_frame, fragment2);
                 fragmentTransaction.addToBackStack(null);
                 fragmentTransaction.commit();
-//                intent=new Intent(getActivity(),Home.class);
-//                startActivity(intent);
             }
         });
 
         list_tender.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                Tender tender=allTender.get(position);
                ShowBox(position);
                 return true;
             }
@@ -106,34 +103,6 @@ public class TenderList extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 tender=allTender.get(position);
-                Date startDateValue = null,endDateValue = null;
-                try {
-                    startDateValue = new SimpleDateFormat("yyyy-MM-dd").parse(allTender.get(position).getCreatedAt().split("T")[0]);
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-                try {
-                    endDateValue = new SimpleDateFormat("yyyy-MM-dd").parse(allTender.get(position).getExpiryDate().split("T")[0]);
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-                //Date endDateValue = new Date(allTender.get(position).getExpiryDate().split("T")[0]);
-                long diff = endDateValue.getTime() - startDateValue.getTime();
-                long seconds = diff / 1000;
-                long minutes = seconds / 60;
-                long hours = minutes / 60;
-                long days = (hours / 24) + 1;
-                Log.d("days", "" + days);
-                Log.i(TAG, "post submitted to API." + tender.toString());
-//                Bundle arguments = new Bundle();
-//
-//                arguments.putParcelable( "object" , tender);
-//
-//                arguments.putString("day", String.valueOf(days));
-//                fragment3.setArguments(arguments);
-//                fragmentTransaction.replace(R.id.content_frame, fragment3);
-//                fragmentTransaction.addToBackStack(null);
-//                fragmentTransaction.commit();
                 Gson gson = new Gson();
                 String jsonString = gson.toJson(tender);
 
@@ -170,9 +139,9 @@ public class TenderList extends Fragment {
     private void ShowBox(final int i){
         final AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
 
-        alertDialog.setTitle("Dialog Button");
+        alertDialog.setTitle("Tender Watch");
 
-        alertDialog.setMessage("This is a three-button dialog!");
+        alertDialog.setMessage("Are you sure to delete or edit record?");
 
         alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Delete", new DialogInterface.OnClickListener() {
 
@@ -196,13 +165,8 @@ public class TenderList extends Fragment {
                     @Override
                     public void onFailure(Call<ResponseBody> call, Throwable t) {
                         Log.i(TAG,"response---"+t);
-
                     }
                 });
-               // list_tender.notify();
-
-                //...
-
             } });
 
         alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Edit", new DialogInterface.OnClickListener() {
@@ -210,46 +174,18 @@ public class TenderList extends Fragment {
             @RequiresApi(api = Build.VERSION_CODES.N)
             public void onClick(DialogInterface dialog, int id) {
                 tender=allTender.get(i);
-                final Fragment fragment3 = new EditTender();
-                FragmentManager fragmentManager = getFragmentManager();
-                final FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                Gson gson = new Gson();
+                String jsonString = gson.toJson(tender);
 
-                Date startDateValue = null,endDateValue = null;
-                try {
-                    startDateValue = new SimpleDateFormat("yyyy-MM-dd").parse(allTender.get(i).getCreatedAt().split("T")[0]);
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-                try {
-                    endDateValue = new SimpleDateFormat("yyyy-MM-dd").parse(allTender.get(i).getExpiryDate().split("T")[0]);
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-                //Date endDateValue = new Date(allTender.get(position).getExpiryDate().split("T")[0]);
-                long diff = endDateValue.getTime() - startDateValue.getTime();
-                long seconds = diff / 1000;
-                long minutes = seconds / 60;
-                long hours = minutes / 60;
-                long days = (hours / 24) + 1;
-                Log.d("days", "" + days);
-                Log.i(TAG, "post submitted to API." + tender.toString());
-                Bundle arguments = new Bundle();
-
-                arguments.putParcelable( "object" , tender);
-
-                arguments.putString("day", String.valueOf(days));
-                fragment3.setArguments(arguments);
-                fragmentTransaction.replace(R.id.content_frame, fragment3);
-                fragmentTransaction.addToBackStack(null);
-                fragmentTransaction.commit();
+                Intent intent = new Intent(getActivity(),EditTenderDetail.class);
+                intent.putExtra("data",jsonString);
+                startActivity(intent);
             }});
 
         alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "Cancel", new DialogInterface.OnClickListener() {
 
             public void onClick(DialogInterface dialog, int id) {
-
-                //...
-
+                alertDialog.dismiss();
             }});
         alertDialog.show();
     }

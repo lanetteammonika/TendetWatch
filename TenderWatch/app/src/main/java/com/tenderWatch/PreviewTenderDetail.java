@@ -5,9 +5,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Base64;
@@ -22,7 +19,6 @@ import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 import com.tenderWatch.ClientDrawer.ClientDrawer;
-import com.tenderWatch.ClientDrawer.PreviewTender;
 import com.tenderWatch.Models.GetCategory;
 import com.tenderWatch.Models.GetCountry;
 import com.tenderWatch.Models.Tender;
@@ -46,7 +42,7 @@ public class PreviewTenderDetail extends AppCompatActivity {
 
     private static final ArrayList<String> alpha2 = new ArrayList<String>();
     private static final ArrayList<String> categoryName = new ArrayList<String>();
-    private static final String TAG = PreviewTender.class.getSimpleName();
+    private static final String TAG = PreviewTenderDetail.class.getSimpleName();
     private List Data, Data2;
     Tender object;
     String day,flag,countryName1,categoryName1;
@@ -95,15 +91,6 @@ public class PreviewTenderDetail extends AppCompatActivity {
                 Intent intent = new Intent(PreviewTenderDetail.this,EditTenderDetail.class);
                 intent.putExtra("data",jsonString);
                 startActivity(intent);
-//                Bundle arguments = new Bundle();
-//
-//                arguments.putParcelable( "object" , object);
-//
-//                arguments.putString("day", String.valueOf(day));
-//                fragment2.setArguments(arguments);
-//                fragmentTransaction.replace(R.id.content_frame, fragment2);
-//                fragmentTransaction.addToBackStack(null);
-//                fragmentTransaction.commit();
             }
         });
 
@@ -117,7 +104,6 @@ public class PreviewTenderDetail extends AppCompatActivity {
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                         Log.i(TAG,"response---"+response.body());
                         Intent intent = new Intent(PreviewTenderDetail.this,ClientDrawer.class);
-                       // intent.putExtra("data",jsonString);
                         startActivity(intent);
                     }
 
@@ -131,31 +117,19 @@ public class PreviewTenderDetail extends AppCompatActivity {
             }
         });
 
-
-//        Bundle args = PreviewTenderDetail.this;
-//        if (args != null) {
-//            object = args.getParcelable("object");
-//            day=args.getString("day");
-//        } else {
-//            Log.w("GetObject", "Arguments expected, but missing");
-//        }
-        if(!object.getTenderPhoto().toString().equals("")){
+       if(!object.getTenderPhoto().toString().equals("")){
             Picasso.with(PreviewTenderDetail.this)
                     .load(object.getTenderPhoto().toString())
                     .into(new Target() {
                         @Override
                         public void onBitmapLoaded(final Bitmap bitmap, Picasso.LoadedFrom from) {
                             Log.v("Main", String.valueOf(bitmap));
-                            // main = bitmap;
                             imagetender.setImageBitmap(bitmap);
-                            //  imagetender.getLayoutParams().height = 300;
-                            //imagetender.getLayoutParams().width = 100;
                         }
 
                         @Override
                         public void onBitmapFailed(Drawable errorDrawable) {
                             Log.v("Main", "errrorrrr");
-
                         }
 
                         @Override
@@ -194,10 +168,7 @@ public class PreviewTenderDetail extends AppCompatActivity {
         }else{
             Address.setText(object.getAddress().toString());
         }
-
-
         flag3=(ImageView) findViewById(R.id.preview_flag_image);
-
     }
 
     private void GetCategory() {
@@ -208,10 +179,7 @@ public class PreviewTenderDetail extends AppCompatActivity {
                 for (int i = 0; i < Data2.size(); i++) {
                     alpha2.add(response.body().get(i).getCategoryName().toString() + "~" + response.body().get(i).getImgString().toString());
                     categoryName.add(response.body().get(i).getCategoryName().toString() + "~" + response.body().get(i).getId().toString());
-
-                    // CountryFlag.add(response.body().get(i).getImageString().toString());
                 }
-                //Collections.sort(alpha);
                 for (int i = 0; i < Data2.size(); i++) {
                     if(categoryName.get(i).split("~")[1].toString().equals(object.getCategory().toString())){
 
@@ -220,12 +188,10 @@ public class PreviewTenderDetail extends AppCompatActivity {
                             Category.setText(categoryName1.substring(0,45)+"...");
                         }else {
                             Category.setText(categoryName1);
-
                         }
                         break;
                     }
                 }
-
             }
 
             @Override
@@ -243,8 +209,6 @@ public class PreviewTenderDetail extends AppCompatActivity {
                 for (int i = 0; i < Data.size(); i++) {
                     alpha.add(response.body().get(i).getCountryName().toString() + "~" + response.body().get(i).getImageString().toString());
                     countryName.add(response.body().get(i).getCountryName().toString() + "~" + response.body().get(i).getCountryCode().toString() + "~" + response.body().get(i).getId().toString());
-
-                    // CountryFlag.add(response.body().get(i).getImageString().toString());
                 }
                 Collections.sort(alpha);
                 Collections.sort(countryName);
@@ -258,7 +222,6 @@ public class PreviewTenderDetail extends AppCompatActivity {
                         break;
                     }
                 }
-
             }
 
             @Override
@@ -266,7 +229,6 @@ public class PreviewTenderDetail extends AppCompatActivity {
 
             }
         });
-
     }
 
     public Bitmap StringToBitMap(String encodedString) {
@@ -279,6 +241,4 @@ public class PreviewTenderDetail extends AppCompatActivity {
             return null;
         }
     }
-
-
 }

@@ -412,10 +412,6 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener {
 
         @Override
         protected void onPostExecute(Bitmap result) {
-            // Set the bitmap into ImageView
-            //image.setImageBitmap(result);
-            // Close progressdialog
-            //Dialog mProgressDialog;
             mProgressDialog.dismiss();
         }
     }

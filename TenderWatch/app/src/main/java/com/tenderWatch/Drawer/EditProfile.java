@@ -175,19 +175,11 @@ public class EditProfile extends Fragment implements View.OnClickListener{
             if (txtMobileNo.getText().toString().split("-")[1].length() < 9) {
                 sp.ShowDialog(getActivity(), "Enter Mobiile number up to 9 digit");
             } else {
-                SendData();
+                ApiCall();
             }
         } else {
             sp.ShowDialog(getActivity(), "Enter Details");
         }
-    }
-    private void SendData() {
-        String country1 = txtCountry.getText().toString();
-        String mobile = txtMobileNo.getText().toString();
-        String occupation1 = txtOccupation.getText().toString();
-        String deviceId = Settings.Secure.getString(getActivity().getContentResolver(), Settings.Secure.ANDROID_ID);
-        String role = sp.getPreferences(getActivity(), "role");
-        ApiCall();
     }
 
     private void ApiCall() {
@@ -219,10 +211,10 @@ public class EditProfile extends Fragment implements View.OnClickListener{
                 Log.i(TAG, "response register-->");
                 if (response.isSuccessful()) {
                     sp.setPreferencesObject(getActivity(),response.body());
-
-//                    intent = new Intent(getActivity(), ClientDrawer.class);
-//                    startActivity(intent);
                     sp.ShowDialog(getActivity(), "Profile Update Successful");
+
+                    intent = new Intent(getActivity(), MainDrawer.class);
+                    startActivity(intent);
                 } else {
                     sp.ShowDialog(getActivity(), response.errorBody().source().toString().split("\"")[3]);
                 }
