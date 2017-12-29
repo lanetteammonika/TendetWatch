@@ -38,6 +38,7 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import com.tenderWatch.ClientDrawer.ClientDrawer;
 import com.tenderWatch.Drawer.MainDrawer;
 import com.tenderWatch.Models.Register;
+import com.tenderWatch.Models.User;
 import com.tenderWatch.Retrofit.Api;
 import com.tenderWatch.Retrofit.ApiUtils;
 import com.tenderWatch.SharedPreference.SharedPreference;
@@ -69,6 +70,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
     String newString;
     SharedPreference sp = new SharedPreference();
 
+    User user;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -293,12 +295,13 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
         });
     }
 
-    public void sendPost(String email, String password, String role, String deviceId) {
+    public void sendPost(String email, String password, String role, final String deviceId) {
         mAPIService.savePost(email, password, role, deviceId).enqueue(new Callback<Register>() {
             @Override
             public void onResponse(Call<Register> call, Response<Register> response) {
 
                 if (response.isSuccessful()) {
+                    sp.setPreferences(Login.this,"androidId",deviceId);
                     sp.setPreferencesObject(Login.this,response.body().getUser());
                     Object user=sp.getPreferencesObject(Login.this);
                     String role = sp.getPreferences(Login.this, "role");
@@ -408,6 +411,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
         String password = txtPassword.getText().toString();
         SharedPreference sp = new SharedPreference();
         String role = sp.getPreferences(Login.this, "role");
+        //user =sp.getPreferencesObject(Login.this);
         String deviceId = FirebaseInstanceId.getInstance().getToken();
         sendPost(email, password, role, deviceId);
     }

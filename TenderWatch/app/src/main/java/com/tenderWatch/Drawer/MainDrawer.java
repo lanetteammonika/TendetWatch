@@ -1,6 +1,8 @@
 package com.tenderWatch.Drawer;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -11,9 +13,15 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
+import com.tenderWatch.ClientDrawer.ClientDrawer;
 import com.tenderWatch.ClientDrawer.Support;
 import com.tenderWatch.CountryList;
 import com.tenderWatch.MainActivity;
@@ -22,11 +30,14 @@ import com.tenderWatch.R;
 import com.tenderWatch.Retrofit.Api;
 import com.tenderWatch.Retrofit.ApiUtils;
 import com.tenderWatch.SharedPreference.SharedPreference;
+import com.tenderWatch.SignUpSelection;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
 
 public class MainDrawer extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -35,7 +46,10 @@ public class MainDrawer extends AppCompatActivity
     private static final String TAG = MainDrawer.class.getSimpleName();
     Intent intent;
     MenuItem menu2;
-
+    CircleImageView circledrawerimage;
+    User user;
+    NavigationView navigationView;
+    TextView emailText;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,7 +57,6 @@ public class MainDrawer extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.drawertoolbar);
         mAPIService= ApiUtils.getAPIService();
         setSupportActionBar(toolbar); //NO PROBLEM !!!!
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -52,7 +65,11 @@ public class MainDrawer extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
+        circledrawerimage = navigationView.getHeaderView(0).findViewById(R.id.circledrawerimage2);
+        emailText=navigationView.getHeaderView(0).findViewById(R.id.textView2);
+        user= (User) sp.getPreferencesObject(MainDrawer.this);
+        Picasso.with(this).load(user.getProfilePhoto()).into(circledrawerimage);
+        emailText.setText(user.getEmail());
         displaySelectedScreen(R.id.nav_home);
     }
 
@@ -156,7 +173,7 @@ public class MainDrawer extends AppCompatActivity
         String token="Bearer "+sp.getPreferences(MainDrawer.this,"token");
         User u = (User) sp.getPreferencesObject(MainDrawer.this);
         String role=sp.getPreferences(MainDrawer.this,"role");
-        String deviceId=u.getDeviceId().toString();
+        String deviceId=sp.getPreferences(MainDrawer.this,"androidId");
         mAPIService.logout(token,deviceId,role).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {

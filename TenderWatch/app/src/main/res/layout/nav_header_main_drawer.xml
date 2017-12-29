@@ -15,17 +15,16 @@
     >
 
     <de.hdodenhof.circleimageview.CircleImageView
-        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="@dimen/value_90"
         android:layout_height="@dimen/value_90"
         android:padding="@dimen/value_5"
         android:src="@drawable/avtar"
-        android:id="@+id/circledrawerimage"
+        android:id="@+id/circledrawerimage2"
         android:layout_gravity="center_horizontal"
 
         />
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="android.studio@android.com"

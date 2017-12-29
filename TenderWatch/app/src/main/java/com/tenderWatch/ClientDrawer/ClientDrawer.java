@@ -2,6 +2,8 @@ package com.tenderWatch.ClientDrawer;
 
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.NavigationView;
@@ -12,16 +14,25 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
+import com.tenderWatch.Drawer.MainDrawer;
 import com.tenderWatch.MainActivity;
+import com.tenderWatch.Models.User;
 import com.tenderWatch.R;
 import com.tenderWatch.Retrofit.Api;
 import com.tenderWatch.Retrofit.ApiUtils;
 import com.tenderWatch.SharedPreference.SharedPreference;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -33,6 +44,9 @@ public class ClientDrawer extends AppCompatActivity
     SharedPreference sp=new SharedPreference();
     private static final String TAG = ClientDrawer.class.getSimpleName();
     Intent intent;
+    CircleImageView circledrawerimage;
+    User user;
+    TextView emailText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +65,11 @@ public class ClientDrawer extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
+        circledrawerimage = navigationView.getHeaderView(0).findViewById(R.id.circledrawerimage2);
+        emailText=navigationView.getHeaderView(0).findViewById(R.id.textView2);
+        user= (User) sp.getPreferencesObject(ClientDrawer.this);
+        Picasso.with(this).load(user.getProfilePhoto()).into(circledrawerimage);
+        emailText.setText(user.getEmail());
         displaySelectedScreen(R.id.nav_home);
     }
 
@@ -146,7 +164,6 @@ public class ClientDrawer extends AppCompatActivity
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter, R.anim.exit);
                 finish();
-
             }
 
             @Override

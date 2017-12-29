@@ -52,6 +52,9 @@ public class User {
     @SerializedName("isActive")
     @Expose
     private Boolean isActive;
+    @SerializedName("androidDeviceId")
+    @Expose
+    private List<String> androidDeviceId=null;
 
     public String getProfilePhoto() {
         return profilePhoto;
@@ -147,6 +150,14 @@ public class User {
 
     public void setDeviceId(List<String> deviceId) {
         this.deviceId = deviceId;
+    }
+
+    public List<String> getAndroidDeviceId() {
+        return androidDeviceId;
+    }
+
+    public void setAndroidDeviceId(List<String> androidDeviceId) {
+        this.androidDeviceId = androidDeviceId;
     }
 
     public String getCreatedAt() {

@@ -73,20 +73,20 @@ public interface Api {
     @FormUrlEncoded
     Call<Register> savePostGoogle(@Field("token") String idToken,
                                   @Field("role") String role,
-                                  @Field("deviceId") String deviceId);
+                                  @Field("androidDeviceId") String deviceId);
 
     @POST("auth/facelogin")
     @FormUrlEncoded
     Call<Register> savePostFB(@Field("token") String idToken,
                               @Field("role") String role,
-                              @Field("deviceId") String deviceId);
+                              @Field("androidDeviceId") String deviceId);
 
     @POST("auth/login")
     @FormUrlEncoded
     Call<Register> savePost(@Field("email") String email,
                             @Field("password") String password,
                             @Field("role") String role,
-                            @Field("deviceId") String deviceId);
+                            @Field("androidDeviceId") String deviceId);
 
     @POST("auth/forgot")
     @FormUrlEncoded
@@ -113,8 +113,7 @@ public interface Api {
                                @Part MultipartBody.Part occupation,
                                @Part MultipartBody.Part aboutMe,
                                @Part MultipartBody.Part role,
-                               @Part MultipartBody.Part deviceId,
-                               @Part MultipartBody.Part deviceType,
+                               @Part MultipartBody.Part androidDeviceId,
                                @Part MultipartBody.Part image
     );
 
@@ -127,22 +126,17 @@ public interface Api {
                                     @Part MultipartBody.Part occupation,
                                     @Part MultipartBody.Part aboutMe,
                                     @Part MultipartBody.Part role,
-                                    @Part MultipartBody.Part deviceId,
+                                    @Part MultipartBody.Part androidDeviceId,
                                     @Part MultipartBody.Part image,
-                                    @Part MultipartBody.Part deviceType,
                                     @Part MultipartBody.Part selections,
                                     @Part MultipartBody.Part subscribe
-    );
+                                    );
 
-
-    @POST("users")
     @FormUrlEncoded
-    Call<ResponseBody> logout(
-            @Header("Authorization") String token,
-            @Field("deviceId") String deviceId,
-            @Field("role") String role
-    );
-
+    @HTTP(method = "DELETE", path = "users", hasBody = true)
+    Call<ResponseBody> logout(@Header("Authorization") String token,
+                              @Field("androidDeviceId") String deviceId,
+                              @Field("role") String role);
     @Multipart
     @POST("users/{userId}")
     Call<User> UpdateUser(

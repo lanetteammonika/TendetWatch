@@ -42,7 +42,7 @@ public class Agreement extends AppCompatActivity implements View.OnClickListener
     CreateUser user = new CreateUser();
     private static final String TAG = Agreement.class.getSimpleName();
     private Api mAPIService;
-    MultipartBody.Part selections1,email1, password1, country1, deviceType1, subscribe1, contactNo1, occupation1, aboutMe1, role1, deviceId1, image1;
+    MultipartBody.Part deviceId2,selections1,email1, password1, country1, deviceType1, subscribe1, contactNo1, occupation1, aboutMe1, role1, deviceId1, image1;
     SharedPreference sp = new SharedPreference();
     Intent intent;
     LinearLayout back, webLayout;
@@ -164,11 +164,10 @@ public class Agreement extends AppCompatActivity implements View.OnClickListener
         occupation1 = MultipartBody.Part.createFormData("occupation", occupation);
         aboutMe1 = MultipartBody.Part.createFormData("aboutMe", aboutMe);
         role1 = MultipartBody.Part.createFormData("role", role);
-        deviceId1 = MultipartBody.Part.createFormData("deviceId", regId);
-        deviceType1 = MultipartBody.Part.createFormData("deviceType", "ANDROID");
+        deviceId1 = MultipartBody.Part.createFormData("androidDeviceId", regId);
         image1 = MultipartBody.Part.createFormData("image", file1.getName(), requestFile);
 
-        Call<Register> resultCall = mAPIService.uploadImage(email1, password1, country1, contactNo1, occupation1, aboutMe1, role1, deviceId1, deviceType1, image1);
+        Call<Register> resultCall = mAPIService.uploadImage(email1, password1, country1, contactNo1, occupation1, aboutMe1, role1, deviceId1, image1);
         resultCall.enqueue(new Callback<Register>() {
             @Override
             public void onResponse(Call<Register> call, Response<Register> response) {
@@ -219,6 +218,8 @@ public class Agreement extends AppCompatActivity implements View.OnClickListener
         String deviceId = FirebaseInstanceId.getInstance().getToken();
         String selections = String.valueOf(user.getSelections());
         HashMap<String, ArrayList<String>> subscribe = user.getSubscribe();
+        String[] device=new String[1];
+
         File file1 = user.getProfilePhoto();
 
         RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file1);
@@ -229,13 +230,13 @@ public class Agreement extends AppCompatActivity implements View.OnClickListener
         occupation1 = MultipartBody.Part.createFormData("occupation", occupation);
         aboutMe1 = MultipartBody.Part.createFormData("aboutMe", aboutMe);
         role1 = MultipartBody.Part.createFormData("role", role);
-        deviceId1 = MultipartBody.Part.createFormData("deviceId", deviceId);
+        deviceId1 = MultipartBody.Part.createFormData("androidDeviceId", deviceId);
+        deviceId2 = MultipartBody.Part.createFormData("deviceId","");
         subscribe1 = MultipartBody.Part.createFormData("subscribe", selections);
         selections1 = MultipartBody.Part.createFormData("selections",new Gson().toJson(subscribe));
         image1 = MultipartBody.Part.createFormData("image", file1.getName(), requestFile);
-        deviceType1 = MultipartBody.Part.createFormData("deviceType", "ANDROID");
 
-        Call<Register> resultCall = mAPIService.uploadContractor(email1, password1, country1, contactNo1, occupation1, aboutMe1, role1, deviceId1, image1, deviceType1, subscribe1, selections1);
+        Call<Register> resultCall = mAPIService.uploadContractor(email1, password1, country1, contactNo1, occupation1, aboutMe1, role1, deviceId1, image1, subscribe1, selections1);
         resultCall.enqueue(new Callback<Register>() {
             @Override
             public void onResponse(Call<Register> call, Response<Register> response) {
@@ -244,7 +245,6 @@ public class Agreement extends AppCompatActivity implements View.OnClickListener
                     String role = sp.getPreferences(Agreement.this, "role");
                     intent = new Intent(Agreement.this, MainDrawer.class);
                     startActivity(intent);
-
                     Log.i(TAG, "post submitted to API." + response.body().toString());
                 } else {
                     sp.ShowDialog(Agreement.this, response.errorBody().source().toString().split("\"")[3]);
