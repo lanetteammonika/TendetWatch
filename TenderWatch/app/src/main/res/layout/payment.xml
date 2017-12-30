@@ -20,12 +20,14 @@
                 android:background="@color/colorWhite"
                 android:id="@+id/payment_paypal"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="33dp"
                 android:layout_marginHorizontal="@dimen/value_30"
                 android:drawableLeft="@drawable/paypal_icon"
-                android:paddingLeft="@dimen/value_50"
+                android:paddingLeft="@dimen/value_40"
                 android:text="PayPal"
-                android:textAllCaps="false" />
+                android:textAllCaps="false"
+                android:textSize="15sp"
+               />
         </LinearLayout>
 
         <LinearLayout
@@ -39,12 +41,13 @@
 
                 android:id="@+id/payment_creditcard"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="33dp"
                 android:layout_marginHorizontal="@dimen/value_30"
                 android:drawableLeft="@drawable/credit_icon"
-                android:paddingLeft="@dimen/value_50"
+                android:paddingLeft="@dimen/value_40"
                 android:text="Credit Card"
-                android:textAllCaps="false" />
+                android:textAllCaps="false"
+                android:textSize="15sp"/>
         </LinearLayout>
 
         <LinearLayout
@@ -57,12 +60,13 @@
                 android:background="@color/colorWhite"
                 android:id="@+id/payment_googlepay"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="33dp"
                 android:layout_marginHorizontal="@dimen/value_30"
                 android:drawableLeft="@drawable/googlepay_icon"
-                android:paddingLeft="@dimen/value_50"
+                android:paddingLeft="@dimen/value_40"
                 android:text="Google Pay"
-                android:textAllCaps="false" />
+                android:textAllCaps="false"
+                android:textSize="15sp"/>
         </LinearLayout>
 
         <LinearLayout
@@ -75,13 +79,14 @@
                 android:background="@color/colorWhite"
                 android:id="@+id/payment_bank"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="33dp"
                 android:layout_marginHorizontal="@dimen/value_30"
                 android:drawableLeft="@drawable/googlepay_icon"
-                android:paddingLeft="@dimen/value_50"
+                android:paddingLeft="@dimen/value_40"
                 android:text="Bank Account"
                 android:gravity="center"
-                android:textAllCaps="false" />
+                android:textAllCaps="false"
+                android:textSize="15sp"/>
         </LinearLayout>
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

@@ -20,12 +20,6 @@ import com.google.android.gms.wallet.PaymentsClient;
 import com.google.android.gms.wallet.TransactionInfo;
 import com.google.android.gms.wallet.Wallet;
 import com.google.android.gms.wallet.WalletConstants;
-import com.mercadopago.constants.Sites;
-import com.mercadopago.core.MercadoPago;
-import com.mercadopago.exceptions.MPException;
-import com.mercadopago.model.Issuer;
-import com.mercadopago.model.PaymentMethod;
-import com.mercadopago.util.JsonUtil;
 import com.paypal.android.sdk.payments.PayPalConfiguration;
 import com.paypal.android.sdk.payments.PayPalPayment;
 import com.paypal.android.sdk.payments.PayPalService;
@@ -208,21 +202,7 @@ public class PaymentSelection extends AppCompatActivity implements View.OnClickL
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        //If the result is from paypal
-        if (requestCode == MercadoPago.CARD_VAULT_REQUEST_CODE) {
-            if (resultCode == RESULT_OK) {
-                PaymentMethod paymentMethod = JsonUtil.getInstance().fromJson(data.getStringExtra("paymentMethod"), PaymentMethod.class);
-                Issuer issuer = JsonUtil.getInstance().fromJson(data.getStringExtra("issuer"), Issuer.class);
-                //Token token = JsonUtil.getInstance().fromJson(data.getStringExtra("token"), Token.class);
 
-                // Done! Send the data to your server
-
-            } else {
-                if ((data != null) && (data.hasExtra("mpException"))) {
-                    MPException exception = JsonUtil.getInstance().fromJson(data.getStringExtra("mpException"), MPException.class);
-                }
-            }
-        }
 
         if (requestCode == LOAD_PAYMENT_DATA_REQUEST_CODE) {
             switch (resultCode) {
