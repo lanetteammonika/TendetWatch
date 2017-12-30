@@ -55,7 +55,7 @@ public class Category extends AppCompatActivity {
     SharedPreference sp = new SharedPreference();
     LinearLayout back;
     TextView txtContract;
-    String contract;
+    String contract,s;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +74,8 @@ public class Category extends AppCompatActivity {
         Intent show = getIntent();
 
         empNo = show.getStringArrayListExtra("CountryAtContractor");
+        s=show.getStringExtra("sub");
+
         countryListName = show.getStringArrayListExtra("Country");
         contract = show.getStringExtra("version");
         txtContract.setText(contract);
@@ -198,7 +200,12 @@ public class Category extends AppCompatActivity {
                     startActivity(intent);
                     finish();
                 }
-
+                if(s!=null){
+                    intent = new Intent(
+                            Category.this, PaymentSelection.class);
+                    startActivity(intent);
+                    finish();
+                }
 
             }
         });

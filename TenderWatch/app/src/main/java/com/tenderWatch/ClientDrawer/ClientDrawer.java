@@ -65,8 +65,8 @@ public class ClientDrawer extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        circledrawerimage = navigationView.getHeaderView(0).findViewById(R.id.circledrawerimage2);
-        emailText=navigationView.getHeaderView(0).findViewById(R.id.textView2);
+        circledrawerimage = navigationView.getHeaderView(0).findViewById(R.id.circledrawerimage);
+        emailText=navigationView.getHeaderView(0).findViewById(R.id.textView);
         user= (User) sp.getPreferencesObject(ClientDrawer.this);
         Picasso.with(this).load(user.getProfilePhoto()).into(circledrawerimage);
         emailText.setText(user.getEmail());

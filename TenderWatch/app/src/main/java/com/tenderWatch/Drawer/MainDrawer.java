@@ -23,6 +23,7 @@ import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 import com.tenderWatch.ClientDrawer.ClientDrawer;
 import com.tenderWatch.ClientDrawer.Support;
+import com.tenderWatch.ClientDrawer.TenderList;
 import com.tenderWatch.CountryList;
 import com.tenderWatch.MainActivity;
 import com.tenderWatch.Models.User;
@@ -132,7 +133,7 @@ public class MainDrawer extends AppCompatActivity
         //initializing the fragment object which is selected
         switch (itemId) {
             case R.id.nav_home:
-                fragment = new Home();
+                fragment = new TenderList();
                 break;
             case R.id.nav_subscriptiondetails:
                 menu2.setVisible(true);

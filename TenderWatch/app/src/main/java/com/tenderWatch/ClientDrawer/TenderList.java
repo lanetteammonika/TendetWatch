@@ -24,6 +24,7 @@ import android.widget.ListView;
 import com.google.gson.Gson;
 import com.tenderWatch.Adapters.IndexingArrayAdapter;
 import com.tenderWatch.Adapters.TenderListAdapter;
+import com.tenderWatch.Drawer.MainDrawer;
 import com.tenderWatch.EditTenderDetail;
 import com.tenderWatch.Login;
 import com.tenderWatch.Models.Tender;
@@ -89,7 +90,12 @@ public class TenderList extends Fragment {
                 fragmentTransaction.commit();
             }
         });
-
+        String role=sp.getPreferences(getActivity(),"role");
+        if(role.equals("client")) {
+            fab.setVisibility(View.VISIBLE);
+        }else {
+            fab.setVisibility(View.GONE);
+        }
         list_tender.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {

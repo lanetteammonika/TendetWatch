@@ -97,6 +97,8 @@ public class EditTenderDetail extends AppCompatActivity {
         setContentView(R.layout.activity_edit_tender_detail);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         mApiService= ApiUtils.getAPIService();
         spinner = (ListView) findViewById(R.id.spinner);
         spinner2 = (ListView) findViewById(R.id.spinner3);
@@ -133,6 +135,19 @@ public class EditTenderDetail extends AppCompatActivity {
         description.setText(object.getDescription().toString());
         String cid=object.getCountry().toString();
         String caid=object.getCategory().toString();
+
+        toolbar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Gson gson = new Gson();
+                String jsonString = gson.toJson(object);
+
+                Intent intent=new Intent(EditTenderDetail.this,PreviewTenderDetail.class);
+                intent.putExtra("data",jsonString);
+                startActivity(intent);
+            }
+        });
+
 
         if(!object.getTenderPhoto().toString().equals("")){
             Picasso.with(EditTenderDetail.this)
