@@ -41,7 +41,7 @@
                 <ImageView
                     android:layout_width="@dimen/value_15"
                     android:layout_height="@dimen/value_15"
-                    android:id="@+id/imgtrue"
+                    android:id="@+id/img_close"
                     android:layout_gravity="right"
                     android:layout_marginRight="@dimen/value_15"
                     android:layout_weight="1"

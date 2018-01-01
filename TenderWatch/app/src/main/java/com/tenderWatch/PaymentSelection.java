@@ -1,13 +1,19 @@
 package com.tenderWatch;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Intent;
 import android.media.session.MediaSession;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.api.Status;
@@ -30,12 +36,23 @@ import com.stripe.android.TokenCallback;
 import com.stripe.android.model.BankAccount;
 import com.stripe.android.model.Card;
 import com.stripe.android.model.Token;
+import com.tenderWatch.Adapters.CustomList;
+import com.tenderWatch.Models.GetCountry;
+import com.tenderWatch.Retrofit.Api;
+import com.tenderWatch.Retrofit.ApiUtils;
 import com.tenderWatch.SharedPreference.PayPalConfig;
 
 import org.json.JSONException;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import static java.security.AccessController.getContext;
 
@@ -49,6 +66,15 @@ public class PaymentSelection extends AppCompatActivity implements View.OnClickL
             .clientId(PayPalConfig.PAYPAL_CLIENT_ID);
     private PaymentsClient paymentsClient;
     public static final int LOAD_PAYMENT_DATA_REQUEST_CODE = 1;
+    private List Data, Data2;
+    private static final ArrayList<String> alpha = new ArrayList<String>();
+    private static final ArrayList<String> countryName = new ArrayList<String>();
+    Api mApiService;
+    CustomList countryAdapter;
+    ImageView down_arrow, up_arrow, down_arrow2, up_arrow2, down_arrow3, up_arrow3,tenderImage;
+    LinearLayout country_home,llbankType;
+    ListView spinner,spinnerbanktype;
+    private ArrayAdapter<String> listAdapter ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +89,7 @@ public class PaymentSelection extends AppCompatActivity implements View.OnClickL
         btnGooglePay.setOnClickListener(this);
         btnBank.setOnClickListener(this);
         Intent intent = new Intent(this, PayPalService.class);
+        mApiService= ApiUtils.getAPIService();
 
         intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, config);
 
@@ -81,13 +108,6 @@ public class PaymentSelection extends AppCompatActivity implements View.OnClickL
                 getPayment();
                 break;
             case R.id.payment_creditcard:
-//                new MercadoPago.StartActivityBuilder()
-//                    .setActivity(PaymentSelection.this)
-//                    .setPublicKey("pk_test_mjxYxMlj4K2WZfR6TwlHdIXW")
-//                    .setAmount(BigDecimal.valueOf(15))
-//                    .setSite(Sites.USA)
-//                    .setInstallmentsEnabled(true)
-//                    .startCardVaultActivity();
                 call();
                 break;
             case R.id.payment_googlepay:
@@ -102,24 +122,105 @@ public class PaymentSelection extends AppCompatActivity implements View.OnClickL
                 }
                 break;
             case R.id.payment_bank:
-                Stripe stripe = new Stripe(PaymentSelection.this);
-                stripe.setDefaultPublishableKey("pk_test_mjxYxMlj4K2WZfR6TwlHdIXW");
-                BankAccount bankAccount = new BankAccount("000123456789", "US", "usd", "110000000");
-                stripe.createBankAccountToken(bankAccount, new TokenCallback() {
-                    @Override
-                    public void onError(Exception error) {
-                        Log.e("Stripe Error", error.getMessage());
-                    }
-
-                    @Override
-                    public void onSuccess(com.stripe.android.model.Token token) {
-                        Log.e("Bank Token", token.getId());
-                        token.getBankAccount();
-
-                    }
-                });
+//                Stripe stripe = new Stripe(PaymentSelection.this);
+//                stripe.setDefaultPublishableKey("pk_test_mjxYxMlj4K2WZfR6TwlHdIXW");
+//                BankAccount bankAccount = new BankAccount("000123456789", "US", "usd", "110000000");
+//                stripe.createBankAccountToken(bankAccount, new TokenCallback() {
+//                    @Override
+//                    public void onError(Exception error) {
+//                        Log.e("Stripe Error", error.getMessage());
+//                    }
+//
+//                    @Override
+//                    public void onSuccess(com.stripe.android.model.Token token) {
+//                        Log.e("Bank Token", token.getId());
+//                        token.getBankAccount();
+//
+//                    }
+//                });
+                GetBankDetail();
                 break;
         }
+    }
+
+    private void GetBankDetail() {
+        final Dialog dialog = new Dialog(PaymentSelection.this);
+        dialog.setContentView(R.layout.bankdetail);
+
+        spinner=(ListView) dialog.findViewById(R.id.spinner3);
+        country_home=(LinearLayout) dialog.findViewById(R.id.category_home) ;
+        down_arrow=(ImageView) dialog.findViewById(R.id.bank_down_arrow);
+        up_arrow=(ImageView) dialog.findViewById(R.id.bank_up_arrow);
+        down_arrow2=(ImageView) dialog.findViewById(R.id.bank_down_arrow2);
+        up_arrow2=(ImageView) dialog.findViewById(R.id.bank_up_arrow2);
+        spinnerbanktype=(ListView) dialog.findViewById(R.id.spinner4);
+        llbankType=(LinearLayout) dialog.findViewById(R.id.bank_type);
+        String[] planets = new String[] { "Individual" ,"Company"};
+        ArrayList<String> planetList = new ArrayList<String>();
+        planetList.addAll( Arrays.asList(planets) );
+        // Create ArrayAdapter using the planet list.
+        listAdapter = new ArrayAdapter<String>(this, R.layout.simplerow, planetList);
+
+        mApiService.getCountryData().enqueue(new Callback<ArrayList<GetCountry>>() {
+            @Override
+            public void onResponse(Call<ArrayList<GetCountry>> call, Response<ArrayList<GetCountry>> response) {
+                Data = response.body();
+                for (int i = 0; i < Data.size(); i++) {
+                    alpha.add(response.body().get(i).getCountryName().toString() + "~" + response.body().get(i).getImageString().toString());
+                    countryName.add(response.body().get(i).getCountryName().toString() + "~" + response.body().get(i).getCountryCode().toString() + "~" + response.body().get(i).getId().toString());
+                }
+                Collections.sort(alpha);
+                Collections.sort(countryName);
+                spinnerbanktype.setAdapter(listAdapter);
+                countryAdapter = new CustomList(PaymentSelection.this, alpha);
+                spinner.setAdapter(countryAdapter);
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<GetCountry>> call, Throwable t) {
+
+            }
+        });
+
+        up_arrow.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("NewApi")
+            @Override
+            public void onClick(View v) {
+                country_home.setVisibility(View.GONE);
+                up_arrow.setVisibility(View.INVISIBLE);
+                down_arrow.setVisibility(View.VISIBLE);
+            }
+        });
+
+        down_arrow.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("NewApi")
+            @Override
+            public void onClick(View v) {
+                country_home.setVisibility(View.VISIBLE);
+                up_arrow.setVisibility(View.VISIBLE);
+                down_arrow.setVisibility(View.INVISIBLE);
+            }
+        });
+
+        up_arrow2.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("NewApi")
+            @Override
+            public void onClick(View v) {
+                down_arrow2.setVisibility(View.VISIBLE);
+                down_arrow.setVisibility(View.VISIBLE);
+            }
+        });
+
+        down_arrow2.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("NewApi")
+            @Override
+            public void onClick(View v) {
+                llbankType.setVisibility(View.VISIBLE);
+                up_arrow2.setVisibility(View.VISIBLE);
+                down_arrow2.setVisibility(View.INVISIBLE);
+            }
+        });
+        dialog.show();
     }
 
     private void call() {
@@ -136,10 +237,7 @@ public class PaymentSelection extends AppCompatActivity implements View.OnClickL
                     public void onSuccess(com.stripe.android.model.Token token) {
                         Log.e("Bank Token", token.getId());
                         token.getBankAccount();
-
                     }
-
-
                 }
         );
     }

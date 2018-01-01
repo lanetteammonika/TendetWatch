@@ -13,11 +13,13 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.tenderWatch.Adapters.IndexingArrayAdapter;
+import com.tenderWatch.Drawer.MainDrawer;
 import com.tenderWatch.Models.GetCountry;
 import com.tenderWatch.Retrofit.Api;
 import com.tenderWatch.Retrofit.ApiUtils;
@@ -58,6 +60,7 @@ public class CountryList extends AppCompatActivity {
     String check,s;
     SharedPreference sp = new SharedPreference();
     ArrayList<String> a_country = new ArrayList<String>();
+    ImageView imgClose;
 
     int pos = 0;
 
@@ -71,6 +74,7 @@ public class CountryList extends AppCompatActivity {
         lltext = (LinearLayout) findViewById(R.id.lltext);
         back = (LinearLayout) findViewById(R.id.country_toolbar);
         subscription=(LinearLayout) findViewById(R.id.subscription);
+        imgClose=(ImageView) findViewById(R.id.img_close);
 
         sideSelector = (SideSelector) findViewById(R.id.side_selector);
         mAPIService = ApiUtils.getAPIService();
@@ -132,18 +136,19 @@ public class CountryList extends AppCompatActivity {
                         countryList.add(new EntryItem(name, flag, countryCode, id, false));
                     }
                 }
+
                 alpha.clear();
                 String str = list.toString().replaceAll(",", "");
                 char[] chars = str.toCharArray();
                 Log.i(TAG, "post submitted to API." + chars);
                 char[] al = new char[27];
+
                 for (int j = 1, i = 0; j < chars.length; j = j + 2, i++) {
                     al[i] = chars[j];
                     Log.i(TAG, "post." + chars[j]);
                 }
 
                 Log.i(TAG, "post submitted to API." + al);
-
                 SideSelector ss = new SideSelector(getApplicationContext());
                 ss.setAlphabet(al);
                 alphabetlist = str.substring(1, str.length() - 1).replaceAll(" ", "").toCharArray();
@@ -168,6 +173,16 @@ public class CountryList extends AppCompatActivity {
 
             }
         });
+
+        imgClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i=new Intent(CountryList.this, MainDrawer.class);
+                i.putExtra("nav_sub","true");
+                startActivity(i);
+            }
+        });
+
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

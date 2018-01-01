@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
@@ -18,6 +19,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -46,7 +48,7 @@ public class MainDrawer extends AppCompatActivity
     SharedPreference sp = new SharedPreference();
     private static final String TAG = MainDrawer.class.getSimpleName();
     Intent intent;
-    MenuItem menu2;
+    MenuItem menu2,editMenu;
     CircleImageView circledrawerimage;
     User user;
     NavigationView navigationView;
@@ -69,10 +71,18 @@ public class MainDrawer extends AppCompatActivity
         circledrawerimage = navigationView.getHeaderView(0).findViewById(R.id.circledrawerimage2);
         emailText=navigationView.getHeaderView(0).findViewById(R.id.textView2);
         user= (User) sp.getPreferencesObject(MainDrawer.this);
+
         Picasso.with(this).load(user.getProfilePhoto()).into(circledrawerimage);
         emailText.setText(user.getEmail());
-        displaySelectedScreen(R.id.nav_home);
+        String get=getIntent().getStringExtra("nav_sub");
+        if(get !=null){
+            displaySelectedScreen(R.id.nav_subscriptiondetails);
+        }else{
+            displaySelectedScreen(R.id.nav_home);
+        }
+
     }
+    boolean doubleBackToExitPressedOnce = false;
 
     @Override
     public void onBackPressed() {
@@ -82,14 +92,34 @@ public class MainDrawer extends AppCompatActivity
         } else {
             super.onBackPressed();
         }
+        // Checking for fragment count on backstack
+        if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+            getSupportFragmentManager().popBackStack();
+        } else if (!doubleBackToExitPressedOnce) {
+            this.doubleBackToExitPressedOnce = true;
+            Toast.makeText(this, "Please click BACK again to exit.", Toast.LENGTH_SHORT).show();
+
+            new Handler().postDelayed(new Runnable() {
+
+                @Override
+                public void run() {
+                    doubleBackToExitPressedOnce = false;
+                }
+            }, 2000);
+        } else {
+            super.onBackPressed();
+            return;
+        }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main_drawer, menu);
+        editMenu=menu.findItem(R.id.menu_item2);
         menu2 = menu.findItem(R.id.menu_item);
         menu2.setVisible(false);
+        editMenu.setVisible(false);
 
         // getMenuInflater().inflate(R.menu.main_drawer, menu);
         return true;
@@ -149,7 +179,8 @@ public class MainDrawer extends AppCompatActivity
                 fragment = new ChangePassword();
                 break;
             case R.id.nav_notifications:
-                fragment = new ChangePassword();
+                editMenu.setVisible(true);
+                fragment = new Notification();
                 break;
             case R.id.nav_contactsupportteam:
                 fragment = new Support();
@@ -199,4 +230,6 @@ public class MainDrawer extends AppCompatActivity
             }
         });
     }
+
+
 }
