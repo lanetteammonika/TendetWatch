@@ -25,6 +25,7 @@ import android.widget.Toast;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 import com.tenderWatch.Drawer.MainDrawer;
+import com.tenderWatch.Drawer.Notification;
 import com.tenderWatch.MainActivity;
 import com.tenderWatch.Models.User;
 import com.tenderWatch.R;
@@ -124,7 +125,7 @@ public class ClientDrawer extends AppCompatActivity
                 fragment = new ChangePassword();
                 break;
             case R.id.nav_notifications:
-                fragment = new TenderList();
+                fragment = new Notification();
                 break;
             case R.id.nav_contactsupportteam:
                 fragment = new Support();

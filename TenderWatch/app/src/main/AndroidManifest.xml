@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -20,6 +21,7 @@
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -57,10 +59,9 @@
         <activity android:name=".SignUpSelection" />
         <activity android:name=".Agreement" />
         <activity android:name=".Category" />
-        <activity android:name=".PaymentSelection"
-            android:theme="@style/App">
-
-        </activity>
+        <activity
+            android:name=".PaymentSelection"
+            android:theme="@style/App"></activity>
         <activity
             android:name=".Drawer.MainDrawer"
             android:label="@string/title_activity_main_drawer"
@@ -78,9 +79,9 @@
             android:label="@string/title_activity_edit_tender_detail"
             android:theme="@style/AppThemeAction" />
         <activity android:name=".SubscriptionDetail" />
-        <activity android:name=".Paypaldemo"></activity>
+        <activity android:name=".Paypaldemo" />
         <activity android:name=".ConfirmationActivity" />
-        <activity android:name=".GooglePay"></activity>
+        <activity android:name=".GooglePay" />
         <!-- Firebase Notifications -->
         <service android:name=".service.MyFirebaseMessagingService">
             <intent-filter>
@@ -93,9 +94,11 @@
             </intent-filter>
         </service>
         <!-- ./Firebase Notifications -->
-        <activity android:name=".Main2Activity">
-
-        </activity>
+        <activity android:name=".Main2Activity"></activity>
+        <activity
+            android:name=".ClientDetail"
+            android:label="@string/title_activity_client_detail"
+            android:theme="@style/AppThemeAction"></activity>
     </application>
 
 </manifest>

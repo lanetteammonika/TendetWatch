@@ -7,6 +7,8 @@ import android.graphics.drawable.Drawable;
 import android.icu.text.SimpleDateFormat;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Base64;
@@ -41,7 +43,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class PreviewTenderDetail extends AppCompatActivity {
+public class ClientDetail extends AppCompatActivity {
     Api mApiService;
     private static final ArrayList<String> alpha = new ArrayList<String>();
     private static final ArrayList<String> countryName = new ArrayList<String>();
@@ -62,11 +64,18 @@ public class PreviewTenderDetail extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_preview_tender_detail);
+        setContentView(R.layout.activity_client_detail);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        setTitle("Tender Detail");
+        toolbar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i=new Intent(ClientDetail.this, MainDrawer.class);
+                i.putExtra("nav_not","true");
+                startActivity(i);
+            }
+        });
         mApiService= ApiUtils.getAPIService();
         tenderTitle=(TextView) findViewById(R.id.preview_tender_title);
         Country=(TextView) findViewById(R.id.preview_country_name);
@@ -88,6 +97,17 @@ public class PreviewTenderDetail extends AppCompatActivity {
         String json=getIntent().getStringExtra("data");
         Gson gson=new Gson();
         object=gson.fromJson(json, Tender.class);
+        editTender.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Gson gson = new Gson();
+                String jsonString = gson.toJson(object);
+
+                Intent intent = new Intent(ClientDetail.this,EditTenderDetail.class);
+                intent.putExtra("data",jsonString);
+                startActivity(intent);
+            }
+        });
         Calendar c = Calendar.getInstance();
         SimpleDateFormat df = null;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -119,42 +139,17 @@ public class PreviewTenderDetail extends AppCompatActivity {
         long minutes = seconds / 60;
         long hours = minutes / 60;
         long days = (hours / 24) + 1;
-        editTender.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Gson gson = new Gson();
-                String jsonString = gson.toJson(object);
-
-                Intent intent = new Intent(PreviewTenderDetail.this,EditTenderDetail.class);
-                intent.putExtra("data",jsonString);
-                startActivity(intent);
-            }
-        });
-        toolbar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Gson gson = new Gson();
-                String jsonString = gson.toJson(object);
-                String role=sp.getPreferences(PreviewTenderDetail.this,"role");
-                Intent intent;
-                if(role.equals("client")) {
-                    intent = new Intent(PreviewTenderDetail.this, ClientDrawer.class);
-                }else{
-                    intent = new Intent(PreviewTenderDetail.this, MainDrawer.class);
-                }                intent.putExtra("data",jsonString);
-                startActivity(intent);
-            }
-        });
+        Log.d("days", "" + days);
         removeTender.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String token="Bearer "+sp.getPreferences(PreviewTenderDetail.this,"token");
+                String token="Bearer "+sp.getPreferences(ClientDetail.this,"token");
                 String id=object.getId().toString();
                 mApiService.removeTender(token,id).enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                         Log.i(TAG,"response---"+response.body());
-                        Intent intent = new Intent(PreviewTenderDetail.this,ClientDrawer.class);
+                        Intent intent = new Intent(ClientDetail.this,ClientDrawer.class);
                         startActivity(intent);
                     }
 
@@ -168,8 +163,8 @@ public class PreviewTenderDetail extends AppCompatActivity {
             }
         });
 
-       if(!object.getTenderPhoto().toString().equals("")){
-            Picasso.with(PreviewTenderDetail.this)
+        if(!object.getTenderPhoto().toString().equals("")){
+            Picasso.with(ClientDetail.this)
                     .load(object.getTenderPhoto().toString())
                     .into(new Target() {
                         @Override
@@ -292,4 +287,5 @@ public class PreviewTenderDetail extends AppCompatActivity {
             return null;
         }
     }
+
 }

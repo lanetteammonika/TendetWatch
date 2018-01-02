@@ -48,7 +48,7 @@ public class MainDrawer extends AppCompatActivity
     SharedPreference sp = new SharedPreference();
     private static final String TAG = MainDrawer.class.getSimpleName();
     Intent intent;
-    MenuItem menu2,editMenu;
+    private static MenuItem menu2,editMenu;
     CircleImageView circledrawerimage;
     User user;
     NavigationView navigationView;
@@ -75,7 +75,11 @@ public class MainDrawer extends AppCompatActivity
         Picasso.with(this).load(user.getProfilePhoto()).into(circledrawerimage);
         emailText.setText(user.getEmail());
         String get=getIntent().getStringExtra("nav_sub");
-        if(get !=null){
+        String getnot=getIntent().getStringExtra("nav_not");
+        if(getnot !=null){
+            displaySelectedScreen(R.id.nav_notifications);
+        }
+        else if(get !=null){
             displaySelectedScreen(R.id.nav_subscriptiondetails);
         }else{
             displaySelectedScreen(R.id.nav_home);
@@ -118,9 +122,9 @@ public class MainDrawer extends AppCompatActivity
         getMenuInflater().inflate(R.menu.main_drawer, menu);
         editMenu=menu.findItem(R.id.menu_item2);
         menu2 = menu.findItem(R.id.menu_item);
+        editMenu.setTitle("Edit");
         menu2.setVisible(false);
         editMenu.setVisible(false);
-
         // getMenuInflater().inflate(R.menu.main_drawer, menu);
         return true;
     }
@@ -137,8 +141,32 @@ public class MainDrawer extends AppCompatActivity
             call();
             return true;
         }
+        if (id == R.id.menu_item2) {
 
+
+            callEdit();
+            return true;
+        }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void callEdit() {
+        Fragment fragment = null;
+        fragment=new Notification();
+        Bundle args = new Bundle();
+        if(editMenu.getTitle().equals("Edit")){
+            editMenu.setTitle("Cancel");
+            args.putString("edit", "true");
+            fragment.setArguments(args);
+        }else{
+            editMenu.setTitle("Edit");
+        }
+
+
+
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.content_frame, fragment);
+        ft.commit();
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -226,7 +254,6 @@ public class MainDrawer extends AppCompatActivity
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Log.i(TAG, "post submitted to API." + t);
-
             }
         });
     }

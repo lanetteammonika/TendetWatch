@@ -31,6 +31,7 @@ public class NotificationAdapter extends BaseAdapter {
     private Context context;
     private ArrayList<ResponseNotifications> countryNameList;
     private String test;
+    private ArrayList<String> selectedItem=new ArrayList<String>();;
 
     public NotificationAdapter(Context context,ArrayList<ResponseNotifications> countryNameList,String test){
         this.context=context;
@@ -39,7 +40,15 @@ public class NotificationAdapter extends BaseAdapter {
     }
 
     public void setCheckedItem(String i) {
+        if (!selectedItem.contains(i)) {
+            selectedItem.add(i);
+        }else{
+            selectedItem.remove(i);
+        }
+    }
 
+    public ArrayList<String> getCheckedItem(){
+        return selectedItem;
     }
 
     @Override
@@ -58,7 +67,7 @@ public class NotificationAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         convertView = inflater.inflate(R.layout.layout_notification, parent, false);
@@ -79,19 +88,19 @@ public class NotificationAdapter extends BaseAdapter {
         int z=s3.length();
         Spannable spanText = new SpannableString(countryNameList.get(position).getMessage());
        // spanText.setSpan(new ForegroundColorSpan(context.getResources().getColor(R.color.colorPrimary)), 0, changeString.length(), 0);
-        spanText.setSpan(new ForegroundColorSpan(context.getResources().getColor(R.color.colorTender)), 12,p, 0);
+        spanText.setSpan(new ForegroundColorSpan(context.getResources().getColor(R.color.colorTender)), x+1,p, 0);
         txtCountryName.setText(spanText);
         txtTime.setText(countryNameList.get(position).getCreatedAt().split("T")[0]);
         Picasso.with(context).load(countryNameList.get(position).getSender().getProfilePhoto()).into(flag_img);
         if(test.equals("true")){
-            tick.setVisibility(View.VISIBLE);
+            tick2.setVisibility(View.VISIBLE);
         }
         tick.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 tick2.setVisibility(View.VISIBLE);
                 tick.setVisibility(View.GONE);
-
+               setCheckedItem(countryNameList.get(position).getId());
             }
         });
         tick2.setOnClickListener(new View.OnClickListener() {
@@ -99,6 +108,7 @@ public class NotificationAdapter extends BaseAdapter {
             public void onClick(View view) {
                 tick.setVisibility(View.VISIBLE);
                 tick2.setVisibility(View.GONE);
+                setCheckedItem(countryNameList.get(position).getId());
             }
         });
 

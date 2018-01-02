@@ -203,7 +203,6 @@ public interface Api {
     Call<ResponseBody> removeTender(
             @Header("Authorization") String token,
             @Path("tenderDetailId") String id
-
     );
 
     @GET("service/userServices")
@@ -214,6 +213,11 @@ public interface Api {
     @GET("notification")
     Call<ArrayList<ResponseNotifications>> getNotifications(
             @Header("Authorization") String token
+    );
+    @FormUrlEncoded
+    @HTTP(method = "DELETE", path = "notification/delete", hasBody = true)
+    Call<ResponseBody> deleteNotification(@Header("Authorization") String token,
+                              @Field("notification") ArrayList<String> notification
     );
 
 }

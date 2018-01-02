@@ -26,4 +26,5 @@
     <string name="spinner_prompt">fgdgdf</string>
     <string name="title_activity_preview_tender_detail">PreviewTenderDetail</string>
     <string name="title_activity_edit_tender_detail">EditTenderDetail</string>
+    <string name="title_activity_client_detail">ClientDetail</string>
 </resources>
