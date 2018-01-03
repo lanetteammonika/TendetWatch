@@ -3,7 +3,6 @@ package com.tenderWatch.ClientDrawer;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -12,12 +11,10 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -26,7 +23,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,7 +32,6 @@ import com.tenderWatch.Adapters.CustomList;
 import com.tenderWatch.BuildConfig;
 import com.tenderWatch.Models.GetCategory;
 import com.tenderWatch.Models.GetCountry;
-import com.tenderWatch.Models.Tender;
 import com.tenderWatch.Models.UploadTender;
 import com.tenderWatch.R;
 import com.tenderWatch.Retrofit.Api;
@@ -120,7 +115,6 @@ public class Home extends Fragment implements AdapterView.OnItemSelectedListener
         down_arrow3 = (ImageView) view.findViewById(R.id.down_arrow3);
         up_arrow3 = (ImageView) view.findViewById(R.id.up_arrow3);
         tenderImage = (ImageView) view.findViewById(R.id.tender_image);
-
         country_home = (LinearLayout) view.findViewById(R.id.country_home);
         category_home = (LinearLayout) view.findViewById(R.id.category_home);
         country = (TextView) view.findViewById(R.id.txt_home_country_name);
@@ -128,7 +122,6 @@ public class Home extends Fragment implements AdapterView.OnItemSelectedListener
         mApiService = ApiUtils.getAPIService();
         spinner.setOnItemSelectedListener(this);
         scrollView = (MyScrollView) view.findViewById(R.id.home_scroll);
-
 
         tenderImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -283,12 +276,12 @@ public class Home extends Fragment implements AdapterView.OnItemSelectedListener
                                     sp.ShowDialog(getActivity(), "please fill at least one information");
                                 } else {
                                     String e = email2.getText().toString() != "" ? email2.getText().toString() : "";
-                                    String m = mobile.getText().toString() != "" ? mobile.getText().toString() : "";
+                                    String m = mobile.getText().toString() != "" ? "+" + countryCode + "-"+mobile.getText().toString() : "";
                                     String l = landline.getText().toString() != "" ? landline.getText().toString() : "";
                                     String a = address.getText().toString() != "" ? address.getText().toString() : "";
 
                                     email1 = MultipartBody.Part.createFormData("email", e);
-                                    contactNo1 = MultipartBody.Part.createFormData("contactNo", "+" + countryCode + "-"+m);
+                                    contactNo1 = MultipartBody.Part.createFormData("contactNo", m);
                                     landlineNo1 = MultipartBody.Part.createFormData("landlineNo", l);
                                     address1 = MultipartBody.Part.createFormData("address", a);
                                     dialog.dismiss();
@@ -404,7 +397,8 @@ public class Home extends Fragment implements AdapterView.OnItemSelectedListener
                     @Override
                     public void onResponse(Call<UploadTender> call, Response<UploadTender> response) {
 
-
+                        Intent intent = new Intent(getActivity(),ClientDrawer.class);
+                        startActivity(intent);
                         Log.i(TAG,"response---"+response.body());
 
                     }

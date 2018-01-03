@@ -18,10 +18,8 @@ public class ConfirmationActivity extends AppCompatActivity {
         //Getting Intent
         Intent intent = getIntent();
 
-
         try {
             JSONObject jsonDetails = new JSONObject(intent.getStringExtra("PaymentDetails"));
-
             //Displaying payment details
             showDetails(jsonDetails.getJSONObject("response"), intent.getStringExtra("PaymentAmount"));
         } catch (JSONException e) {

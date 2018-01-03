@@ -1,6 +1,5 @@
 package com.tenderWatch.Drawer;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -11,16 +10,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.google.gson.Gson;
 import com.tenderWatch.Adapters.NotificationAdapter;
-import com.tenderWatch.Adapters.TenderListAdapter;
-import com.tenderWatch.ClientDetail;
+import com.tenderWatch.NTenderDetail;
 import com.tenderWatch.Models.ResponseNotifications;
 import com.tenderWatch.Models.Tender;
-import com.tenderWatch.PreviewTenderDetail;
 import com.tenderWatch.R;
 import com.tenderWatch.Retrofit.Api;
 import com.tenderWatch.Retrofit.ApiUtils;
@@ -86,7 +82,7 @@ public class Notification extends Fragment {
                 obj=notification_list.get(i).getTender();
                 Gson gson = new Gson();
                 String jsonString = gson.toJson(obj);
-                Intent intent = new Intent(getActivity(),ClientDetail.class);
+                Intent intent = new Intent(getActivity(),NTenderDetail.class);
                 intent.putExtra("data",jsonString);
                 startActivity(intent);
 

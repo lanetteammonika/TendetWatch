@@ -61,7 +61,7 @@
         <activity android:name=".Category" />
         <activity
             android:name=".PaymentSelection"
-            android:theme="@style/App"></activity>
+            android:theme="@style/App" />
         <activity
             android:name=".Drawer.MainDrawer"
             android:label="@string/title_activity_main_drawer"
@@ -82,6 +82,7 @@
         <activity android:name=".Paypaldemo" />
         <activity android:name=".ConfirmationActivity" />
         <activity android:name=".GooglePay" />
+        <activity android:name=".ClientDetail"/>
         <!-- Firebase Notifications -->
         <service android:name=".service.MyFirebaseMessagingService">
             <intent-filter>
@@ -94,11 +95,11 @@
             </intent-filter>
         </service>
         <!-- ./Firebase Notifications -->
-        <activity android:name=".Main2Activity"></activity>
+        <activity android:name=".Main2Activity" />
         <activity
-            android:name=".ClientDetail"
+            android:name=".NTenderDetail"
             android:label="@string/title_activity_client_detail"
-            android:theme="@style/AppThemeAction"></activity>
+            android:theme="@style/AppThemeAction" />
     </application>
 
 </manifest>

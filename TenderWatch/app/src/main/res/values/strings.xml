@@ -3,6 +3,8 @@
     <string name="about_app"><u>About TenderWatch</u></string>
     <string name="title_activity_login">Login</string>
     <string name="forgetpassword"><u>Forget Password?</u></string>
+    <string name="clientdetail"><u>Client Detail</u></string>
+
     <string name="facebook_app_id">338657463270317</string>
     <string name="fb_login_protocol_scheme">fb338657463270317</string>
     <string name="create_acc"><u>CREATE AN ACCOUNT</u></string>

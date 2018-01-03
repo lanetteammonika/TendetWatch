@@ -5,8 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.tenderWatch.ClientDetail"
-    tools:showIn="@layout/activity_client_detail">
+    tools:context="com.tenderWatch.NTenderDetail"
+    tools:showIn="@layout/activity_ntender_detail">
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -408,7 +408,23 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:layout_marginTop="@dimen/value_50">
+                    android:layout_marginRight="@dimen/value_30"
+                    android:layout_marginTop="@dimen/value_2"
+                    android:gravity="right"
+                    >
+                    <TextView
+                        android:id="@+id/lbl_clientDetail"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/clientdetail"
+                        android:textColor="@color/colorTender"
+                        />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="@dimen/value_30">
 
                     <RelativeLayout
                         android:layout_width="match_parent"
@@ -436,11 +452,11 @@
                             android:layout_height="@dimen/value_35"
                             android:background="@drawable/round_corner"
                             android:layout_gravity="center"
-                            android:text="Amend"
+                            android:text="Interested"
                             android:textSize="@dimen/text_20"
                             android:textAllCaps="false"
                             android:textColor="@color/colorWhite"
-                            android:backgroundTint="#787878"
+                            android:backgroundTint="#8DD75B"
                             android:layout_marginLeft="@dimen/value_30"
                             android:layout_toRightOf="@+id/remove_tender"
                             android:paddingLeft="@dimen/value_10"
@@ -448,6 +464,7 @@
                             />
                     </RelativeLayout>
                 </LinearLayout>
+
             </LinearLayout>
         </ScrollView>
     </LinearLayout>

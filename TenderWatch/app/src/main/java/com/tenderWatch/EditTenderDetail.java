@@ -163,7 +163,6 @@ public class EditTenderDetail extends AppCompatActivity {
                         @Override
                         public void onBitmapFailed(Drawable errorDrawable) {
                             Log.v("Main", "errrorrrr");
-
                         }
 
                         @Override
@@ -221,6 +220,7 @@ public class EditTenderDetail extends AppCompatActivity {
                 scrollView.setScrolling(true);
             }
         });
+
         down_arrow2.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("NewApi")
             @Override
@@ -233,7 +233,6 @@ public class EditTenderDetail extends AppCompatActivity {
                 down_arrow.setVisibility(View.VISIBLE);
                 scrollView.setScrolling(false);
                 //homeScroll.setEnabled(false);
-
             }
         });
 
@@ -264,10 +263,12 @@ public class EditTenderDetail extends AppCompatActivity {
                     final ImageView box = (ImageView) dialog.findViewById(R.id.home_box);
                     final ImageView boxright = (ImageView) dialog.findViewById(R.id.home_box_checked);
                     TextView code=(TextView) dialog.findViewById(R.id.contact_code);
+
                     if(object.getContactNo().toString().equals("")){
                         mobile.setText("");
                     }else{
-                        mobile.setText(object.getContactNo().toString());}
+                        mobile.setText(object.getContactNo().toString());
+                    }
 
                     if(object.getLandlineNo().toString().equals("")){
                         landline.setText("");
