@@ -14,6 +14,7 @@ import android.widget.ListView;
 
 import com.google.gson.Gson;
 import com.tenderWatch.Adapters.NotificationAdapter;
+import com.tenderWatch.Models.Sender;
 import com.tenderWatch.NTenderDetail;
 import com.tenderWatch.Models.ResponseNotifications;
 import com.tenderWatch.Models.Tender;
@@ -80,10 +81,13 @@ public class Notification extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 obj=notification_list.get(i).getTender();
+                Sender s=notification_list.get(i).getSender();
                 Gson gson = new Gson();
                 String jsonString = gson.toJson(obj);
+                String sender=gson.toJson(s);
                 Intent intent = new Intent(getActivity(),NTenderDetail.class);
                 intent.putExtra("data",jsonString);
+                intent.putExtra("sender",sender);
                 startActivity(intent);
 
             }

@@ -464,7 +464,7 @@ public class EditTenderDetail extends AppCompatActivity {
                 }
                 Collections.sort(falpha);
                 Collections.sort(fcountryName);
-                for (int i = 0; i < Data2.size(); i++) {
+                for (int i = 0; i < Data.size(); i++) {
                     if(fcountryName.get(i).split("~")[2].toString().equals(object.getCountry().toString())){
                         country.setText(response.body().get(i).getCountryName().toString());
                         break;

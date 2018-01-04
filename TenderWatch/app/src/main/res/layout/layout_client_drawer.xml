@@ -51,7 +51,7 @@
             android:layout_height="wrap_content">
 
             <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/circleView"
+                android:id="@+id/client_circleView"
                 android:layout_width="@dimen/value_120"
                 android:layout_height="@dimen/value_120"
                 android:layout_centerInParent="true"
@@ -61,9 +61,8 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignBottom="@id/circleView"
-                android:layout_margin="@dimen/value_15"
-                android:layout_toRightOf="@+id/circleView"
+                android:layout_alignBottom="@id/client_circleView"
+                android:layout_toRightOf="@+id/client_circleView"
                 android:text="0.0/5.0"
                 android:textSize="@dimen/value_15" />
         </RelativeLayout>
@@ -93,7 +92,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:layout_marginLeft="@dimen/value_35"
+                android:layout_marginLeft="@dimen/value_40"
                 android:backgroundTint="@android:color/transparent"
                 android:singleLine="true"
                 android:text="Email"
@@ -129,7 +128,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:layout_marginLeft="@dimen/value_30"
+                android:layout_marginLeft="@dimen/value_40"
                 android:backgroundTint="@android:color/transparent"
                 android:inputType="number"
                 android:singleLine="true"
@@ -167,10 +166,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:layout_marginLeft="@dimen/value_30"
+                android:layout_marginLeft="@dimen/value_40"
                 android:backgroundTint="@android:color/transparent"
                 android:singleLine="true"
                 android:text="Country"
+                android:textColor="@color/colorBlack"
                 android:textSize="@dimen/text_15" />
             <ImageView
                 android:id="@+id/c_flag"
@@ -209,7 +209,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:layout_marginLeft="@dimen/value_30"
+                android:layout_marginLeft="@dimen/value_40"
                 android:backgroundTint="@android:color/transparent"
                 android:singleLine="true"
                 android:text="Occupation"
@@ -247,11 +247,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:layout_marginLeft="@dimen/value_30"
+                android:layout_marginLeft="@dimen/value_40"
                 android:backgroundTint="@android:color/transparent"
                 android:singleLine="true"
                 android:text="MORE ABOUT ME (click here)"
-                android:textSize="@dimen/text_15" />
+                android:textSize="@dimen/text_15"
+                android:textColor="@color/colorBlack"/>
 
         </RelativeLayout>
 
@@ -261,6 +262,7 @@
             android:layout_marginBottom="@dimen/value_5"
             android:layout_marginLeft="@dimen/value_20"
             android:layout_marginRight="@dimen/value_20"
+            android:layout_marginTop="@dimen/value_5"
             android:background="#808080" />
 
         <RelativeLayout

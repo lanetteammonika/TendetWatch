@@ -13,44 +13,37 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Filter;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
+import com.tenderWatch.Models.AllContractorTender;
 import com.tenderWatch.Models.Tender;
 import com.tenderWatch.R;
-import com.tenderWatch.SignUpSelection;
 
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
- * Created by lcom48 on 18/12/17.
+ * Created by lcom47 on 4/1/18.
  */
 
-public class TenderListAdapter extends BaseAdapter {
+public class ContractorTenderListAdapter extends BaseAdapter {
+
     private Context context;
-    private ArrayList<Tender> tenderList;
+    private ArrayList<AllContractorTender> tenderList;
 
 
-    public TenderListAdapter(Context context, ArrayList<Tender> tenderList){
+    public ContractorTenderListAdapter(Context context, ArrayList<AllContractorTender> tenderList){
         this.context=context;
         this.tenderList=tenderList;
     }
-    public void updateReceiptsList(ArrayList<Tender> tenderList) {
-        this.tenderList.clear();
-        this.tenderList.addAll(tenderList);
-        this.notifyDataSetChanged();
-    }
+
     @Override
     public int getCount() {
         return tenderList.size();
@@ -77,36 +70,17 @@ public class TenderListAdapter extends BaseAdapter {
         TextView txtTenderTitle=(TextView) convertView.findViewById(R.id.tender_title);
         TextView txtTenderExpDate=(TextView) convertView.findViewById(R.id.tender_expdate);
         LinearLayout stampRemove=(LinearLayout) convertView.findViewById(R.id.stamp_remove);
-        if(!tenderList.get(position).getTenderPhoto().toString().equals("")) {
-            Picasso.with(context)
-                    .load(tenderList.get(position).getTenderPhoto().toString())
-                    .into(new Target() {
-                        @Override
-                        public void onBitmapLoaded(final Bitmap bitmap, Picasso.LoadedFrom from) {
-                            Log.v("Main", String.valueOf(bitmap));
-                            Bitmap main = bitmap;
-                            tender_image.setImageBitmap(main);
-                        }
+        if(!tenderList.get(position).getTenderUploader().getProfilePhoto().toString().equals("")) {
+            Picasso.with(context).load(tenderList.get(position).getTenderUploader().getProfilePhoto().toString()).into(tender_image);
 
-                        @Override
-                        public void onBitmapFailed(Drawable errorDrawable) {
-                            Log.v("Main", "errrorrrr");
-                        }
-
-                        @Override
-                        public void onPrepareLoad(Drawable placeHolderDrawable) {
-                        }
-                    });
-          //  Log.i(TAG, profilePicUrl);
-        //}
+            //  Log.i(TAG, profilePicUrl);
+            //}
         }
-        Calendar c = Calendar.getInstance();
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-        String formattedDate = df.format(c.getTime());
+
         Date startDateValue = null,endDateValue = null;
         try {
-              startDateValue = new SimpleDateFormat("yyyy-MM-dd").parse(formattedDate);
-            //  startDateValue = new SimpleDateFormat("yyyy-MM-dd").parse(tenderList.get(position).getCreatedAt().split("T")[0]);
+           // startDateValue = new SimpleDateFormat("yyyy-MM-dd").parse(formattedDate);
+              startDateValue = new SimpleDateFormat("yyyy-MM-dd").parse(tenderList.get(position).getCreatedAt().split("T")[0]);
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -122,15 +96,15 @@ public class TenderListAdapter extends BaseAdapter {
         long hours = minutes / 60;
         long days = (hours / 24) + 1;
 
-        if(days==0 || days<0){
+        if(days==0 ){
             stampRemove.setVisibility(View.VISIBLE);
             txtTenderExpDate.setText("Expired");
         }else{
             txtTenderExpDate.setText(days+" days");
         }
         Log.d("days", "" + days);
-        txtTenderName.setText(tenderList.get(position).getTenderName().toString());
-        txtTenderTitle.setText(tenderList.get(position).getTenderName().toString());
+        txtTenderName.setText(tenderList.get(position).getTenderUploader().getEmail().toString());
+        txtTenderTitle.setText(tenderList.get(position).getEmail().toString());
 
         return convertView;
     }
@@ -146,6 +120,5 @@ public class TenderListAdapter extends BaseAdapter {
         }
     }
 
+
 }
-
-

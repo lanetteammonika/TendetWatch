@@ -60,6 +60,7 @@ public class NTenderDetail extends AppCompatActivity {
     RelativeLayout rlEmail,rlContact,rlLandline,rlAddress;
     Button removeTender,editTender;
     SharedPreference sp=new SharedPreference();
+    String sender;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -101,11 +102,13 @@ public class NTenderDetail extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(NTenderDetail.this,ClientDetail.class);
+                intent.putExtra("sender",sender);
                 startActivity(intent);
             }
         });
 
         String json=getIntent().getStringExtra("data");
+        sender=getIntent().getStringExtra("sender");
         Gson gson=new Gson();
         object=gson.fromJson(json, Tender.class);
         editTender.setOnClickListener(new View.OnClickListener() {

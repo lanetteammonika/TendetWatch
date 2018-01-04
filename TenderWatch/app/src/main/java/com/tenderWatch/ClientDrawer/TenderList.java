@@ -22,11 +22,13 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.google.gson.Gson;
+import com.tenderWatch.Adapters.ContractorTenderListAdapter;
 import com.tenderWatch.Adapters.IndexingArrayAdapter;
 import com.tenderWatch.Adapters.TenderListAdapter;
 import com.tenderWatch.Drawer.MainDrawer;
 import com.tenderWatch.EditTenderDetail;
 import com.tenderWatch.Login;
+import com.tenderWatch.Models.AllContractorTender;
 import com.tenderWatch.Models.Tender;
 import com.tenderWatch.PreviewTenderDetail;
 import com.tenderWatch.R;
@@ -59,7 +61,9 @@ public class TenderList extends Fragment {
     Intent intent;
     ArrayList<Tender> allTender = new ArrayList<Tender>();
     TenderListAdapter adapter;
+    ContractorTenderListAdapter Con_adapter;
     ListView list_tender;
+    ArrayList<AllContractorTender> contractoradapter=new ArrayList<AllContractorTender>();
     Tender tender;
     @Nullable
     @Override
@@ -74,7 +78,13 @@ public class TenderList extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mAPIService = ApiUtils.getAPIService();
-        GetAllTender();
+        String role=sp.getPreferences(getActivity(),"role");
+        if(role.equals("client")){
+            GetAllTender();
+        }else{
+            AllContractorTender();
+        }
+
         list_tender=(ListView) view.findViewById(R.id.list_tender);
         final Fragment fragment2 = new Home();
 
@@ -90,7 +100,7 @@ public class TenderList extends Fragment {
                 fragmentTransaction.commit();
             }
         });
-        String role=sp.getPreferences(getActivity(),"role");
+        //String role=sp.getPreferences(getActivity(),"role");
         if(role.equals("client")) {
             fab.setVisibility(View.VISIBLE);
         }else {
@@ -111,15 +121,59 @@ public class TenderList extends Fragment {
                 tender=allTender.get(position);
                 Gson gson = new Gson();
                 String jsonString = gson.toJson(tender);
+                Date startDateValue = null,endDateValue = null;
+                try {
+                    // startDateValue = new SimpleDateFormat("yyyy-MM-dd").parse(formattedDate);
+                    startDateValue = new SimpleDateFormat("yyyy-MM-dd").parse(tender.getCreatedAt().split("T")[0]);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                try {
+                    endDateValue = new SimpleDateFormat("yyyy-MM-dd").parse(tender.getExpiryDate().split("T")[0]);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                //Date endDateValue = new Date(allTender.get(position).getExpiryDate().split("T")[0]);
+                long diff = endDateValue.getTime() - startDateValue.getTime();
+                long seconds = diff / 1000;
+                long minutes = seconds / 60;
+                long hours = minutes / 60;
+                long days = (hours / 24) + 1;
 
-                Intent intent = new Intent(getActivity(),PreviewTenderDetail.class);
-                intent.putExtra("data",jsonString);
-                startActivity(intent);
+                if(days==0){
+                    sp.ShowDialog(getActivity(),"Tender is not Activated.");
+                }else{
+                    Intent intent = new Intent(getActivity(),PreviewTenderDetail.class);
+                    intent.putExtra("data",jsonString);
+                    startActivity(intent);
+                }
+
 
             }
         });
         //you can set the title for your toolbar here for different fragments different titles
         getActivity().setTitle("Tender Watch");
+    }
+
+    private void AllContractorTender() {
+        String token = "Bearer " + sp.getPreferences(getActivity(), "token");
+        mAPIService.getAllContractorTender(token).enqueue(new Callback<ArrayList<AllContractorTender>>() {
+            @Override
+            public void onResponse(Call<ArrayList<AllContractorTender>> call, Response<ArrayList<AllContractorTender>> response) {
+                Log.i(TAG, "post submitted to API." + response.body());
+                if(response.body()!=null) {
+                    contractoradapter = response.body();
+                    Con_adapter = new ContractorTenderListAdapter(getActivity(), response.body());
+                    list_tender.setAdapter(Con_adapter);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<AllContractorTender>> call, Throwable t) {
+                Log.i(TAG, "post submitted to API." + t);
+
+            }
+        });
     }
 
     private void GetAllTender() {

@@ -212,7 +212,6 @@ public class Home extends Fragment implements AdapterView.OnItemSelectedListener
                     final ImageView boxright = (ImageView) dialog.findViewById(R.id.home_box_checked);
                     final TextView code=(TextView) dialog.findViewById(R.id.contact_code);
 
-
                     box.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {

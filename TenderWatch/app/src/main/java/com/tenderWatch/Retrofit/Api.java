@@ -5,12 +5,14 @@ package com.tenderWatch.Retrofit;
  */
 
 import com.tenderWatch.Drawer.MainDrawer;
+import com.tenderWatch.Models.AllContractorTender;
 import com.tenderWatch.Models.GetCategory;
 import com.tenderWatch.Models.GetCountry;
 import com.tenderWatch.Models.LoginPost;
 import com.tenderWatch.Models.Message;
 import com.tenderWatch.Models.Register;
 import com.tenderWatch.Models.ResponseNotifications;
+import com.tenderWatch.Models.ResponseRating;
 import com.tenderWatch.Models.SubScriptionResponse;
 import com.tenderWatch.Models.Success;
 import com.tenderWatch.Models.Tender;
@@ -164,6 +166,11 @@ public interface Api {
             @Header("Authorization") String token
     );
 
+    @POST("tender/getTenders")
+    Call<ArrayList<AllContractorTender>> getAllContractorTender(
+            @Header("Authorization") String token
+    );
+
     @Multipart
     @POST("tender")
     Call<UploadTender> uploadTender(
@@ -218,6 +225,13 @@ public interface Api {
     @HTTP(method = "DELETE", path = "notification/delete", hasBody = true)
     Call<ResponseBody> deleteNotification(@Header("Authorization") String token,
                               @Field("notification") ArrayList<String> notification
+    );
+    @POST("review")
+    @FormUrlEncoded
+    Call<ResponseRating> giveRating(
+            @Header("Authorization") String token,
+            @Field("user") String clientId,
+            @Field("rating") String Rating
     );
 
 }
