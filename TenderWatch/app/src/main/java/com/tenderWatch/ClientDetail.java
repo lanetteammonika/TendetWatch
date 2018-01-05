@@ -2,6 +2,7 @@ package com.tenderWatch;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -42,9 +43,9 @@ import retrofit2.Response;
 
 public class ClientDetail extends AppCompatActivity {
     CircleImageView clientImage;
-    ImageView flag,eRat1,eRat2,eRat3,eRat4,eRat5,fRat1,fRat2,fRat3,fRat4,fRat5;
-    TextView email,mobile,country,occcupation,aboutMe;
-    String sender;
+    ImageView close,flag,eRat1,eRat2,eRat3,eRat4,eRat5,fRat1,fRat2,fRat3,fRat4,fRat5;
+    TextView email,mobile,country,occcupation,aboutMe,txtRate;
+    String sender,jsonString;
     Sender obj;
     Api mApiService;
     private List Data;
@@ -53,6 +54,7 @@ public class ClientDetail extends AppCompatActivity {
     SharedPreference sp=new SharedPreference();
     private static final String TAG = ClientDetail.class.getSimpleName();
     String rate;
+    Button btnClientSubmit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +62,8 @@ public class ClientDetail extends AppCompatActivity {
 
         setContentView(R.layout.layout_client_drawer);
         mApiService= ApiUtils.getAPIService();
+        sender=getIntent().getStringExtra("sender");
+        jsonString=getIntent().getStringExtra("data");
         flag=(ImageView) findViewById(R.id.c_flag);
         eRat1=(ImageView) findViewById(R.id.e_s1);
         eRat2=(ImageView) findViewById(R.id.e_s2);
@@ -71,12 +75,15 @@ public class ClientDetail extends AppCompatActivity {
         fRat3=(ImageView) findViewById(R.id.f_s3);
         fRat4=(ImageView) findViewById(R.id.f_s4);
         fRat5=(ImageView) findViewById(R.id.f_s5);
+        close=(ImageView) findViewById(R.id.img_close);
         email=(TextView) findViewById(R.id.txt_client_email);
         mobile=(TextView) findViewById(R.id.txt_client_mobileNo);
         country=(TextView) findViewById(R.id.txt_client_country);
         occcupation=(TextView) findViewById(R.id.txt_client_occupation);
         aboutMe=(TextView) findViewById(R.id.txt_client_aboutme);
         clientImage=(CircleImageView) findViewById(R.id.client_circleView);
+        btnClientSubmit=(Button) findViewById(R.id.btn_client_submit);
+        txtRate=(TextView) findViewById(R.id.txt_avgRate);
 
         eRat1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -134,6 +141,21 @@ public class ClientDetail extends AppCompatActivity {
             }
         });
         DisplayDetail();
+        btnClientSubmit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                callRatingApi();
+            }
+        });
+        close.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(ClientDetail.this,NTenderDetail.class);
+                intent.putExtra("data",jsonString);
+                intent.putExtra("sender",sender);
+                startActivity(intent);
+            }
+        });
     }
 
     private void callRatingApi() {
@@ -192,7 +214,7 @@ public class ClientDetail extends AppCompatActivity {
         }
     }
     private void DisplayDetail() {
-        sender=getIntent().getStringExtra("sender");
+
         Gson gson=new Gson();
         obj=gson.fromJson(sender, Sender.class);
         Picasso.with(this).load(obj.getProfilePhoto()).into(clientImage);FGetAllCountry();

@@ -196,6 +196,29 @@ public class TenderList extends Fragment {
             }
         });
     }
+    private void RemoveTender(int i, final AlertDialog alertDialog){
+        tender=allTender.get(i);
+        final String token="Bearer "+sp.getPreferences(getActivity(),"token");
+        String tenderid=tender.getId().toString();
+        mAPIService.removeTender(token,tenderid).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                Log.i(TAG,"response---"+response.body());
+                final Fragment fragment3 = new TenderList();
+                FragmentManager fragmentManager = getFragmentManager();
+                final FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.content_frame, fragment3);
+                //fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.commit();
+                alertDialog.dismiss();
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.i(TAG,"response---"+t);
+            }
+        });
+    }
     private void ShowBox(final int i){
         final AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
 
@@ -206,6 +229,8 @@ public class TenderList extends Fragment {
         alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Delete", new DialogInterface.OnClickListener() {
 
             public void onClick(DialogInterface dialog, int id) {
+                String Con_msg="Tender will be completely removed from TenderWatch.are you sure you want to remove?";
+                String Client_msg="Are you sure you want to remove this Tender completely from your Account?";
                 tender=allTender.get(i);
                 final String token="Bearer "+sp.getPreferences(getActivity(),"token");
                 String tenderid=tender.getId().toString();
@@ -236,7 +261,6 @@ public class TenderList extends Fragment {
                 tender=allTender.get(i);
                 Gson gson = new Gson();
                 String jsonString = gson.toJson(tender);
-
                 Intent intent = new Intent(getActivity(),EditTenderDetail.class);
                 intent.putExtra("data",jsonString);
                 startActivity(intent);

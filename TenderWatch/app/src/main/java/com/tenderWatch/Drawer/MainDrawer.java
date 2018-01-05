@@ -21,6 +21,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 import com.tenderWatch.ClientDrawer.ClientDrawer;
@@ -28,6 +29,7 @@ import com.tenderWatch.ClientDrawer.Support;
 import com.tenderWatch.ClientDrawer.TenderList;
 import com.tenderWatch.CountryList;
 import com.tenderWatch.MainActivity;
+import com.tenderWatch.Models.Tender;
 import com.tenderWatch.Models.User;
 import com.tenderWatch.R;
 import com.tenderWatch.Retrofit.Api;
@@ -53,6 +55,7 @@ public class MainDrawer extends AppCompatActivity
     User user;
     NavigationView navigationView;
     TextView emailText;
+    Menu m;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,8 +75,8 @@ public class MainDrawer extends AppCompatActivity
         emailText=navigationView.getHeaderView(0).findViewById(R.id.textView2);
         user= (User) sp.getPreferencesObject(MainDrawer.this);
 
-        Picasso.with(this).load(user.getProfilePhoto()).into(circledrawerimage);
-        emailText.setText(user.getEmail());
+
+        Picasso.with(MainDrawer.this).load(user.getProfilePhoto()).into(circledrawerimage);
         String get=getIntent().getStringExtra("nav_sub");
         String getnot=getIntent().getStringExtra("nav_not");
         if(getnot !=null){
@@ -82,6 +85,8 @@ public class MainDrawer extends AppCompatActivity
         else if(get !=null){
             displaySelectedScreen(R.id.nav_subscriptiondetails);
         }else{
+
+            emailText.setText(user.getEmail());
             displaySelectedScreen(R.id.nav_home);
         }
 
@@ -90,6 +95,7 @@ public class MainDrawer extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
+
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
@@ -102,7 +108,6 @@ public class MainDrawer extends AppCompatActivity
         } else if (!doubleBackToExitPressedOnce) {
             this.doubleBackToExitPressedOnce = true;
             Toast.makeText(this, "Please click BACK again to exit.", Toast.LENGTH_SHORT).show();
-
             new Handler().postDelayed(new Runnable() {
 
                 @Override
@@ -195,22 +200,32 @@ public class MainDrawer extends AppCompatActivity
                 break;
             case R.id.nav_subscriptiondetails:
                 menu2.setVisible(true);
+                editMenu.setVisible(false);
                 fragment = new SubScription();
                 break;
             case R.id.nav_editprofile:
+                editMenu.setVisible(false);
+                menu2.setVisible(false);
                 fragment = new EditProfile();
                 break;
             case R.id.nav_changepassword:
+                editMenu.setVisible(false);
+                menu2.setVisible(false);
                 fragment = new ChangePassword();
                 break;
             case R.id.nav_favorites:
+                editMenu.setVisible(false);
+                menu2.setVisible(false);
                 fragment = new ChangePassword();
                 break;
             case R.id.nav_notifications:
                 editMenu.setVisible(true);
+                menu2.setVisible(false);
                 fragment = new Notification();
                 break;
             case R.id.nav_contactsupportteam:
+                editMenu.setVisible(false);
+                menu2.setVisible(false);
                 fragment = new Support();
                 break;
             case R.id.nav_logout:

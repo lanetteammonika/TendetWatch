@@ -187,22 +187,28 @@ public class Category extends AppCompatActivity {
                     if (items.size() > 1) {
                         ss.ShowDialog(Category.this, "During Free Trial Period you can choose only 1 category");
                     } else {
+
+                        if(s!=null){
+                            intent = new Intent(
+                                    Category.this, PaymentSelection.class);
+                        }else{
+                            intent = new Intent(
+                                    Category.this, Agreement.class);
+                        }
+
                         user.setSubscribe(map);
-                        intent = new Intent(
-                                Category.this, Agreement.class);
+
                         startActivity(intent);
                         finish();
                     }
                 } else {
                     user.setSubscribe(map);
+                    if(s!=null){
+                        intent = new Intent(
+                                Category.this, PaymentSelection.class);
+                    }else{
                     intent = new Intent(
-                            Category.this, Agreement.class);
-                    startActivity(intent);
-                    finish();
-                }
-                if(s!=null){
-                    intent = new Intent(
-                            Category.this, PaymentSelection.class);
+                            Category.this, Agreement.class);}
                     startActivity(intent);
                     finish();
                 }

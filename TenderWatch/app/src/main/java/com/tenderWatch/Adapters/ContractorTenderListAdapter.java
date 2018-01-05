@@ -72,15 +72,15 @@ public class ContractorTenderListAdapter extends BaseAdapter {
         LinearLayout stampRemove=(LinearLayout) convertView.findViewById(R.id.stamp_remove);
         if(!tenderList.get(position).getTenderUploader().getProfilePhoto().toString().equals("")) {
             Picasso.with(context).load(tenderList.get(position).getTenderUploader().getProfilePhoto().toString()).into(tender_image);
-
-            //  Log.i(TAG, profilePicUrl);
-            //}
         }
 
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        String formattedDate = df.format(c.getTime());
         Date startDateValue = null,endDateValue = null;
         try {
-           // startDateValue = new SimpleDateFormat("yyyy-MM-dd").parse(formattedDate);
-              startDateValue = new SimpleDateFormat("yyyy-MM-dd").parse(tenderList.get(position).getCreatedAt().split("T")[0]);
+            startDateValue = new SimpleDateFormat("yyyy-MM-dd").parse(formattedDate);
+            //  startDateValue = new SimpleDateFormat("yyyy-MM-dd").parse(tenderList.get(position).getCreatedAt().split("T")[0]);
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -108,17 +108,5 @@ public class ContractorTenderListAdapter extends BaseAdapter {
 
         return convertView;
     }
-
-    public Bitmap StringToBitMap(String encodedString) {
-        try {
-            byte[] encodeByte = Base64.decode(encodedString, Base64.DEFAULT);
-            Bitmap bitmap = BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
-            return bitmap;
-        } catch (Exception e) {
-            e.getMessage();
-            return null;
-        }
-    }
-
 
 }

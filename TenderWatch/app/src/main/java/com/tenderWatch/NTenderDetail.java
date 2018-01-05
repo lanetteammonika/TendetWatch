@@ -101,7 +101,10 @@ public class NTenderDetail extends AppCompatActivity {
         lblClientDetail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Gson gson = new Gson();
+                String jsonString = gson.toJson(object);
                 Intent intent = new Intent(NTenderDetail.this,ClientDetail.class);
+                intent.putExtra("data",jsonString);
                 intent.putExtra("sender",sender);
                 startActivity(intent);
             }
@@ -119,6 +122,7 @@ public class NTenderDetail extends AppCompatActivity {
 
                 Intent intent = new Intent(NTenderDetail.this,EditTenderDetail.class);
                 intent.putExtra("data",jsonString);
+                intent.putExtra("sender",sender);
                 startActivity(intent);
             }
         });
@@ -242,7 +246,6 @@ public class NTenderDetail extends AppCompatActivity {
                 }
                 for (int i = 0; i < Data2.size(); i++) {
                     if(categoryName.get(i).split("~")[1].toString().equals(object.getCategory().toString())){
-
                         categoryName1=response.body().get(i).getCategoryName().toString();
                         if(categoryName1.length()>45){
                             Category.setText(categoryName1.substring(0,45)+"...");

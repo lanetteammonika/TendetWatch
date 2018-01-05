@@ -89,10 +89,8 @@ public class Notification extends Fragment {
                 intent.putExtra("data",jsonString);
                 intent.putExtra("sender",sender);
                 startActivity(intent);
-
             }
         });
-
         GetNotification();
     }
 

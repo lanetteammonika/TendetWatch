@@ -76,7 +76,7 @@ public class Home extends Fragment implements AdapterView.OnItemSelectedListener
     SharedPreference sp = new SharedPreference();
     MyScrollView scrollView;
     MultipartBody.Part name1, email1, countryId1,image1, categoryId1, landlineNo1, contactNo1, city1, description1, address1, isFollowTendeer1, tenderPhono1;
-    EditText city,title,description;
+    EditText city,title,description,edtSearch;
     Button btnUploadTender;
     private Uri mPictureUri;
     private static final int PICTURE_WIDTH = 1100;
@@ -101,6 +101,7 @@ public class Home extends Fragment implements AdapterView.OnItemSelectedListener
         getActivity().setTitle("Home");
         spinner = (ListView) view.findViewById(R.id.spinner);
         spinner2 = (ListView) view.findViewById(R.id.spinner3);
+        edtSearch=(EditText) view.findViewById(R.id.edtSearch);
 
         city=(EditText) view.findViewById(R.id.home_city);
         title=(EditText) view.findViewById(R.id.home_title);
@@ -145,6 +146,24 @@ public class Home extends Fragment implements AdapterView.OnItemSelectedListener
             }
         });
 
+        edtSearch.addTextChangedListener(new TextWatcher() {
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (countryAdapter != null)
+                    countryAdapter.getFilter().filter(s.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+        });
 
         btnUploadTender.setOnClickListener(new View.OnClickListener() {
             @Override

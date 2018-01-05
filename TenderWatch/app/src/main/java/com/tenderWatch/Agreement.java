@@ -173,6 +173,7 @@ public class Agreement extends AppCompatActivity implements View.OnClickListener
             public void onResponse(Call<Register> call, Response<Register> response) {
                 Log.i(TAG, "response register-->");
                 if (response.isSuccessful()) {
+                    sp.setPreferencesObject(Agreement.this,user);
                     intent = new Intent(Agreement.this, ClientDrawer.class);
                     startActivity(intent);
                     sp.ShowDialog(Agreement.this, "Successful Registration");
@@ -242,8 +243,13 @@ public class Agreement extends AppCompatActivity implements View.OnClickListener
             public void onResponse(Call<Register> call, Response<Register> response) {
                 Log.i(TAG, "response register-->");
                 if (response.isSuccessful()) {
-                    String role = sp.getPreferences(Agreement.this, "role");
+                    ///String role = sp.getPreferences(Agreement.this, "role");
+                    Gson gson = new Gson();
+                    String jsonString = gson.toJson(user);
+                    sp.setPreferencesObject(Agreement.this,user);
+
                     intent = new Intent(Agreement.this, MainDrawer.class);
+                    intent.putExtra("data",jsonString);
                     startActivity(intent);
                     Log.i(TAG, "post submitted to API." + response.body().toString());
                 } else {

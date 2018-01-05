@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Base64;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -141,7 +142,8 @@ public class PreviewTenderDetail extends AppCompatActivity {
                     intent = new Intent(PreviewTenderDetail.this, ClientDrawer.class);
                 }else{
                     intent = new Intent(PreviewTenderDetail.this, MainDrawer.class);
-                }                intent.putExtra("data",jsonString);
+                }
+                intent.putExtra("data",jsonString);
                 startActivity(intent);
             }
         });
@@ -227,13 +229,14 @@ public class PreviewTenderDetail extends AppCompatActivity {
             @Override
             public void onResponse(Call<ArrayList<GetCategory>> call, Response<ArrayList<GetCategory>> response) {
                 Data2 = response.body();
+
                 for (int i = 0; i < Data2.size(); i++) {
                     alpha2.add(response.body().get(i).getCategoryName().toString() + "~" + response.body().get(i).getImgString().toString());
                     categoryName.add(response.body().get(i).getCategoryName().toString() + "~" + response.body().get(i).getId().toString());
                 }
+
                 for (int i = 0; i < Data2.size(); i++) {
                     if(categoryName.get(i).split("~")[1].toString().equals(object.getCategory().toString())){
-
                         categoryName1=response.body().get(i).getCategoryName().toString();
                         if(categoryName1.length()>45){
                             Category.setText(categoryName1.substring(0,45)+"...");
@@ -251,7 +254,27 @@ public class PreviewTenderDetail extends AppCompatActivity {
             }
         });
     }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                // todo: goto back activity from here
+                String role=sp.getPreferences(PreviewTenderDetail.this,"role");
+                Intent i;
+                if(role.equals("client")){
+                    i=new Intent(PreviewTenderDetail.this, ClientDrawer.class);
+                }else{
+                    i=new Intent(PreviewTenderDetail.this, MainDrawer.class);
+                }
+                i.putExtra("nav_not","true");
+                startActivity(i);
+                finish();
+                return true;
 
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
     private void GetAllCountry() {
         mApiService.getCountryData().enqueue(new Callback<ArrayList<GetCountry>>() {
             @Override
