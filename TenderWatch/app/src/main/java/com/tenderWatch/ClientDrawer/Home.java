@@ -173,6 +173,7 @@ public class Home extends Fragment implements AdapterView.OnItemSelectedListener
                 alpha2.clear();
                 countryName.clear();
                 categoryName.clear();
+
             }
         });
 

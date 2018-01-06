@@ -22,7 +22,9 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 import com.tenderWatch.Models.Tender;
+import com.tenderWatch.Models.User;
 import com.tenderWatch.R;
+import com.tenderWatch.SharedPreference.SharedPreference;
 import com.tenderWatch.SignUpSelection;
 
 import java.text.ParseException;
@@ -40,7 +42,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class TenderListAdapter extends BaseAdapter {
     private Context context;
     private ArrayList<Tender> tenderList;
-
+    SharedPreference sp=new SharedPreference();
 
     public TenderListAdapter(Context context, ArrayList<Tender> tenderList){
         this.context=context;
@@ -100,6 +102,7 @@ public class TenderListAdapter extends BaseAdapter {
           //  Log.i(TAG, profilePicUrl);
         //}
         }
+        CircleImageView imgTrue=(CircleImageView) convertView.findViewById(R.id.tender_image3);
         Calendar c = Calendar.getInstance();
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
         String formattedDate = df.format(c.getTime());
@@ -131,6 +134,15 @@ public class TenderListAdapter extends BaseAdapter {
         Log.d("days", "" + days);
         txtTenderName.setText(tenderList.get(position).getTenderName().toString());
         txtTenderTitle.setText(tenderList.get(position).getTenderName().toString());
+        User user= (User) sp.getPreferencesObject(context);
+        if(tenderList.get(position).getFavorite().size()>0){
+            for(int i=0;i<tenderList.get(position).getFavorite().size();i++){
+                String id=user.getId();
+                if (tenderList.get(position).getFavorite().contains(id)) {
+                    imgTrue.setVisibility(View.VISIBLE);
+                }
+            }
+        }
 
         return convertView;
     }

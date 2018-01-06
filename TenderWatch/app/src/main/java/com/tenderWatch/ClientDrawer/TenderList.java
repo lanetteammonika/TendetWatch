@@ -5,11 +5,9 @@ import android.content.Intent;
 import android.icu.text.SimpleDateFormat;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -23,26 +21,20 @@ import android.widget.ListView;
 
 import com.google.gson.Gson;
 import com.tenderWatch.Adapters.ContractorTenderListAdapter;
-import com.tenderWatch.Adapters.IndexingArrayAdapter;
 import com.tenderWatch.Adapters.TenderListAdapter;
-import com.tenderWatch.Drawer.MainDrawer;
+import com.tenderWatch.ContractotTenderDetail;
 import com.tenderWatch.EditTenderDetail;
-import com.tenderWatch.Login;
 import com.tenderWatch.Models.AllContractorTender;
 import com.tenderWatch.Models.Tender;
+import com.tenderWatch.Models.TenderUploader;
 import com.tenderWatch.PreviewTenderDetail;
 import com.tenderWatch.R;
 import com.tenderWatch.Retrofit.Api;
 import com.tenderWatch.Retrofit.ApiUtils;
 import com.tenderWatch.SharedPreference.SharedPreference;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import java.io.Serializable;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 
 import okhttp3.ResponseBody;
@@ -65,6 +57,8 @@ public class TenderList extends Fragment {
     ListView list_tender;
     ArrayList<AllContractorTender> contractoradapter=new ArrayList<AllContractorTender>();
     Tender tender;
+    AllContractorTender contractorTender;
+    String role;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -78,7 +72,7 @@ public class TenderList extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mAPIService = ApiUtils.getAPIService();
-        String role=sp.getPreferences(getActivity(),"role");
+        role=sp.getPreferences(getActivity(),"role");
         if(role.equals("client")){
             GetAllTender();
         }else{
@@ -118,37 +112,48 @@ public class TenderList extends Fragment {
             @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                tender=allTender.get(position);
-                Gson gson = new Gson();
-                String jsonString = gson.toJson(tender);
-                Date startDateValue = null,endDateValue = null;
-                try {
-                    // startDateValue = new SimpleDateFormat("yyyy-MM-dd").parse(formattedDate);
-                    startDateValue = new SimpleDateFormat("yyyy-MM-dd").parse(tender.getCreatedAt().split("T")[0]);
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-                try {
-                    endDateValue = new SimpleDateFormat("yyyy-MM-dd").parse(tender.getExpiryDate().split("T")[0]);
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-                //Date endDateValue = new Date(allTender.get(position).getExpiryDate().split("T")[0]);
-                long diff = endDateValue.getTime() - startDateValue.getTime();
-                long seconds = diff / 1000;
-                long minutes = seconds / 60;
-                long hours = minutes / 60;
-                long days = (hours / 24) + 1;
+                if(role.equals("client")) {
+                    tender = allTender.get(position);
+                    Gson gson = new Gson();
+                    String jsonString = gson.toJson(tender);
+                    Date startDateValue = null, endDateValue = null;
+                    try {
+                        // startDateValue = new SimpleDateFormat("yyyy-MM-dd").parse(formattedDate);
+                        startDateValue = new SimpleDateFormat("yyyy-MM-dd").parse(tender.getCreatedAt().split("T")[0]);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    try {
+                        endDateValue = new SimpleDateFormat("yyyy-MM-dd").parse(tender.getExpiryDate().split("T")[0]);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    //Date endDateValue = new Date(allTender.get(position).getExpiryDate().split("T")[0]);
+                    long diff = endDateValue.getTime() - startDateValue.getTime();
+                    long seconds = diff / 1000;
+                    long minutes = seconds / 60;
+                    long hours = minutes / 60;
+                    long days = (hours / 24) + 1;
 
-                if(days==0){
-                    sp.ShowDialog(getActivity(),"Tender is not Activated.");
+                    if (days == 0) {
+                        sp.ShowDialog(getActivity(), "Tender is not Activated.");
+                    } else {
+                        Intent intent = new Intent(getActivity(), PreviewTenderDetail.class);
+                        intent.putExtra("data", jsonString);
+                        startActivity(intent);
+                    }
                 }else{
-                    Intent intent = new Intent(getActivity(),PreviewTenderDetail.class);
-                    intent.putExtra("data",jsonString);
+                    contractorTender=contractoradapter.get(position);
+                    TenderUploader client=contractorTender.getTenderUploader();
+                    Log.i(TAG, "post submitted to API." + client);
+                    Gson gson = new Gson();
+                    String jsonString = gson.toJson(contractorTender);
+                    String sender=gson.toJson(client);
+                    Intent intent = new Intent(getActivity(), ContractotTenderDetail.class);
+                    intent.putExtra("data", jsonString);
+                    intent.putExtra("sender", sender);
                     startActivity(intent);
                 }
-
-
             }
         });
         //you can set the title for your toolbar here for different fragments different titles
@@ -165,6 +170,7 @@ public class TenderList extends Fragment {
                     contractoradapter = response.body();
                     Con_adapter = new ContractorTenderListAdapter(getActivity(), response.body());
                     list_tender.setAdapter(Con_adapter);
+
                 }
             }
 

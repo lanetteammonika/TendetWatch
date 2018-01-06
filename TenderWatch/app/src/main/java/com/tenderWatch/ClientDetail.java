@@ -141,6 +141,7 @@ public class ClientDetail extends AppCompatActivity {
             }
         });
         DisplayDetail();
+        GetUser();
         btnClientSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -157,6 +158,23 @@ public class ClientDetail extends AppCompatActivity {
             }
         });
     }
+    private void GetUser() {
+        String token = "Bearer " + sp.getPreferences(ClientDetail.this, "token");
+        String userId=obj.getId().toString();
+        mApiService.getUserDetail(token,userId).enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                Log.i(TAG, "post submitted to API." + response);
+
+            }
+
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+                Log.i(TAG, "post submitted to API." + t);
+            }
+        });
+    }
+
 
     private void callRatingApi() {
         String token="Bearer " + sp.getPreferences(ClientDetail.this,"token");

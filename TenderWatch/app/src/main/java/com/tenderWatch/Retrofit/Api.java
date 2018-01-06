@@ -133,13 +133,14 @@ public interface Api {
                                     @Part MultipartBody.Part image,
                                     @Part MultipartBody.Part selections,
                                     @Part MultipartBody.Part subscribe
-                                    );
+    );
 
     @FormUrlEncoded
     @HTTP(method = "DELETE", path = "users", hasBody = true)
     Call<ResponseBody> logout(@Header("Authorization") String token,
                               @Field("androidDeviceId") String deviceId,
                               @Field("role") String role);
+
     @Multipart
     @POST("users/{userId}")
     Call<User> UpdateUser(
@@ -150,6 +151,12 @@ public interface Api {
             @Part MultipartBody.Part occupation,
             @Part MultipartBody.Part aboutMe,
             @Part MultipartBody.Part image
+    );
+
+    @GET("users/{userId}")
+    Call<User> getUserDetail(
+            @Header("Authorization") String token,
+            @Path("userId") String userId
     );
 
     @POST("users/changePassword/{userId}")
@@ -221,11 +228,13 @@ public interface Api {
     Call<ArrayList<ResponseNotifications>> getNotifications(
             @Header("Authorization") String token
     );
+
     @FormUrlEncoded
     @HTTP(method = "DELETE", path = "notification/delete", hasBody = true)
     Call<ResponseBody> deleteNotification(@Header("Authorization") String token,
-                              @Field("notification") ArrayList<String> notification
+                                          @Field("notification") ArrayList<String> notification
     );
+
     @POST("review")
     @FormUrlEncoded
     Call<ResponseRating> giveRating(

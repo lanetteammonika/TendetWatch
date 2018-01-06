@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }else{
                 intent = new Intent(MainActivity.this, MainDrawer.class);
             }
-            sp.setPreferences(MainActivity.this, "role",((User) user).getRole().toString());
+            sp.setPreferences(MainActivity.this, "role",role);
            // intent.putExtra("Role", "client");
             Log.i(TAG, "testing");
             startActivity(intent);

@@ -32,6 +32,7 @@ import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 import com.tenderWatch.Adapters.CustomList;
+import com.tenderWatch.ClientDrawer.ClientDrawer;
 import com.tenderWatch.ClientDrawer.Home;
 import com.tenderWatch.Models.GetCategory;
 import com.tenderWatch.Models.GetCountry;
@@ -540,6 +541,9 @@ public class EditTenderDetail extends AppCompatActivity {
                 .enqueue(new Callback<UpdateTender>() {
                     @Override
                     public void onResponse(Call<UpdateTender> call, Response<UpdateTender> response) {
+                        Log.i(TAG,"response---"+response.body());
+                        Intent intent = new Intent(EditTenderDetail.this,ClientDrawer.class);
+                        startActivity(intent);
                         Log.i(TAG,"response---"+response.body());
                     }
 

@@ -92,6 +92,12 @@ public class Notification extends Fragment {
             }
         });
         GetNotification();
+        GetUser();
+    }
+
+    private void GetUser() {
+        String token = "Bearer " + sp.getPreferences(getActivity(), "token");
+
     }
 
     private void DeleteNotification(){

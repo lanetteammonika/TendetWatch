@@ -44,8 +44,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 
-public class MainDrawer extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+public class MainDrawer extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private Api mAPIService;
     SharedPreference sp = new SharedPreference();
     private static final String TAG = MainDrawer.class.getSimpleName();
@@ -53,7 +52,6 @@ public class MainDrawer extends AppCompatActivity
     private static MenuItem menu2,editMenu;
     CircleImageView circledrawerimage;
     User user;
-    NavigationView navigationView;
     TextView emailText;
     Menu m;
     @Override
@@ -74,9 +72,8 @@ public class MainDrawer extends AppCompatActivity
         circledrawerimage = navigationView.getHeaderView(0).findViewById(R.id.circledrawerimage2);
         emailText=navigationView.getHeaderView(0).findViewById(R.id.textView2);
         user= (User) sp.getPreferencesObject(MainDrawer.this);
-
-
-        Picasso.with(MainDrawer.this).load(user.getProfilePhoto()).into(circledrawerimage);
+        Picasso.with(this).load(user.getProfilePhoto()).into(circledrawerimage);
+        emailText.setText(user.getEmail());
         String get=getIntent().getStringExtra("nav_sub");
         String getnot=getIntent().getStringExtra("nav_not");
         if(getnot !=null){
@@ -166,9 +163,6 @@ public class MainDrawer extends AppCompatActivity
         }else{
             editMenu.setTitle("Edit");
         }
-
-
-
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.content_frame, fragment);
         ft.commit();

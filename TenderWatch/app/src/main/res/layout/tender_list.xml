@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal">
 
     <FrameLayout
@@ -17,14 +18,34 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center">
+                android:layout_gravity="center"
+                android:orientation="vertical">
 
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/tender_image2"
+                <RelativeLayout
                     android:layout_width="@dimen/value_70"
                     android:layout_height="@dimen/value_70"
-                    android:padding="@dimen/value_5"
-                    android:src="@drawable/avtar" />
+                    android:gravity="end">
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/tender_image2"
+                        android:layout_width="@dimen/value_70"
+                        android:layout_height="@dimen/value_70"
+                        android:padding="@dimen/value_5"
+                        android:src="@drawable/avtar" />
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/tender_image3"
+                        android:layout_width="@dimen/value_30"
+                        android:layout_height="@dimen/value_30"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentRight="true"
+                        android:background="#00000000"
+                        android:padding="@dimen/value_5"
+                        android:src="@drawable/right_tick_3x"
+                        android:visibility="gone"
+                        app:civ_border_width="@dimen/value_1"
+                        app:civ_border_color="#FFF"/>
+                </RelativeLayout>
             </LinearLayout>
 
             <LinearLayout
@@ -74,55 +95,53 @@
                 <RelativeLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    >
+                    android:layout_gravity="center_vertical">
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:orientation="vertical"
-                    android:layout_marginRight="@dimen/value_20"
-                    >
-
-                    <TextView
-                        android:id="@+id/tender_name"
+                    <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Name:"
-                        android:ellipsize="end"
-                        android:singleLine="true"
-                        android:textColor="@color/colorBlack"
-                        android:textSize="@dimen/text_15" />
+                        android:layout_gravity="center"
+                        android:layout_marginRight="@dimen/value_20"
+                        android:orientation="vertical">
 
-                    <TextView
-                        android:id="@+id/tender_title"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/value_2"
-                        android:text="Title:"
-                        android:ellipsize="end"
-                        android:singleLine="true"
-                        android:textColor="@color/colorBlack"
-                        android:textSize="@dimen/text_15" />
+                        <TextView
+                            android:id="@+id/tender_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="end"
+                            android:singleLine="true"
+                            android:text="Name:"
+                            android:textColor="@color/colorBlack"
+                            android:textSize="@dimen/text_15" />
 
-                    <TextView
-                        android:id="@+id/tender_expdate"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/value_2"
-                        android:text="Exp_Day:"
-                        android:textColor="@color/colorBlack"
-                        android:textSize="@dimen/text_15" />
-                </LinearLayout>
-                <ImageView
-                    android:layout_width="@dimen/value_20"
-                    android:layout_height="@dimen/value_20"
-                    android:src="@drawable/right_arr_3x"
-                    android:layout_gravity="center_vertical"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerInParent="true"
-                    />
+                        <TextView
+                            android:id="@+id/tender_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/value_2"
+                            android:ellipsize="end"
+                            android:singleLine="true"
+                            android:text="Title:"
+                            android:textColor="@color/colorBlack"
+                            android:textSize="@dimen/text_15" />
+
+                        <TextView
+                            android:id="@+id/tender_expdate"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/value_2"
+                            android:text="Exp_Day:"
+                            android:textColor="@color/colorBlack"
+                            android:textSize="@dimen/text_15" />
+                    </LinearLayout>
+
+                    <ImageView
+                        android:layout_width="@dimen/value_20"
+                        android:layout_height="@dimen/value_20"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerInParent="true"
+                        android:layout_gravity="center_vertical"
+                        android:src="@drawable/right_arr_3x" />
                 </RelativeLayout>
             </LinearLayout>
 

@@ -20,7 +20,9 @@ import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 import com.tenderWatch.Models.AllContractorTender;
 import com.tenderWatch.Models.Tender;
+import com.tenderWatch.Models.User;
 import com.tenderWatch.R;
+import com.tenderWatch.SharedPreference.SharedPreference;
 
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -37,7 +39,7 @@ public class ContractorTenderListAdapter extends BaseAdapter {
 
     private Context context;
     private ArrayList<AllContractorTender> tenderList;
-
+    SharedPreference sp=new SharedPreference();
 
     public ContractorTenderListAdapter(Context context, ArrayList<AllContractorTender> tenderList){
         this.context=context;
@@ -70,6 +72,8 @@ public class ContractorTenderListAdapter extends BaseAdapter {
         TextView txtTenderTitle=(TextView) convertView.findViewById(R.id.tender_title);
         TextView txtTenderExpDate=(TextView) convertView.findViewById(R.id.tender_expdate);
         LinearLayout stampRemove=(LinearLayout) convertView.findViewById(R.id.stamp_remove);
+        CircleImageView imgTrue=(CircleImageView) convertView.findViewById(R.id.tender_image3);
+
         if(!tenderList.get(position).getTenderUploader().getProfilePhoto().toString().equals("")) {
             Picasso.with(context).load(tenderList.get(position).getTenderUploader().getProfilePhoto().toString()).into(tender_image);
         }
@@ -105,7 +109,15 @@ public class ContractorTenderListAdapter extends BaseAdapter {
         Log.d("days", "" + days);
         txtTenderName.setText(tenderList.get(position).getTenderUploader().getEmail().toString());
         txtTenderTitle.setText(tenderList.get(position).getEmail().toString());
-
+        User user= (User) sp.getPreferencesObject(context);
+        if(tenderList.get(position).getFavorite().size()>0){
+            for(int i=0;i<tenderList.get(position).getFavorite().size();i++){
+                String id=user.getId();
+                if (tenderList.get(position).getFavorite().contains(id)) {
+                    imgTrue.setVisibility(View.VISIBLE);
+                }
+            }
+        }
         return convertView;
     }
 

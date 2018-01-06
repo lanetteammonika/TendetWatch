@@ -17,11 +17,16 @@
         <meta-data
             android:name="com.google.android.gms.wallet.api.enabled"
             android:value="true" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/done_white_tick" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/transparent_grey" />
 
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -82,7 +87,7 @@
         <activity android:name=".Paypaldemo" />
         <activity android:name=".ConfirmationActivity" />
         <activity android:name=".GooglePay" />
-        <activity android:name=".ClientDetail"/>
+        <activity android:name=".ClientDetail" />
         <!-- Firebase Notifications -->
         <service android:name=".service.MyFirebaseMessagingService">
             <intent-filter>
@@ -96,6 +101,7 @@
         </service>
         <!-- ./Firebase Notifications -->
         <activity android:name=".Main2Activity" />
+        <activity android:name=".ContractotTenderDetail" />
         <activity
             android:name=".NTenderDetail"
             android:label="@string/title_activity_client_detail"
