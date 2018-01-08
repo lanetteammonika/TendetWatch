@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -18,6 +19,7 @@ import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
+import com.tenderWatch.Drawer.MainDrawer;
 import com.tenderWatch.Drawer.Notification;
 import com.tenderWatch.Models.GetCountry;
 import com.tenderWatch.Models.ResponseRating;
@@ -151,7 +153,7 @@ public class ClientDetail extends AppCompatActivity {
         close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(ClientDetail.this,NTenderDetail.class);
+                Intent intent = new Intent(ClientDetail.this,ContractotTenderDetail.class);
                 intent.putExtra("data",jsonString);
                 intent.putExtra("sender",sender);
                 startActivity(intent);
@@ -165,7 +167,7 @@ public class ClientDetail extends AppCompatActivity {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
                 Log.i(TAG, "post submitted to API." + response);
-
+                txtRate.setText(response.body().getAvg().toString()+"/5.0");
             }
 
             @Override
@@ -249,5 +251,7 @@ public class ClientDetail extends AppCompatActivity {
                 dialog.show();
             }
         });
+
     }
+
 }

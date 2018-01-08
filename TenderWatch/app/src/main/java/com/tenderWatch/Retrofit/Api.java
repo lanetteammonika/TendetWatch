@@ -243,5 +243,28 @@ public interface Api {
             @Field("rating") String Rating
     );
 
+    @GET("tender/{tenderDetailId}")
+    Call<UpdateTender> getTender(
+            @Header("Authorization") String token,
+            @Path("tenderDetailId") String id
+    );
+
+    @PUT("tender/interested/{tenderId}")
+    Call<ResponseBody> callInterested(
+            @Header("Authorization") String token,
+            @Path("tenderId") String id
+    );
+    @PUT("tender/favorite/{tenderId}")
+    Call<UpdateTender> addFavorite(
+            @Header("Authorization") String token,
+            @Path("tenderId") String id
+    );
+
+    @GET("tender/getTenders")
+    Call<ArrayList<Tender>> getAllFavoriteTender(
+            @Header("Authorization") String token
+    );
+
+
 }
 

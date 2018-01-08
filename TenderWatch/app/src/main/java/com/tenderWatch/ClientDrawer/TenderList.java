@@ -2,6 +2,7 @@ package com.tenderWatch.ClientDrawer;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.icu.text.SimpleDateFormat;
 import android.os.Build;
 import android.os.Bundle;
@@ -27,6 +28,8 @@ import com.tenderWatch.EditTenderDetail;
 import com.tenderWatch.Models.AllContractorTender;
 import com.tenderWatch.Models.Tender;
 import com.tenderWatch.Models.TenderUploader;
+import com.tenderWatch.Models.UpdateTender;
+import com.tenderWatch.Models.User;
 import com.tenderWatch.PreviewTenderDetail;
 import com.tenderWatch.R;
 import com.tenderWatch.Retrofit.Api;
@@ -144,6 +147,22 @@ public class TenderList extends Fragment {
                     }
                 }else{
                     contractorTender=contractoradapter.get(position);
+                    String token="Bearer "+sp.getPreferences(getActivity(),"token");
+                    String id2=contractorTender.getId().toString();
+                    mAPIService.getTender(token,id2).enqueue(new Callback<UpdateTender>() {
+                        @Override
+                        public void onResponse(Call<UpdateTender> call, Response<UpdateTender> response) {
+                            Log.i(TAG, "post submitted to API." + response.body());
+                        }
+
+                        @Override
+                        public void onFailure(Call<UpdateTender> call, Throwable t) {
+                            Log.i(TAG, "post submitted to API." + t);
+                        }
+                    });
+
+
+                    User user= (User) sp.getPreferencesObject(getActivity());
                     TenderUploader client=contractorTender.getTenderUploader();
                     Log.i(TAG, "post submitted to API." + client);
                     Gson gson = new Gson();
@@ -152,6 +171,17 @@ public class TenderList extends Fragment {
                     Intent intent = new Intent(getActivity(), ContractotTenderDetail.class);
                     intent.putExtra("data", jsonString);
                     intent.putExtra("sender", sender);
+                    if(contractoradapter.get(position).getAmendRead().size()>0) {
+                        for (int i = 0; i < contractoradapter.get(position).getAmendRead().size(); i++) {
+                            String Con_id = user.getId();
+                            if (!contractoradapter.get(position).getAmendRead().contains(Con_id)) {
+                                intent.putExtra("amended", "true");
+                            }
+                        }
+                    }
+                    if(contractoradapter.get(position).getAmendRead().size()==0){
+                        intent.putExtra("amended", "true");
+                    }
                     startActivity(intent);
                 }
             }

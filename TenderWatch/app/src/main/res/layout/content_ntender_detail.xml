@@ -447,7 +447,7 @@
                             android:paddingRight="@dimen/value_10"
                             />
                         <Button
-                            android:id="@+id/edit_tender"
+                            android:id="@+id/btn_interested_tender"
                             android:layout_width="@dimen/value_120"
                             android:layout_height="@dimen/value_35"
                             android:background="@drawable/round_corner"

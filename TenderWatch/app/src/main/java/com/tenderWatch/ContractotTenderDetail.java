@@ -1,5 +1,7 @@
 package com.tenderWatch;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -7,6 +9,7 @@ import android.graphics.drawable.Drawable;
 import android.icu.text.SimpleDateFormat;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Base64;
@@ -63,7 +66,7 @@ public class ContractotTenderDetail extends AppCompatActivity {
 
     TextView lblClientDetail,tenderTitle,Country,Category,ExpDay,Description,City,Contact,LandLine,Email,Address;
     RelativeLayout rlEmail,rlContact,rlLandline,rlAddress;
-    Button removeTender,editTender;
+    Button removeTender,btnInterestedTender;
     SharedPreference sp=new SharedPreference();
     String sender;
     @Override
@@ -99,9 +102,10 @@ public class ContractotTenderDetail extends AppCompatActivity {
         rlLandline=(RelativeLayout) findViewById(R.id.rl_preview_landline);
         rlEmail=(RelativeLayout) findViewById(R.id.rl_preview_email);
         removeTender=(Button) findViewById(R.id.remove_tender);
-        editTender=(Button) findViewById(R.id.edit_tender);
+        btnInterestedTender=(Button) findViewById(R.id.btn_interested_tender);
         imagetender=(ImageView) findViewById(R.id.preview_tender_image);
         lblClientDetail=(TextView) findViewById(R.id.lbl_clientDetail);
+
 
         lblClientDetail.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -117,18 +121,16 @@ public class ContractotTenderDetail extends AppCompatActivity {
 
         String json=getIntent().getStringExtra("data");
         sender=getIntent().getStringExtra("sender");
+        String amend=getIntent().getStringExtra("amended");
+        if(amend != null){
+            sp.ShowDialog(ContractotTenderDetail.this,"Tender has been amended by client");
+        }
         Gson gson=new Gson();
         object=gson.fromJson(json, AllContractorTender.class);
-        editTender.setOnClickListener(new View.OnClickListener() {
+        btnInterestedTender.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Gson gson = new Gson();
-                String jsonString = gson.toJson(object);
-
-                Intent intent = new Intent(ContractotTenderDetail.this,EditTenderDetail.class);
-                intent.putExtra("data",jsonString);
-                intent.putExtra("sender",sender);
-                startActivity(intent);
+              CallInterestedApi();
             }
         });
         Calendar c = Calendar.getInstance();
@@ -264,10 +266,27 @@ public class ContractotTenderDetail extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<ArrayList<GetCategory>> call, Throwable t) {
-
+                Log.i(TAG, "post submitted to API." + t);
             }
         });
     }
+
+        private void CallInterestedApi(){
+            String token = "Bearer " + sp.getPreferences(ContractotTenderDetail.this, "token");
+            String tenderId=object.getId().toString();
+            mApiService.callInterested(token,tenderId).enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    Log.i(TAG, "post submitted to API." + response);
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    Log.i(TAG, "post submitted to API." + t);
+                }
+            });
+        }
+
 
     private void GetAllCountry() {
         mApiService.getCountryData().enqueue(new Callback<ArrayList<GetCountry>>() {
@@ -316,7 +335,6 @@ public class ContractotTenderDetail extends AppCompatActivity {
                 // todo: goto back activity from here
 
                 Intent i=new Intent(ContractotTenderDetail.this, MainDrawer.class);
-                i.putExtra("nav_not","true");
                 startActivity(i);
                 finish();
                 return true;
