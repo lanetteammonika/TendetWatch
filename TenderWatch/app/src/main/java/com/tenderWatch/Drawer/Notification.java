@@ -15,6 +15,7 @@ import android.widget.ListView;
 import com.google.gson.Gson;
 import com.tenderWatch.Adapters.NotificationAdapter;
 import com.tenderWatch.Models.Sender;
+import com.tenderWatch.Models.UpdateTender;
 import com.tenderWatch.NTenderDetail;
 import com.tenderWatch.Models.ResponseNotifications;
 import com.tenderWatch.Models.Tender;
@@ -86,6 +87,23 @@ public class Notification extends Fragment {
                 String jsonString = gson.toJson(obj);
                 String sender=gson.toJson(s);
                 Intent intent = new Intent(getActivity(),NTenderDetail.class);
+                String token = "Bearer " + sp.getPreferences(getActivity(), "token");
+                String id2 = notification_list.get(i).getId().toString();
+                sp.showProgressDialog(getActivity());
+
+                mAPIServices.readNotification(token, id2).enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        sp.hideProgressDialog();
+                        Log.i(TAG, "post submitted to API." + response.body());
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        Log.i(TAG, "post submitted to API." + t);
+                    }
+                });
+
                 intent.putExtra("data",jsonString);
                 intent.putExtra("sender",sender);
                 startActivity(intent);
@@ -102,9 +120,11 @@ public class Notification extends Fragment {
 
     private void DeleteNotification(){
         String token = "Bearer " + sp.getPreferences(getActivity(), "token");
+        sp.showProgressDialog(getActivity());
         mAPIServices.deleteNotification(token,idList).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                sp.hideProgressDialog();
                 Log.i(TAG, "post submitted to API." + response);
                 GetNotification();
             }
@@ -118,9 +138,12 @@ public class Notification extends Fragment {
 
     private void GetNotification() {
         String token = "Bearer " + sp.getPreferences(getActivity(), "token");
+        sp.showProgressDialog(getActivity());
+
         mAPIServices.getNotifications(token).enqueue(new Callback<ArrayList<ResponseNotifications>>() {
             @Override
             public void onResponse(Call<ArrayList<ResponseNotifications>> call, Response<ArrayList<ResponseNotifications>> response) {
+               sp.hideProgressDialog();
                 Log.i(TAG, "post submitted to API." + response);
                 int size = response.body().size();
                 if(size==0){

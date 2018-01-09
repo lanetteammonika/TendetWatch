@@ -93,13 +93,13 @@ public class CountryList extends AppCompatActivity {
             back.setVisibility(View.GONE);
             txtSelectedContract.setVisibility(View.GONE);
         }
+        sp.showProgressDialog(CountryList.this);
 
         mAPIService.getCountryData().enqueue(new Callback<ArrayList<GetCountry>>() {
             @Override
             public void onResponse(Call<ArrayList<GetCountry>> call, Response<ArrayList<GetCountry>> response) {
                 Log.i("array-------", response.body().get(0).getCountryName().toString());
                 Data = response.body();
-
                for (int i = 0; i < Data.size(); i++) {
                     String name = response.body().get(i).getCountryName().toString();
                     String flag = response.body().get(i).getImageString().toString();
@@ -155,7 +155,7 @@ public class CountryList extends AppCompatActivity {
                 adapter = new IndexingArrayAdapter(getApplicationContext(), R.id.lvCountry, countryList, alpha2, list, chars);
                 lvCountry.clearChoices();
                 lvCountry.setAdapter(adapter);
-
+                sp.hideProgressDialog();
                 lvCountry.clearChoices();
                 lvCountry.setTextFilterEnabled(true);
                 if (sideSelector != null)

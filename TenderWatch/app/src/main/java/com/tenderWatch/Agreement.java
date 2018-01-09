@@ -168,9 +168,12 @@ public class Agreement extends AppCompatActivity implements View.OnClickListener
         image1 = MultipartBody.Part.createFormData("image", file1.getName(), requestFile);
 
         Call<Register> resultCall = mAPIService.uploadImage(email1, password1, country1, contactNo1, occupation1, aboutMe1, role1, deviceId1, image1);
+        sp.showProgressDialog(Agreement.this);
+
         resultCall.enqueue(new Callback<Register>() {
             @Override
             public void onResponse(Call<Register> call, Response<Register> response) {
+                sp.hideProgressDialog();
                 Log.i(TAG, "response register-->");
                 if (response.isSuccessful()) {
                     sp.setPreferencesObject(Agreement.this,user);
@@ -238,10 +241,13 @@ public class Agreement extends AppCompatActivity implements View.OnClickListener
         image1 = MultipartBody.Part.createFormData("image", file1.getName(), requestFile);
 
         Call<Register> resultCall = mAPIService.uploadContractor(email1, password1, country1, contactNo1, occupation1, aboutMe1, role1, deviceId1, image1, subscribe1, selections1);
+        sp.showProgressDialog(Agreement.this);
+
         resultCall.enqueue(new Callback<Register>() {
             @Override
             public void onResponse(Call<Register> call, Response<Register> response) {
                 Log.i(TAG, "response register-->");
+                sp.hideProgressDialog();
                 if (response.isSuccessful()) {
                     ///String role = sp.getPreferences(Agreement.this, "role");
                     Gson gson = new Gson();

@@ -150,11 +150,12 @@ public class ClientDrawer extends AppCompatActivity
         String token="Bearer "+sp.getPreferences(ClientDrawer.this,"token");
         String deviceId = sp.getPreferences(getApplicationContext(), "deviceId");
         String role=sp.getPreferences(ClientDrawer.this,"role");
-
+sp.showProgressDialog(ClientDrawer.this);
         mAPIService.logout(token,deviceId,role).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                // Log.i(TAG, "post submitted to API." + response);
+                sp.hideProgressDialog();
                 sp.removePreferences(ClientDrawer.this,"role");
                 sp.removePreferences(ClientDrawer.this,"email");
                 sp.removePreferences(ClientDrawer.this,"id");

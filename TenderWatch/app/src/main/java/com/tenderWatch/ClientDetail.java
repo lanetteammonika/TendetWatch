@@ -163,9 +163,12 @@ public class ClientDetail extends AppCompatActivity {
     private void GetUser() {
         String token = "Bearer " + sp.getPreferences(ClientDetail.this, "token");
         String userId=obj.getId().toString();
+        sp.showProgressDialog(ClientDetail.this);
+
         mApiService.getUserDetail(token,userId).enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
+                sp.hideProgressDialog();
                 Log.i(TAG, "post submitted to API." + response);
                 txtRate.setText(response.body().getAvg().toString()+"/5.0");
             }
@@ -181,9 +184,12 @@ public class ClientDetail extends AppCompatActivity {
     private void callRatingApi() {
         String token="Bearer " + sp.getPreferences(ClientDetail.this,"token");
         String clientId=obj.getId().toString();
+        sp.showProgressDialog(ClientDetail.this);
+
         mApiService.giveRating(token,clientId,rate).enqueue(new Callback<ResponseRating>() {
             @Override
             public void onResponse(Call<ResponseRating> call, Response<ResponseRating> response) {
+                sp.hideProgressDialog();
                 Log.i(TAG, "post submitted to API." + response);
             }
 
@@ -195,10 +201,13 @@ public class ClientDetail extends AppCompatActivity {
     }
 
     private void FGetAllCountry() {
+        sp.showProgressDialog(ClientDetail.this);
+
         mApiService.getCountryData().enqueue(new Callback<ArrayList<GetCountry>>() {
             @SuppressLint("ResourceType")
             @Override
             public void onResponse(Call<ArrayList<GetCountry>> call, Response<ArrayList<GetCountry>> response) {
+               sp.hideProgressDialog();
                 Data = response.body();
                 for (int i = 0; i < Data.size(); i++) {
                     falpha.add(response.body().get(i).getCountryName().toString() + "~" + response.body().get(i).getImageString().toString());

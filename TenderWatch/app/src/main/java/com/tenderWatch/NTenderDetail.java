@@ -94,7 +94,6 @@ public class NTenderDetail extends AppCompatActivity {
         rlLandline=(RelativeLayout) findViewById(R.id.rl_preview_landline);
         rlEmail=(RelativeLayout) findViewById(R.id.rl_preview_email);
         removeTender=(Button) findViewById(R.id.remove_tender);
-        editTender=(Button) findViewById(R.id.edit_tender);
         imagetender=(ImageView) findViewById(R.id.preview_tender_image);
         lblClientDetail=(TextView) findViewById(R.id.lbl_clientDetail);
 
@@ -114,18 +113,7 @@ public class NTenderDetail extends AppCompatActivity {
         sender=getIntent().getStringExtra("sender");
         Gson gson=new Gson();
         object=gson.fromJson(json, Tender.class);
-        editTender.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Gson gson = new Gson();
-                String jsonString = gson.toJson(object);
 
-                Intent intent = new Intent(NTenderDetail.this,EditTenderDetail.class);
-                intent.putExtra("data",jsonString);
-                intent.putExtra("sender",sender);
-                startActivity(intent);
-            }
-        });
         Calendar c = Calendar.getInstance();
         SimpleDateFormat df = null;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -163,9 +151,12 @@ public class NTenderDetail extends AppCompatActivity {
             public void onClick(View v) {
                 String token="Bearer "+sp.getPreferences(NTenderDetail.this,"token");
                 String id=object.getId().toString();
+                sp.showProgressDialog(NTenderDetail.this);
+
                 mApiService.removeTender(token,id).enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        sp.hideProgressDialog();
                         Log.i(TAG,"response---"+response.body());
                         Intent intent = new Intent(NTenderDetail.this,ClientDrawer.class);
                         startActivity(intent);
@@ -236,9 +227,12 @@ public class NTenderDetail extends AppCompatActivity {
     }
 
     private void GetCategory() {
+        sp.showProgressDialog(NTenderDetail.this);
+
         mApiService.getCategoryData().enqueue(new Callback<ArrayList<GetCategory>>() {
             @Override
             public void onResponse(Call<ArrayList<GetCategory>> call, Response<ArrayList<GetCategory>> response) {
+                sp.hideProgressDialog();
                 Data2 = response.body();
                 for (int i = 0; i < Data2.size(); i++) {
                     alpha2.add(response.body().get(i).getCategoryName().toString() + "~" + response.body().get(i).getImgString().toString());
@@ -265,9 +259,12 @@ public class NTenderDetail extends AppCompatActivity {
     }
 
     private void GetAllCountry() {
+        sp.showProgressDialog(NTenderDetail.this);
+
         mApiService.getCountryData().enqueue(new Callback<ArrayList<GetCountry>>() {
             @Override
             public void onResponse(Call<ArrayList<GetCountry>> call, Response<ArrayList<GetCountry>> response) {
+                sp.hideProgressDialog();
                 Data = response.body();
                 for (int i = 0; i < Data.size(); i++) {
                     alpha.add(response.body().get(i).getCountryName().toString() + "~" + response.body().get(i).getImageString().toString());

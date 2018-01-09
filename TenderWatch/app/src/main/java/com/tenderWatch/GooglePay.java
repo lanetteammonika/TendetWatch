@@ -28,6 +28,7 @@ import com.google.android.gms.wallet.WalletConstants;
 import com.stripe.android.Stripe;
 import com.stripe.android.TokenCallback;
 import com.stripe.android.model.BankAccount;
+import com.tenderWatch.SharedPreference.SharedPreference;
 
 import java.util.Arrays;
 
@@ -37,6 +38,7 @@ public class GooglePay extends AppCompatActivity {
     private PaymentsClient paymentsClient;
     public static final int LOAD_PAYMENT_DATA_REQUEST_CODE=1;
     Button bank;
+    SharedPreference sp=new SharedPreference();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,6 +50,8 @@ public class GooglePay extends AppCompatActivity {
                 Stripe stripe = new Stripe(GooglePay.this);
                 stripe.setDefaultPublishableKey("pk_test_mjxYxMlj4K2WZfR6TwlHdIXW");
                 BankAccount bankAccount = new BankAccount("000123456789","US","usd","110000000");
+                sp.showProgressDialog(GooglePay.this);
+
                 stripe.createBankAccountToken(bankAccount, new TokenCallback() {
                     @Override
                     public void onError(Exception error) {
@@ -56,6 +60,7 @@ public class GooglePay extends AppCompatActivity {
 
                     @Override
                     public void onSuccess(com.stripe.android.model.Token token) {
+                        sp.hideProgressDialog();
                         Log.e("Bank Token", token.getId());
                     }
                 });

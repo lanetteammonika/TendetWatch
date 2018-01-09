@@ -99,10 +99,12 @@ public class ForgotPassword extends AppCompatActivity implements View.OnClickLis
     private void forgotPassword() {
         String email = txtEmail.getText().toString();
         String role = "contractor";
+        sp.showProgressDialog(ForgotPassword.this);
+
         mAPIService.forgotPassword(email, role).enqueue(new Callback<LoginPost>() {
             @Override
             public void onResponse(Call<LoginPost> call, Response<LoginPost> response) {
-
+                sp.hideProgressDialog();
                 if (response.isSuccessful()) {
                     sp.ShowDialog(ForgotPassword.this, "Your password is send in your registered EmailId");
                 } else {

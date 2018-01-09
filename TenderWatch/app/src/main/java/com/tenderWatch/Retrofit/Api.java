@@ -261,10 +261,21 @@ public interface Api {
     );
 
     @GET("tender/getTenders")
-    Call<ArrayList<Tender>> getAllFavoriteTender(
+    Call<ArrayList<AllContractorTender>> getAllFavoriteTender(
             @Header("Authorization") String token
     );
 
+
+    @PUT("notification/{notificationId}")
+    Call<ResponseBody> readNotification(
+            @Header("Authorization") String token,
+            @Path("notificationId") String id
+    );
+    @DELETE("tender/favorite/{favoriteId}")
+    Call<ResponseBody> removeFavorite(
+            @Header("Authorization") String token,
+            @Path("favoriteId") String id
+    );
 
 }
 

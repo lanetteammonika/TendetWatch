@@ -243,10 +243,13 @@ public class ContractotTenderDetail extends AppCompatActivity {
     }
 
     private void GetCategory() {
+        sp.showProgressDialog(ContractotTenderDetail.this);
+
         mApiService.getCategoryData().enqueue(new Callback<ArrayList<GetCategory>>() {
             @Override
             public void onResponse(Call<ArrayList<GetCategory>> call, Response<ArrayList<GetCategory>> response) {
                 Data2 = response.body();
+                sp.hideProgressDialog();
                 for (int i = 0; i < Data2.size(); i++) {
                     alpha2.add(response.body().get(i).getCategoryName().toString() + "~" + response.body().get(i).getImgString().toString());
                     categoryName.add(response.body().get(i).getCategoryName().toString() + "~" + response.body().get(i).getId().toString());
@@ -289,10 +292,13 @@ public class ContractotTenderDetail extends AppCompatActivity {
 
 
     private void GetAllCountry() {
+        sp.showProgressDialog(ContractotTenderDetail.this);
+
         mApiService.getCountryData().enqueue(new Callback<ArrayList<GetCountry>>() {
             @Override
             public void onResponse(Call<ArrayList<GetCountry>> call, Response<ArrayList<GetCountry>> response) {
                 Data = response.body();
+                sp.hideProgressDialog();
                 for (int i = 0; i < Data.size(); i++) {
                     alpha.add(response.body().get(i).getCountryName().toString() + "~" + response.body().get(i).getImageString().toString());
                     countryName.add(response.body().get(i).getCountryName().toString() + "~" + response.body().get(i).getCountryCode().toString() + "~" + response.body().get(i).getId().toString());

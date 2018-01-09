@@ -164,12 +164,13 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
         btnSignIn.setSize(SignInButton.SIZE_STANDARD);
         btnSignIn.setScopes(gso.getScopeArray());
         fb.setOnClickListener(this);
+
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
 
             @Override
             public void onSuccess(LoginResult loginResult) {
                 Log.d(TAG, String.valueOf(loginResult));
-                SharedPreference sp = new SharedPreference();
+                sp.hideProgressDialog();
                 String accessToken = loginResult.getAccessToken().getToken();
                 String deviceId = FirebaseInstanceId.getInstance().getToken();
                 String role = sp.getPreferences(Login.this, "role");
@@ -236,10 +237,12 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
     }
 
     public void savePostFB(String idToken, String role, String deviceId) {
+        sp.showProgressDialog(Login.this);
+
         mAPIService.savePostFB(idToken, role, deviceId).enqueue(new Callback<Register>() {
             @Override
             public void onResponse(Call<Register> call, Response<Register> response) {
-
+                sp.hideProgressDialog();
                 if (response.isSuccessful()) {
                     sp.setPreferencesObject(Login.this,response.body().getUser());
                     Object user=sp.getPreferencesObject(Login.this);
@@ -266,10 +269,12 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
     }
 
     public void sendPostGoogle(String idToken, String role, String deviceId) {
+        sp.showProgressDialog(Login.this);
+
         mAPIService.savePostGoogle(idToken, role, deviceId).enqueue(new Callback<Register>() {
             @Override
             public void onResponse(Call<Register> call, Response<Register> response) {
-
+                sp.hideProgressDialog();
                 if (response.isSuccessful()) {
                     sp.setPreferencesObject(Login.this,response.body().getUser());
                     Object user=sp.getPreferencesObject(Login.this);
@@ -296,10 +301,12 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
     }
 
     public void sendPost(String email, String password, String role, final String deviceId) {
+        sp.showProgressDialog(Login.this);
+
         mAPIService.savePost(email, password, role, deviceId).enqueue(new Callback<Register>() {
             @Override
             public void onResponse(Call<Register> call, Response<Register> response) {
-
+                sp.hideProgressDialog();
                 if (response.isSuccessful()) {
                     sp.setPreferences(Login.this,"androidId",deviceId);
                     sp.setPreferencesObject(Login.this,response.body().getUser());

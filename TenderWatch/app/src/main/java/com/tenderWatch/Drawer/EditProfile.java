@@ -205,9 +205,12 @@ public class EditProfile extends Fragment implements View.OnClickListener{
         image1 = MultipartBody.Part.createFormData("image",name, requestFile);
         String token="Bearer "+sp.getPreferences(getActivity(),"token");
         Call<User> resultCall = mAPIService.UpdateUser(token,Id,country1, contactNo1, occupation1, aboutMe1, image1);
+        sp.showProgressDialog(getActivity());
+
         resultCall.enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
+                sp.hideProgressDialog();
                 Log.i(TAG, "response register-->");
                 if (response.isSuccessful()) {
                     sp.setPreferencesObject(getActivity(),response.body());

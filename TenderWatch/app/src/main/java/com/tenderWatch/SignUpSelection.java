@@ -451,10 +451,13 @@ public class SignUpSelection extends AppCompatActivity implements View.OnClickLi
 
     public void checkEmail() {
         String email = txtEmail.getText().toString();
+        sp.showProgressDialog(SignUpSelection.this);
+
         mAPIService.checkEmailExit(txtEmail.getText().toString(), sp.getPreferences(getApplicationContext(), "role")).enqueue(new Callback<Message>() {
             @Override
             public void onResponse(Call<Message> call, Response<Message> response) {
                 //  if (response.isSuccessful()) {
+                sp.hideProgressDialog();
                 if (response.message().equals("Found")) {
                      sp.ShowDialog(SignUpSelection.this, response.errorBody().source().toString().split("\"")[3]);
                      txtEmail.setError("change Email");

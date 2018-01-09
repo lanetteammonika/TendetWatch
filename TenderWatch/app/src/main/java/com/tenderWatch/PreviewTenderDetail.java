@@ -152,9 +152,12 @@ public class PreviewTenderDetail extends AppCompatActivity {
             public void onClick(View v) {
                 String token="Bearer "+sp.getPreferences(PreviewTenderDetail.this,"token");
                 String id=object.getId().toString();
+                sp.showProgressDialog(PreviewTenderDetail.this);
+
                 mApiService.removeTender(token,id).enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        sp.hideProgressDialog();
                         Log.i(TAG,"response---"+response.body());
                         Intent intent = new Intent(PreviewTenderDetail.this,ClientDrawer.class);
                         startActivity(intent);
@@ -225,11 +228,13 @@ public class PreviewTenderDetail extends AppCompatActivity {
     }
 
     private void GetCategory() {
+        sp.showProgressDialog(PreviewTenderDetail.this);
+
         mApiService.getCategoryData().enqueue(new Callback<ArrayList<GetCategory>>() {
             @Override
             public void onResponse(Call<ArrayList<GetCategory>> call, Response<ArrayList<GetCategory>> response) {
                 Data2 = response.body();
-
+                sp.hideProgressDialog();
                 for (int i = 0; i < Data2.size(); i++) {
                     alpha2.add(response.body().get(i).getCategoryName().toString() + "~" + response.body().get(i).getImgString().toString());
                     categoryName.add(response.body().get(i).getCategoryName().toString() + "~" + response.body().get(i).getId().toString());
@@ -276,9 +281,12 @@ public class PreviewTenderDetail extends AppCompatActivity {
         }
     }
     private void GetAllCountry() {
+        sp.showProgressDialog(PreviewTenderDetail.this);
+
         mApiService.getCountryData().enqueue(new Callback<ArrayList<GetCountry>>() {
             @Override
             public void onResponse(Call<ArrayList<GetCountry>> call, Response<ArrayList<GetCountry>> response) {
+                sp.hideProgressDialog();
                 Data = response.body();
                 for (int i = 0; i < Data.size(); i++) {
                     alpha.add(response.body().get(i).getCountryName().toString() + "~" + response.body().get(i).getImageString().toString());

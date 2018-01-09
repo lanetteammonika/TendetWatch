@@ -80,6 +80,7 @@ public class Category extends AppCompatActivity {
         contract = show.getStringExtra("version");
         txtContract.setText(contract);
         user.setSelections(empNo.size());
+        sp.showProgressDialog(Category.this);
 
         mAPIService.getCategoryData().enqueue(new Callback<ArrayList<GetCategory>>() {
             @Override
@@ -140,7 +141,7 @@ public class Category extends AppCompatActivity {
                     bAdapter = new ArrayAdapter(Category.this, R.id.lvCategory, countryList, alpha2, list, chars);
                     // set adapter
                     // adapter
-
+                    sp.hideProgressDialog();
                     lvCountry.setAdapter(bAdapter);
                     lvCountry.setTextFilterEnabled(true);
                     if (sideSelector != null)

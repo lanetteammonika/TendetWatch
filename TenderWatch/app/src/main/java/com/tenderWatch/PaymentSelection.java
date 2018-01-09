@@ -41,6 +41,7 @@ import com.tenderWatch.Models.GetCountry;
 import com.tenderWatch.Retrofit.Api;
 import com.tenderWatch.Retrofit.ApiUtils;
 import com.tenderWatch.SharedPreference.PayPalConfig;
+import com.tenderWatch.SharedPreference.SharedPreference;
 
 import org.json.JSONException;
 
@@ -75,6 +76,7 @@ public class PaymentSelection extends AppCompatActivity implements View.OnClickL
     LinearLayout country_home,llbankType;
     ListView spinner,spinnerbanktype;
     private ArrayAdapter<String> listAdapter ;
+    SharedPreference sp=new SharedPreference();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -160,10 +162,12 @@ public class PaymentSelection extends AppCompatActivity implements View.OnClickL
         planetList.addAll( Arrays.asList(planets) );
         // Create ArrayAdapter using the planet list.
         listAdapter = new ArrayAdapter<String>(this, R.layout.simplerow, planetList);
+        sp.showProgressDialog(PaymentSelection.this);
 
         mApiService.getCountryData().enqueue(new Callback<ArrayList<GetCountry>>() {
             @Override
             public void onResponse(Call<ArrayList<GetCountry>> call, Response<ArrayList<GetCountry>> response) {
+                sp.hideProgressDialog();
                 Data = response.body();
                 for (int i = 0; i < Data.size(); i++) {
                     alpha.add(response.body().get(i).getCountryName().toString() + "~" + response.body().get(i).getImageString().toString());

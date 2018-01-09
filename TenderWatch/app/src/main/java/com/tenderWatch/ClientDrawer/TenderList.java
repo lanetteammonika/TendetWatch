@@ -58,10 +58,11 @@ public class TenderList extends Fragment {
     TenderListAdapter adapter;
     ContractorTenderListAdapter Con_adapter;
     ListView list_tender;
-    ArrayList<AllContractorTender> contractoradapter=new ArrayList<AllContractorTender>();
+    ArrayList<AllContractorTender> contractoradapter = new ArrayList<AllContractorTender>();
     Tender tender;
     AllContractorTender contractorTender;
     String role;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -75,14 +76,24 @@ public class TenderList extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mAPIService = ApiUtils.getAPIService();
-        role=sp.getPreferences(getActivity(),"role");
-        if(role.equals("client")){
+        role = sp.getPreferences(getActivity(), "role");
+
+        if (role.equals("client")) {
             GetAllTender();
         }else{
-            AllContractorTender();
+            Bundle bundle = getArguments();
+            if (bundle  != null) {
+                String value = bundle.getString("nav_fav");
+                if(value!=null) {
+                   GetAllFavorite();
+                }
+            }
+            else{
+                AllContractorTender();
+            }
         }
 
-        list_tender=(ListView) view.findViewById(R.id.list_tender);
+        list_tender = (ListView) view.findViewById(R.id.list_tender);
         final Fragment fragment2 = new Home();
 
         FragmentManager fragmentManager = getFragmentManager();
@@ -98,15 +109,28 @@ public class TenderList extends Fragment {
             }
         });
         //String role=sp.getPreferences(getActivity(),"role");
-        if(role.equals("client")) {
+        if (role.equals("client")) {
             fab.setVisibility(View.VISIBLE);
-        }else {
+        } else {
             fab.setVisibility(View.GONE);
         }
         list_tender.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-               ShowBox(position);
+                if (role.equals("client")) {
+                    ShowBox(position);
+                }else{
+                    Bundle bundle = getArguments();
+                    if (bundle  != null) {
+                        String value = bundle.getString("nav_fav");
+                        if(value!=null) {
+                            ShowBoxFavorite(position);
+                        }
+                    }
+                    else{
+                        ShowBoxForContractor(position);
+                    }
+                }
                 return true;
             }
         });
@@ -115,7 +139,7 @@ public class TenderList extends Fragment {
             @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if(role.equals("client")) {
+                if (role.equals("client")) {
                     tender = allTender.get(position);
                     Gson gson = new Gson();
                     String jsonString = gson.toJson(tender);
@@ -145,11 +169,11 @@ public class TenderList extends Fragment {
                         intent.putExtra("data", jsonString);
                         startActivity(intent);
                     }
-                }else{
-                    contractorTender=contractoradapter.get(position);
-                    String token="Bearer "+sp.getPreferences(getActivity(),"token");
-                    String id2=contractorTender.getId().toString();
-                    mAPIService.getTender(token,id2).enqueue(new Callback<UpdateTender>() {
+                } else {
+                    contractorTender = contractoradapter.get(position);
+                    String token = "Bearer " + sp.getPreferences(getActivity(), "token");
+                    String id2 = contractorTender.getId().toString();
+                    mAPIService.getTender(token, id2).enqueue(new Callback<UpdateTender>() {
                         @Override
                         public void onResponse(Call<UpdateTender> call, Response<UpdateTender> response) {
                             Log.i(TAG, "post submitted to API." + response.body());
@@ -162,16 +186,16 @@ public class TenderList extends Fragment {
                     });
 
 
-                    User user= (User) sp.getPreferencesObject(getActivity());
-                    TenderUploader client=contractorTender.getTenderUploader();
+                    User user = (User) sp.getPreferencesObject(getActivity());
+                    TenderUploader client = contractorTender.getTenderUploader();
                     Log.i(TAG, "post submitted to API." + client);
                     Gson gson = new Gson();
                     String jsonString = gson.toJson(contractorTender);
-                    String sender=gson.toJson(client);
+                    String sender = gson.toJson(client);
                     Intent intent = new Intent(getActivity(), ContractotTenderDetail.class);
                     intent.putExtra("data", jsonString);
                     intent.putExtra("sender", sender);
-                    if(contractoradapter.get(position).getAmendRead().size()>0) {
+                    if (contractoradapter.get(position).getAmendRead().size() > 0) {
                         for (int i = 0; i < contractoradapter.get(position).getAmendRead().size(); i++) {
                             String Con_id = user.getId();
                             if (!contractoradapter.get(position).getAmendRead().contains(Con_id)) {
@@ -179,7 +203,7 @@ public class TenderList extends Fragment {
                             }
                         }
                     }
-                    if(contractoradapter.get(position).getAmendRead().size()==0){
+                    if (contractoradapter.get(position).getAmendRead().size() == 0) {
                         intent.putExtra("amended", "true");
                     }
                     startActivity(intent);
@@ -190,13 +214,79 @@ public class TenderList extends Fragment {
         getActivity().setTitle("Tender Watch");
     }
 
-    private void AllContractorTender() {
+    private void ShowBoxFavorite(final int i) {
+        final AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
+
+        alertDialog.setTitle("Tender Watch");
+
+        alertDialog.setMessage("Are you sure to delete record?");
+
+        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Delete", new DialogInterface.OnClickListener() {
+
+            public void onClick(DialogInterface dialog, int id) {
+                contractorTender = contractoradapter.get(i);
+                final String token = "Bearer " + sp.getPreferences(getActivity(), "token");
+                String tenderid = contractorTender.getId().toString();
+                sp.showProgressDialog(getActivity());
+                mAPIService.removeFavorite(token,tenderid).enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                       sp.hideProgressDialog();
+                        Log.i(TAG, "post submitted to API." + response.body());
+                        GetAllFavorite();
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        Log.i(TAG, "post submitted to API." + t);
+                    }
+                });
+            }
+        });
+
+        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "Cancel", new DialogInterface.OnClickListener() {
+
+            public void onClick(DialogInterface dialog, int id) {
+                alertDialog.dismiss();
+            }
+        });
+        alertDialog.show();
+    }
+
+    private void GetAllFavorite(){
         String token = "Bearer " + sp.getPreferences(getActivity(), "token");
-        mAPIService.getAllContractorTender(token).enqueue(new Callback<ArrayList<AllContractorTender>>() {
+        sp.showProgressDialog(getActivity());
+        adapter=null;
+        mAPIService.getAllFavoriteTender(token).enqueue(new Callback<ArrayList<AllContractorTender>>() {
             @Override
             public void onResponse(Call<ArrayList<AllContractorTender>> call, Response<ArrayList<AllContractorTender>> response) {
                 Log.i(TAG, "post submitted to API." + response.body());
-                if(response.body()!=null) {
+                if (response.body() != null) {
+                    contractoradapter = response.body();
+                    Con_adapter = new ContractorTenderListAdapter(getActivity(), response.body());
+                    list_tender.setAdapter(Con_adapter);
+
+                }
+                sp.hideProgressDialog();
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<AllContractorTender>> call, Throwable t) {
+                Log.i(TAG, "post submitted to API." + t);
+
+            }
+        });
+    }
+
+    private void AllContractorTender() {
+        String token = "Bearer " + sp.getPreferences(getActivity(), "token");
+        sp.showProgressDialog(getActivity());
+        mAPIService.getAllContractorTender(token).enqueue(new Callback<ArrayList<AllContractorTender>>() {
+            @Override
+            public void onResponse(Call<ArrayList<AllContractorTender>> call, Response<ArrayList<AllContractorTender>> response) {
+                sp.hideProgressDialog();
+                Log.i(TAG, "post submitted to API." + response.body());
+                if (response.body() != null) {
                     contractoradapter = response.body();
                     Con_adapter = new ContractorTenderListAdapter(getActivity(), response.body());
                     list_tender.setAdapter(Con_adapter);
@@ -214,11 +304,14 @@ public class TenderList extends Fragment {
 
     private void GetAllTender() {
         String token = "Bearer " + sp.getPreferences(getActivity(), "token");
+        sp.showProgressDialog(getActivity());
+        adapter=null;
         mAPIService.getAllTender(token).enqueue(new Callback<ArrayList<Tender>>() {
             @Override
             public void onResponse(Call<ArrayList<Tender>> call, Response<ArrayList<Tender>> response) {
-               // Log.i(TAG, "post submitted to API." + response.body());
-                if(response.body()!=null) {
+                // Log.i(TAG, "post submitted to API." + response.body());
+                sp.hideProgressDialog();
+                if (response.body() != null) {
                     allTender = response.body();
                     adapter = new TenderListAdapter(getActivity(), response.body());
                     list_tender.setAdapter(adapter);
@@ -232,14 +325,15 @@ public class TenderList extends Fragment {
             }
         });
     }
-    private void RemoveTender(int i, final AlertDialog alertDialog){
-        tender=allTender.get(i);
-        final String token="Bearer "+sp.getPreferences(getActivity(),"token");
-        String tenderid=tender.getId().toString();
-        mAPIService.removeTender(token,tenderid).enqueue(new Callback<ResponseBody>() {
+
+    private void RemoveTender(int i, final AlertDialog alertDialog) {
+        tender = allTender.get(i);
+        final String token = "Bearer " + sp.getPreferences(getActivity(), "token");
+        String tenderid = tender.getId().toString();
+        mAPIService.removeTender(token, tenderid).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                Log.i(TAG,"response---"+response.body());
+                Log.i(TAG, "response---" + response.body());
                 final Fragment fragment3 = new TenderList();
                 FragmentManager fragmentManager = getFragmentManager();
                 final FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -251,11 +345,12 @@ public class TenderList extends Fragment {
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Log.i(TAG,"response---"+t);
+                Log.i(TAG, "response---" + t);
             }
         });
     }
-    private void ShowBox(final int i){
+
+    private void ShowBox(final int i) {
         final AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
 
         alertDialog.setTitle("Tender Watch");
@@ -265,15 +360,83 @@ public class TenderList extends Fragment {
         alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Delete", new DialogInterface.OnClickListener() {
 
             public void onClick(DialogInterface dialog, int id) {
-                String Con_msg="Tender will be completely removed from TenderWatch.are you sure you want to remove?";
-                String Client_msg="Are you sure you want to remove this Tender completely from your Account?";
-                tender=allTender.get(i);
-                final String token="Bearer "+sp.getPreferences(getActivity(),"token");
-                String tenderid=tender.getId().toString();
-                mAPIService.removeTender(token,tenderid).enqueue(new Callback<ResponseBody>() {
+                String Con_msg = "Tender will be completely removed from TenderWatch.are you sure you want to remove?";
+                String Client_msg = "Are you sure you want to remove this Tender completely from your Account?";
+                tender = allTender.get(i);
+                final String token = "Bearer " + sp.getPreferences(getActivity(), "token");
+                String tenderid = tender.getId().toString();
+                sp.showProgressDialog(getActivity());
+
+                mAPIService.removeTender(token, tenderid).enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                        Log.i(TAG,"response---"+response.body());
+                       sp.hideProgressDialog();
+                        if (role.equals("client")) {
+                            GetAllTender();
+                        }else{
+                            Bundle bundle = getArguments();
+                            if (bundle  != null) {
+                                String value = bundle.getString("nav_fav");
+                                if(value!=null) {
+                                    GetAllFavorite();
+                                }
+                            }
+                            else{
+                                AllContractorTender();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        Log.i(TAG, "response---" + t);
+                    }
+                });
+            }
+        });
+
+        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Edit", new DialogInterface.OnClickListener() {
+
+            @RequiresApi(api = Build.VERSION_CODES.N)
+            public void onClick(DialogInterface dialog, int id) {
+                tender = allTender.get(i);
+                Gson gson = new Gson();
+                String jsonString = gson.toJson(tender);
+                Intent intent = new Intent(getActivity(), EditTenderDetail.class);
+                intent.putExtra("data", jsonString);
+                startActivity(intent);
+            }
+        });
+
+        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "Cancel", new DialogInterface.OnClickListener() {
+
+            public void onClick(DialogInterface dialog, int id) {
+                alertDialog.dismiss();
+            }
+        });
+        alertDialog.show();
+    }
+
+    private void ShowBoxForContractor(final int i) {
+        final AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
+
+        alertDialog.setTitle("Tender Watch");
+
+        alertDialog.setMessage("Are you sure to Delete or add Favorite record?");
+
+        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Delete", new DialogInterface.OnClickListener() {
+
+            public void onClick(DialogInterface dialog, int id) {
+                contractorTender = contractoradapter.get(i);
+                final String token = "Bearer " + sp.getPreferences(getActivity(), "token");
+                String tenderid = contractorTender.getId().toString();
+                sp.showProgressDialog(getActivity());
+
+                mAPIService.removeTender(token, tenderid).enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        sp.hideProgressDialog();
+                        Log.i(TAG, "response---" + response.body());
                         final Fragment fragment3 = new TenderList();
                         FragmentManager fragmentManager = getFragmentManager();
                         final FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -285,28 +448,49 @@ public class TenderList extends Fragment {
 
                     @Override
                     public void onFailure(Call<ResponseBody> call, Throwable t) {
-                        Log.i(TAG,"response---"+t);
+                        Log.i(TAG, "response---" + t);
                     }
                 });
-            } });
+            }
+        });
 
-        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Edit", new DialogInterface.OnClickListener() {
+        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Favorite", new DialogInterface.OnClickListener() {
 
             @RequiresApi(api = Build.VERSION_CODES.N)
             public void onClick(DialogInterface dialog, int id) {
-                tender=allTender.get(i);
-                Gson gson = new Gson();
-                String jsonString = gson.toJson(tender);
-                Intent intent = new Intent(getActivity(),EditTenderDetail.class);
-                intent.putExtra("data",jsonString);
-                startActivity(intent);
-            }});
+                contractorTender = contractoradapter.get(i);
+                final String token = "Bearer " + sp.getPreferences(getActivity(), "token");
+                String tenderid = contractorTender.getId().toString();
+                sp.showProgressDialog(getActivity());
+
+                mAPIService.addFavorite(token,tenderid).enqueue(new Callback<UpdateTender>() {
+                    @Override
+                    public void onResponse(Call<UpdateTender> call, Response<UpdateTender> response) {
+                        sp.hideProgressDialog();
+                        Log.i(TAG, "response---" + response.body());
+                        final Fragment fragment3 = new TenderList();
+                        FragmentManager fragmentManager = getFragmentManager();
+                        final FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                        fragmentTransaction.replace(R.id.content_frame, fragment3);
+                        //fragmentTransaction.addToBackStack(null);
+                        fragmentTransaction.commit();
+                        alertDialog.dismiss();
+                    }
+
+                    @Override
+                    public void onFailure(Call<UpdateTender> call, Throwable t) {
+                        Log.i(TAG, "response---" + t);
+                    }
+                });
+            }
+        });
 
         alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "Cancel", new DialogInterface.OnClickListener() {
 
             public void onClick(DialogInterface dialog, int id) {
                 alertDialog.dismiss();
-            }});
+            }
+        });
         alertDialog.show();
     }
 }
