@@ -306,7 +306,6 @@ public class NTenderDetail extends AppCompatActivity {
         switch (item.getItemId()) {
             case android.R.id.home:
                 // todo: goto back activity from here
-
                 Intent i=new Intent(NTenderDetail.this, MainDrawer.class);
                 i.putExtra("nav_not","true");
                 startActivity(i);

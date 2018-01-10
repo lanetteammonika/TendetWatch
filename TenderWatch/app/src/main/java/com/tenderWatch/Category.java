@@ -167,7 +167,6 @@ public class Category extends AppCompatActivity {
                                     long id) {
                 bAdapter.setItemSelected(position);
                 bAdapter.setCheckedItem(position);
-
             }
         });
 
@@ -179,16 +178,13 @@ public class Category extends AppCompatActivity {
                 HashMap<String, String> items = bAdapter.getallitems();
 
                 for (Map.Entry<String, String> entry : items.entrySet()) {
-
                     populateMap(map, entry.getValue().split("~")[1], entry.getValue().split("~")[2]);
-
                 }
 
                 if (txtContract.getText().toString().equals("Trial Version")) {
                     if (items.size() > 1) {
                         ss.ShowDialog(Category.this, "During Free Trial Period you can choose only 1 category");
                     } else {
-
                         if(s!=null){
                             intent = new Intent(
                                     Category.this, PaymentSelection.class);
@@ -196,9 +192,7 @@ public class Category extends AppCompatActivity {
                             intent = new Intent(
                                     Category.this, Agreement.class);
                         }
-
                         user.setSubscribe(map);
-
                         startActivity(intent);
                         finish();
                     }
@@ -213,7 +207,6 @@ public class Category extends AppCompatActivity {
                     startActivity(intent);
                     finish();
                 }
-
             }
         });
 
@@ -222,7 +215,9 @@ public class Category extends AppCompatActivity {
             public void onClick(View v) {
                 intent = new Intent(
                         Category.this, CountryList.class);
+                intent.putExtra("sub","1234");
                 startActivity(intent);
+                finish();
             }
         });
 

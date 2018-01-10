@@ -110,7 +110,17 @@ public class PaymentSelection extends AppCompatActivity implements View.OnClickL
                 getPayment();
                 break;
             case R.id.payment_creditcard:
-                call();
+                Intent i=new Intent(PaymentSelection.this,CardDemoDesign.class);
+                startActivity(i);
+                //call();
+//                curl https://api.stripe.com/v1/transfers \
+//                -u sk_test_BQokikJOvBiI2HlWgH4olfQ2: \
+//                -d amount=500 \
+//                -d currency=usd \
+//                -d recipient=rp_1040gJ2eZvKYlo2Cs2z8Excq \
+//                -d card=card_1045042eZvKYlo2CqHA03rvb \
+//                -d description="Transfer to siddarth@stripe.com" \
+//                -d statement_descriptor="Sales for 22 May 2014"
                 break;
             case R.id.payment_googlepay:
                 PaymentDataRequest request = createPaymentDataRequest();
@@ -124,23 +134,24 @@ public class PaymentSelection extends AppCompatActivity implements View.OnClickL
                 }
                 break;
             case R.id.payment_bank:
-//                Stripe stripe = new Stripe(PaymentSelection.this);
-//                stripe.setDefaultPublishableKey("pk_test_mjxYxMlj4K2WZfR6TwlHdIXW");
-//                BankAccount bankAccount = new BankAccount("000123456789", "US", "usd", "110000000");
-//                stripe.createBankAccountToken(bankAccount, new TokenCallback() {
-//                    @Override
-//                    public void onError(Exception error) {
-//                        Log.e("Stripe Error", error.getMessage());
-//                    }
-//
-//                    @Override
-//                    public void onSuccess(com.stripe.android.model.Token token) {
-//                        Log.e("Bank Token", token.getId());
-//                        token.getBankAccount();
-//
-//                    }
-//                });
-                GetBankDetail();
+
+                Stripe stripe = new Stripe(PaymentSelection.this);
+                stripe.setDefaultPublishableKey("pk_test_mjxYxMlj4K2WZfR6TwlHdIXW");
+                BankAccount bankAccount = new BankAccount("000123456789", "US", "usd", "110000000");
+                stripe.createBankAccountToken(bankAccount, new TokenCallback() {
+                    @Override
+                    public void onError(Exception error) {
+                        Log.e("Stripe Error", error.getMessage());
+                    }
+
+                    @Override
+                    public void onSuccess(com.stripe.android.model.Token token) {
+                        Log.e("Bank Token", token.getId());
+                        token.getBankAccount();
+
+                    }
+                });
+                //GetBankDetail();
                 break;
         }
     }

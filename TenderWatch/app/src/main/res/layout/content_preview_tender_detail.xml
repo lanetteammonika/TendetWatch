@@ -134,10 +134,18 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="100dp"
-                            android:lines="2"
+                            android:maxLines="3"
                             android:text="@string/about_app"
                             android:textColor="@color/colorBlack"
                             android:textSize="@dimen/value_15"
+                            />
+                        <ImageView
+                            android:id="@+id/preview_catflag_image"
+                            android:layout_width="35dp"
+                            android:layout_height="30dp"
+                            android:layout_marginLeft="@dimen/value_10"
+                            android:layout_toRightOf="@+id/preview_category"
+                            android:src="@drawable/avtar"
                             />
                     </RelativeLayout>
                 </LinearLayout>

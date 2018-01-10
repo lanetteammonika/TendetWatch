@@ -62,6 +62,7 @@ public class TenderList extends Fragment {
     Tender tender;
     AllContractorTender contractorTender;
     String role;
+    User user;
 
     @Nullable
     @Override
@@ -186,7 +187,7 @@ public class TenderList extends Fragment {
                     });
 
 
-                    User user = (User) sp.getPreferencesObject(getActivity());
+                    user = (User) sp.getPreferencesObject(getActivity());
                     TenderUploader client = contractorTender.getTenderUploader();
                     Log.i(TAG, "post submitted to API." + client);
                     Gson gson = new Gson();
@@ -195,16 +196,18 @@ public class TenderList extends Fragment {
                     Intent intent = new Intent(getActivity(), ContractotTenderDetail.class);
                     intent.putExtra("data", jsonString);
                     intent.putExtra("sender", sender);
-                    if (contractoradapter.get(position).getAmendRead().size() > 0) {
-                        for (int i = 0; i < contractoradapter.get(position).getAmendRead().size(); i++) {
-                            String Con_id = user.getId();
-                            if (!contractoradapter.get(position).getAmendRead().contains(Con_id)) {
-                                intent.putExtra("amended", "true");
+                    if(contractoradapter.get(position).getAmendRead()!=null) {
+                        if (contractoradapter.get(position).getAmendRead().size() > 0) {
+                            for (int i = 0; i < contractoradapter.get(position).getAmendRead().size(); i++) {
+                                String Con_id = user.getId();
+                                if (!contractoradapter.get(position).getAmendRead().contains(Con_id)) {
+                                    intent.putExtra("amended", "true");
+                                }
                             }
                         }
-                    }
-                    if (contractoradapter.get(position).getAmendRead().size() == 0) {
-                        intent.putExtra("amended", "true");
+                        if (contractoradapter.get(position).getAmendRead().size() == 0) {
+                            intent.putExtra("amended", "true");
+                        }
                     }
                     startActivity(intent);
                 }
@@ -226,7 +229,7 @@ public class TenderList extends Fragment {
             public void onClick(DialogInterface dialog, int id) {
                 contractorTender = contractoradapter.get(i);
                 final String token = "Bearer " + sp.getPreferences(getActivity(), "token");
-                String tenderid = contractorTender.getId().toString();
+                String tenderid = contractorTender.getId();
                 sp.showProgressDialog(getActivity());
                 mAPIService.removeFavorite(token,tenderid).enqueue(new Callback<ResponseBody>() {
                     @Override
@@ -265,14 +268,14 @@ public class TenderList extends Fragment {
                     contractoradapter = response.body();
                     Con_adapter = new ContractorTenderListAdapter(getActivity(), response.body());
                     list_tender.setAdapter(Con_adapter);
-
                 }
                 sp.hideProgressDialog();
             }
 
             @Override
             public void onFailure(Call<ArrayList<AllContractorTender>> call, Throwable t) {
-                Log.i(TAG, "post submitted to API." + t);
+                sp.hideProgressDialog();
+                list_tender.setAdapter(null);
 
             }
         });
@@ -297,7 +300,8 @@ public class TenderList extends Fragment {
             @Override
             public void onFailure(Call<ArrayList<AllContractorTender>> call, Throwable t) {
                 Log.i(TAG, "post submitted to API." + t);
-
+                sp.hideProgressDialog();
+                sp.ShowDialog(getActivity(),"server is down");
             }
         });
     }
@@ -321,7 +325,8 @@ public class TenderList extends Fragment {
             @Override
             public void onFailure(Call<ArrayList<Tender>> call, Throwable t) {
                 Log.i(TAG, "post submitted to API." + t);
-
+                sp.hideProgressDialog();
+                sp.ShowDialog(getActivity(),"server is down");
             }
         });
     }
@@ -423,6 +428,9 @@ public class TenderList extends Fragment {
         alertDialog.setTitle("Tender Watch");
 
         alertDialog.setMessage("Are you sure to Delete or add Favorite record?");
+
+
+
 
         alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Delete", new DialogInterface.OnClickListener() {
 

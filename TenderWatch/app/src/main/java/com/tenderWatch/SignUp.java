@@ -114,8 +114,6 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener {
         if (txtaboutMe != null) {
             if (txtaboutMe.equals("About Me")) {
                 aboutMe.setText(txtaboutMe);
-            } else {
-                aboutMe.setText(txtaboutMe.substring(0, 10) + "....");
             }
         }
         if (empNo != null) {
