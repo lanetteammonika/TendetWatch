@@ -168,6 +168,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/value_40"
                 android:text="About Me"
+                android:ellipsize="end"
                 android:textSize="@dimen/text_20"
                 android:backgroundTint="@android:color/transparent"
                 android:focusable="false"

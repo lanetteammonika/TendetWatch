@@ -3,6 +3,8 @@
     <string name="about_app"><u>About TenderWatch</u></string>
     <string name="title_activity_login">Login</string>
     <string name="forgetpassword"><u>Forget Password?</u></string>
+    <string name="clientdetail"><u>Client Detail</u></string>
+
     <string name="facebook_app_id">338657463270317</string>
     <string name="fb_login_protocol_scheme">fb338657463270317</string>
     <string name="create_acc"><u>CREATE AN ACCOUNT</u></string>
@@ -17,6 +19,8 @@
     <string name="take_or_select_a_picture">take a picture</string>
     <string name="string_title_upload_progressbar_">upload image</string>
     <string name="title_activity_main_drawer">MainDrawer</string>
+    <string name="apikey">AIzaSyD2Q_kzN4e-Pn7qbDaObpWtMed8ympXlbM</string>
+    <!--// AIzaSyAXnvwE26cM8wY9Xcv2APpdlmAdNTnQt9Q-->
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -24,4 +28,5 @@
     <string name="spinner_prompt">fgdgdf</string>
     <string name="title_activity_preview_tender_detail">PreviewTenderDetail</string>
     <string name="title_activity_edit_tender_detail">EditTenderDetail</string>
+    <string name="title_activity_client_detail">ClientDetail</string>
 </resources>

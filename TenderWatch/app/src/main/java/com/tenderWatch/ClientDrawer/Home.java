@@ -3,7 +3,6 @@ package com.tenderWatch.ClientDrawer;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -12,12 +11,10 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -26,7 +23,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,7 +32,6 @@ import com.tenderWatch.Adapters.CustomList;
 import com.tenderWatch.BuildConfig;
 import com.tenderWatch.Models.GetCategory;
 import com.tenderWatch.Models.GetCountry;
-import com.tenderWatch.Models.Tender;
 import com.tenderWatch.Models.UploadTender;
 import com.tenderWatch.R;
 import com.tenderWatch.Retrofit.Api;
@@ -81,7 +76,7 @@ public class Home extends Fragment implements AdapterView.OnItemSelectedListener
     SharedPreference sp = new SharedPreference();
     MyScrollView scrollView;
     MultipartBody.Part name1, email1, countryId1,image1, categoryId1, landlineNo1, contactNo1, city1, description1, address1, isFollowTendeer1, tenderPhono1;
-    EditText city,title,description;
+    EditText city,title,description,edtSearch;
     Button btnUploadTender;
     private Uri mPictureUri;
     private static final int PICTURE_WIDTH = 1100;
@@ -106,6 +101,7 @@ public class Home extends Fragment implements AdapterView.OnItemSelectedListener
         getActivity().setTitle("Home");
         spinner = (ListView) view.findViewById(R.id.spinner);
         spinner2 = (ListView) view.findViewById(R.id.spinner3);
+        edtSearch=(EditText) view.findViewById(R.id.edtSearch);
 
         city=(EditText) view.findViewById(R.id.home_city);
         title=(EditText) view.findViewById(R.id.home_title);
@@ -120,7 +116,6 @@ public class Home extends Fragment implements AdapterView.OnItemSelectedListener
         down_arrow3 = (ImageView) view.findViewById(R.id.down_arrow3);
         up_arrow3 = (ImageView) view.findViewById(R.id.up_arrow3);
         tenderImage = (ImageView) view.findViewById(R.id.tender_image);
-
         country_home = (LinearLayout) view.findViewById(R.id.country_home);
         category_home = (LinearLayout) view.findViewById(R.id.category_home);
         country = (TextView) view.findViewById(R.id.txt_home_country_name);
@@ -128,7 +123,6 @@ public class Home extends Fragment implements AdapterView.OnItemSelectedListener
         mApiService = ApiUtils.getAPIService();
         spinner.setOnItemSelectedListener(this);
         scrollView = (MyScrollView) view.findViewById(R.id.home_scroll);
-
 
         tenderImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -152,6 +146,24 @@ public class Home extends Fragment implements AdapterView.OnItemSelectedListener
             }
         });
 
+        edtSearch.addTextChangedListener(new TextWatcher() {
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (countryAdapter != null)
+                    countryAdapter.getFilter().filter(s.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+        });
 
         btnUploadTender.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -161,6 +173,7 @@ public class Home extends Fragment implements AdapterView.OnItemSelectedListener
                 alpha2.clear();
                 countryName.clear();
                 categoryName.clear();
+
             }
         });
 
@@ -218,7 +231,6 @@ public class Home extends Fragment implements AdapterView.OnItemSelectedListener
                     final ImageView box = (ImageView) dialog.findViewById(R.id.home_box);
                     final ImageView boxright = (ImageView) dialog.findViewById(R.id.home_box_checked);
                     final TextView code=(TextView) dialog.findViewById(R.id.contact_code);
-
 
                     box.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -283,12 +295,12 @@ public class Home extends Fragment implements AdapterView.OnItemSelectedListener
                                     sp.ShowDialog(getActivity(), "please fill at least one information");
                                 } else {
                                     String e = email2.getText().toString() != "" ? email2.getText().toString() : "";
-                                    String m = mobile.getText().toString() != "" ? mobile.getText().toString() : "";
+                                    String m = mobile.getText().toString() != "" ? "+" + countryCode + "-"+mobile.getText().toString() : "";
                                     String l = landline.getText().toString() != "" ? landline.getText().toString() : "";
                                     String a = address.getText().toString() != "" ? address.getText().toString() : "";
 
                                     email1 = MultipartBody.Part.createFormData("email", e);
-                                    contactNo1 = MultipartBody.Part.createFormData("contactNo", "+" + countryCode + "-"+m);
+                                    contactNo1 = MultipartBody.Part.createFormData("contactNo", m);
                                     landlineNo1 = MultipartBody.Part.createFormData("landlineNo", l);
                                     address1 = MultipartBody.Part.createFormData("address", a);
                                     dialog.dismiss();
@@ -393,21 +405,19 @@ public class Home extends Fragment implements AdapterView.OnItemSelectedListener
             description1=MultipartBody.Part.createFormData("description",Des);
         }
         String token="Bearer " +sp.getPreferences(getActivity(),"token");
-        //File file1= new File("");
-
-       // RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file1);
 
         if(image1==null) {
             image1 = MultipartBody.Part.createFormData("image", "");
         }
         isFollowTendeer1=MultipartBody.Part.createFormData("isFollowTender","true");
-
+        sp.showProgressDialog(getActivity());
         mApiService.uploadTender(token,email1,name1,city1,description1,contactNo1,landlineNo1,address1,countryId1,categoryId1,isFollowTendeer1,image1)
                 .enqueue(new Callback<UploadTender>() {
                     @Override
                     public void onResponse(Call<UploadTender> call, Response<UploadTender> response) {
-
-
+                        sp.hideProgressDialog();
+                        Intent intent = new Intent(getActivity(),ClientDrawer.class);
+                        startActivity(intent);
                         Log.i(TAG,"response---"+response.body());
 
                     }
@@ -423,19 +433,18 @@ public class Home extends Fragment implements AdapterView.OnItemSelectedListener
 
     private void GetCategory(final View v) {
         final View v1 = v;
+        sp.showProgressDialog(getActivity());
         mApiService.getCategoryData().enqueue(new Callback<ArrayList<GetCategory>>() {
             @Override
             public void onResponse(Call<ArrayList<GetCategory>> call, Response<ArrayList<GetCategory>> response) {
                 Data2 = response.body();
+                sp.hideProgressDialog();
+
                 for (int i = 0; i < Data2.size(); i++) {
                     alpha2.add(response.body().get(i).getCategoryName().toString() + "~" + response.body().get(i).getImgString().toString());
                     categoryName.add(response.body().get(i).getCategoryName().toString() + "~" + response.body().get(i).getId().toString());
-
-                    // CountryFlag.add(response.body().get(i).getImageString().toString());
-                }
-                //Collections.sort(alpha);
+               }
                 categoryAdapter = new CustomList(getContext(), alpha2);
-
                 spinner2.setAdapter(categoryAdapter);
             }
 
@@ -448,15 +457,15 @@ public class Home extends Fragment implements AdapterView.OnItemSelectedListener
 
     private void GetAllCountry(final View v) {
         final View v1 = v;
+        sp.showProgressDialog(getActivity());
         mApiService.getCountryData().enqueue(new Callback<ArrayList<GetCountry>>() {
             @Override
             public void onResponse(Call<ArrayList<GetCountry>> call, Response<ArrayList<GetCountry>> response) {
                 Data = response.body();
+                sp.hideProgressDialog();
                 for (int i = 0; i < Data.size(); i++) {
                     alpha.add(response.body().get(i).getCountryName().toString() + "~" + response.body().get(i).getImageString().toString());
                     countryName.add(response.body().get(i).getCountryName().toString() + "~" + response.body().get(i).getCountryCode().toString() + "~" + response.body().get(i).getId().toString());
-
-                    // CountryFlag.add(response.body().get(i).getImageString().toString());
                 }
                 Collections.sort(alpha);
                 Collections.sort(countryName);

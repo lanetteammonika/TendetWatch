@@ -114,8 +114,6 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener {
         if (txtaboutMe != null) {
             if (txtaboutMe.equals("About Me")) {
                 aboutMe.setText(txtaboutMe);
-            } else {
-                aboutMe.setText(txtaboutMe.substring(0, 10) + "....");
             }
         }
         if (empNo != null) {
@@ -412,10 +410,6 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener {
 
         @Override
         protected void onPostExecute(Bitmap result) {
-            // Set the bitmap into ImageView
-            //image.setImageBitmap(result);
-            // Close progressdialog
-            //Dialog mProgressDialog;
             mProgressDialog.dismiss();
         }
     }

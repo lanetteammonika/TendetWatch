@@ -10,6 +10,27 @@ import java.util.List;
  */
 
 public class User {
+    @SerializedName("isActive")
+    @Expose
+    private Boolean isActive;
+    @SerializedName("createdAt")
+    @Expose
+    private String createdAt;
+    @SerializedName("subscribe")
+    @Expose
+    private String subscribe;
+    @SerializedName("isPayment")
+    @Expose
+    private Boolean isPayment;
+    @SerializedName("payment")
+    @Expose
+    private Integer payment;
+    @SerializedName("androidDeviceId")
+    @Expose
+    private List<String> androidDeviceId = null;
+    @SerializedName("_id")
+    @Expose
+    private String id;
     @SerializedName("profilePhoto")
     @Expose
     private String profilePhoto;
@@ -31,27 +52,68 @@ public class User {
     @SerializedName("role")
     @Expose
     private String role;
-    @SerializedName("_id")
+    @SerializedName("avg")
     @Expose
-    private String id;
-    @SerializedName("payment")
+    private Double avg;
+    @SerializedName("review")
     @Expose
-    private Integer payment;
-    @SerializedName("isPayment")
-    @Expose
-    private Boolean isPayment;
-    @SerializedName("subscribe")
-    @Expose
-    private String subscribe;
-    @SerializedName("deviceId")
-    @Expose
-    private List<String> deviceId = null;
-    @SerializedName("createdAt")
-    @Expose
-    private String createdAt;
-    @SerializedName("isActive")
-    @Expose
-    private Boolean isActive;
+    private Review review;
+
+    public Boolean getIsActive() {
+        return isActive;
+    }
+
+    public void setIsActive(Boolean isActive) {
+        this.isActive = isActive;
+    }
+
+    public String getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public String getSubscribe() {
+        return subscribe;
+    }
+
+    public void setSubscribe(String subscribe) {
+        this.subscribe = subscribe;
+    }
+
+    public Boolean getIsPayment() {
+        return isPayment;
+    }
+
+    public void setIsPayment(Boolean isPayment) {
+        this.isPayment = isPayment;
+    }
+
+    public Integer getPayment() {
+        return payment;
+    }
+
+    public void setPayment(Integer payment) {
+        this.payment = payment;
+    }
+
+    public List<String> getAndroidDeviceId() {
+        return androidDeviceId;
+    }
+
+    public void setAndroidDeviceId(List<String> androidDeviceId) {
+        this.androidDeviceId = androidDeviceId;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getProfilePhoto() {
         return profilePhoto;
@@ -109,6 +171,33 @@ public class User {
         this.role = role;
     }
 
+    public Double getAvg() {
+        return avg;
+    }
+
+    public void setAvg(Double avg) {
+        this.avg = avg;
+    }
+
+    public Review getReview() {
+        return review;
+    }
+
+    public void setReview(Review review) {
+        this.review = review;
+    }
+
+}
+
+class Review {
+
+    @SerializedName("_id")
+    @Expose
+    private String id;
+    @SerializedName("rating")
+    @Expose
+    private Integer rating;
+
     public String getId() {
         return id;
     }
@@ -117,51 +206,12 @@ public class User {
         this.id = id;
     }
 
-    public Integer getPayment() {
-        return payment;
+    public Integer getRating() {
+        return rating;
     }
 
-    public void setPayment(Integer payment) {
-        this.payment = payment;
+    public void setRating(Integer rating) {
+        this.rating = rating;
     }
 
-    public Boolean getIsPayment() {
-        return isPayment;
-    }
-
-    public void setIsPayment(Boolean isPayment) {
-        this.isPayment = isPayment;
-    }
-
-    public String getSubscribe() {
-        return subscribe;
-    }
-
-    public void setSubscribe(String subscribe) {
-        this.subscribe = subscribe;
-    }
-
-    public List<String> getDeviceId() {
-        return deviceId;
-    }
-
-    public void setDeviceId(List<String> deviceId) {
-        this.deviceId = deviceId;
-    }
-
-    public String getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(String createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public Boolean getIsActive() {
-        return isActive;
-    }
-
-    public void setIsActive(Boolean isActive) {
-        this.isActive = isActive;
-    }
 }

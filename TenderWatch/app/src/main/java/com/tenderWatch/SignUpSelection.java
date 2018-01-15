@@ -435,13 +435,7 @@ public class SignUpSelection extends AppCompatActivity implements View.OnClickLi
             case R.id.btn_client_signup:
                 if (checkValidation()) {
                     checkEmail();
-                    // signup();
-                    //}
-
-                    //Toast.makeText(SignUpSelection.this, "Form contains not error", Toast.LENGTH_LONG).show();
                 }
-
-                //Toast.makeText(SignUpSelection.this, "Form contains error", Toast.LENGTH_LONG).show();
                 break;
             case R.id.client_signup_back:
                 back.setOnClickListener(new View.OnClickListener() {
@@ -457,35 +451,26 @@ public class SignUpSelection extends AppCompatActivity implements View.OnClickLi
 
     public void checkEmail() {
         String email = txtEmail.getText().toString();
+        sp.showProgressDialog(SignUpSelection.this);
+
         mAPIService.checkEmailExit(txtEmail.getText().toString(), sp.getPreferences(getApplicationContext(), "role")).enqueue(new Callback<Message>() {
             @Override
             public void onResponse(Call<Message> call, Response<Message> response) {
                 //  if (response.isSuccessful()) {
+                sp.hideProgressDialog();
                 if (response.message().equals("Found")) {
-                    //  sp.ShowDialog(SignUpSelection.this,"This Email already Register in application");
-                    // else{
-                    //  }
-                    sp.ShowDialog(SignUpSelection.this, response.errorBody().source().toString().split("\"")[3]);
-
-                    txtEmail.setError("change Email");
+                     sp.ShowDialog(SignUpSelection.this, response.errorBody().source().toString().split("\"")[3]);
+                     txtEmail.setError("change Email");
                     // break;
                 } else {
-                    //sp.ShowDialog(SignUpSelection.this,response.errorBody().source().toString().split("\"")[3]);
-
                     signup();
                 }
-                //}else{
-                // sp.ShowDialog(SignUpSelection.this,response.errorBody().source().toString().split("\"")[3]);
-
-                // }
             }
 
             @Override
             public void onFailure(Call<Message> call, Throwable t) {
                 String email = txtEmail.getText().toString();
                 sp.ShowDialog(SignUpSelection.this, "Server is down. Come back later!!");
-
-
             }
         });
     }
@@ -500,16 +485,11 @@ public class SignUpSelection extends AppCompatActivity implements View.OnClickLi
         } else {
             user.setEmail(email);
             user.setPassword(password);
-
             intent = new Intent(SignUpSelection.this, SignUp.class);
             intent.putExtra("bitmap", main);
             finish();
-
             startActivity(intent);
-
         }
-
-
     }
 
     @Override

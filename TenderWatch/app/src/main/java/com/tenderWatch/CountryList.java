@@ -13,11 +13,13 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.tenderWatch.Adapters.IndexingArrayAdapter;
+import com.tenderWatch.Drawer.MainDrawer;
 import com.tenderWatch.Models.GetCountry;
 import com.tenderWatch.Retrofit.Api;
 import com.tenderWatch.Retrofit.ApiUtils;
@@ -52,12 +54,13 @@ public class CountryList extends AppCompatActivity {
     IndexingArrayAdapter adapter;
     Button btn_next;
     String alphabetS = "";
-    LinearLayout lltext, back;
+    LinearLayout lltext, back,subscription;
     TextView txtSelectedContract;
     Intent intent;
-    String check;
+    String check,s;
     SharedPreference sp = new SharedPreference();
     ArrayList<String> a_country = new ArrayList<String>();
+    ImageView imgClose;
 
     int pos = 0;
 
@@ -70,6 +73,8 @@ public class CountryList extends AppCompatActivity {
         lvCountry = (ListView) findViewById(R.id.lvCountry);
         lltext = (LinearLayout) findViewById(R.id.lltext);
         back = (LinearLayout) findViewById(R.id.country_toolbar);
+        subscription=(LinearLayout) findViewById(R.id.subscription);
+        imgClose=(ImageView) findViewById(R.id.img_close);
 
         sideSelector = (SideSelector) findViewById(R.id.side_selector);
         mAPIService = ApiUtils.getAPIService();
@@ -79,19 +84,23 @@ public class CountryList extends AppCompatActivity {
         lvCountry.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         Intent show = getIntent();
         check = show.getStringExtra("check");
+         s=show.getStringExtra("sub");
         if (check == null) {
             CallContractorSignUp();
         }
+        if(s!=null){
+            subscription.setVisibility(View.VISIBLE);
+            back.setVisibility(View.GONE);
+            txtSelectedContract.setVisibility(View.GONE);
+        }
+        sp.showProgressDialog(CountryList.this);
 
         mAPIService.getCountryData().enqueue(new Callback<ArrayList<GetCountry>>() {
             @Override
             public void onResponse(Call<ArrayList<GetCountry>> call, Response<ArrayList<GetCountry>> response) {
                 Log.i("array-------", response.body().get(0).getCountryName().toString());
-
                 Data = response.body();
-
-
-                for (int i = 0; i < Data.size(); i++) {
+               for (int i = 0; i < Data.size(); i++) {
                     String name = response.body().get(i).getCountryName().toString();
                     String flag = response.body().get(i).getImageString().toString();
                     String countryCode = response.body().get(i).getCountryCode().toString();
@@ -127,25 +136,26 @@ public class CountryList extends AppCompatActivity {
                         countryList.add(new EntryItem(name, flag, countryCode, id, false));
                     }
                 }
+
                 alpha.clear();
                 String str = list.toString().replaceAll(",", "");
                 char[] chars = str.toCharArray();
                 Log.i(TAG, "post submitted to API." + chars);
                 char[] al = new char[27];
+
                 for (int j = 1, i = 0; j < chars.length; j = j + 2, i++) {
                     al[i] = chars[j];
                     Log.i(TAG, "post." + chars[j]);
                 }
 
                 Log.i(TAG, "post submitted to API." + al);
-
                 SideSelector ss = new SideSelector(getApplicationContext());
                 ss.setAlphabet(al);
                 alphabetlist = str.substring(1, str.length() - 1).replaceAll(" ", "").toCharArray();
                 adapter = new IndexingArrayAdapter(getApplicationContext(), R.id.lvCountry, countryList, alpha2, list, chars);
                 lvCountry.clearChoices();
                 lvCountry.setAdapter(adapter);
-
+                sp.hideProgressDialog();
                 lvCountry.clearChoices();
                 lvCountry.setTextFilterEnabled(true);
                 if (sideSelector != null)
@@ -163,6 +173,16 @@ public class CountryList extends AppCompatActivity {
 
             }
         });
+
+        imgClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i=new Intent(CountryList.this, MainDrawer.class);
+                i.putExtra("nav_sub","true");
+                startActivity(i);
+            }
+        });
+
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -178,7 +198,6 @@ public class CountryList extends AppCompatActivity {
                 list.clear();
                 alpha.clear();
                 setResult(Activity.RESULT_OK, intent);
-                //startActivityForResult(intent,1);
             }
         });
 
@@ -187,9 +206,6 @@ public class CountryList extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position,
                                     long id) {
-                TextView tvItemTitle = (TextView) view.findViewById(R.id.tvItemTitle);
-                String value = (String) lvCountry.getItemAtPosition(position).toString();
-                String Country = tvItemTitle.getText().toString();
                 adapter.setItemSelected(position);
                 adapter.setCheckedItem(position);
                 pos = position;
@@ -222,6 +238,7 @@ public class CountryList extends AppCompatActivity {
                     } else {
                         if (check == null) {
                             intent = new Intent(CountryList.this, Category.class);
+                            intent.putExtra("sub",s);
                             intent.putExtra("CountryAtContractor", a_countryID);
                             intent.putExtra("Country", a_country);
                             intent.putExtra("version", txtSelectedContract.getText().toString());
@@ -249,6 +266,7 @@ public class CountryList extends AppCompatActivity {
                     }
                 } else {
                     intent = new Intent(CountryList.this, Category.class);
+                    intent.putExtra("sub",s);
                     intent.putExtra("CountryAtContractor", a_countryID);
                     intent.putExtra("Country", a_country);
                     intent.putExtra("version", txtSelectedContract.getText().toString());
@@ -258,7 +276,6 @@ public class CountryList extends AppCompatActivity {
                     list.clear();
                     alpha.clear();
                     startActivity(intent);
-                    // setResult(Activity.RESULT_OK, intent);
                     finish();
                 }
             }
@@ -298,6 +315,9 @@ public class CountryList extends AppCompatActivity {
         final TextView txtTrial = (TextView) dialog.findViewById(R.id.txt_trial);
         TextView txtMonth = (TextView) dialog.findViewById(R.id.txt_month);
         TextView txtYear = (TextView) dialog.findViewById(R.id.txt_year);
+        if(s!=null){
+            txtTrial.setVisibility(View.GONE);
+        }
         txtTrial.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -344,7 +364,7 @@ public class CountryList extends AppCompatActivity {
     /**
      * Section Item
      */
-    public class SectionItem implements Item {
+    public static class SectionItem implements Item {
         private final String title;
         private final String flag;
         private final String code;
@@ -397,7 +417,7 @@ public class CountryList extends AppCompatActivity {
     /**
      * Entry Item
      */
-    public class EntryItem implements Item {
+    public static class EntryItem implements Item {
         public final String title;
         private final String flag;
         private final String code;

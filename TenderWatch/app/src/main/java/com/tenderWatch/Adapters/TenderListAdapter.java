@@ -15,16 +15,21 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Filter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 import com.tenderWatch.Models.Tender;
+import com.tenderWatch.Models.User;
 import com.tenderWatch.R;
+import com.tenderWatch.SharedPreference.SharedPreference;
 import com.tenderWatch.SignUpSelection;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -37,7 +42,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class TenderListAdapter extends BaseAdapter {
     private Context context;
     private ArrayList<Tender> tenderList;
-
+    SharedPreference sp=new SharedPreference();
 
     public TenderListAdapter(Context context, ArrayList<Tender> tenderList){
         this.context=context;
@@ -73,6 +78,7 @@ public class TenderListAdapter extends BaseAdapter {
         TextView txtTenderName=(TextView) convertView.findViewById(R.id.tender_name);
         TextView txtTenderTitle=(TextView) convertView.findViewById(R.id.tender_title);
         TextView txtTenderExpDate=(TextView) convertView.findViewById(R.id.tender_expdate);
+        LinearLayout stampRemove=(LinearLayout) convertView.findViewById(R.id.stamp_remove);
         if(!tenderList.get(position).getTenderPhoto().toString().equals("")) {
             Picasso.with(context)
                     .load(tenderList.get(position).getTenderPhoto().toString())
@@ -96,9 +102,14 @@ public class TenderListAdapter extends BaseAdapter {
           //  Log.i(TAG, profilePicUrl);
         //}
         }
+        CircleImageView imgTrue=(CircleImageView) convertView.findViewById(R.id.tender_image3);
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        String formattedDate = df.format(c.getTime());
         Date startDateValue = null,endDateValue = null;
         try {
-            startDateValue = new SimpleDateFormat("yyyy-MM-dd").parse(tenderList.get(position).getCreatedAt().split("T")[0]);
+              startDateValue = new SimpleDateFormat("yyyy-MM-dd").parse(formattedDate);
+            //  startDateValue = new SimpleDateFormat("yyyy-MM-dd").parse(tenderList.get(position).getCreatedAt().split("T")[0]);
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -113,10 +124,26 @@ public class TenderListAdapter extends BaseAdapter {
         long minutes = seconds / 60;
         long hours = minutes / 60;
         long days = (hours / 24) + 1;
+
+        if(days==0 || days<0){
+            stampRemove.setVisibility(View.VISIBLE);
+            txtTenderExpDate.setText("Expired");
+        }else{
+            txtTenderExpDate.setText(days+" days");
+        }
         Log.d("days", "" + days);
         txtTenderName.setText(tenderList.get(position).getTenderName().toString());
         txtTenderTitle.setText(tenderList.get(position).getTenderName().toString());
-        txtTenderExpDate.setText(days+" days");
+        User user= (User) sp.getPreferencesObject(context);
+        if(tenderList.get(position).getFavorite().size()>0){
+            for(int i=0;i<tenderList.get(position).getFavorite().size();i++){
+                String id=user.getId();
+                if (tenderList.get(position).getFavorite().contains(id)) {
+                    imgTrue.setVisibility(View.VISIBLE);
+                }
+            }
+        }
+
         return convertView;
     }
 

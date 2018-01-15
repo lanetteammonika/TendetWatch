@@ -4,14 +4,14 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
+import android.icu.text.SimpleDateFormat;
+import android.os.Build;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Base64;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -22,7 +22,7 @@ import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 import com.tenderWatch.ClientDrawer.ClientDrawer;
-import com.tenderWatch.ClientDrawer.PreviewTender;
+import com.tenderWatch.Drawer.MainDrawer;
 import com.tenderWatch.Models.GetCategory;
 import com.tenderWatch.Models.GetCountry;
 import com.tenderWatch.Models.Tender;
@@ -30,8 +30,11 @@ import com.tenderWatch.Retrofit.Api;
 import com.tenderWatch.Retrofit.ApiUtils;
 import com.tenderWatch.SharedPreference.SharedPreference;
 
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import okhttp3.ResponseBody;
@@ -46,12 +49,12 @@ public class PreviewTenderDetail extends AppCompatActivity {
 
     private static final ArrayList<String> alpha2 = new ArrayList<String>();
     private static final ArrayList<String> categoryName = new ArrayList<String>();
-    private static final String TAG = PreviewTender.class.getSimpleName();
+    private static final String TAG = PreviewTenderDetail.class.getSimpleName();
     private List Data, Data2;
     Tender object;
     String day,flag,countryName1,categoryName1;
-    Bitmap Bflag;
-    ImageView flag3,imagetender;
+    Bitmap Bflag,catBflag;
+    ImageView flag3,imagetender,catFlag;
 
     TextView tenderTitle,Country,Category,ExpDay,Description,City,Contact,LandLine,Email,Address;
     RelativeLayout rlEmail,rlContact,rlLandline,rlAddress;
@@ -83,9 +86,41 @@ public class PreviewTenderDetail extends AppCompatActivity {
         removeTender=(Button) findViewById(R.id.remove_tender);
         editTender=(Button) findViewById(R.id.edit_tender);
         imagetender=(ImageView) findViewById(R.id.preview_tender_image);
+        catFlag=(ImageView) findViewById(R.id.preview_catflag_image);
         String json=getIntent().getStringExtra("data");
         Gson gson=new Gson();
         object=gson.fromJson(json, Tender.class);
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat df = null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            df = new SimpleDateFormat("yyyy-MM-dd");
+        }
+        String formattedDate = null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            formattedDate = df.format(c.getTime());
+        }
+        Date startDateValue = null,endDateValue = null;
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                startDateValue = new SimpleDateFormat("yyyy-MM-dd").parse(formattedDate);
+            }
+            //  startDateValue = new SimpleDateFormat("yyyy-MM-dd").parse(tenderList.get(position).getCreatedAt().split("T")[0]);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                endDateValue = new SimpleDateFormat("yyyy-MM-dd").parse(object.getExpiryDate().split("T")[0]);
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        //Date endDateValue = new Date(allTender.get(position).getExpiryDate().split("T")[0]);
+        long diff = endDateValue.getTime() - startDateValue.getTime();
+        long seconds = diff / 1000;
+        long minutes = seconds / 60;
+        long hours = minutes / 60;
+        long days = (hours / 24) + 1;
         editTender.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -95,29 +130,37 @@ public class PreviewTenderDetail extends AppCompatActivity {
                 Intent intent = new Intent(PreviewTenderDetail.this,EditTenderDetail.class);
                 intent.putExtra("data",jsonString);
                 startActivity(intent);
-//                Bundle arguments = new Bundle();
-//
-//                arguments.putParcelable( "object" , object);
-//
-//                arguments.putString("day", String.valueOf(day));
-//                fragment2.setArguments(arguments);
-//                fragmentTransaction.replace(R.id.content_frame, fragment2);
-//                fragmentTransaction.addToBackStack(null);
-//                fragmentTransaction.commit();
             }
         });
-
+        toolbar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Gson gson = new Gson();
+                String jsonString = gson.toJson(object);
+                String role=sp.getPreferences(PreviewTenderDetail.this,"role");
+                Intent intent;
+                if(role.equals("client")) {
+                    intent = new Intent(PreviewTenderDetail.this, ClientDrawer.class);
+                }else{
+                    intent = new Intent(PreviewTenderDetail.this, MainDrawer.class);
+                }
+                intent.putExtra("data",jsonString);
+                startActivity(intent);
+            }
+        });
         removeTender.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String token="Bearer "+sp.getPreferences(PreviewTenderDetail.this,"token");
                 String id=object.getId().toString();
+                sp.showProgressDialog(PreviewTenderDetail.this);
+
                 mApiService.removeTender(token,id).enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        sp.hideProgressDialog();
                         Log.i(TAG,"response---"+response.body());
                         Intent intent = new Intent(PreviewTenderDetail.this,ClientDrawer.class);
-                       // intent.putExtra("data",jsonString);
                         startActivity(intent);
                     }
 
@@ -131,31 +174,19 @@ public class PreviewTenderDetail extends AppCompatActivity {
             }
         });
 
-
-//        Bundle args = PreviewTenderDetail.this;
-//        if (args != null) {
-//            object = args.getParcelable("object");
-//            day=args.getString("day");
-//        } else {
-//            Log.w("GetObject", "Arguments expected, but missing");
-//        }
-        if(!object.getTenderPhoto().toString().equals("")){
+       if(!object.getTenderPhoto().toString().equals("")){
             Picasso.with(PreviewTenderDetail.this)
                     .load(object.getTenderPhoto().toString())
                     .into(new Target() {
                         @Override
                         public void onBitmapLoaded(final Bitmap bitmap, Picasso.LoadedFrom from) {
                             Log.v("Main", String.valueOf(bitmap));
-                            // main = bitmap;
                             imagetender.setImageBitmap(bitmap);
-                            //  imagetender.getLayoutParams().height = 300;
-                            //imagetender.getLayoutParams().width = 100;
                         }
 
                         @Override
                         public void onBitmapFailed(Drawable errorDrawable) {
                             Log.v("Main", "errrorrrr");
-
                         }
 
                         @Override
@@ -169,7 +200,7 @@ public class PreviewTenderDetail extends AppCompatActivity {
         GetAllCountry();
         tenderTitle.setText(object.getTenderName().toString());
 
-        ExpDay.setText(day+" days");
+        ExpDay.setText(days+" days");
         Description.setText(object.getDescription().toString());
         City.setText(object.getCity().toString());
         if(object.getContactNo().toString().equals("")){
@@ -194,13 +225,12 @@ public class PreviewTenderDetail extends AppCompatActivity {
         }else{
             Address.setText(object.getAddress().toString());
         }
-
-
         flag3=(ImageView) findViewById(R.id.preview_flag_image);
-
     }
 
     private void GetCategory() {
+        sp.showProgressDialog(PreviewTenderDetail.this);
+
         mApiService.getCategoryData().enqueue(new Callback<ArrayList<GetCategory>>() {
             @Override
             public void onResponse(Call<ArrayList<GetCategory>> call, Response<ArrayList<GetCategory>> response) {
@@ -208,24 +238,21 @@ public class PreviewTenderDetail extends AppCompatActivity {
                 for (int i = 0; i < Data2.size(); i++) {
                     alpha2.add(response.body().get(i).getCategoryName().toString() + "~" + response.body().get(i).getImgString().toString());
                     categoryName.add(response.body().get(i).getCategoryName().toString() + "~" + response.body().get(i).getId().toString());
-
-                    // CountryFlag.add(response.body().get(i).getImageString().toString());
                 }
-                //Collections.sort(alpha);
+
                 for (int i = 0; i < Data2.size(); i++) {
                     if(categoryName.get(i).split("~")[1].toString().equals(object.getCategory().toString())){
-
                         categoryName1=response.body().get(i).getCategoryName().toString();
-                        if(categoryName1.length()>45){
-                            Category.setText(categoryName1.substring(0,45)+"...");
-                        }else {
-                            Category.setText(categoryName1);
 
-                        }
+                            Category.setText(categoryName1);
+                        day=response.body().get(i).getImgString();
+                        catBflag = StringToBitMap(day);
+                        catFlag.setImageBitmap(catBflag);
+                        sp.hideProgressDialog();
+
                         break;
                     }
                 }
-
             }
 
             @Override
@@ -234,17 +261,38 @@ public class PreviewTenderDetail extends AppCompatActivity {
             }
         });
     }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                // todo: goto back activity from here
+                String role=sp.getPreferences(PreviewTenderDetail.this,"role");
+                Intent i;
+                if(role.equals("client")){
+                    i=new Intent(PreviewTenderDetail.this, ClientDrawer.class);
+                }else{
+                    i=new Intent(PreviewTenderDetail.this, MainDrawer.class);
+                }
+                i.putExtra("nav_not","true");
+                startActivity(i);
+                finish();
+                return true;
 
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
     private void GetAllCountry() {
+        sp.showProgressDialog(PreviewTenderDetail.this);
+
         mApiService.getCountryData().enqueue(new Callback<ArrayList<GetCountry>>() {
             @Override
             public void onResponse(Call<ArrayList<GetCountry>> call, Response<ArrayList<GetCountry>> response) {
+
                 Data = response.body();
                 for (int i = 0; i < Data.size(); i++) {
                     alpha.add(response.body().get(i).getCountryName().toString() + "~" + response.body().get(i).getImageString().toString());
                     countryName.add(response.body().get(i).getCountryName().toString() + "~" + response.body().get(i).getCountryCode().toString() + "~" + response.body().get(i).getId().toString());
-
-                    // CountryFlag.add(response.body().get(i).getImageString().toString());
                 }
                 Collections.sort(alpha);
                 Collections.sort(countryName);
@@ -255,10 +303,10 @@ public class PreviewTenderDetail extends AppCompatActivity {
                         Country.setText(countryName1);
                         Bflag = StringToBitMap(flag);
                         flag3.setImageBitmap(Bflag);
+                        sp.hideProgressDialog();
                         break;
                     }
                 }
-
             }
 
             @Override
@@ -266,7 +314,6 @@ public class PreviewTenderDetail extends AppCompatActivity {
 
             }
         });
-
     }
 
     public Bitmap StringToBitMap(String encodedString) {
@@ -279,6 +326,4 @@ public class PreviewTenderDetail extends AppCompatActivity {
             return null;
         }
     }
-
-
 }

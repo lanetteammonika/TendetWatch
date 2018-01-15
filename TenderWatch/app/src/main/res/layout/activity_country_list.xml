@@ -1,36 +1,73 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rlCountry"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:id="@+id/rlCountry"
+    android:background="#FFF"
     android:focusable="true"
     android:focusableInTouchMode="true"
-    android:background="#FFF"
+    android:orientation="vertical"
 
-   >
+    >
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:background="#FFF"
-        android:layout_marginTop="@dimen/value_5"
         android:layout_marginLeft="@dimen/value_10"
-        >
+        android:layout_marginTop="@dimen/value_5"
+        android:background="#FFF"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:id="@+id/subscription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:layout_marginTop="@dimen/value_3"
+                    android:gravity="center"
+                    android:text="Country"
+                    android:textAlignment="center"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="@dimen/text_20" />
+
+                <ImageView
+                    android:id="@+id/img_close"
+                    android:layout_width="@dimen/value_15"
+                    android:layout_height="@dimen/value_15"
+                    android:layout_alignParentRight="true"
+                    android:layout_gravity="right"
+                    android:layout_marginRight="@dimen/value_15"
+                    android:layout_marginTop="@dimen/value_10"
+                    android:layout_weight="1"
+                    android:src="@drawable/cancel_3x" />
+            </RelativeLayout>
+        </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            >
+            android:visibility="gone">
+
             <LinearLayout
                 android:id="@+id/country_toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                >
+                android:layout_height="wrap_content">
+
                 <ImageView
                     android:layout_width="@dimen/value_20"
                     android:layout_height="@dimen/value_20"
-                    android:src="@drawable/left_arr_3x"
-                    android:layout_gravity="center"/>
+                    android:layout_gravity="center"
+                    android:src="@drawable/left_arr_3x" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -43,107 +80,108 @@
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
+
     <LinearLayout
+        android:id="@+id/lltext"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="#FFF"
-        android:layout_marginTop="@dimen/value_5"
         android:layout_marginLeft="@dimen/value_10"
-        android:visibility="gone"
-        android:id="@+id/lltext"
-        >
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="top|center_horizontal"
-        android:text="You're interested in Tenders from \n which Country?"
-        android:textAlignment="center"
-        android:textColor="@color/colorBlack"
-        android:textSize="18sp"
         android:layout_marginTop="@dimen/value_5"
-        />
-    <TextView
-        android:id="@+id/txt_selectedContract"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="right"
-        android:text="Trial Version"
-        android:layout_marginRight="@dimen/value_20"
-        android:textColor="@color/colorBlack"
-        android:textSize="18sp"
-         />
+        android:background="#FFF"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|center_horizontal"
+            android:layout_marginTop="@dimen/value_5"
+            android:text="You're interested in Tenders from \n which Country?"
+            android:textAlignment="center"
+            android:textColor="@color/colorBlack"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/txt_selectedContract"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_marginRight="@dimen/value_20"
+            android:text="Trial Version"
+            android:textColor="@color/colorBlack"
+            android:textSize="18sp" />
     </LinearLayout>
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center">
-            <EditText
-        android:id="@+id/edtSearch"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/value_35"
-        android:gravity="center_vertical"
-        android:nextFocusUp="@id/edtSearch"
-        android:nextFocusLeft="@id/edtSearch"
-        android:singleLine="true"
-        android:layout_marginRight="@dimen/value_20"
-        android:layout_marginLeft="@dimen/value_20"
-        android:layout_marginTop="@dimen/value_10"
-        android:background="@drawable/searchbox"
-        android:textSize="15sp"
-        />
+
+        <EditText
+            android:id="@+id/edtSearch"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/value_35"
+            android:layout_marginLeft="@dimen/value_20"
+            android:layout_marginRight="@dimen/value_20"
+            android:layout_marginTop="@dimen/value_10"
+            android:background="@drawable/searchbox"
+            android:gravity="center_vertical"
+            android:nextFocusLeft="@id/edtSearch"
+            android:nextFocusUp="@id/edtSearch"
+            android:singleLine="true"
+            android:textSize="15sp" />
+
         <ImageView
             android:layout_width="20sp"
             android:layout_height="20sp"
-            android:layout_marginTop="@dimen/value_8"
             android:layout_alignTop="@+id/edtSearch"
             android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/value_8"
             android:src="@android:drawable/ic_menu_search" />
 
     </RelativeLayout>
-<RelativeLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_marginBottom="@dimen/value_20"
-android:id="@+id/rllist"
-    android:layout_alignParentBottom="true"
-    >
-    <ListView
-        android:id="@+id/lvCountry"
+
+    <RelativeLayout
+        android:id="@+id/rllist"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginRight="@dimen/value_50"
-        android:layout_marginLeft="@dimen/value_20"
-        android:layout_marginBottom="@dimen/value_30"
-android:choiceMode="singleChoice"
-        >
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="@dimen/value_20">
 
-    </ListView>
+        <ListView
+            android:id="@+id/lvCountry"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="@dimen/value_30"
+            android:layout_marginLeft="@dimen/value_20"
+            android:layout_marginRight="@dimen/value_50"
+            android:choiceMode="singleChoice">
 
-    <com.tenderWatch.SideSelector
-        android:id="@+id/side_selector"
-        android:layout_width="@dimen/value_30"
-        android:layout_height="match_parent"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="@dimen/value_20"
-        android:layout_marginTop="@dimen/value_45"
-        android:layout_marginBottom="@dimen/value_45"
-        />
+        </ListView>
 
-    <Button
-        android:id="@+id/btn_CountryNext"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/value_35"
-        android:background="@drawable/button"
-        android:layout_gravity="center"
-        android:text="Next"
-        android:textSize="20sp"
-        android:textAllCaps="false"
-        android:textColor="@color/colorWhite"
-        android:layout_marginLeft="@dimen/value_60"
-        android:layout_marginRight="@dimen/value_60"
-        android:layout_alignParentBottom="true"          />
+        <com.tenderWatch.SideSelector
+            android:id="@+id/side_selector"
+            android:layout_width="@dimen/value_30"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="@dimen/value_45"
+            android:layout_marginRight="@dimen/value_20"
+            android:layout_marginTop="@dimen/value_45" />
 
-</RelativeLayout>
+        <Button
+            android:id="@+id/btn_CountryNext"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/value_35"
+            android:layout_alignParentBottom="true"
+            android:layout_gravity="center"
+            android:layout_marginLeft="@dimen/value_60"
+            android:layout_marginRight="@dimen/value_60"
+            android:background="@drawable/button"
+            android:text="Next"
+            android:textAllCaps="false"
+            android:textColor="@color/colorWhite"
+            android:textSize="20sp" />
+
+    </RelativeLayout>
 
 </LinearLayout>

@@ -183,19 +183,11 @@ public class EditProfile extends Fragment implements View.OnClickListener{
             if (txtMobileNo.getText().toString().split("-")[1].length() < 9) {
                 sp.ShowDialog(getActivity(), "Enter Mobiile number up to 9 digit");
             } else {
-                SendData();
+                ApiCall();
             }
         } else {
             sp.ShowDialog(getActivity(), "Enter Details");
         }
-    }
-    private void SendData() {
-        String country1 = txtCountry.getText().toString();
-        String mobile = txtMobileNo.getText().toString();
-        String occupation1 = txtOccupation.getText().toString();
-        String deviceId = Settings.Secure.getString(getActivity().getContentResolver(), Settings.Secure.ANDROID_ID);
-        String role = sp.getPreferences(getActivity(), "role");
-        ApiCall();
     }
 
     private void ApiCall() {
@@ -221,16 +213,17 @@ public class EditProfile extends Fragment implements View.OnClickListener{
         image1 = MultipartBody.Part.createFormData("image",name, requestFile);
        String token="Bearer "+sp.getPreferences(getActivity(),"token");
         Call<User> resultCall = mAPIService.UpdateUser(token,Id,country1, contactNo1, occupation1, aboutMe1, image1);
+       sp.showProgressDialog(getActivity());
         resultCall.enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
                 Log.i(TAG, "response register-->");
+                sp.hideProgressDialog();;
                 if (response.isSuccessful()) {
                     sp.setPreferencesObject(getActivity(),response.body());
-
-//                    intent = new Intent(getActivity(), ClientDrawer.class);
-//                    startActivity(intent);
                     sp.ShowDialog(getActivity(), "Profile Update Successful");
+                    intent = new Intent(getActivity(), ClientDrawer.class);
+                    startActivity(intent);
                 } else {
                     sp.ShowDialog(getActivity(), response.errorBody().source().toString().split("\"")[3]);
                 }
@@ -288,7 +281,6 @@ public class EditProfile extends Fragment implements View.OnClickListener{
                                     croppedPicture.getName());   //optional
                             RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), croppedPicture);
                             users.setProfilePhoto(croppedPicture);
-                            //image1 = MultipartBody.Part.createFormData("image", croppedPicture.getName(), requestFile);
                         }
                         startActivityForResult(intent, REQUEST_CODE_CROP_PICTURE);
                         break;
@@ -360,8 +352,7 @@ public class EditProfile extends Fragment implements View.OnClickListener{
                 // If request is cancelled, the result arrays are empty.
                 if (!(grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    //finish();
-                }
+                    getActivity().finish();                }
                 break;
             }
         }

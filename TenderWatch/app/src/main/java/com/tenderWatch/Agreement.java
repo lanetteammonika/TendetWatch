@@ -15,10 +15,13 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.gson.Gson;
 import com.tenderWatch.ClientDrawer.ClientDrawer;
 import com.tenderWatch.Drawer.MainDrawer;
 import com.tenderWatch.Models.CreateUser;
 import com.tenderWatch.Models.Register;
+import com.tenderWatch.Models.User;
 import com.tenderWatch.Retrofit.Api;
 import com.tenderWatch.Retrofit.ApiUtils;
 import com.tenderWatch.SharedPreference.SharedPreference;
@@ -40,7 +43,7 @@ public class Agreement extends AppCompatActivity implements View.OnClickListener
     CreateUser user = new CreateUser();
     private static final String TAG = Agreement.class.getSimpleName();
     private Api mAPIService;
-    MultipartBody.Part email1, password1, country1, selections1, subscribe1, contactNo1, occupation1, aboutMe1, role1, deviceId1, image1;
+    MultipartBody.Part deviceId2,selections1,email1, password1, country1, deviceType1, subscribe1, contactNo1, occupation1, aboutMe1, role1, deviceId1, image1;
     SharedPreference sp = new SharedPreference();
     Intent intent;
     LinearLayout back, webLayout;
@@ -151,6 +154,7 @@ public class Agreement extends AppCompatActivity implements View.OnClickListener
         String role = user.getRole().toString();
         String deviceId = user.getDeviceId().toString();
         File file1 = user.getProfilePhoto();
+        String regId = FirebaseInstanceId.getInstance().getToken();
 
         RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file1);
 
@@ -161,16 +165,28 @@ public class Agreement extends AppCompatActivity implements View.OnClickListener
         occupation1 = MultipartBody.Part.createFormData("occupation", occupation);
         aboutMe1 = MultipartBody.Part.createFormData("aboutMe", aboutMe);
         role1 = MultipartBody.Part.createFormData("role", role);
-        deviceId1 = MultipartBody.Part.createFormData("deviceId", deviceId);
+        deviceId1 = MultipartBody.Part.createFormData("androidDeviceId", regId);
         image1 = MultipartBody.Part.createFormData("image", file1.getName(), requestFile);
-
+        if(image1==null) {
+            image1 = MultipartBody.Part.createFormData("image", "");
+        }
         Call<Register> resultCall = mAPIService.uploadImage(email1, password1, country1, contactNo1, occupation1, aboutMe1, role1, deviceId1, image1);
+        sp.showProgressDialog(Agreement.this);
+
         resultCall.enqueue(new Callback<Register>() {
             @Override
             public void onResponse(Call<Register> call, Response<Register> response) {
+                sp.hideProgressDialog();
                 Log.i(TAG, "response register-->");
                 if (response.isSuccessful()) {
+                    User u1=response.body().getUser();
+                    sp.setPreferencesObject(Agreement.this,u1);
+                    sp.setPreferences(Agreement.this,"token",response.body().getToken());
+                    User u2= (User) sp.getPreferencesObject(Agreement.this);
+                    String t=sp.getPreferences(Agreement.this,"token");
                     intent = new Intent(Agreement.this, ClientDrawer.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+
                     startActivity(intent);
                     sp.ShowDialog(Agreement.this, "Successful Registration");
                 } else {
@@ -212,35 +228,56 @@ public class Agreement extends AppCompatActivity implements View.OnClickListener
         String occupation = user.getOccupation().toString();
         String aboutMe = user.getAboutMe().toString();
         String role = user.getRole().toString();
-        String deviceId = user.getDeviceId().toString();
+        String deviceId = FirebaseInstanceId.getInstance().getToken();
         String selections = String.valueOf(user.getSelections());
         HashMap<String, ArrayList<String>> subscribe = user.getSubscribe();
+        String[] device=new String[1];
+
         File file1 = user.getProfilePhoto();
+        RequestBody requestFile;
+if(user.getProfilePhoto() != null) {
+     requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file1);
+    image1 = MultipartBody.Part.createFormData("image", file1.getName(), requestFile);
 
-        RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file1);
+}else{
+    image1 = MultipartBody.Part.createFormData("image", "");
 
-        email1 = MultipartBody.Part.createFormData("email", email);
+}
+email1 = MultipartBody.Part.createFormData("email", email);
         password1 = MultipartBody.Part.createFormData("password", password);
         country1 = MultipartBody.Part.createFormData("country", country);
         contactNo1 = MultipartBody.Part.createFormData("contactNo", contact);
         occupation1 = MultipartBody.Part.createFormData("occupation", occupation);
         aboutMe1 = MultipartBody.Part.createFormData("aboutMe", aboutMe);
         role1 = MultipartBody.Part.createFormData("role", role);
-        deviceId1 = MultipartBody.Part.createFormData("deviceId", deviceId);
-        selections1 = MultipartBody.Part.createFormData("selections", selections);
-        subscribe1 = MultipartBody.Part.createFormData("subscribe", String.valueOf(subscribe));
-        image1 = MultipartBody.Part.createFormData("image", file1.getName(), requestFile);
+        deviceId1 = MultipartBody.Part.createFormData("androidDeviceId", deviceId);
+        deviceId2 = MultipartBody.Part.createFormData("deviceId","");
+        subscribe1 = MultipartBody.Part.createFormData("subscribe", selections);
+        selections1 = MultipartBody.Part.createFormData("selections",new Gson().toJson(subscribe));
 
-        Call<Register> resultCall = mAPIService.uploadContractor(email1, password1, country1, contactNo1, occupation1, aboutMe1, role1, deviceId1, image1, selections1, subscribe1);
+        Call<Register> resultCall = mAPIService.uploadContractor(email1, password1, country1, contactNo1, occupation1, aboutMe1, role1, deviceId1, image1, subscribe1, selections1);
+        sp.showProgressDialog(Agreement.this);
+
         resultCall.enqueue(new Callback<Register>() {
             @Override
             public void onResponse(Call<Register> call, Response<Register> response) {
                 Log.i(TAG, "response register-->");
+                sp.hideProgressDialog();
                 if (response.isSuccessful()) {
-                    String role = sp.getPreferences(Agreement.this, "role");
-                    intent = new Intent(Agreement.this, MainDrawer.class);
-                    startActivity(intent);
+                    ///String role = sp.getPreferences(Agreement.this, "role");
+                    Gson gson = new Gson();
+                    String jsonString = gson.toJson(user);
+                    User u1=response.body().getUser();
+                    sp.setPreferencesObject(Agreement.this,u1);
+                    sp.setPreferences(Agreement.this,"token",response.body().getToken());
+                    User u2= (User) sp.getPreferencesObject(Agreement.this);
+                    String t=sp.getPreferences(Agreement.this,"token");
 
+                    intent = new Intent(Agreement.this, MainDrawer.class);
+                    intent.putExtra("data",jsonString);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+
+                    startActivity(intent);
                     Log.i(TAG, "post submitted to API." + response.body().toString());
                 } else {
                     sp.ShowDialog(Agreement.this, response.errorBody().source().toString().split("\"")[3]);

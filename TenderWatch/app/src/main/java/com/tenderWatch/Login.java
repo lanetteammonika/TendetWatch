@@ -34,9 +34,11 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.OptionalPendingResult;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.tenderWatch.ClientDrawer.ClientDrawer;
 import com.tenderWatch.Drawer.MainDrawer;
 import com.tenderWatch.Models.Register;
+import com.tenderWatch.Models.User;
 import com.tenderWatch.Retrofit.Api;
 import com.tenderWatch.Retrofit.ApiUtils;
 import com.tenderWatch.SharedPreference.SharedPreference;
@@ -68,6 +70,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
     String newString;
     SharedPreference sp = new SharedPreference();
 
+    User user;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -137,8 +140,6 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
 
             @Override
             public void afterTextChanged(Editable editable) {
-
-                // Validation.isPassword(txtPassword,true);
                 Log.i(TAG, "post submitted to API." + Validation.isValidPassword(txtPassword.getText().toString()));
 
             }
@@ -163,15 +164,15 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
         btnSignIn.setSize(SignInButton.SIZE_STANDARD);
         btnSignIn.setScopes(gso.getScopeArray());
         fb.setOnClickListener(this);
+
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
 
             @Override
             public void onSuccess(LoginResult loginResult) {
                 Log.d(TAG, String.valueOf(loginResult));
-                SharedPreference sp = new SharedPreference();
+                sp.hideProgressDialog();
                 String accessToken = loginResult.getAccessToken().getToken();
-                String deviceId = Settings.Secure.getString(getContentResolver(),
-                        Settings.Secure.ANDROID_ID);
+                String deviceId = FirebaseInstanceId.getInstance().getToken();
                 String role = sp.getPreferences(Login.this, "role");
                 savePostFB(accessToken, role, deviceId);
                 if (AccessToken.getCurrentAccessToken() != null) {
@@ -236,10 +237,12 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
     }
 
     public void savePostFB(String idToken, String role, String deviceId) {
+        sp.showProgressDialog(Login.this);
+
         mAPIService.savePostFB(idToken, role, deviceId).enqueue(new Callback<Register>() {
             @Override
             public void onResponse(Call<Register> call, Response<Register> response) {
-
+                sp.hideProgressDialog();
                 if (response.isSuccessful()) {
                     sp.setPreferencesObject(Login.this,response.body().getUser());
                     Object user=sp.getPreferencesObject(Login.this);
@@ -250,6 +253,8 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
                     }else {
                         intent = new Intent(Login.this, MainDrawer.class);
                     }
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+
                     startActivity(intent);
                     Log.i(TAG, "post submitted to API." + response.body().toString());
                 } else {
@@ -266,10 +271,12 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
     }
 
     public void sendPostGoogle(String idToken, String role, String deviceId) {
+        sp.showProgressDialog(Login.this);
+
         mAPIService.savePostGoogle(idToken, role, deviceId).enqueue(new Callback<Register>() {
             @Override
             public void onResponse(Call<Register> call, Response<Register> response) {
-
+                sp.hideProgressDialog();
                 if (response.isSuccessful()) {
                     sp.setPreferencesObject(Login.this,response.body().getUser());
                     Object user=sp.getPreferencesObject(Login.this);
@@ -280,6 +287,8 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
                     }else {
                         intent = new Intent(Login.this, MainDrawer.class);
                     }
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+
                     startActivity(intent);
                     Log.i(TAG, "post submitted to API." + response.body().toString());
                 } else {
@@ -295,12 +304,15 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
         });
     }
 
-    public void sendPost(String email, String password, String role, String deviceId) {
+    public void sendPost(String email, String password, String role, final String deviceId) {
+        sp.showProgressDialog(Login.this);
+
         mAPIService.savePost(email, password, role, deviceId).enqueue(new Callback<Register>() {
             @Override
             public void onResponse(Call<Register> call, Response<Register> response) {
-
+                sp.hideProgressDialog();
                 if (response.isSuccessful()) {
+                    sp.setPreferences(Login.this,"androidId",deviceId);
                     sp.setPreferencesObject(Login.this,response.body().getUser());
                     Object user=sp.getPreferencesObject(Login.this);
                     String role = sp.getPreferences(Login.this, "role");
@@ -319,6 +331,8 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
                     }else {
                         intent = new Intent(Login.this, MainDrawer.class);
                     }
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+
                     startActivity(intent);
                     finish();
                     Log.i(TAG, "post submitted to API." + response.body().toString());
@@ -343,8 +357,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
             sp.setPreferences(getApplicationContext(), "Login", "GOOGLEYES");
             GoogleSignInAccount acct = result.getSignInAccount();
             String idToken = acct.getIdToken();
-            String deviceId = Settings.Secure.getString(getContentResolver(),
-                    Settings.Secure.ANDROID_ID);
+            String deviceId = FirebaseInstanceId.getInstance().getToken();
             String role = sp.getPreferences(Login.this, "role");
             sendPostGoogle(idToken, role, deviceId);
             // Show signed-in UI.
@@ -411,49 +424,10 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
         String password = txtPassword.getText().toString();
         SharedPreference sp = new SharedPreference();
         String role = sp.getPreferences(Login.this, "role");
-        String deviceId = sp.getPreferences(getApplicationContext(), "deviceId");
+        //user =sp.getPreferencesObject(Login.this);
+        String deviceId = FirebaseInstanceId.getInstance().getToken();
         sendPost(email, password, role, deviceId);
     }
-
-    private void showProgressDialog() {
-        if (mProgressDialog == null) {
-            mProgressDialog = new ProgressDialog(this);
-            //  mProgressDialog.setMessage(getString(R.string.loading));
-            mProgressDialog.setIndeterminate(true);
-        }
-
-        mProgressDialog.show();
-    }
-
-    private void hideProgressDialog() {
-        if (mProgressDialog != null && mProgressDialog.isShowing()) {
-            mProgressDialog.hide();
-        }
-    }
-
-    boolean doubleBackToExitPressedOnce = false;
-
-//    @Override
-//    public void onBackPressed() {
-//        //Checking for fragment count on backstack
-//        if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
-//            getSupportFragmentManager().popBackStack();
-//        } else if (!doubleBackToExitPressedOnce) {
-//            this.doubleBackToExitPressedOnce = true;
-//            Toast.makeText(this, "Please click BACK again to exit.", Toast.LENGTH_SHORT).show();
-//
-//            new Handler().postDelayed(new Runnable() {
-//
-//                @Override
-//                public void run() {
-//                    doubleBackToExitPressedOnce = false;
-//                }
-//            }, 2000);
-//        } else {
-//            super.onBackPressed();
-//            return;
-//        }
-//    }
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {

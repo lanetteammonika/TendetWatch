@@ -1,5 +1,6 @@
 package com.tenderWatch.SharedPreference;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -21,6 +22,7 @@ import static com.facebook.FacebookSdk.getApplicationContext;
  */
 
 public class SharedPreference {
+    ProgressDialog mProgressDialog;
     public static void setPreferences(Context context, String key, String value) {
         SharedPreferences appSharedPrefs = PreferenceManager
                 .getDefaultSharedPreferences(context);
@@ -87,6 +89,21 @@ public class SharedPreference {
                 });
 
         builder.show();
+    }
+    public void showProgressDialog(Context context) {
+        if (mProgressDialog == null) {
+            mProgressDialog = new ProgressDialog(context);
+            mProgressDialog.setMessage("Loading....");
+            mProgressDialog.setIndeterminate(true);
+        }
+
+        mProgressDialog.show();
+    }
+
+    public void hideProgressDialog() {
+        if (mProgressDialog != null && mProgressDialog.isShowing()) {
+            mProgressDialog.hide();
+        }
     }
    // public  void ShowAlert(Context con)
 }

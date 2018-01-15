@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/round_corner"
+    android:orientation="vertical"
+    android:padding="@dimen/value_10">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/bank_account_no"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Account Number" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/textview_design"
+            android:padding="@dimen/value_5">
+
+            <TextView
+                android:id="@+id/txt_bank_country_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/value_20"
+                android:singleLine="true"
+                android:text="Select Country"
+                android:textColor="@color/colorBlack"
+                android:textSize="@dimen/text_15" />
+
+            <FrameLayout
+                android:id="@+id/FrameLayout2"
+                android:layout_width="@dimen/value_20"
+                android:layout_height="@dimen/value_20"
+                android:layout_alignParentRight="true">
+
+                <ImageView
+                    android:id="@+id/bank_down_arrow"
+                    android:layout_width="@dimen/value_15"
+                    android:layout_height="@dimen/value_15"
+                    android:src="@drawable/sort_down_filled" />
+
+                <ImageView
+                    android:id="@+id/bank_up_arrow"
+                    android:layout_width="@dimen/value_15"
+                    android:layout_height="@dimen/value_15"
+                    android:src="@drawable/sort_up_filled"
+                    android:visibility="gone" />
+            </FrameLayout>
+        </RelativeLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/category_home"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/value_2"
+        android:background="@drawable/listview_border"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <ListView
+            android:id="@+id/spinner3"
+            android:layout_width="fill_parent"
+            android:layout_height="200dp"
+            android:visibility="visible" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/bank_acc_holder_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Account Holder Name" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/textview_design"
+            android:padding="@dimen/value_5">
+
+            <TextView
+                android:id="@+id/txt__name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/value_20"
+                android:singleLine="true"
+                android:text="Select Bank Account Type"
+                android:textColor="@color/colorBlack"
+                android:textSize="@dimen/text_15" />
+
+            <FrameLayout
+                android:id="@+id/FrameLayout1"
+                android:layout_width="@dimen/value_20"
+                android:layout_height="@dimen/value_20"
+                android:layout_alignParentRight="true">
+
+                <ImageView
+                    android:id="@+id/bank_down_arrow2"
+                    android:layout_width="@dimen/value_15"
+                    android:layout_height="@dimen/value_15"
+                    android:src="@drawable/sort_down_filled" />
+
+                <ImageView
+                    android:id="@+id/bank_up_arrow2"
+                    android:layout_width="@dimen/value_15"
+                    android:layout_height="@dimen/value_15"
+                    android:src="@drawable/sort_up_filled"
+                    android:visibility="gone" />
+            </FrameLayout>
+        </RelativeLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/bank_type"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/value_2"
+        android:background="@drawable/listview_border"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <ListView
+            android:id="@+id/spinner4"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:visibility="visible" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/bnak_routing_no"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Bank Routing Number" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/value_40"
+        android:layout_marginLeft="@dimen/value_40"
+        android:layout_marginRight="@dimen/value_40"
+        android:layout_marginTop="@dimen/value_10"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btn_Save"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/value_35"
+            android:layout_gravity="center"
+            android:background="@drawable/button"
+            android:text="save"
+            android:textAllCaps="false"
+            android:textColor="@color/colorWhite"
+            android:textSize="@dimen/text_20" />
+    </LinearLayout>
+
+</LinearLayout>

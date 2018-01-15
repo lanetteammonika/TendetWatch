@@ -137,10 +137,12 @@ public class ChangePassword  extends Fragment implements View.OnClickListener{
         String oldPassword=txt_oldPassword.getText().toString();
         String newPassword=txt_newPassword.getText().toString();
         Call<Success> resultCall = mAPIService.ChangePassword(token,Id,oldPassword,newPassword);
+        sp.showProgressDialog(getActivity());
         resultCall.enqueue(new Callback<Success>() {
             @Override
             public void onResponse(Call<Success> call, Response<Success> response) {
                 Log.i(TAG, "response register-->");
+                sp.hideProgressDialog();
                 if (response.isSuccessful()) {
                     sp.ShowDialog(getActivity(), response.body().getMessage().toString());
                    intent = new Intent(getActivity(),ClientDrawer.class );startActivity(intent);

@@ -32,6 +32,7 @@ import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 import com.tenderWatch.Adapters.CustomList;
+import com.tenderWatch.ClientDrawer.ClientDrawer;
 import com.tenderWatch.ClientDrawer.Home;
 import com.tenderWatch.Models.GetCategory;
 import com.tenderWatch.Models.GetCountry;
@@ -97,6 +98,8 @@ public class EditTenderDetail extends AppCompatActivity {
         setContentView(R.layout.activity_edit_tender_detail);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         mApiService= ApiUtils.getAPIService();
         spinner = (ListView) findViewById(R.id.spinner);
         spinner2 = (ListView) findViewById(R.id.spinner3);
@@ -134,6 +137,19 @@ public class EditTenderDetail extends AppCompatActivity {
         String cid=object.getCountry().toString();
         String caid=object.getCategory().toString();
 
+        toolbar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Gson gson = new Gson();
+                String jsonString = gson.toJson(object);
+
+                Intent intent=new Intent(EditTenderDetail.this,PreviewTenderDetail.class);
+                intent.putExtra("data",jsonString);
+                startActivity(intent);
+            }
+        });
+
+
         if(!object.getTenderPhoto().toString().equals("")){
             Picasso.with(EditTenderDetail.this)
                     .load(object.getTenderPhoto().toString())
@@ -148,7 +164,6 @@ public class EditTenderDetail extends AppCompatActivity {
                         @Override
                         public void onBitmapFailed(Drawable errorDrawable) {
                             Log.v("Main", "errrorrrr");
-
                         }
 
                         @Override
@@ -206,6 +221,7 @@ public class EditTenderDetail extends AppCompatActivity {
                 scrollView.setScrolling(true);
             }
         });
+
         down_arrow2.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("NewApi")
             @Override
@@ -218,7 +234,6 @@ public class EditTenderDetail extends AppCompatActivity {
                 down_arrow.setVisibility(View.VISIBLE);
                 scrollView.setScrolling(false);
                 //homeScroll.setEnabled(false);
-
             }
         });
 
@@ -249,11 +264,12 @@ public class EditTenderDetail extends AppCompatActivity {
                     final ImageView box = (ImageView) dialog.findViewById(R.id.home_box);
                     final ImageView boxright = (ImageView) dialog.findViewById(R.id.home_box_checked);
                     TextView code=(TextView) dialog.findViewById(R.id.contact_code);
+
                     if(object.getContactNo().toString().equals("")){
                         mobile.setText("");
                     }else{
-                        //code.setText(object.getContactNo().toString().split("-")[0]);
-                        mobile.setText(object.getContactNo().toString());}
+                        mobile.setText(object.getContactNo().toString());
+                    }
 
                     if(object.getLandlineNo().toString().equals("")){
                         landline.setText("");
@@ -403,9 +419,7 @@ public class EditTenderDetail extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String id1 = categoryName.get(position).split("~")[1];
-
                 categoryId1 = MultipartBody.Part.createFormData("category", id1);
-
                 categoryname = alpha2.get(position).split("~")[0];
                 category.setText(categoryname);
                 category_home.setVisibility(View.GONE);
@@ -417,29 +431,23 @@ public class EditTenderDetail extends AppCompatActivity {
     }
 
     private void FGetCategory() {
+        sp.showProgressDialog(EditTenderDetail.this);
+
         mApiService.getCategoryData().enqueue(new Callback<ArrayList<GetCategory>>() {
             @Override
             public void onResponse(Call<ArrayList<GetCategory>> call, Response<ArrayList<GetCategory>> response) {
                 Data2 = response.body();
+                sp.hideProgressDialog();
                 for (int i = 0; i < Data2.size(); i++) {
                     falpha2.add(response.body().get(i).getCategoryName().toString() + "~" + response.body().get(i).getImgString().toString());
                     fcategoryName.add(response.body().get(i).getCategoryName().toString() + "~" + response.body().get(i).getId().toString());
-
-                    // CountryFlag.add(response.body().get(i).getImageString().toString());
                 }
-                //Collections.sort(alpha);
                 for (int i = 0; i < Data2.size(); i++) {
                     if(fcategoryName.get(i).split("~")[1].toString().equals(object.getCategory().toString())){
-
-                        // categoryName1=response.body().get(i).getCategoryName().toString();
-                        // categoryId1 = MultipartBody.Part.createFormData("country",response.body().get(i).getId().toString());
-
-                        category.setText(response.body().get(i).getCategoryName().toString());
-
+                       category.setText(response.body().get(i).getCategoryName().toString());
                         break;
                     }
                 }
-
             }
 
             @Override
@@ -450,31 +458,25 @@ public class EditTenderDetail extends AppCompatActivity {
     }
 
     private void FGetAllCountry() {
+        sp.showProgressDialog(EditTenderDetail.this);
+
         mApiService.getCountryData().enqueue(new Callback<ArrayList<GetCountry>>() {
             @Override
             public void onResponse(Call<ArrayList<GetCountry>> call, Response<ArrayList<GetCountry>> response) {
+                sp.hideProgressDialog();
                 Data = response.body();
                 for (int i = 0; i < Data.size(); i++) {
                     falpha.add(response.body().get(i).getCountryName().toString() + "~" + response.body().get(i).getImageString().toString());
                     fcountryName.add(response.body().get(i).getCountryName().toString() + "~" + response.body().get(i).getCountryCode().toString() + "~" + response.body().get(i).getId().toString());
-
-                    // CountryFlag.add(response.body().get(i).getImageString().toString());
                 }
                 Collections.sort(falpha);
                 Collections.sort(fcountryName);
-                for (int i = 0; i < Data2.size(); i++) {
+                for (int i = 0; i < Data.size(); i++) {
                     if(fcountryName.get(i).split("~")[2].toString().equals(object.getCountry().toString())){
-                        //flag=response.body().get(i).getImageString().toString();
-                        //   countryName1=response.body().get(i).getCountryName().toString();
-                        // countryId1 = MultipartBody.Part.createFormData("country", response.body().get(i).getId().toString());
-
                         country.setText(response.body().get(i).getCountryName().toString());
-                        //  Bflag = StringToBitMap(flag);
-                        //  flag3.setImageBitmap(Bflag);
                         break;
                     }
                 }
-
             }
 
             @Override
@@ -520,7 +522,7 @@ public class EditTenderDetail extends AppCompatActivity {
 
         startActivityForResult(chooserIntent, REQUEST_CODE_SELECT_PICTURE);
     }
-
+//-working on add subscription,-Research for Payment with paypal in android,-starting integrating payment with paypal in application.
     private void CallApi() {
         String City=city.getText().toString();
         String Title=title.getText().toString();
@@ -534,9 +536,6 @@ public class EditTenderDetail extends AppCompatActivity {
         }
         String token="Bearer " +sp.getPreferences(EditTenderDetail.this,"token");
         id=object.getId().toString();
-        //File file1= new File("");
-
-        // RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file1);
 
         if(image1==null) {
             image1 = MultipartBody.Part.createFormData("image", "");
@@ -548,35 +547,33 @@ public class EditTenderDetail extends AppCompatActivity {
                 .enqueue(new Callback<UpdateTender>() {
                     @Override
                     public void onResponse(Call<UpdateTender> call, Response<UpdateTender> response) {
-
-
                         Log.i(TAG,"response---"+response.body());
-
+                        Intent intent = new Intent(EditTenderDetail.this,ClientDrawer.class);
+                        startActivity(intent);
+                        Log.i(TAG,"response---"+response.body());
                     }
 
                     @Override
                     public void onFailure(Call<UpdateTender> call, Throwable t) {
                         Log.i(TAG,"response---"+t);
-
                     }
                 });
 
     }
 
     private void GetCategory() {
+        sp.showProgressDialog(EditTenderDetail.this);
+
         mApiService.getCategoryData().enqueue(new Callback<ArrayList<GetCategory>>() {
             @Override
             public void onResponse(Call<ArrayList<GetCategory>> call, Response<ArrayList<GetCategory>> response) {
                 Data2 = response.body();
+                sp.hideProgressDialog();
                 for (int i = 0; i < Data2.size(); i++) {
                     alpha2.add(response.body().get(i).getCategoryName().toString() + "~" + response.body().get(i).getImgString().toString());
                     categoryName.add(response.body().get(i).getCategoryName().toString() + "~" + response.body().get(i).getId().toString());
-
-                    // CountryFlag.add(response.body().get(i).getImageString().toString());
                 }
-                //Collections.sort(alpha);
                 categoryAdapter = new CustomList(EditTenderDetail.this, alpha2);
-
                 spinner2.setAdapter(categoryAdapter);
             }
 
@@ -588,20 +585,20 @@ public class EditTenderDetail extends AppCompatActivity {
     }
 
     private void GetAllCountry() {
+        sp.showProgressDialog(EditTenderDetail.this);
+
         mApiService.getCountryData().enqueue(new Callback<ArrayList<GetCountry>>() {
             @Override
             public void onResponse(Call<ArrayList<GetCountry>> call, Response<ArrayList<GetCountry>> response) {
+                sp.hideProgressDialog();
                 Data = response.body();
                 for (int i = 0; i < Data.size(); i++) {
                     alpha.add(response.body().get(i).getCountryName().toString() + "~" + response.body().get(i).getImageString().toString());
                     countryName.add(response.body().get(i).getCountryName().toString() + "~" + response.body().get(i).getCountryCode().toString() + "~" + response.body().get(i).getId().toString());
-
-                    // CountryFlag.add(response.body().get(i).getImageString().toString());
                 }
                 Collections.sort(alpha);
                 Collections.sort(countryName);
                 countryAdapter = new CustomList(EditTenderDetail.this, alpha);
-
                 spinner.setAdapter(countryAdapter);
             }
 
@@ -644,7 +641,6 @@ public class EditTenderDetail extends AppCompatActivity {
                             intent.putExtra(ZoomCropImageActivity.INTENT_EXTRA_FILE_NAME,
                                     croppedPicture.getName());   //optional
                             RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), croppedPicture);
-                            //user.setProfilePhoto(croppedPicture);
                             image1 = MultipartBody.Part.createFormData("image", croppedPicture.getName(), requestFile);
                         }
                         startActivityForResult(intent, REQUEST_CODE_CROP_PICTURE);
