@@ -53,8 +53,8 @@ public class NTenderDetail extends AppCompatActivity {
     private List Data, Data2;
     Tender object;
     String day,flag,countryName1,categoryName1;
-    Bitmap Bflag;
-    ImageView flag3,imagetender;
+    Bitmap Bflag,catBflag;
+    ImageView flag3,imagetender,catFlag;
 
     TextView lblClientDetail,tenderTitle,Country,Category,ExpDay,Description,City,Contact,LandLine,Email,Address;
     RelativeLayout rlEmail,rlContact,rlLandline,rlAddress;
@@ -96,6 +96,7 @@ public class NTenderDetail extends AppCompatActivity {
         removeTender=(Button) findViewById(R.id.remove_tender);
         imagetender=(ImageView) findViewById(R.id.preview_tender_image);
         lblClientDetail=(TextView) findViewById(R.id.lbl_clientDetail);
+        catFlag=(ImageView) findViewById(R.id.preview_catflag_image);
 
         lblClientDetail.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -241,11 +242,12 @@ public class NTenderDetail extends AppCompatActivity {
                 for (int i = 0; i < Data2.size(); i++) {
                     if(categoryName.get(i).split("~")[1].toString().equals(object.getCategory().toString())){
                         categoryName1=response.body().get(i).getCategoryName().toString();
-                        if(categoryName1.length()>45){
-                            Category.setText(categoryName1.substring(0,45)+"...");
-                        }else {
-                            Category.setText(categoryName1);
-                        }
+                        Category.setText(categoryName1);
+
+                        day=response.body().get(i).getImgString();
+                        catBflag = StringToBitMap(day);
+                        catFlag.setImageBitmap(catBflag);
+                        sp.hideProgressDialog();
                         break;
                     }
                 }
@@ -291,6 +293,15 @@ public class NTenderDetail extends AppCompatActivity {
         });
     }
 
+    @Override
+    public void onBackPressed() {
+        if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+            getSupportFragmentManager().popBackStack();
+        } else {
+            this.finish();
+        }
+    }
+
     public Bitmap StringToBitMap(String encodedString) {
         try {
             byte[] encodeByte = Base64.decode(encodedString, Base64.DEFAULT);
@@ -306,10 +317,7 @@ public class NTenderDetail extends AppCompatActivity {
         switch (item.getItemId()) {
             case android.R.id.home:
                 // todo: goto back activity from here
-                Intent i=new Intent(NTenderDetail.this, MainDrawer.class);
-                i.putExtra("nav_not","true");
-                startActivity(i);
-                finish();
+                this.onBackPressed();
                 return true;
 
             default:

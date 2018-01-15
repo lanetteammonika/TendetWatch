@@ -21,6 +21,7 @@ import com.tenderWatch.ClientDrawer.ClientDrawer;
 import com.tenderWatch.Drawer.MainDrawer;
 import com.tenderWatch.Models.CreateUser;
 import com.tenderWatch.Models.Register;
+import com.tenderWatch.Models.User;
 import com.tenderWatch.Retrofit.Api;
 import com.tenderWatch.Retrofit.ApiUtils;
 import com.tenderWatch.SharedPreference.SharedPreference;
@@ -166,7 +167,9 @@ public class Agreement extends AppCompatActivity implements View.OnClickListener
         role1 = MultipartBody.Part.createFormData("role", role);
         deviceId1 = MultipartBody.Part.createFormData("androidDeviceId", regId);
         image1 = MultipartBody.Part.createFormData("image", file1.getName(), requestFile);
-
+        if(image1==null) {
+            image1 = MultipartBody.Part.createFormData("image", "");
+        }
         Call<Register> resultCall = mAPIService.uploadImage(email1, password1, country1, contactNo1, occupation1, aboutMe1, role1, deviceId1, image1);
         sp.showProgressDialog(Agreement.this);
 
@@ -176,8 +179,14 @@ public class Agreement extends AppCompatActivity implements View.OnClickListener
                 sp.hideProgressDialog();
                 Log.i(TAG, "response register-->");
                 if (response.isSuccessful()) {
-                    sp.setPreferencesObject(Agreement.this,user);
+                    User u1=response.body().getUser();
+                    sp.setPreferencesObject(Agreement.this,u1);
+                    sp.setPreferences(Agreement.this,"token",response.body().getToken());
+                    User u2= (User) sp.getPreferencesObject(Agreement.this);
+                    String t=sp.getPreferences(Agreement.this,"token");
                     intent = new Intent(Agreement.this, ClientDrawer.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+
                     startActivity(intent);
                     sp.ShowDialog(Agreement.this, "Successful Registration");
                 } else {
@@ -225,9 +234,16 @@ public class Agreement extends AppCompatActivity implements View.OnClickListener
         String[] device=new String[1];
 
         File file1 = user.getProfilePhoto();
+        RequestBody requestFile;
+if(user.getProfilePhoto() != null) {
+     requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file1);
+    image1 = MultipartBody.Part.createFormData("image", file1.getName(), requestFile);
 
-        RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file1);
-        email1 = MultipartBody.Part.createFormData("email", email);
+}else{
+    image1 = MultipartBody.Part.createFormData("image", "");
+
+}
+email1 = MultipartBody.Part.createFormData("email", email);
         password1 = MultipartBody.Part.createFormData("password", password);
         country1 = MultipartBody.Part.createFormData("country", country);
         contactNo1 = MultipartBody.Part.createFormData("contactNo", contact);
@@ -238,7 +254,6 @@ public class Agreement extends AppCompatActivity implements View.OnClickListener
         deviceId2 = MultipartBody.Part.createFormData("deviceId","");
         subscribe1 = MultipartBody.Part.createFormData("subscribe", selections);
         selections1 = MultipartBody.Part.createFormData("selections",new Gson().toJson(subscribe));
-        image1 = MultipartBody.Part.createFormData("image", file1.getName(), requestFile);
 
         Call<Register> resultCall = mAPIService.uploadContractor(email1, password1, country1, contactNo1, occupation1, aboutMe1, role1, deviceId1, image1, subscribe1, selections1);
         sp.showProgressDialog(Agreement.this);
@@ -252,10 +267,16 @@ public class Agreement extends AppCompatActivity implements View.OnClickListener
                     ///String role = sp.getPreferences(Agreement.this, "role");
                     Gson gson = new Gson();
                     String jsonString = gson.toJson(user);
-                    sp.setPreferencesObject(Agreement.this,user);
+                    User u1=response.body().getUser();
+                    sp.setPreferencesObject(Agreement.this,u1);
+                    sp.setPreferences(Agreement.this,"token",response.body().getToken());
+                    User u2= (User) sp.getPreferencesObject(Agreement.this);
+                    String t=sp.getPreferences(Agreement.this,"token");
 
                     intent = new Intent(Agreement.this, MainDrawer.class);
                     intent.putExtra("data",jsonString);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+
                     startActivity(intent);
                     Log.i(TAG, "post submitted to API." + response.body().toString());
                 } else {

@@ -326,7 +326,7 @@ public class TenderList extends Fragment {
             public void onFailure(Call<ArrayList<Tender>> call, Throwable t) {
                 Log.i(TAG, "post submitted to API." + t);
                 sp.hideProgressDialog();
-                sp.ShowDialog(getActivity(),"server is down");
+                sp.ShowDialog(getActivity(),"Tender not Found");
             }
         });
     }

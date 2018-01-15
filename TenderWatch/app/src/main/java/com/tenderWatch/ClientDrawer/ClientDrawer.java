@@ -34,6 +34,7 @@ import com.tenderWatch.R;
 import com.tenderWatch.Retrofit.Api;
 import com.tenderWatch.Retrofit.ApiUtils;
 import com.tenderWatch.SharedPreference.SharedPreference;
+import com.tenderWatch.utils.ConnectivityReceiver;
 
 import java.util.ArrayList;
 
@@ -92,11 +93,20 @@ public class ClientDrawer extends AppCompatActivity
         circledrawerimage = navigationView.getHeaderView(0).findViewById(R.id.circledrawerimage);
         emailText=navigationView.getHeaderView(0).findViewById(R.id.textView);
         user= (User) sp.getPreferencesObject(ClientDrawer.this);
-        Picasso.with(this).load(user.getProfilePhoto()).into(circledrawerimage);
-        emailText.setText(user.getEmail());
+        if(!user.getProfilePhoto().equals("no image")){
+            Picasso.with(this).load(user.getProfilePhoto()).into(circledrawerimage);}
+            emailText.setText(user.getEmail());
+        if(checkConnection()){
         displaySelectedScreen(R.id.nav_home);
-    }
+        }else{
+            sp.ShowDialog(ClientDrawer.this,"Please Check your internet Connection");
+        }
 
+    }
+    private boolean checkConnection() {
+        boolean isConnected = ConnectivityReceiver.isConnected(ClientDrawer.this);
+        return isConnected;
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.

@@ -58,6 +58,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             sp.setPreferences(MainActivity.this, "role",role);
            // intent.putExtra("Role", "client");
             Log.i(TAG, "testing");
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+
             startActivity(intent);
             overridePendingTransition(R.anim.enter, R.anim.exit);
         }

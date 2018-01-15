@@ -253,6 +253,8 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
                     }else {
                         intent = new Intent(Login.this, MainDrawer.class);
                     }
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+
                     startActivity(intent);
                     Log.i(TAG, "post submitted to API." + response.body().toString());
                 } else {
@@ -285,6 +287,8 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
                     }else {
                         intent = new Intent(Login.this, MainDrawer.class);
                     }
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+
                     startActivity(intent);
                     Log.i(TAG, "post submitted to API." + response.body().toString());
                 } else {
@@ -327,6 +331,8 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
                     }else {
                         intent = new Intent(Login.this, MainDrawer.class);
                     }
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+
                     startActivity(intent);
                     finish();
                     Log.i(TAG, "post submitted to API." + response.body().toString());

@@ -153,10 +153,7 @@ public class ClientDetail extends AppCompatActivity {
         close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(ClientDetail.this,ContractotTenderDetail.class);
-                intent.putExtra("data",jsonString);
-                intent.putExtra("sender",sender);
-                startActivity(intent);
+                onBackPressed();
             }
         });
     }
@@ -232,6 +229,15 @@ public class ClientDetail extends AppCompatActivity {
         });
 
     }
+    @Override
+    public void onBackPressed() {
+        if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+            getSupportFragmentManager().popBackStack();
+        } else {
+            this.finish();
+        }
+    }
+
     public Bitmap StringToBitMap(String encodedString) {
         try {
             byte[] encodeByte = Base64.decode(encodedString, Base64.DEFAULT);
@@ -242,6 +248,7 @@ public class ClientDetail extends AppCompatActivity {
             return null;
         }
     }
+
     private void DisplayDetail() {
 
         Gson gson=new Gson();

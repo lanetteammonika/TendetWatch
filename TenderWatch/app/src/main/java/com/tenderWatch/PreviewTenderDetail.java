@@ -53,8 +53,8 @@ public class PreviewTenderDetail extends AppCompatActivity {
     private List Data, Data2;
     Tender object;
     String day,flag,countryName1,categoryName1;
-    Bitmap Bflag;
-    ImageView flag3,imagetender;
+    Bitmap Bflag,catBflag;
+    ImageView flag3,imagetender,catFlag;
 
     TextView tenderTitle,Country,Category,ExpDay,Description,City,Contact,LandLine,Email,Address;
     RelativeLayout rlEmail,rlContact,rlLandline,rlAddress;
@@ -86,6 +86,7 @@ public class PreviewTenderDetail extends AppCompatActivity {
         removeTender=(Button) findViewById(R.id.remove_tender);
         editTender=(Button) findViewById(R.id.edit_tender);
         imagetender=(ImageView) findViewById(R.id.preview_tender_image);
+        catFlag=(ImageView) findViewById(R.id.preview_catflag_image);
         String json=getIntent().getStringExtra("data");
         Gson gson=new Gson();
         object=gson.fromJson(json, Tender.class);
@@ -234,7 +235,6 @@ public class PreviewTenderDetail extends AppCompatActivity {
             @Override
             public void onResponse(Call<ArrayList<GetCategory>> call, Response<ArrayList<GetCategory>> response) {
                 Data2 = response.body();
-                sp.hideProgressDialog();
                 for (int i = 0; i < Data2.size(); i++) {
                     alpha2.add(response.body().get(i).getCategoryName().toString() + "~" + response.body().get(i).getImgString().toString());
                     categoryName.add(response.body().get(i).getCategoryName().toString() + "~" + response.body().get(i).getId().toString());
@@ -243,11 +243,13 @@ public class PreviewTenderDetail extends AppCompatActivity {
                 for (int i = 0; i < Data2.size(); i++) {
                     if(categoryName.get(i).split("~")[1].toString().equals(object.getCategory().toString())){
                         categoryName1=response.body().get(i).getCategoryName().toString();
-                        if(categoryName1.length()>45){
-                            Category.setText(categoryName1.substring(0,45)+"...");
-                        }else {
+
                             Category.setText(categoryName1);
-                        }
+                        day=response.body().get(i).getImgString();
+                        catBflag = StringToBitMap(day);
+                        catFlag.setImageBitmap(catBflag);
+                        sp.hideProgressDialog();
+
                         break;
                     }
                 }
@@ -286,7 +288,7 @@ public class PreviewTenderDetail extends AppCompatActivity {
         mApiService.getCountryData().enqueue(new Callback<ArrayList<GetCountry>>() {
             @Override
             public void onResponse(Call<ArrayList<GetCountry>> call, Response<ArrayList<GetCountry>> response) {
-                sp.hideProgressDialog();
+
                 Data = response.body();
                 for (int i = 0; i < Data.size(); i++) {
                     alpha.add(response.body().get(i).getCountryName().toString() + "~" + response.body().get(i).getImageString().toString());
@@ -301,6 +303,7 @@ public class PreviewTenderDetail extends AppCompatActivity {
                         Country.setText(countryName1);
                         Bflag = StringToBitMap(flag);
                         flag3.setImageBitmap(Bflag);
+                        sp.hideProgressDialog();
                         break;
                     }
                 }

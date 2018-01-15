@@ -104,7 +104,8 @@ public class MainDrawer extends AppCompatActivity implements NavigationView.OnNa
         circledrawerimage = navigationView.getHeaderView(0).findViewById(R.id.circledrawerimage2);
         emailText = navigationView.getHeaderView(0).findViewById(R.id.textView2);
         user = (User) sp.getPreferencesObject(MainDrawer.this);
-        Picasso.with(this).load(user.getProfilePhoto()).into(circledrawerimage);
+        if(!user.getProfilePhoto().equals("no image")){
+        Picasso.with(this).load(user.getProfilePhoto()).into(circledrawerimage);}
         emailText.setText(user.getEmail());
         String get = getIntent().getStringExtra("nav_sub");
         String getnot = getIntent().getStringExtra("nav_not");
