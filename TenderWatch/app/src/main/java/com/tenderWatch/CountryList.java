@@ -238,7 +238,7 @@ public class CountryList extends AppCompatActivity {
                     } else {
                         if (check == null) {
                             intent = new Intent(CountryList.this, Category.class);
-                            intent.putExtra("sub",s);
+                            intent.putExtra("sub", s);
                             intent.putExtra("CountryAtContractor", a_countryID);
                             intent.putExtra("Country", a_country);
                             intent.putExtra("version", txtSelectedContract.getText().toString());
@@ -251,8 +251,10 @@ public class CountryList extends AppCompatActivity {
                             startActivity(intent);
 
                             finish();
+
                         } else {
                             intent = new Intent(CountryList.this, SignUp.class);
+                            intent.putExtra("sub",s);
                             intent.putExtra("Country", a_country);
                             adapter.setItemSelected(pos);
                             countryList.clear();
