@@ -47,13 +47,16 @@ import retrofit2.Response;
 public class ClientDrawer extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     private Api mAPIService;
-    SharedPreference sp=new SharedPreference();
+    SharedPreference sp = new SharedPreference();
     private static final String TAG = ClientDrawer.class.getSimpleName();
     Intent intent;
     CircleImageView circledrawerimage;
     User user;
     TextView emailText;
     NavigationView navigationView;
+    private static MenuItem Cmenu2, CeditMenu;
+    static Boolean Cdisplay = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,7 +68,7 @@ public class ClientDrawer extends AppCompatActivity
         mAPIService = ApiUtils.getAPIService();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle ;
+        ActionBarDrawerToggle toggle;
 
         toggle = new ActionBarDrawerToggle(
                 this,                  /* host Activity */
@@ -91,26 +94,35 @@ public class ClientDrawer extends AppCompatActivity
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         circledrawerimage = navigationView.getHeaderView(0).findViewById(R.id.circledrawerimage);
-        emailText=navigationView.getHeaderView(0).findViewById(R.id.textView);
-        user= (User) sp.getPreferencesObject(ClientDrawer.this);
-        if(!user.getProfilePhoto().equals("no image")){
-            Picasso.with(this).load(user.getProfilePhoto()).into(circledrawerimage);}
-            emailText.setText(user.getEmail());
-        if(checkConnection()){
-        displaySelectedScreen(R.id.nav_home);
-        }else{
-            sp.ShowDialog(ClientDrawer.this,"Please Check your internet Connection");
+        emailText = navigationView.getHeaderView(0).findViewById(R.id.textView);
+        user = (User) sp.getPreferencesObject(ClientDrawer.this);
+        if (!user.getProfilePhoto().equals("no image")) {
+            Picasso.with(this).load(user.getProfilePhoto()).into(circledrawerimage);
+        }
+        emailText.setText(user.getEmail());
+        if (checkConnection()) {
+            displaySelectedScreen(R.id.nav_home);
+        } else {
+            sp.ShowDialog(ClientDrawer.this, "Please Check your internet Connection");
         }
 
     }
+
     private boolean checkConnection() {
         boolean isConnected = ConnectivityReceiver.isConnected(ClientDrawer.this);
         return isConnected;
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        //getMenuInflater().inflate(R.menu.main_drawer, menu);
+        getMenuInflater().inflate(R.menu.main_drawer, menu);
+        CeditMenu = menu.findItem(R.id.menu_item2);
+        Cmenu2 = menu.findItem(R.id.menu_item);
+        CeditMenu.setTitle("Edit");
+        Cmenu2.setVisible(false);
+        CeditMenu.setVisible(false);
+        // getMenuInflater().inflate(R.menu.main_drawer, menu);
         return true;
     }
 
@@ -120,14 +132,39 @@ public class ClientDrawer extends AppCompatActivity
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
         //noinspection SimplifiableIfStatement
         if (id == R.id.menu_item) {
+            //call();
+            return true;
+        }
+        if (id == R.id.drawertoolbar) {
+            GetNotification();
             return true;
         }
 
+        if (id == R.id.menu_item2) {
+            callEdit();
+            return true;
+        }
         return super.onOptionsItemSelected(item);
     }
+
+    private void callEdit() {
+        Fragment fragment = null;
+        fragment = new Notification();
+        Bundle args = new Bundle();
+        if (CeditMenu.getTitle().equals("Edit")) {
+            CeditMenu.setTitle("Cancel");
+            args.putString("edit", "true");
+            fragment.setArguments(args);
+        } else {
+            CeditMenu.setTitle("Edit");
+        }
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.content_frame, fragment);
+        ft.commit();
+    }
+
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -135,6 +172,8 @@ public class ClientDrawer extends AppCompatActivity
         displaySelectedScreen(item.getItemId());
         return true;
     }
+
+
     private void displaySelectedScreen(int itemId) {
 
         //creating fragment object
@@ -143,24 +182,46 @@ public class ClientDrawer extends AppCompatActivity
         //initializing the fragment object which is selected
         switch (itemId) {
             case R.id.nav_home:
+                if (Cdisplay) {
+                    CeditMenu.setVisible(false);
+                    Cmenu2.setVisible(false);
+                }
                 fragment = new TenderList();
+                Cdisplay = true;
                 break;
             case R.id.nav_uploadtender:
+                CeditMenu.setVisible(false);
+                Cmenu2.setVisible(false);
                 fragment = new Home();
                 break;
             case R.id.nav_editprofile:
+                CeditMenu.setVisible(false);
+                Cmenu2.setVisible(false);
                 fragment = new EditProfile();
                 break;
             case R.id.nav_changepassword:
+                CeditMenu.setVisible(false);
+                Cmenu2.setVisible(false);
                 fragment = new ChangePassword();
                 break;
             case R.id.nav_favorites:
-                fragment = new ChangePassword();
+                CeditMenu.setVisible(false);
+                Cmenu2.setVisible(false);
+                fragment = new TenderList();
+                Bundle bundle = new Bundle();
+                bundle.putString("nav_fav", "true");
+                if (bundle != null) {
+                    fragment.setArguments(bundle);
+                }
                 break;
             case R.id.nav_notifications:
+                CeditMenu.setVisible(true);
+                Cmenu2.setVisible(false);
                 fragment = new Notification();
                 break;
             case R.id.nav_contactsupportteam:
+                CeditMenu.setVisible(false);
+                Cmenu2.setVisible(false);
                 fragment = new Support();
                 break;
             case R.id.nav_logout:
@@ -178,6 +239,7 @@ public class ClientDrawer extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
     }
+
     private void setMenuCounter(@IdRes int itemId, int count) {
         TextView view = (TextView) navigationView.getMenu().findItem(itemId).getActionView();
         view.setBackgroundResource(R.drawable.bg_red);
@@ -209,23 +271,24 @@ public class ClientDrawer extends AppCompatActivity
             }
         });
     }
+
     private void Logout() {
-        String token="Bearer "+sp.getPreferences(ClientDrawer.this,"token");
+        String token = "Bearer " + sp.getPreferences(ClientDrawer.this, "token");
         String deviceId = sp.getPreferences(getApplicationContext(), "deviceId");
-        String role=sp.getPreferences(ClientDrawer.this,"role");
-sp.showProgressDialog(ClientDrawer.this);
-        mAPIService.logout(token,deviceId,role).enqueue(new Callback<ResponseBody>() {
+        String role = sp.getPreferences(ClientDrawer.this, "role");
+        sp.showProgressDialog(ClientDrawer.this);
+        mAPIService.logout(token, deviceId, role).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-               // Log.i(TAG, "post submitted to API." + response);
+                // Log.i(TAG, "post submitted to API." + response);
                 sp.hideProgressDialog();
-                sp.removePreferences(ClientDrawer.this,"role");
-                sp.removePreferences(ClientDrawer.this,"email");
-                sp.removePreferences(ClientDrawer.this,"id");
-                sp.removePreferences(ClientDrawer.this,"profile");
-                sp.removePreferences(ClientDrawer.this,"MyObject");
+                sp.removePreferences(ClientDrawer.this, "role");
+                sp.removePreferences(ClientDrawer.this, "email");
+                sp.removePreferences(ClientDrawer.this, "id");
+                sp.removePreferences(ClientDrawer.this, "profile");
+                sp.removePreferences(ClientDrawer.this, "MyObject");
 
-                intent=new Intent(ClientDrawer.this, MainActivity.class);
+                intent = new Intent(ClientDrawer.this, MainActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter, R.anim.exit);
                 finish();
@@ -238,11 +301,12 @@ sp.showProgressDialog(ClientDrawer.this);
             }
         });
     }
+
     boolean doubleBackToExitPressedOnce = false;
 
     @Override
     public void onBackPressed() {
-       // Checking for fragment count on backstack
+        // Checking for fragment count on backstack
         if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
             getSupportFragmentManager().popBackStack();
         } else if (!doubleBackToExitPressedOnce) {

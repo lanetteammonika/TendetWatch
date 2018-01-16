@@ -430,6 +430,7 @@ public class Home extends Fragment implements AdapterView.OnItemSelectedListener
                 });
 
     }
+    //
 
     private void GetCategory(final View v) {
         final View v1 = v;
@@ -438,7 +439,6 @@ public class Home extends Fragment implements AdapterView.OnItemSelectedListener
             @Override
             public void onResponse(Call<ArrayList<GetCategory>> call, Response<ArrayList<GetCategory>> response) {
                 Data2 = response.body();
-                sp.hideProgressDialog();
 
                 for (int i = 0; i < Data2.size(); i++) {
                     alpha2.add(response.body().get(i).getCategoryName().toString() + "~" + response.body().get(i).getImgString().toString());
@@ -446,6 +446,8 @@ public class Home extends Fragment implements AdapterView.OnItemSelectedListener
                }
                 categoryAdapter = new CustomList(getContext(), alpha2);
                 spinner2.setAdapter(categoryAdapter);
+                sp.hideProgressDialog();
+
             }
 
             @Override
@@ -462,7 +464,6 @@ public class Home extends Fragment implements AdapterView.OnItemSelectedListener
             @Override
             public void onResponse(Call<ArrayList<GetCountry>> call, Response<ArrayList<GetCountry>> response) {
                 Data = response.body();
-                sp.hideProgressDialog();
                 for (int i = 0; i < Data.size(); i++) {
                     alpha.add(response.body().get(i).getCountryName().toString() + "~" + response.body().get(i).getImageString().toString());
                     countryName.add(response.body().get(i).getCountryName().toString() + "~" + response.body().get(i).getCountryCode().toString() + "~" + response.body().get(i).getId().toString());
@@ -472,6 +473,7 @@ public class Home extends Fragment implements AdapterView.OnItemSelectedListener
                 countryAdapter = new CustomList(getContext(), alpha);
 
                 spinner.setAdapter(countryAdapter);
+
             }
 
             @Override
