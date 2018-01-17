@@ -103,7 +103,7 @@ public class MainDrawer extends AppCompatActivity implements NavigationView.OnNa
         navigationView.setNavigationItemSelectedListener(this);
         circledrawerimage = navigationView.getHeaderView(0).findViewById(R.id.circledrawerimage2);
         emailText = navigationView.getHeaderView(0).findViewById(R.id.textView2);
-        user = (User) sp.getPreferencesObject(MainDrawer.this);
+        user = (User)sp .getPreferencesObject(MainDrawer.this);
         if(!user.getProfilePhoto().equals("no image")){
         Picasso.with(this).load(user.getProfilePhoto()).into(circledrawerimage);}
         emailText.setText(user.getEmail());
@@ -334,6 +334,7 @@ public class MainDrawer extends AppCompatActivity implements NavigationView.OnNa
                 sp.removePreferences(MainDrawer.this, "profile");
                 sp.removePreferences(MainDrawer.this, "MyObject");
                 sp.removePreferences(MainDrawer.this, "token");
+                sp.removePreferences(MainDrawer.this,"sel_con");
 
                 intent = new Intent(MainDrawer.this, MainActivity.class);
                 startActivity(intent);

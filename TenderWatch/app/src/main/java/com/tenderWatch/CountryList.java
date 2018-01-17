@@ -57,7 +57,7 @@ public class CountryList extends AppCompatActivity {
     LinearLayout lltext, back,subscription;
     TextView txtSelectedContract;
     Intent intent;
-    String check,s;
+    String check,s,selCon;
     SharedPreference sp = new SharedPreference();
     ArrayList<String> a_country = new ArrayList<String>();
     ImageView imgClose;
@@ -85,14 +85,21 @@ public class CountryList extends AppCompatActivity {
         Intent show = getIntent();
         check = show.getStringExtra("check");
          s=show.getStringExtra("sub");
-        if (check == null) {
+        selCon=sp.getPreferences(CountryList.this,"sel_con");
+        if (check == null && selCon ==null) {
             CallContractorSignUp();
         }
-        if(s!=null){
+        if(selCon!=null){
+            txtSelectedContract.setText(selCon);
+            lltext.setVisibility(View.VISIBLE);
+            subscription.setVisibility(View.VISIBLE);
+
+        }
+        if(s==null){
             subscription.setVisibility(View.VISIBLE);
             back.setVisibility(View.GONE);
             txtSelectedContract.setVisibility(View.GONE);
-        }
+                    }
         sp.showProgressDialog(CountryList.this);
 
         mAPIService.getCountryData().enqueue(new Callback<ArrayList<GetCountry>>() {
@@ -177,27 +184,29 @@ public class CountryList extends AppCompatActivity {
         imgClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i=new Intent(CountryList.this, MainDrawer.class);
-                i.putExtra("nav_sub","true");
-                startActivity(i);
+                onBackPressed();
+//                Intent i=new Intent(CountryList.this, MainDrawer.class);
+//                i.putExtra("nav_sub","true");
+//                startActivity(i);
             }
         });
 
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                intent = new Intent(CountryList.this, SignUp.class);
-                countryList.clear();
-                alpha2.clear();
-                list.clear();
-                alpha.clear();
-                intent.putExtra("Country", a_country);
-                adapter.setItemSelected(pos);
-                countryList.clear();
-                alpha2.clear();
-                list.clear();
-                alpha.clear();
-                setResult(Activity.RESULT_OK, intent);
+                onBackPressed();;
+//                intent = new Intent(CountryList.this, SignUp.class);
+//                countryList.clear();
+//                alpha2.clear();
+//                list.clear();
+//                alpha.clear();
+//                intent.putExtra("Country", a_country);
+//                adapter.setItemSelected(pos);
+//                countryList.clear();
+//                alpha2.clear();
+//                list.clear();
+//                alpha.clear();
+//                setResult(Activity.RESULT_OK, intent);
             }
         });
 
@@ -256,6 +265,7 @@ public class CountryList extends AppCompatActivity {
                             intent = new Intent(CountryList.this, SignUp.class);
                             intent.putExtra("sub",s);
                             intent.putExtra("Country", a_country);
+
                             adapter.setItemSelected(pos);
                             countryList.clear();
                             alpha2.clear();
@@ -271,6 +281,8 @@ public class CountryList extends AppCompatActivity {
                     intent.putExtra("sub",s);
                     intent.putExtra("CountryAtContractor", a_countryID);
                     intent.putExtra("Country", a_country);
+                    intent.putExtra("selectedCon","true");
+
                     intent.putExtra("version", txtSelectedContract.getText().toString());
                     adapter.setItemSelected(pos);
                     countryList.clear();
@@ -311,12 +323,15 @@ public class CountryList extends AppCompatActivity {
     }
 
     private void CallContractorSignUp() {
+
         final Dialog dialog = new Dialog(CountryList.this);
         dialog.setContentView(R.layout.select_contract);
         lltext.setVisibility(View.VISIBLE);
         final TextView txtTrial = (TextView) dialog.findViewById(R.id.txt_trial);
         TextView txtMonth = (TextView) dialog.findViewById(R.id.txt_month);
         TextView txtYear = (TextView) dialog.findViewById(R.id.txt_year);
+
+
         if(s!=null){
             txtTrial.setVisibility(View.GONE);
         }
@@ -331,6 +346,7 @@ public class CountryList extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 txtSelectedContract.setText("$15 / month");
+                sp.setPreferences(CountryList.this,"sel_con","$15 / month");
                 dialog.dismiss();
             }
         });
@@ -338,6 +354,7 @@ public class CountryList extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 txtSelectedContract.setText("$120 / year");
+                sp.setPreferences(CountryList.this,"sel_con","$120 / year");
                 dialog.dismiss();
             }
         });

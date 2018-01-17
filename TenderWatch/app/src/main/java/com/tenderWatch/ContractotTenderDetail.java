@@ -282,6 +282,8 @@ public class ContractotTenderDetail extends AppCompatActivity {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                     Log.i(TAG, "post submitted to API." + response);
+                    Intent intent = new Intent(ContractotTenderDetail.this,MainDrawer.class);
+                    startActivity(intent);
                 }
 
                 @Override

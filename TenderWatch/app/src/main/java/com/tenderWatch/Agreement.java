@@ -207,7 +207,19 @@ public class Agreement extends AppCompatActivity implements View.OnClickListener
     private void SignUpPost() {
         if (signUp.getAlpha() == 1) {
             if (sp.getPreferences(Agreement.this, "role").equals("contractor")) {
-                uploadContractor();
+              if(sp.getPreferences(Agreement.this,"sel_con") !=null){
+                  if(sp.getPreferences(Agreement.this,"sel_con").equals("$15 / month")){
+                      intent = new Intent(Agreement.this, PaymentSelection.class);
+                      intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+
+                      startActivity(intent);
+                  }else {
+                      uploadContractor();
+                  }
+              }else{
+                  uploadContractor();
+              }
+
             } else {
                 uploadImage();
 

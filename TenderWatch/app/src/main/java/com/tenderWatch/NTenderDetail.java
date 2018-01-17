@@ -58,7 +58,7 @@ public class NTenderDetail extends AppCompatActivity {
 
     TextView lblClientDetail,tenderTitle,Country,Category,ExpDay,Description,City,Contact,LandLine,Email,Address;
     RelativeLayout rlEmail,rlContact,rlLandline,rlAddress;
-    Button removeTender,editTender;
+    Button removeTender,editTender,btnInterestedTender;
     SharedPreference sp=new SharedPreference();
     String sender;
     @Override
@@ -97,7 +97,14 @@ public class NTenderDetail extends AppCompatActivity {
         imagetender=(ImageView) findViewById(R.id.preview_tender_image);
         lblClientDetail=(TextView) findViewById(R.id.lbl_clientDetail);
         catFlag=(ImageView) findViewById(R.id.preview_catflag_image);
+        btnInterestedTender=(Button) findViewById(R.id.btn_interested_tender);
 
+        btnInterestedTender.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CallInterestedApi();
+            }
+        });
         lblClientDetail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -225,6 +232,23 @@ public class NTenderDetail extends AppCompatActivity {
             Address.setText(object.getAddress().toString());
         }
         flag3=(ImageView) findViewById(R.id.preview_flag_image);
+    }
+
+    private void CallInterestedApi(){
+        String token = "Bearer " + sp.getPreferences(NTenderDetail.this, "token");
+        String tenderId=object.getId().toString();
+        mApiService.callInterested(token,tenderId).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                Intent intent = new Intent(NTenderDetail.this,MainDrawer.class);
+                startActivity(intent);
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.i(TAG, "post submitted to API." + t);
+            }
+        });
     }
 
     private void GetCategory() {

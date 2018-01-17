@@ -188,6 +188,8 @@ public class ClientDetail extends AppCompatActivity {
             public void onResponse(Call<ResponseRating> call, Response<ResponseRating> response) {
                 sp.hideProgressDialog();
                 Log.i(TAG, "post submitted to API." + response);
+                Intent intent = new Intent(ClientDetail.this,MainDrawer.class);
+                startActivity(intent);
             }
 
             @Override

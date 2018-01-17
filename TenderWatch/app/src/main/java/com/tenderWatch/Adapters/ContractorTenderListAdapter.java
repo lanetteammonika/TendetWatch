@@ -135,7 +135,6 @@ public class ContractorTenderListAdapter extends BaseAdapter {
             if (tenderList.get(position).getAmendRead().size() == 0) {
                 tender_image.setBorderColor(Color.RED);
                 tender_image.setBorderWidth(2);
-
             }
         }
         return convertView;

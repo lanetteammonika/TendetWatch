@@ -15,6 +15,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.tenderWatch.Adapters.ArrayAdapter;
+import com.tenderWatch.Drawer.MainDrawer;
 import com.tenderWatch.Models.CreateUser;
 import com.tenderWatch.Models.GetCategory;
 import com.tenderWatch.Retrofit.Api;
@@ -55,7 +56,7 @@ public class Category extends AppCompatActivity {
     SharedPreference sp = new SharedPreference();
     LinearLayout back;
     TextView txtContract;
-    String contract,s;
+    String contract,s,selCon,contractSelected;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,9 +73,11 @@ public class Category extends AppCompatActivity {
         lvCountry.clearChoices();
 
         Intent show = getIntent();
+        contractSelected=getIntent().getStringExtra("selectedCon");
 
         empNo = show.getStringArrayListExtra("CountryAtContractor");
         s=show.getStringExtra("sub");
+        selCon=sp.getPreferences(Category.this,"sel_con");
 
         countryListName = show.getStringArrayListExtra("Country");
         contract = show.getStringExtra("version");
@@ -185,10 +188,17 @@ public class Category extends AppCompatActivity {
                     if (items.size() > 1) {
                         ss.ShowDialog(Category.this, "During Free Trial Period you can choose only 1 category");
                     } else {
-                        if(s!=null){
-                            intent = new Intent(
-                                    Category.this, PaymentSelection.class);
-                        }else{
+                        if(s!=null && selCon==null){
+
+                            if(contractSelected!=null){
+                                intent = new Intent(
+                                        Category.this, MainDrawer.class);
+                            }else{
+                                intent = new Intent(
+                                        Category.this, PaymentSelection.class);
+                            }
+                            intent.putExtra("selCon","true");
+                        }                        else{
                             intent = new Intent(
                                     Category.this, Agreement.class);
                         }
@@ -199,8 +209,14 @@ public class Category extends AppCompatActivity {
                 } else {
                     user.setSubscribe(map);
                     if(s!=null){
-                        intent = new Intent(
-                                Category.this, PaymentSelection.class);
+                        if(contractSelected!=null){
+                            intent = new Intent(
+                                    Category.this, MainDrawer.class);
+                        }else{
+                            intent = new Intent(
+                                    Category.this, PaymentSelection.class);
+                        }
+                        intent.putExtra("selCon","true");
                     }else{
                     intent = new Intent(
                             Category.this, Agreement.class);}

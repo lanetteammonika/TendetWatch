@@ -3,6 +3,7 @@ package com.tenderWatch;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.media.session.MediaSession;
 import android.os.Bundle;
@@ -26,6 +27,8 @@ import com.google.android.gms.wallet.PaymentsClient;
 import com.google.android.gms.wallet.TransactionInfo;
 import com.google.android.gms.wallet.Wallet;
 import com.google.android.gms.wallet.WalletConstants;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.gson.Gson;
 import com.paypal.android.sdk.payments.PayPalConfiguration;
 import com.paypal.android.sdk.payments.PayPalPayment;
 import com.paypal.android.sdk.payments.PayPalService;
@@ -37,7 +40,11 @@ import com.stripe.android.model.BankAccount;
 import com.stripe.android.model.Card;
 import com.stripe.android.model.Token;
 import com.tenderWatch.Adapters.CustomList;
+import com.tenderWatch.Drawer.MainDrawer;
+import com.tenderWatch.Models.CreateUser;
 import com.tenderWatch.Models.GetCountry;
+import com.tenderWatch.Models.Register;
+import com.tenderWatch.Models.User;
 import com.tenderWatch.Retrofit.Api;
 import com.tenderWatch.Retrofit.ApiUtils;
 import com.tenderWatch.SharedPreference.PayPalConfig;
@@ -45,12 +52,17 @@ import com.tenderWatch.SharedPreference.SharedPreference;
 
 import org.json.JSONException;
 
+import java.io.File;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -76,7 +88,13 @@ public class PaymentSelection extends AppCompatActivity implements View.OnClickL
     LinearLayout country_home,llbankType;
     ListView spinner,spinnerbanktype;
     private ArrayAdapter<String> listAdapter ;
-    SharedPreference sp=new SharedPreference();
+    CreateUser user = new CreateUser();
+    private static final String TAG = PaymentSelection.class.getSimpleName();
+    MultipartBody.Part deviceId2, selections1, email1, password1, country1, deviceType1, subscribe1, contactNo1, occupation1, aboutMe1, role1, deviceId1, image1;
+    SharedPreference sp = new SharedPreference();
+    Intent intent;
+    private Api mAPIService;
+    String selCon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,6 +108,8 @@ public class PaymentSelection extends AppCompatActivity implements View.OnClickL
         btnCreditCard.setOnClickListener(this);
         btnGooglePay.setOnClickListener(this);
         btnBank.setOnClickListener(this);
+        mAPIService= ApiUtils.getAPIService();
+        selCon=getIntent().getStringExtra("selCon");
         Intent intent = new Intent(this, PayPalService.class);
         mApiService= ApiUtils.getAPIService();
 
@@ -111,6 +131,7 @@ public class PaymentSelection extends AppCompatActivity implements View.OnClickL
                 break;
             case R.id.payment_creditcard:
                 Intent i=new Intent(PaymentSelection.this,CardDemoDesign.class);
+                i.putExtra("selCon","true");
                 startActivity(i);
                 //call();
 //                curl https://api.stripe.com/v1/transfers \
@@ -135,26 +156,106 @@ public class PaymentSelection extends AppCompatActivity implements View.OnClickL
                 break;
             case R.id.payment_bank:
 
-                Stripe stripe = new Stripe(PaymentSelection.this);
-                stripe.setDefaultPublishableKey("pk_test_mjxYxMlj4K2WZfR6TwlHdIXW");
-                BankAccount bankAccount = new BankAccount("000123456789", "US", "usd", "110000000");
-                stripe.createBankAccountToken(bankAccount, new TokenCallback() {
-                    @Override
-                    public void onError(Exception error) {
-                        Log.e("Stripe Error", error.getMessage());
-                    }
-
-                    @Override
-                    public void onSuccess(com.stripe.android.model.Token token) {
-                        Log.e("Bank Token", token.getId());
-                        token.getBankAccount();
-
-                    }
-                });
-                //GetBankDetail();
+//                Stripe stripe = new Stripe(PaymentSelection.this);
+//                stripe.setDefaultPublishableKey("pk_test_mjxYxMlj4K2WZfR6TwlHdIXW");
+//                BankAccount bankAccount = new BankAccount("000123456789", "US", "usd", "110000000");
+//                stripe.createBankAccountToken(bankAccount, new TokenCallback() {
+//                    @Override
+//                    public void onError(Exception error) {
+//                        Log.e("Stripe Error", error.getMessage());
+//                    }
+//
+//                    @Override
+//                    public void onSuccess(com.stripe.android.model.Token token) {
+//                        Log.e("Bank Token", token.getId());
+//                        token.getBankAccount();
+//
+//                    }
+//                });
+                GetBankDetail();
                 break;
         }
     }
+
+
+    private void uploadContractor() {
+        final ProgressDialog progressDialog;
+        progressDialog = new ProgressDialog(PaymentSelection.this);
+        progressDialog.setMessage(getString(R.string.string_title_upload_progressbar_));
+        progressDialog.show();
+
+        String email = user.getEmail().toString();
+        String password = user.getPassword().toString();
+        String country = user.getCountry().toString();
+        String contact = user.getContactNo().toString();
+        String occupation = user.getOccupation().toString();
+        String aboutMe = user.getAboutMe().toString();
+        String role = user.getRole().toString();
+        String deviceId = FirebaseInstanceId.getInstance().getToken();
+        String selections = String.valueOf(user.getSelections());
+        HashMap<String, ArrayList<String>> subscribe = user.getSubscribe();
+        String[] device = new String[1];
+
+        File file1 = user.getProfilePhoto();
+        RequestBody requestFile;
+        if (user.getProfilePhoto() != null) {
+            requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file1);
+            image1 = MultipartBody.Part.createFormData("image", file1.getName(), requestFile);
+
+        } else {
+            image1 = MultipartBody.Part.createFormData("image", "");
+
+        }
+        email1 = MultipartBody.Part.createFormData("email", email);
+        password1 = MultipartBody.Part.createFormData("password", password);
+        country1 = MultipartBody.Part.createFormData("country", country);
+        contactNo1 = MultipartBody.Part.createFormData("contactNo", contact);
+        occupation1 = MultipartBody.Part.createFormData("occupation", occupation);
+        aboutMe1 = MultipartBody.Part.createFormData("aboutMe", aboutMe);
+        role1 = MultipartBody.Part.createFormData("role", role);
+        deviceId1 = MultipartBody.Part.createFormData("androidDeviceId", deviceId);
+        deviceId2 = MultipartBody.Part.createFormData("deviceId", "");
+        subscribe1 = MultipartBody.Part.createFormData("subscribe", selections);
+        selections1 = MultipartBody.Part.createFormData("selections", new Gson().toJson(subscribe));
+
+        Call<Register> resultCall = mAPIService.uploadContractor(email1, password1, country1, contactNo1, occupation1, aboutMe1, role1, deviceId1, image1, subscribe1, selections1);
+        sp.showProgressDialog(PaymentSelection.this);
+
+        resultCall.enqueue(new Callback<Register>() {
+            @Override
+            public void onResponse(Call<Register> call, Response<Register> response) {
+                Log.i(TAG, "response register-->");
+                sp.hideProgressDialog();
+                if (response.isSuccessful()) {
+                    ///String role = sp.getPreferences(Agreement.this, "role");
+                    Gson gson = new Gson();
+                    String jsonString = gson.toJson(user);
+                    User u1 = response.body().getUser();
+                    sp.setPreferencesObject(PaymentSelection.this, u1);
+                    sp.setPreferences(PaymentSelection.this, "token", response.body().getToken());
+                    User u2 = (User) sp.getPreferencesObject(PaymentSelection.this);
+                    String t = sp.getPreferences(PaymentSelection.this, "token");
+
+                    intent = new Intent(PaymentSelection.this, MainDrawer.class);
+                    intent.putExtra("data", jsonString);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+
+                    startActivity(intent);
+                    Log.i(TAG, "post submitted to API." + response.body().toString());
+                } else {
+                    sp.ShowDialog(PaymentSelection.this, response.errorBody().source().toString().split("\"")[3]);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Register> call, Throwable t) {
+                Log.i(TAG, "error register-->");
+                sp.ShowDialog(PaymentSelection.this, "Server is down. Come back later!!");
+            }
+        });
+
+    }
+
 
     private void GetBankDetail() {
         final Dialog dialog = new Dialog(PaymentSelection.this);
@@ -168,12 +269,26 @@ public class PaymentSelection extends AppCompatActivity implements View.OnClickL
         up_arrow2=(ImageView) dialog.findViewById(R.id.bank_up_arrow2);
         spinnerbanktype=(ListView) dialog.findViewById(R.id.spinner4);
         llbankType=(LinearLayout) dialog.findViewById(R.id.bank_type);
+        Button save=(Button) dialog.findViewById(R.id.btn_Save);
+
         String[] planets = new String[] { "Individual" ,"Company"};
         ArrayList<String> planetList = new ArrayList<String>();
         planetList.addAll( Arrays.asList(planets) );
         // Create ArrayAdapter using the planet list.
         listAdapter = new ArrayAdapter<String>(this, R.layout.simplerow, planetList);
         sp.showProgressDialog(PaymentSelection.this);
+
+        save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(selCon != null){
+                    uploadContractor();
+                }else{
+                    intent=new Intent(PaymentSelection.this,MainDrawer.class);
+                    startActivity(intent);
+                }
+            }
+        });
 
         mApiService.getCountryData().enqueue(new Callback<ArrayList<GetCountry>>() {
             @Override
@@ -202,7 +317,7 @@ public class PaymentSelection extends AppCompatActivity implements View.OnClickL
             @Override
             public void onClick(View v) {
                 country_home.setVisibility(View.GONE);
-                up_arrow.setVisibility(View.INVISIBLE);
+                up_arrow.setVisibility(View.GONE);
                 down_arrow.setVisibility(View.VISIBLE);
             }
         });
@@ -213,7 +328,7 @@ public class PaymentSelection extends AppCompatActivity implements View.OnClickL
             public void onClick(View v) {
                 country_home.setVisibility(View.VISIBLE);
                 up_arrow.setVisibility(View.VISIBLE);
-                down_arrow.setVisibility(View.INVISIBLE);
+                down_arrow.setVisibility(View.GONE);
             }
         });
 
@@ -221,8 +336,10 @@ public class PaymentSelection extends AppCompatActivity implements View.OnClickL
             @SuppressLint("NewApi")
             @Override
             public void onClick(View v) {
+                llbankType.setVisibility(View.GONE);
                 down_arrow2.setVisibility(View.VISIBLE);
                 down_arrow.setVisibility(View.VISIBLE);
+                up_arrow2.setVisibility(View.GONE);
             }
         });
 
@@ -230,9 +347,10 @@ public class PaymentSelection extends AppCompatActivity implements View.OnClickL
             @SuppressLint("NewApi")
             @Override
             public void onClick(View v) {
+                country_home.setVisibility(View.GONE);
                 llbankType.setVisibility(View.VISIBLE);
                 up_arrow2.setVisibility(View.VISIBLE);
-                down_arrow2.setVisibility(View.INVISIBLE);
+                down_arrow2.setVisibility(View.GONE);
             }
         });
         dialog.show();
@@ -251,6 +369,9 @@ public class PaymentSelection extends AppCompatActivity implements View.OnClickL
                     @Override
                     public void onSuccess(com.stripe.android.model.Token token) {
                         Log.e("Bank Token", token.getId());
+                        Intent intent = new Intent(PaymentSelection.this, MainDrawer.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
                         token.getBankAccount();
                     }
                 }
@@ -322,6 +443,12 @@ public class PaymentSelection extends AppCompatActivity implements View.OnClickL
                 case Activity.RESULT_OK:
                     PaymentData paymentData = PaymentData.getFromIntent(data);
                     String token = paymentData.getPaymentMethodToken().getToken();
+                    if(selCon != null){
+                        uploadContractor();
+                    }else{
+                        intent=new Intent(PaymentSelection.this,MainDrawer.class);
+                        startActivity(intent);
+                    }
                     break;
                 case Activity.RESULT_CANCELED:
                     break;
@@ -351,9 +478,18 @@ public class PaymentSelection extends AppCompatActivity implements View.OnClickL
                         Log.i("paymentExample", paymentDetails);
 
                         //Starting a new activity for the payment details and also putting the payment details with intent
-                        startActivity(new Intent(this, ConfirmationActivity.class)
-                                .putExtra("PaymentDetails", paymentDetails)
-                                .putExtra("PaymentAmount", 5));
+                         if(selCon != null){
+                             uploadContractor();
+                         }else{
+                             intent=new Intent(PaymentSelection.this,MainDrawer.class);
+                             startActivity(intent);
+                         }
+
+
+//                        uploadContractor();
+//                        startActivity(new Intent(this, ConfirmationActivity.class)
+//                                .putExtra("PaymentDetails", paymentDetails)
+//                                .putExtra("PaymentAmount", 5));
 
                     } catch (JSONException e) {
                         Log.e("paymentExample", "an extremely unlikely failure occurred: ", e);
