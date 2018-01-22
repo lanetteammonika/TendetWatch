@@ -54,9 +54,9 @@ public class CustomList extends BaseAdapter{
         TextView txtCountryName=(TextView) convertView.findViewById(R.id.name);
         ImageView flag_img=(ImageView) convertView.findViewById(R.id.flag_img);
 
-        txtCountryName.setText(countryNameList.get(position).toString().split("~")[0]);
+        txtCountryName.setText(countryNameList.get(position).split("~")[0]);
 
-        Bitmap flag1 = StringToBitMap(countryNameList.get(position).toString().split("~")[1]);
+        Bitmap flag1 = StringToBitMap(countryNameList.get(position).split("~")[1]);
         flag_img.setImageBitmap(flag1);
 
         return convertView;

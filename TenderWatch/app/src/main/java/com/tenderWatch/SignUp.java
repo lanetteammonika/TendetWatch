@@ -169,7 +169,7 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener {
     }
 
     private void CheckValidation() {
-        if (!mobileNo.getText().toString().isEmpty() && !occupation.getText().toString().isEmpty()) {
+        if (!mobileNo.getText().toString().isEmpty() ) {
             if (mobileNo.getText().toString().split("-")[1].length() < 9) {
                 sp.ShowDialog(SignUp.this, "Enter Mobiile number up to 9 digit");
             } else {
@@ -183,15 +183,16 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener {
     private void SendData() {
         String country1 = country.getText().toString();
         String mobile = mobileNo.getText().toString();
-        String occupation1 = occupation.getText().toString();
+        String occupation1 = occupation.getText().toString() != "" ? occupation.getText().toString() : "";
         String deviceId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
         String role = sp.getPreferences(SignUp.this, "role");
-
+        String aboutMe2=aboutMe.getText().toString().equals("About Me") ? aboutMe.getText().toString() : "";
         user.setCountry(country1);
         user.setContactNo(mobile);
         user.setOccupation(occupation1);
         user.setDeviceId(deviceId);
         user.setRole(role);
+        user.setAboutMe(aboutMe2);
 
         if (sp.getPreferences(SignUp.this, "role").equals("contractor")) {
             intent = new Intent(
@@ -299,11 +300,9 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener {
                             if (txtaboutMe.equals("About Me")) {
                                 aboutMe.setText(txtaboutMe);
                             } else {
-                                if (txtaboutMe.length() > 10) {
-                                    aboutMe.setText(txtaboutMe.substring(0, 10) + "....");
-                                } else {
+
                                     aboutMe.setText(txtaboutMe);
-                                }
+
                             }
                             user.setAboutMe(txtaboutMe);
                         }

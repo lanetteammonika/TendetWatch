@@ -58,6 +58,9 @@ public class User {
     @SerializedName("review")
     @Expose
     private Review review;
+    @SerializedName("invoiceURL")
+    @Expose
+    private String invoiceURL;
 
     public Boolean getIsActive() {
         return isActive;
@@ -185,6 +188,14 @@ public class User {
 
     public void setReview(Review review) {
         this.review = review;
+    }
+
+    public String getInvoiceURL() {
+        return invoiceURL;
+    }
+
+    public void setInvoiceURL(String invoiceURL) {
+        this.invoiceURL = invoiceURL;
     }
 
 }

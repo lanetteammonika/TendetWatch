@@ -60,7 +60,6 @@ public class MainDrawer extends AppCompatActivity implements NavigationView.OnNa
     User user;
     TextView emailText;
     NavigationView navigationView;
-    Menu menu;
     static Boolean display = false;
 
     @Override
@@ -96,6 +95,8 @@ public class MainDrawer extends AppCompatActivity implements NavigationView.OnNa
             }
         };
 
+
+
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
@@ -118,14 +119,12 @@ public class MainDrawer extends AppCompatActivity implements NavigationView.OnNa
             displaySelectedScreen(R.id.nav_home);
         }
         GetNotification();
-
     }
 
     boolean doubleBackToExitPressedOnce = false;
 
     @Override
     public void onBackPressed() {
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
@@ -308,7 +307,6 @@ public class MainDrawer extends AppCompatActivity implements NavigationView.OnNa
         if (fragment != null) {
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             ft.replace(R.id.content_frame, fragment);
-
             ft.commit();
         }
 

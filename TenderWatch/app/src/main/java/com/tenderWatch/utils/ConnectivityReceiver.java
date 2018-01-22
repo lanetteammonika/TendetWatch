@@ -32,6 +32,7 @@ public class ConnectivityReceiver
         }
     }
 
+
     public static boolean isConnected(Context context) {
         ConnectivityManager
                 cm = (ConnectivityManager) context

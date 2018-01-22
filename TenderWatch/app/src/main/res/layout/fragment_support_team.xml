@@ -92,13 +92,11 @@
 
             android:textColor="@color/colorBlack"/>
 
-        <EditText
+        <TextView
 
             android:layout_width="match_parent"
 
             android:layout_height="wrap_content"
-
-            android:hint="Email"
 
             android:textSize="@dimen/text_20"
 
@@ -109,8 +107,6 @@
             android:text="support@tenderwatch.com"
 
             android:textColor="@color/colorGray"
-
-            android:focusable="false"
 
             />
 

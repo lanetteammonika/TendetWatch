@@ -276,7 +276,6 @@ public class SignUpSelection extends AppCompatActivity implements View.OnClickLi
         fb = (Button) findViewById(R.id.fbsignup);
         loginButton = (LoginButton) findViewById(R.id.signupfb_button);
         mAPIService = ApiUtils.getAPIService();
-
         FacebookSdk.sdkInitialize(getApplicationContext());
         callbackManager = CallbackManager.Factory.create();
         btnSignIn = (SignInButton) findViewById(R.id.signupgoogle_button);

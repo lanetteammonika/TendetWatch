@@ -161,7 +161,7 @@ public class TenderList extends Fragment {
                     long seconds = diff / 1000;
                     long minutes = seconds / 60;
                     long hours = minutes / 60;
-                    long days = (hours / 24) + 1;
+                    long days = (hours / 24) ;
 
                     if (days == 0) {
                         sp.ShowDialog(getActivity(), "Tender is not Activated.");

@@ -123,7 +123,7 @@ public class TenderListAdapter extends BaseAdapter {
         long seconds = diff / 1000;
         long minutes = seconds / 60;
         long hours = minutes / 60;
-        long days = (hours / 24) + 1;
+        long days = (hours / 24) ;
 
         if(days==0 || days<0){
             stampRemove.setVisibility(View.VISIBLE);
@@ -132,8 +132,8 @@ public class TenderListAdapter extends BaseAdapter {
             txtTenderExpDate.setText(days+" days");
         }
         Log.d("days", "" + days);
-        txtTenderName.setText(tenderList.get(position).getTenderName().toString());
-        txtTenderTitle.setText(tenderList.get(position).getTenderName().toString());
+        txtTenderName.setText(tenderList.get(position).getTenderName());
+        txtTenderTitle.setText(tenderList.get(position).getTenderName());
         User user= (User) sp.getPreferencesObject(context);
         if(tenderList.get(position).getFavorite().size()>0){
             for(int i=0;i<tenderList.get(position).getFavorite().size();i++){

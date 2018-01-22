@@ -116,7 +116,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btnContractor = (Button) findViewById(R.id.btn_contractor);
         btnClient = (Button) findViewById(R.id.btn_client);
         aboutapp = (TextView) findViewById(R.id.aboutapp);
-
     }
 
     @Override

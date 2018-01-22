@@ -55,6 +55,7 @@ public class SharedPreference {
         User obj = gson.fromJson(json, User.class);
         return obj;
     }
+    //
     /**
      * This method is used to get shared object
      * @param context Application context
@@ -62,7 +63,6 @@ public class SharedPreference {
      * @return return value, for default "" asign.
      */
     public static String getPreferences(Context context, String key) {
-
         SharedPreferences appSharedPrefs = PreferenceManager
                 .getDefaultSharedPreferences(context);
 

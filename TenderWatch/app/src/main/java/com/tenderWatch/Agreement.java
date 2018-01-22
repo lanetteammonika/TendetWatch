@@ -156,8 +156,15 @@ public class Agreement extends AppCompatActivity implements View.OnClickListener
         File file1 = user.getProfilePhoto();
         String regId = FirebaseInstanceId.getInstance().getToken();
 
-        RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file1);
+        RequestBody requestFile;
+        if (user.getProfilePhoto() != null) {
+            requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file1);
+            image1 = MultipartBody.Part.createFormData("image", file1.getName(), requestFile);
 
+        } else {
+            image1 = MultipartBody.Part.createFormData("image", "");
+
+        }
         email1 = MultipartBody.Part.createFormData("email", email);
         password1 = MultipartBody.Part.createFormData("password", password);
         country1 = MultipartBody.Part.createFormData("country", country);
@@ -166,7 +173,6 @@ public class Agreement extends AppCompatActivity implements View.OnClickListener
         aboutMe1 = MultipartBody.Part.createFormData("aboutMe", aboutMe);
         role1 = MultipartBody.Part.createFormData("role", role);
         deviceId1 = MultipartBody.Part.createFormData("androidDeviceId", regId);
-        image1 = MultipartBody.Part.createFormData("image", file1.getName(), requestFile);
         if (image1 == null) {
             image1 = MultipartBody.Part.createFormData("image", "");
         }
@@ -295,7 +301,7 @@ public class Agreement extends AppCompatActivity implements View.OnClickListener
                     sp.ShowDialog(Agreement.this, response.errorBody().source().toString().split("\"")[3]);
                 }
             }
-
+//-resloved bug regarding signup and login in android given by client-changes some design of listview in
             @Override
             public void onFailure(Call<Register> call, Throwable t) {
                 Log.i(TAG, "error register-->");

@@ -250,6 +250,7 @@ public class Home extends Fragment implements AdapterView.OnItemSelectedListener
                             follow = "false";
                         }
                     });
+
                     email2.addTextChangedListener(new TextWatcher() {
                         @Override
                         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -267,6 +268,7 @@ public class Home extends Fragment implements AdapterView.OnItemSelectedListener
 
                         }
                     });
+
                     mobile.addTextChangedListener(new TextWatcher() {
                         @Override
                         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -344,9 +346,7 @@ public class Home extends Fragment implements AdapterView.OnItemSelectedListener
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String id1 = categoryName.get(position).split("~")[1];
-
                 categoryId1 = MultipartBody.Part.createFormData("category", id1);
-
                 categoryname = alpha2.get(position).split("~")[0];
                 category.setText(categoryname);
                 category_home.setVisibility(View.GONE);
@@ -441,8 +441,8 @@ public class Home extends Fragment implements AdapterView.OnItemSelectedListener
                 Data2 = response.body();
 
                 for (int i = 0; i < Data2.size(); i++) {
-                    alpha2.add(response.body().get(i).getCategoryName().toString() + "~" + response.body().get(i).getImgString().toString());
-                    categoryName.add(response.body().get(i).getCategoryName().toString() + "~" + response.body().get(i).getId().toString());
+                    alpha2.add(response.body().get(i).getCategoryName() + "~" + response.body().get(i).getImgString());
+                    categoryName.add(response.body().get(i).getCategoryName() + "~" + response.body().get(i).getId());
                }
                 categoryAdapter = new CustomList(getContext(), alpha2);
                 spinner2.setAdapter(categoryAdapter);
@@ -465,8 +465,8 @@ public class Home extends Fragment implements AdapterView.OnItemSelectedListener
             public void onResponse(Call<ArrayList<GetCountry>> call, Response<ArrayList<GetCountry>> response) {
                 Data = response.body();
                 for (int i = 0; i < Data.size(); i++) {
-                    alpha.add(response.body().get(i).getCountryName().toString() + "~" + response.body().get(i).getImageString().toString());
-                    countryName.add(response.body().get(i).getCountryName().toString() + "~" + response.body().get(i).getCountryCode().toString() + "~" + response.body().get(i).getId().toString());
+                    alpha.add(response.body().get(i).getCountryName() + "~" + response.body().get(i).getImageString());
+                    countryName.add(response.body().get(i).getCountryName() + "~" + response.body().get(i).getCountryCode() + "~" + response.body().get(i).getId());
                 }
                 Collections.sort(alpha);
                 Collections.sort(countryName);

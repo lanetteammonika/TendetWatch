@@ -60,15 +60,16 @@ public class ContractotTenderDetail extends AppCompatActivity {
     private static final String TAG = PreviewTenderDetail.class.getSimpleName();
     private List Data, Data2;
     AllContractorTender object;
-    String day,flag,countryName1,categoryName1,catFlagimg;
-    Bitmap Bflag,catBflag;
-    ImageView flag3,imagetender,catFlag;
+    String day, flag, countryName1, categoryName1, catFlagimg;
+    Bitmap Bflag, catBflag;
+    ImageView flag3, imagetender, catFlag;
 
-    TextView lblClientDetail,tenderTitle,Country,Category,ExpDay,Description,City,Contact,LandLine,Email,Address;
-    RelativeLayout rlEmail,rlContact,rlLandline,rlAddress;
-    Button removeTender,btnInterestedTender;
-    SharedPreference sp=new SharedPreference();
+    TextView lblClientDetail, tenderTitle, Country, Category, ExpDay, Description, City, Contact, LandLine, Email, Address;
+    RelativeLayout rlEmail, rlContact, rlLandline, rlAddress;
+    Button removeTender, btnInterestedTender;
+    SharedPreference sp = new SharedPreference();
     String sender;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,57 +81,57 @@ public class ContractotTenderDetail extends AppCompatActivity {
         toolbar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i=new Intent(ContractotTenderDetail.this, MainDrawer.class);
-                i.putExtra("nav_not","true");
+                Intent i = new Intent(ContractotTenderDetail.this, MainDrawer.class);
+                i.putExtra("nav_not", "true");
                 startActivity(i);
             }
         });
         setTitle("Tender Detail");
-        mApiService= ApiUtils.getAPIService();
-        tenderTitle=(TextView) findViewById(R.id.preview_tender_title);
-        Country=(TextView) findViewById(R.id.preview_country_name);
-        Category=(TextView) findViewById(R.id.preview_category);
-        ExpDay=(TextView) findViewById(R.id.preview_exp);
-        Description=(TextView) findViewById(R.id.preview_description);
-        City=(TextView) findViewById(R.id.preview_tender_city);
-        Contact=(TextView) findViewById(R.id.preview_tender_mobile);
-        LandLine=(TextView) findViewById(R.id.preview_tender_landline);
-        Email=(TextView) findViewById(R.id.preview_tender_email);
-        Address=(TextView) findViewById(R.id.preview_tender_address);
-        rlAddress=(RelativeLayout) findViewById(R.id.rl_preview_address);
-        rlContact=(RelativeLayout) findViewById(R.id.rl_preview_mobile);
-        rlLandline=(RelativeLayout) findViewById(R.id.rl_preview_landline);
-        rlEmail=(RelativeLayout) findViewById(R.id.rl_preview_email);
-        removeTender=(Button) findViewById(R.id.remove_tender);
-        btnInterestedTender=(Button) findViewById(R.id.btn_interested_tender);
-        imagetender=(ImageView) findViewById(R.id.preview_tender_image);
-        lblClientDetail=(TextView) findViewById(R.id.lbl_clientDetail);
-        catFlag=(ImageView) findViewById(R.id.preview_catflag_image);
+        mApiService = ApiUtils.getAPIService();
+        tenderTitle = (TextView) findViewById(R.id.preview_tender_title);
+        Country = (TextView) findViewById(R.id.preview_country_name);
+        Category = (TextView) findViewById(R.id.preview_category);
+        ExpDay = (TextView) findViewById(R.id.preview_exp);
+        Description = (TextView) findViewById(R.id.preview_description);
+        City = (TextView) findViewById(R.id.preview_tender_city);
+        Contact = (TextView) findViewById(R.id.preview_tender_mobile);
+        LandLine = (TextView) findViewById(R.id.preview_tender_landline);
+        Email = (TextView) findViewById(R.id.preview_tender_email);
+        Address = (TextView) findViewById(R.id.preview_tender_address);
+        rlAddress = (RelativeLayout) findViewById(R.id.rl_preview_address);
+        rlContact = (RelativeLayout) findViewById(R.id.rl_preview_mobile);
+        rlLandline = (RelativeLayout) findViewById(R.id.rl_preview_landline);
+        rlEmail = (RelativeLayout) findViewById(R.id.rl_preview_email);
+        removeTender = (Button) findViewById(R.id.remove_tender);
+        btnInterestedTender = (Button) findViewById(R.id.btn_interested_tender);
+        imagetender = (ImageView) findViewById(R.id.preview_tender_image);
+        lblClientDetail = (TextView) findViewById(R.id.lbl_clientDetail);
+        catFlag = (ImageView) findViewById(R.id.preview_catflag_image);
 
         lblClientDetail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Gson gson = new Gson();
                 String jsonString = gson.toJson(object);
-                Intent intent = new Intent(ContractotTenderDetail.this,ClientDetail.class);
-                intent.putExtra("data",jsonString);
-                intent.putExtra("sender",sender);
+                Intent intent = new Intent(ContractotTenderDetail.this, ClientDetail.class);
+                intent.putExtra("data", jsonString);
+                intent.putExtra("sender", sender);
                 startActivity(intent);
             }
         });
 
-        String json=getIntent().getStringExtra("data");
-        sender=getIntent().getStringExtra("sender");
-        String amend=getIntent().getStringExtra("amended");
-        if(amend != null){
-            sp.ShowDialog(ContractotTenderDetail.this,"Tender has been amended by client");
+        String json = getIntent().getStringExtra("data");
+        sender = getIntent().getStringExtra("sender");
+        String amend = getIntent().getStringExtra("amended");
+        if (amend != null) {
+            sp.ShowDialog(ContractotTenderDetail.this, "Tender has been amended by client");
         }
-        Gson gson=new Gson();
-        object=gson.fromJson(json, AllContractorTender.class);
+        Gson gson = new Gson();
+        object = gson.fromJson(json, AllContractorTender.class);
         btnInterestedTender.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-              CallInterestedApi();
+                CallInterestedApi();
             }
         });
         Calendar c = Calendar.getInstance();
@@ -142,7 +143,7 @@ public class ContractotTenderDetail extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             formattedDate = df.format(c.getTime());
         }
-        Date startDateValue = null,endDateValue = null;
+        Date startDateValue = null, endDateValue = null;
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 startDateValue = new SimpleDateFormat("yyyy-MM-dd").parse(formattedDate);
@@ -163,24 +164,24 @@ public class ContractotTenderDetail extends AppCompatActivity {
         long seconds = diff / 1000;
         long minutes = seconds / 60;
         long hours = minutes / 60;
-        long days = (hours / 24) + 1;
+        long days = (hours / 24) ;
         Log.d("days", "" + days);
         removeTender.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String token="Bearer "+sp.getPreferences(ContractotTenderDetail.this,"token");
-                String id=object.getId().toString();
-                mApiService.removeTender(token,id).enqueue(new Callback<ResponseBody>() {
+                String token = "Bearer " + sp.getPreferences(ContractotTenderDetail.this, "token");
+                String id = object.getId().toString();
+                mApiService.removeTender(token, id).enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                        Log.i(TAG,"response---"+response.body());
-                        Intent intent = new Intent(ContractotTenderDetail.this,ClientDrawer.class);
+                        Log.i(TAG, "response---" + response.body());
+                        Intent intent = new Intent(ContractotTenderDetail.this, ClientDrawer.class);
                         startActivity(intent);
                     }
 
                     @Override
                     public void onFailure(Call<ResponseBody> call, Throwable t) {
-                        Log.i(TAG,"response---"+t);
+                        Log.i(TAG, "response---" + t);
 
                     }
                 });
@@ -188,7 +189,7 @@ public class ContractotTenderDetail extends AppCompatActivity {
             }
         });
 
-        if(!object.getTenderPhoto().toString().equals("")){
+        if (!object.getTenderPhoto().toString().equals("")) {
             Picasso.with(ContractotTenderDetail.this)
                     .load(object.getTenderPhoto().toString())
                     .into(new Target() {
@@ -214,32 +215,33 @@ public class ContractotTenderDetail extends AppCompatActivity {
         GetAllCountry();
         tenderTitle.setText(object.getTenderName().toString());
 
-        ExpDay.setText(days+" days");
+        ExpDay.setText(days + " days");
         Description.setText(object.getDescription().toString());
         City.setText(object.getCity().toString());
-        if(object.getContactNo().toString().equals("")){
+        if (object.getContactNo().toString().equals("")) {
             rlContact.setVisibility(View.GONE);
-        }else{
-            Contact.setText(object.getContactNo().toString());}
+        } else {
+            Contact.setText(object.getContactNo().toString());
+        }
 
-        if(object.getLandlineNo().toString().equals("")){
+        if (object.getLandlineNo().toString().equals("")) {
             rlLandline.setVisibility(View.GONE);
-        }else{
+        } else {
             LandLine.setText(object.getLandlineNo().toString());
         }
 
-        if(object.getEmail().toString().equals("")){
+        if (object.getEmail().toString().equals("")) {
             rlEmail.setVisibility(View.GONE);
-        }else{
+        } else {
             Email.setText(object.getEmail().toString());
         }
 
-        if(object.getAddress().toString().equals("")){
+        if (object.getAddress().toString().equals("")) {
             rlAddress.setVisibility(View.GONE);
-        }else{
+        } else {
             Address.setText(object.getAddress().toString());
         }
-        flag3=(ImageView) findViewById(R.id.preview_flag_image);
+        flag3 = (ImageView) findViewById(R.id.preview_flag_image);
     }
 
     private void GetCategory() {
@@ -255,11 +257,11 @@ public class ContractotTenderDetail extends AppCompatActivity {
                     categoryName.add(response.body().get(i).getCategoryName().toString() + "~" + response.body().get(i).getId().toString());
                 }
                 for (int i = 0; i < Data2.size(); i++) {
-                    if(categoryName.get(i).split("~")[1].toString().equals(object.getCategory().toString())){
-                        categoryName1=response.body().get(i).getCategoryName().toString();
+                    if (categoryName.get(i).split("~")[1].toString().equals(object.getCategory().toString())) {
+                        categoryName1 = response.body().get(i).getCategoryName().toString();
                         Category.setText(categoryName1);
 
-                        catFlagimg=response.body().get(i).getImgString();
+                        catFlagimg = response.body().get(i).getImgString();
                         catBflag = StringToBitMap(catFlagimg);
                         catFlag.setImageBitmap(catBflag);
                         sp.hideProgressDialog();
@@ -275,23 +277,23 @@ public class ContractotTenderDetail extends AppCompatActivity {
         });
     }
 
-        private void CallInterestedApi(){
-            String token = "Bearer " + sp.getPreferences(ContractotTenderDetail.this, "token");
-            String tenderId=object.getId().toString();
-            mApiService.callInterested(token,tenderId).enqueue(new Callback<ResponseBody>() {
-                @Override
-                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                    Log.i(TAG, "post submitted to API." + response);
-                    Intent intent = new Intent(ContractotTenderDetail.this,MainDrawer.class);
-                    startActivity(intent);
-                }
+    private void CallInterestedApi() {
+        String token = "Bearer " + sp.getPreferences(ContractotTenderDetail.this, "token");
+        String tenderId = object.getId().toString();
+        mApiService.callInterested(token, tenderId).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                Log.i(TAG, "post submitted to API." + response);
+                Intent intent = new Intent(ContractotTenderDetail.this, MainDrawer.class);
+                startActivity(intent);
+            }
 
-                @Override
-                public void onFailure(Call<ResponseBody> call, Throwable t) {
-                    Log.i(TAG, "post submitted to API." + t);
-                }
-            });
-        }
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.i(TAG, "post submitted to API." + t);
+            }
+        });
+    }
 
 
     private void GetAllCountry() {
@@ -309,9 +311,9 @@ public class ContractotTenderDetail extends AppCompatActivity {
                 Collections.sort(alpha);
                 Collections.sort(countryName);
                 for (int i = 0; i < Data2.size(); i++) {
-                    if(countryName.get(i).split("~")[2].toString().equals(object.getCountry().toString())){
-                        flag=response.body().get(i).getImageString().toString();
-                        countryName1=response.body().get(i).getCountryName().toString();
+                    if (countryName.get(i).split("~")[2].toString().equals(object.getCountry().toString())) {
+                        flag = response.body().get(i).getImageString().toString();
+                        countryName1 = response.body().get(i).getCountryName().toString();
                         Country.setText(countryName1);
                         Bflag = StringToBitMap(flag);
                         flag3.setImageBitmap(Bflag);
@@ -346,6 +348,7 @@ public class ContractotTenderDetail extends AppCompatActivity {
             return null;
         }
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {

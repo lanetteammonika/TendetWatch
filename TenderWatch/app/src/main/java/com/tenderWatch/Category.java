@@ -208,6 +208,7 @@ public class Category extends AppCompatActivity {
                     }
                 } else {
                     user.setSubscribe(map);
+                    Log.v(TAG,"selected country and category----"+map);
                     if(s!=null){
                         if(contractSelected!=null){
                             intent = new Intent(

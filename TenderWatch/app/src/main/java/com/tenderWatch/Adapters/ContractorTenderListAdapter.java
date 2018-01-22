@@ -75,8 +75,8 @@ public class ContractorTenderListAdapter extends BaseAdapter {
         LinearLayout stampRemove = (LinearLayout) convertView.findViewById(R.id.stamp_remove);
         CircleImageView imgTrue = (CircleImageView) convertView.findViewById(R.id.tender_image3);
 
-        if (!tenderList.get(position).getTenderPhoto().toString().equals("no image")) {
-            Picasso.with(context).load(tenderList.get(position).getTenderPhoto().toString().toString()).into(tender_image);
+        if (!tenderList.get(position).getTenderPhoto().equals("no image")) {
+            Picasso.with(context).load(tenderList.get(position).getTenderPhoto()).into(tender_image);
         }
 
         Calendar c = Calendar.getInstance();
@@ -99,7 +99,7 @@ public class ContractorTenderListAdapter extends BaseAdapter {
         long seconds = diff / 1000;
         long minutes = seconds / 60;
         long hours = minutes / 60;
-        long days = (hours / 24) + 1;
+        long days = (hours / 24);
 
         if (days == 0) {
             stampRemove.setVisibility(View.VISIBLE);
@@ -108,8 +108,8 @@ public class ContractorTenderListAdapter extends BaseAdapter {
             txtTenderExpDate.setText(days + " days");
         }
         Log.d("days", "" + days);
-        txtTenderName.setText(tenderList.get(position).getTenderUploader().getEmail().toString());
-        txtTenderTitle.setText(tenderList.get(position).getEmail().toString());
+        txtTenderName.setText(tenderList.get(position).getTenderUploader().getEmail());
+        txtTenderTitle.setText(tenderList.get(position).getEmail());
         User user = (User) sp.getPreferencesObject(context);
         if (tenderList.get(position).getInterested().size() > 0) {
             for (int i = 0; i < tenderList.get(position).getInterested().size(); i++) {
@@ -127,7 +127,6 @@ public class ContractorTenderListAdapter extends BaseAdapter {
                     if (!tenderList.get(position).getAmendRead().contains(id)) {
                         tender_image.setBorderColor(Color.RED);
                         tender_image.setBorderWidth(2);
-
                     }
                 }
             }

@@ -203,7 +203,7 @@ public class EditProfile extends Fragment implements View.OnClickListener{
         String mobile = txtMobileNo.getText().toString();
         String occupation = txtOccupation.getText().toString();
         String about=txtaboutMe;
-        String Id=((User) user).getId().toString();
+        String Id=((User) user).getId();
 
 
         country1 = MultipartBody.Part.createFormData("country", country);
