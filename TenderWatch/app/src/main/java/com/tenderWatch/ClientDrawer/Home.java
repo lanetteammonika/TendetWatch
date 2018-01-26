@@ -391,7 +391,7 @@ public class Home extends Fragment implements AdapterView.OnItemSelectedListener
 
         startActivityForResult(chooserIntent, REQUEST_CODE_SELECT_PICTURE);
     }
-
+//*update:-* -completed favourite module,-add,remove tender from favourite
 
     private void CallApi() {
         String City=city.getText().toString();

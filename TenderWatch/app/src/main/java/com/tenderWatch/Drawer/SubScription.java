@@ -57,9 +57,9 @@ public class SubScription extends Fragment {
         user = (User) sp.getPreferencesObject(getActivity());
         String userId=user.getId();
 
-        mAPIServices.getUserDetail(token,userId).enqueue(new Callback<User>() {
+        mAPIServices.getSubscriptionDetails(token).enqueue(new Callback<SubScriptionResponse>() {
             @Override
-            public void onResponse(Call<User> call, Response<User> response) {
+            public void onResponse(Call<SubScriptionResponse> call, Response<SubScriptionResponse> response) {
                 Log.i(TAG, "post submitted to API." + response);
                 sp.hideProgressDialog();
                 url="http://docs.google.com/gview?embedded=true&url="+response.body().getInvoiceURL();
@@ -69,7 +69,7 @@ public class SubScription extends Fragment {
             }
 
             @Override
-            public void onFailure(Call<User> call, Throwable t) {
+            public void onFailure(Call<SubScriptionResponse> call, Throwable t) {
                 sp.hideProgressDialog();
                 Log.i(TAG, "post submitted to API." + t);
             }
@@ -113,25 +113,6 @@ public class SubScription extends Fragment {
             }
 
         });
-
-
-        // Other webview options
-        /*
-        webView.getSettings().setLoadWithOverviewMode(true);
-        webView.getSettings().setUseWideViewPort(true);
-        webView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
-        webView.setScrollbarFadingEnabled(false);
-        webView.getSettings().setBuiltInZoomControls(true);
-        */
-
-        /*
-         String summary = "<html><body>You scored <b>192</b> points.</body></html>";
-         webview.loadData(summary, "text/html", null);
-         */
-
-        //Load url in webview
-
-
 
     }
 }

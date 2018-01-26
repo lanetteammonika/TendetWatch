@@ -142,7 +142,7 @@ public class Agreement extends AppCompatActivity implements View.OnClickListener
          */
         final ProgressDialog progressDialog;
         progressDialog = new ProgressDialog(Agreement.this);
-        progressDialog.setMessage(getString(R.string.string_title_upload_progressbar_));
+        //progressDialog.setMessage(getString(R.string.string_title_upload_progressbar_));
         progressDialog.show();
 
         String email = user.getEmail().toString();
@@ -215,9 +215,9 @@ public class Agreement extends AppCompatActivity implements View.OnClickListener
             if (sp.getPreferences(Agreement.this, "role").equals("contractor")) {
               if(sp.getPreferences(Agreement.this,"sel_con") !=null){
                   if(sp.getPreferences(Agreement.this,"sel_con").equals("$15 / month")){
+                      uploadContractor();
                       intent = new Intent(Agreement.this, PaymentSelection.class);
                       intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-
                       startActivity(intent);
                   }else {
                       uploadContractor();
@@ -236,16 +236,16 @@ public class Agreement extends AppCompatActivity implements View.OnClickListener
     private void uploadContractor() {
         final ProgressDialog progressDialog;
         progressDialog = new ProgressDialog(Agreement.this);
-        progressDialog.setMessage(getString(R.string.string_title_upload_progressbar_));
+      //  progressDialog.setMessage(getString(R.string.string_title_upload_progressbar_));
         progressDialog.show();
 
-        String email = user.getEmail().toString();
-        String password = user.getPassword().toString();
-        String country = user.getCountry().toString();
-        String contact = user.getContactNo().toString();
-        String occupation = user.getOccupation().toString();
-        String aboutMe = user.getAboutMe().toString();
-        String role = user.getRole().toString();
+        String email = user.getEmail();
+        String password = user.getPassword();
+        String country = user.getCountry();
+        String contact = user.getContactNo();
+        String occupation = user.getOccupation();
+        String aboutMe = user.getAboutMe();
+        String role = user.getRole();
         String deviceId = FirebaseInstanceId.getInstance().getToken();
         String selections = String.valueOf(user.getSelections());
         HashMap<String, ArrayList<String>> subscribe = user.getSubscribe();
@@ -290,8 +290,11 @@ public class Agreement extends AppCompatActivity implements View.OnClickListener
                     sp.setPreferences(Agreement.this, "token", response.body().getToken());
                     User u2 = (User) sp.getPreferencesObject(Agreement.this);
                     String t = sp.getPreferences(Agreement.this, "token");
-
-                    intent = new Intent(Agreement.this, MainDrawer.class);
+                    if(sp.getPreferences(Agreement.this,"sel_con")!=null){
+                        intent = new Intent(Agreement.this, PaymentSelection.class);
+                    }else{
+                        intent = new Intent(Agreement.this, MainDrawer.class);
+                    }
                     intent.putExtra("data", jsonString);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
 

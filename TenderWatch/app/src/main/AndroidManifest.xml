@@ -109,9 +109,8 @@
             android:name=".NTenderDetail"
             android:label="@string/title_activity_client_detail"
             android:theme="@style/AppThemeAction" />
-        <activity android:name=".CardDemoDesign">
+        <activity android:name=".CardDemoDesign"></activity>
 
-        </activity>
         <receiver
             android:name=".ConnectivityReceiver"
             android:enabled="true">
@@ -119,6 +118,8 @@
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>
         </receiver>
+
+        <activity android:name=".BankList"></activity>
     </application>
 
 </manifest>

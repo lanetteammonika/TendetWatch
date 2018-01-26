@@ -86,8 +86,13 @@ public class CountryList extends AppCompatActivity {
         check = show.getStringExtra("check");
         s = show.getStringExtra("sub");
         selCon = sp.getPreferences(CountryList.this, "sel_con");
-        if (check == null && selCon == null) {
+        if (check == null ) {
             CallContractorSignUp();
+        }
+        else{
+            txtSelectedContract.setText(selCon);
+            lltext.setVisibility(View.VISIBLE);
+            subscription.setVisibility(View.VISIBLE);
         }
         if (selCon != null) {
             txtSelectedContract.setText(selCon);
@@ -276,7 +281,11 @@ public class CountryList extends AppCompatActivity {
 
                     }
                 } else {
-                    intent = new Intent(CountryList.this, Category.class);
+                    if(check!=null) {
+                        intent = new Intent(CountryList.this, SignUp.class);
+                    }else {
+                        intent = new Intent(CountryList.this, Category.class);
+                    }
                     intent.putExtra("sub", s);
                     intent.putExtra("CountryAtContractor", a_countryID);
                     intent.putExtra("Country", a_country);
@@ -346,6 +355,7 @@ public class CountryList extends AppCompatActivity {
             public void onClick(View v) {
                 txtSelectedContract.setText("$15 / month");
                 sp.setPreferences(CountryList.this, "sel_con", "$15 / month");
+                sp.setPreferences(CountryList.this,"payment","15");
                 dialog.dismiss();
             }
         });
@@ -354,6 +364,7 @@ public class CountryList extends AppCompatActivity {
             public void onClick(View v) {
                 txtSelectedContract.setText("$120 / year");
                 sp.setPreferences(CountryList.this, "sel_con", "$120 / year");
+                sp.setPreferences(CountryList.this,"payment","120");
                 dialog.dismiss();
             }
         });

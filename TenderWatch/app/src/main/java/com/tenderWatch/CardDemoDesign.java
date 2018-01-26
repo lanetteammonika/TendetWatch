@@ -2,7 +2,10 @@ package com.tenderWatch;
 
 import android.accounts.Account;
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -18,10 +21,15 @@ import com.stripe.android.model.Card;
 import com.tenderWatch.Drawer.MainDrawer;
 import com.tenderWatch.Models.CreateUser;
 import com.tenderWatch.Models.Register;
+import com.tenderWatch.Models.RequestCharges;
+import com.tenderWatch.Models.RequestPayment;
 import com.tenderWatch.Models.User;
 import com.tenderWatch.Retrofit.Api;
 import com.tenderWatch.Retrofit.ApiUtils;
 import com.tenderWatch.SharedPreference.SharedPreference;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -31,6 +39,7 @@ import java.util.Map;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -41,11 +50,13 @@ public class CardDemoDesign extends AppCompatActivity {
     int expMonth,expYear;
     CreateUser user = new CreateUser();
     private static final String TAG = CardDemoDesign.class.getSimpleName();
-    MultipartBody.Part deviceId2, selections1, email1, password1, country1, deviceType1, subscribe1, contactNo1, occupation1, aboutMe1, role1, deviceId1, image1;
+    MultipartBody.Part payment,subscribe,select,deviceId2, selections1, email1, password1, country1, deviceType1, subscribe1, contactNo1, occupation1, aboutMe1, role1, deviceId1, image1;
     SharedPreference sp = new SharedPreference();
     Intent intent;
     private Api mAPIService;
     String selCon;
+    RequestPayment rp=new RequestPayment();
+    RequestCharges rc=new RequestCharges();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,31 +100,97 @@ public class CardDemoDesign extends AppCompatActivity {
                         if(selCon != null){
                             uploadContractor();
                         }else{
-                            intent=new Intent(CardDemoDesign.this,MainDrawer.class);
-                            startActivity(intent);
+
+                            AddPaymentFromCard(token.getId());
                         }
-
                         token.getBankAccount();
-
                     }
                 }
         );
 
     }
 
+    private void CallUpdateServices() {
+        String token="Bearer " +sp.getPreferences(CardDemoDesign.this,"token");
+
+        int payment2= Integer.parseInt(sp.getPreferences(CardDemoDesign.this,"payment"));
+        rp.setPayment(payment2);
+        String subscribe2;
+        if(payment2==15){
+            subscribe2="2";
+        }else {
+            subscribe2="0";
+        }
+        rp.setSubscribe(subscribe2);
+        rp.setSelections(user.getSubscribe());
+        mAPIService.updateService(token,rp).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                Log.i(TAG, "response register-->");
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.i(TAG, "response register-->");
+            }
+        });
+    }
+
+    private void AddPaymentFromCard(String source) {
+
+        String token = "Bearer " + sp.getPreferences(CardDemoDesign.this, "token");
+
+        int payment = Integer.parseInt(sp.getPreferences(CardDemoDesign.this, "payment")) * 100;
+        rc.setSource(source);
+        rc.setAmount(payment);
+        mAPIService.payChargesCard(token, rc).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                Log.i(TAG, "response register-->");
+                CallUpdateServices();
+                ShowMsg(CardDemoDesign.this, "Payment Successfull ");
+
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.i(TAG, "response register-->");
+            }
+        });
+    }
+    public void ShowMsg(Context context, String Msg) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(
+                context);
+        builder.setTitle("Tender Watch");
+        builder.setMessage(Msg);
+
+        builder.setPositiveButton("OK",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog,
+                                        int which) {
+                        dialog.dismiss();
+                        Intent intent = new Intent(CardDemoDesign.this, MainDrawer.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                        finish();
+                    }
+                });
+
+        builder.show();
+    }
     private void uploadContractor() {
         final ProgressDialog progressDialog;
         progressDialog = new ProgressDialog(CardDemoDesign.this);
         progressDialog.setMessage(getString(R.string.string_title_upload_progressbar_));
         progressDialog.show();
 
-        String email = user.getEmail().toString();
-        String password = user.getPassword().toString();
-        String country = user.getCountry().toString();
-        String contact = user.getContactNo().toString();
-        String occupation = user.getOccupation().toString();
-        String aboutMe = user.getAboutMe().toString();
-        String role = user.getRole().toString();
+        String email = user.getEmail();
+        String password = user.getPassword();
+        String country = user.getCountry();
+        String contact = user.getContactNo();
+        String occupation = user.getOccupation();
+        String aboutMe = user.getAboutMe();
+        String role = user.getRole();
         String deviceId = FirebaseInstanceId.getInstance().getToken();
         String selections = String.valueOf(user.getSelections());
         HashMap<String, ArrayList<String>> subscribe = user.getSubscribe();
@@ -164,7 +241,7 @@ public class CardDemoDesign extends AppCompatActivity {
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
 
                     startActivity(intent);
-                    Log.i(TAG, "post submitted to API." + response.body().toString());
+                    Log.i(TAG, "post submitted to API." + response.body());
                 } else {
                     sp.ShowDialog(CardDemoDesign.this, response.errorBody().source().toString().split("\"")[3]);
                 }

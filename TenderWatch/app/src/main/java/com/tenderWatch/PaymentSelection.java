@@ -1,20 +1,25 @@
 package com.tenderWatch;
 
+import android.accounts.Account;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.media.session.MediaSession;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.api.Status;
@@ -36,14 +41,22 @@ import com.paypal.android.sdk.payments.PaymentActivity;
 import com.paypal.android.sdk.payments.PaymentConfirmation;
 import com.stripe.android.Stripe;
 import com.stripe.android.TokenCallback;
+import com.stripe.android.exception.APIConnectionException;
+import com.stripe.android.exception.APIException;
+import com.stripe.android.exception.AuthenticationException;
+import com.stripe.android.exception.CardException;
+import com.stripe.android.exception.InvalidRequestException;
+import com.stripe.android.model.AccountParams;
 import com.stripe.android.model.BankAccount;
 import com.stripe.android.model.Card;
+import com.stripe.android.model.SourceParams;
 import com.stripe.android.model.Token;
 import com.tenderWatch.Adapters.CustomList;
 import com.tenderWatch.Drawer.MainDrawer;
 import com.tenderWatch.Models.CreateUser;
 import com.tenderWatch.Models.GetCountry;
 import com.tenderWatch.Models.Register;
+import com.tenderWatch.Models.RequestCharges;
 import com.tenderWatch.Models.User;
 import com.tenderWatch.Retrofit.Api;
 import com.tenderWatch.Retrofit.ApiUtils;
@@ -59,14 +72,17 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static android.os.Build.VERSION.SDK_INT;
 import static java.security.AccessController.getContext;
 
 public class PaymentSelection extends AppCompatActivity implements View.OnClickListener {
@@ -82,19 +98,19 @@ public class PaymentSelection extends AppCompatActivity implements View.OnClickL
     private List Data, Data2;
     private static final ArrayList<String> alpha = new ArrayList<String>();
     private static final ArrayList<String> countryName = new ArrayList<String>();
-    Api mApiService;
+    Api mAPIService;
     CustomList countryAdapter;
-    ImageView down_arrow, up_arrow, down_arrow2, up_arrow2, down_arrow3, up_arrow3,tenderImage;
-    LinearLayout country_home,llbankType;
-    ListView spinner,spinnerbanktype;
-    private ArrayAdapter<String> listAdapter ;
+    ImageView down_arrow, up_arrow, down_arrow2, up_arrow2, down_arrow3, up_arrow3, tenderImage;
+    LinearLayout country_home, llbankType;
+    ListView spinner, spinnerbanktype;
+    private ArrayAdapter<String> listAdapter;
     CreateUser user = new CreateUser();
     private static final String TAG = PaymentSelection.class.getSimpleName();
     MultipartBody.Part deviceId2, selections1, email1, password1, country1, deviceType1, subscribe1, contactNo1, occupation1, aboutMe1, role1, deviceId1, image1;
-    SharedPreference sp = new SharedPreference();
-    Intent intent;
-    private Api mAPIService;
     String selCon;
+    Intent intent;
+    SharedPreference sp=new SharedPreference();
+RequestCharges rc=new RequestCharges();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,10 +124,9 @@ public class PaymentSelection extends AppCompatActivity implements View.OnClickL
         btnCreditCard.setOnClickListener(this);
         btnGooglePay.setOnClickListener(this);
         btnBank.setOnClickListener(this);
-        mAPIService= ApiUtils.getAPIService();
-        selCon=getIntent().getStringExtra("selCon");
+        mAPIService = ApiUtils.getAPIService();
+        selCon = getIntent().getStringExtra("selCon");
         Intent intent = new Intent(this, PayPalService.class);
-        mApiService= ApiUtils.getAPIService();
 
         intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, config);
 
@@ -130,8 +145,8 @@ public class PaymentSelection extends AppCompatActivity implements View.OnClickL
                 getPayment();
                 break;
             case R.id.payment_creditcard:
-                Intent i=new Intent(PaymentSelection.this,CardDemoDesign.class);
-                i.putExtra("selCon","true");
+                Intent i = new Intent(PaymentSelection.this, CardDemoDesign.class);
+                //i.putExtra("selCon","true");
                 startActivity(i);
                 //call();
 //                curl https://api.stripe.com/v1/transfers \
@@ -172,7 +187,9 @@ public class PaymentSelection extends AppCompatActivity implements View.OnClickL
 //
 //                    }
 //                });
-                GetBankDetail();
+                intent = new Intent(PaymentSelection.this, BankList.class);
+                startActivity(intent);
+
                 break;
         }
     }
@@ -257,103 +274,26 @@ public class PaymentSelection extends AppCompatActivity implements View.OnClickL
     }
 
 
-    private void GetBankDetail() {
-        final Dialog dialog = new Dialog(PaymentSelection.this);
-        dialog.setContentView(R.layout.bankdetail);
 
-        spinner=(ListView) dialog.findViewById(R.id.spinner3);
-        country_home=(LinearLayout) dialog.findViewById(R.id.category_home) ;
-        down_arrow=(ImageView) dialog.findViewById(R.id.bank_down_arrow);
-        up_arrow=(ImageView) dialog.findViewById(R.id.bank_up_arrow);
-        down_arrow2=(ImageView) dialog.findViewById(R.id.bank_down_arrow2);
-        up_arrow2=(ImageView) dialog.findViewById(R.id.bank_up_arrow2);
-        spinnerbanktype=(ListView) dialog.findViewById(R.id.spinner4);
-        llbankType=(LinearLayout) dialog.findViewById(R.id.bank_type);
-        Button save=(Button) dialog.findViewById(R.id.btn_Save);
 
-        String[] planets = new String[] { "Individual" ,"Company"};
-        ArrayList<String> planetList = new ArrayList<String>();
-        planetList.addAll( Arrays.asList(planets) );
-        // Create ArrayAdapter using the planet list.
-        listAdapter = new ArrayAdapter<String>(this, R.layout.simplerow, planetList);
-        sp.showProgressDialog(PaymentSelection.this);
-
-        save.setOnClickListener(new View.OnClickListener() {
+    private void CallApi() {
+        String token = "Bearer " + sp.getPreferences(PaymentSelection.this, "token");
+        int payment2 = Integer.parseInt(sp.getPreferences(PaymentSelection.this, "payment")) * 100;
+        rc.setAmount(payment2);
+        //String token=
+        mAPIService.createAcc(token, "US", "usd", "Jane Austen", "individual", "110000000", "000123456789").enqueue(new Callback<ResponseBody>() {
             @Override
-            public void onClick(View view) {
-                if(selCon != null){
-                    uploadContractor();
-                }else{
-                    intent=new Intent(PaymentSelection.this,MainDrawer.class);
-                    startActivity(intent);
-                }
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                Log.i(TAG, "response register-->");
+                intent = new Intent(PaymentSelection.this, BankList.class);
+                startActivity(intent);
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.i(TAG, "response register-->");
             }
         });
-
-        mApiService.getCountryData().enqueue(new Callback<ArrayList<GetCountry>>() {
-            @Override
-            public void onResponse(Call<ArrayList<GetCountry>> call, Response<ArrayList<GetCountry>> response) {
-                sp.hideProgressDialog();
-                Data = response.body();
-                for (int i = 0; i < Data.size(); i++) {
-                    alpha.add(response.body().get(i).getCountryName().toString() + "~" + response.body().get(i).getImageString().toString());
-                    countryName.add(response.body().get(i).getCountryName().toString() + "~" + response.body().get(i).getCountryCode().toString() + "~" + response.body().get(i).getId().toString());
-                }
-                Collections.sort(alpha);
-                Collections.sort(countryName);
-                spinnerbanktype.setAdapter(listAdapter);
-                countryAdapter = new CustomList(PaymentSelection.this, alpha);
-                spinner.setAdapter(countryAdapter);
-            }
-
-            @Override
-            public void onFailure(Call<ArrayList<GetCountry>> call, Throwable t) {
-
-            }
-        });
-
-        up_arrow.setOnClickListener(new View.OnClickListener() {
-            @SuppressLint("NewApi")
-            @Override
-            public void onClick(View v) {
-                country_home.setVisibility(View.GONE);
-                up_arrow.setVisibility(View.GONE);
-                down_arrow.setVisibility(View.VISIBLE);
-            }
-        });
-
-        down_arrow.setOnClickListener(new View.OnClickListener() {
-            @SuppressLint("NewApi")
-            @Override
-            public void onClick(View v) {
-                country_home.setVisibility(View.VISIBLE);
-                up_arrow.setVisibility(View.VISIBLE);
-                down_arrow.setVisibility(View.GONE);
-            }
-        });
-
-        up_arrow2.setOnClickListener(new View.OnClickListener() {
-            @SuppressLint("NewApi")
-            @Override
-            public void onClick(View v) {
-                llbankType.setVisibility(View.GONE);
-                down_arrow2.setVisibility(View.VISIBLE);
-                down_arrow.setVisibility(View.VISIBLE);
-                up_arrow2.setVisibility(View.GONE);
-            }
-        });
-
-        down_arrow2.setOnClickListener(new View.OnClickListener() {
-            @SuppressLint("NewApi")
-            @Override
-            public void onClick(View v) {
-                country_home.setVisibility(View.GONE);
-                llbankType.setVisibility(View.VISIBLE);
-                up_arrow2.setVisibility(View.VISIBLE);
-                down_arrow2.setVisibility(View.GONE);
-            }
-        });
-        dialog.show();
     }
 
     private void call() {
@@ -443,10 +383,10 @@ public class PaymentSelection extends AppCompatActivity implements View.OnClickL
                 case Activity.RESULT_OK:
                     PaymentData paymentData = PaymentData.getFromIntent(data);
                     String token = paymentData.getPaymentMethodToken().getToken();
-                    if(selCon != null){
+                    if (selCon != null) {
                         uploadContractor();
-                    }else{
-                        intent=new Intent(PaymentSelection.this,MainDrawer.class);
+                    } else {
+                        intent = new Intent(PaymentSelection.this, MainDrawer.class);
                         startActivity(intent);
                     }
                     break;
@@ -478,12 +418,12 @@ public class PaymentSelection extends AppCompatActivity implements View.OnClickL
                         Log.i("paymentExample", paymentDetails);
 
                         //Starting a new activity for the payment details and also putting the payment details with intent
-                         if(selCon != null){
-                             uploadContractor();
-                         }else{
-                             intent=new Intent(PaymentSelection.this,MainDrawer.class);
-                             startActivity(intent);
-                         }
+                        if (selCon != null) {
+                            uploadContractor();
+                        } else {
+                            intent = new Intent(PaymentSelection.this, MainDrawer.class);
+                            startActivity(intent);
+                        }
 
 
 //                        uploadContractor();

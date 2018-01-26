@@ -293,7 +293,6 @@ public class TenderList extends Fragment {
                     contractoradapter = response.body();
                     Con_adapter = new ContractorTenderListAdapter(getActivity(), response.body());
                     list_tender.setAdapter(Con_adapter);
-
                 }
             }
 

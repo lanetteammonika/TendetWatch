@@ -11,6 +11,9 @@ import com.tenderWatch.Models.GetCountry;
 import com.tenderWatch.Models.LoginPost;
 import com.tenderWatch.Models.Message;
 import com.tenderWatch.Models.Register;
+import com.tenderWatch.Models.RequestCharges;
+import com.tenderWatch.Models.RequestPayment;
+import com.tenderWatch.Models.ResponseBankList;
 import com.tenderWatch.Models.ResponseNotifications;
 import com.tenderWatch.Models.ResponseRating;
 import com.tenderWatch.Models.SubScriptionResponse;
@@ -34,6 +37,7 @@ import javax.xml.transform.Result;
 import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
@@ -275,6 +279,44 @@ public interface Api {
     Call<ResponseBody> removeFavorite(
             @Header("Authorization") String token,
             @Path("favoriteId") String id
+    );
+
+    @PUT("service/userServices")
+    Call<ResponseBody> updateService(
+            @Header("Authorization") String token,
+            @Body RequestPayment rp
+            );
+
+    @GET("payments/bank/charges")
+    Call<ResponseBankList> getBankList(
+            @Header("Authorization") String token
+    );
+
+    @POST("payments/bank/charges")
+    Call<ResponseBody> payCharges(
+            @Header("Authorization") String token,
+            @Body RequestCharges rc
+            );
+    @POST("payments/bank/android/charges")
+    @FormUrlEncoded
+    Call<ResponseBody> createAcc(
+            @Header("Authorization") String token,
+            @Field("countryCode") String countryCode,
+            @Field("currency") String currency,
+            @Field("accHolderName") String accName,
+            @Field("holderType") String accType,
+            @Field("routingNum") String routingNum,
+            @Field("accNum") String accNum
+    );
+    @FormUrlEncoded
+    @HTTP(method = "DELETE", path = "payments/bank/charges", hasBody = true)
+    Call<ResponseBody> deleteBank(@Header("Authorization") String token,
+                                          @Field("bankId") String bankId
+    );
+    @POST("payments/charges")
+    Call<ResponseBody> payChargesCard(
+            @Header("Authorization") String token,
+            @Body RequestCharges rc
     );
 
 }

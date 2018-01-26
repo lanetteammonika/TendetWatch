@@ -73,7 +73,7 @@ public class Category extends AppCompatActivity {
         lvCountry.clearChoices();
 
         Intent show = getIntent();
-        contractSelected=getIntent().getStringExtra("selectedCon");
+        //contractSelected=getIntent().getStringExtra("selectedCon");
 
         empNo = show.getStringArrayListExtra("CountryAtContractor");
         s=show.getStringExtra("sub");
@@ -197,7 +197,7 @@ public class Category extends AppCompatActivity {
                                 intent = new Intent(
                                         Category.this, PaymentSelection.class);
                             }
-                            intent.putExtra("selCon","true");
+                            //intent.putExtra("selCon","true");
                         }                        else{
                             intent = new Intent(
                                     Category.this, Agreement.class);
@@ -217,7 +217,7 @@ public class Category extends AppCompatActivity {
                             intent = new Intent(
                                     Category.this, PaymentSelection.class);
                         }
-                        intent.putExtra("selCon","true");
+                       // intent.putExtra("selCon","true");
                     }else{
                     intent = new Intent(
                             Category.this, Agreement.class);}

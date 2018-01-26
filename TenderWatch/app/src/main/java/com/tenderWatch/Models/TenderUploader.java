@@ -9,7 +9,7 @@ import java.util.List;
  * Created by lcom48 on 21/12/17.
  */
 
-public class TenderUploader {
+public class  TenderUploader {
     @SerializedName("_id")
     @Expose
     private String id;
