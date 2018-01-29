@@ -98,7 +98,7 @@ public class Home extends Fragment implements AdapterView.OnItemSelectedListener
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         //you can set the title for your toolbar here for different fragments different titles
-        getActivity().setTitle("Home");
+        getActivity().setTitle("Upload Tender");
         spinner = (ListView) view.findViewById(R.id.spinner);
         spinner2 = (ListView) view.findViewById(R.id.spinner3);
         edtSearch=(EditText) view.findViewById(R.id.edtSearch);

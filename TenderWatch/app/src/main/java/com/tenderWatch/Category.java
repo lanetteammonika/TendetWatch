@@ -18,6 +18,7 @@ import com.tenderWatch.Adapters.ArrayAdapter;
 import com.tenderWatch.Drawer.MainDrawer;
 import com.tenderWatch.Models.CreateUser;
 import com.tenderWatch.Models.GetCategory;
+import com.tenderWatch.Models.User;
 import com.tenderWatch.Retrofit.Api;
 import com.tenderWatch.Retrofit.ApiUtils;
 import com.tenderWatch.SharedPreference.SharedPreference;
@@ -157,9 +158,22 @@ public class Category extends AppCompatActivity {
             @Override
             public void onFailure(Call<ArrayList<GetCategory>> call, Throwable t) {
                 sp.ShowDialog(Category.this, "Server is down. Come back later!!");
-
                 Log.i(TAG, "post submitted to API.");
+            }
+        });
 
+        String t="Bearer "+sp.getPreferences(Category.this,"token");
+        User u= (User) sp.getPreferencesObject(Category.this);
+        String id=u.getId();
+        mAPIService.getUserDetail(t,id).enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                Log.v(TAG,"selected country and category----"+response);
+            }
+
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+                Log.v(TAG,"selected country and category----"+t);
             }
         });
 

@@ -97,7 +97,7 @@ public class CardDemoDesign extends AppCompatActivity {
                     @Override
                     public void onSuccess(com.stripe.android.model.Token token) {
                         Log.e("Bank Token", token.getId());
-                        if(selCon != null){
+                        if( selCon != null){
                             uploadContractor();
                         }else{
 

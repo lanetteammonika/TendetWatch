@@ -37,6 +37,7 @@ import com.tenderWatch.Models.ResponseBankList;
 import com.tenderWatch.Retrofit.Api;
 import com.tenderWatch.Retrofit.ApiUtils;
 import com.tenderWatch.SharedPreference.SharedPreference;
+import com.tenderWatch.utils.ConnectivityReceiver;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -73,6 +74,7 @@ public class BankList extends AppCompatActivity {
     EditText txtAccNum, txtAccName, txtRountngNum;
     RequestPayment rp=new RequestPayment();
     CreateUser user = new CreateUser();
+    ConnectivityReceiver cr = new ConnectivityReceiver();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,20 +107,24 @@ public class BankList extends AppCompatActivity {
                 int payment = Integer.parseInt(sp.getPreferences(BankList.this, "payment")) * 100;
                 rc.setSource(b_id);
                 rc.setAmount(payment);
-                mAPIService.payCharges(token, rc).enqueue(new Callback<ResponseBody>() {
-                    @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                        Log.i(TAG, "response register-->");
-                        CallUpdateServices();
+                if(cr.isConnected(BankList.this)) {
+                    mAPIService.payCharges(token, rc).enqueue(new Callback<ResponseBody>() {
+                        @Override
+                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                            Log.i(TAG, "response register-->");
+                            CallUpdateServices();
 
 
-                    }
+                        }
 
-                    @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-                        Log.i(TAG, "response register-->");
-                    }
-                });
+                        @Override
+                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+                            Log.i(TAG, "response register-->");
+                        }
+                    });
+                }else{
+                    sp.ShowDialog(BankList.this,"Please check your internet connection.");
+                }
             }
         });
     }
@@ -157,6 +163,7 @@ public class BankList extends AppCompatActivity {
         }
         rp.setSubscribe(subscribe2);
         rp.setSelections(user.getSubscribe());
+        if(cr.isConnected(BankList.this)){
         mAPIService.updateService(token,rp).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -169,6 +176,9 @@ public class BankList extends AppCompatActivity {
                 Log.i(TAG, "response register-->");
             }
         });
+        }else{
+            sp.ShowDialog(BankList.this,"Please check your internet connection.");
+        }
     }
 
 
@@ -214,6 +224,7 @@ public class BankList extends AppCompatActivity {
 //        sp.showProgressDialog(getApplicationContext());
         if( sp.getPreferences(BankList.this, "token")!=null) {
             String token = "Bearer " + sp.getPreferences(BankList.this, "token");
+            if(cr.isConnected(BankList.this)){
             mAPIService.getBankList(token).enqueue(new Callback<ResponseBankList>() {
                 @Override
                 public void onResponse(Call<ResponseBankList> call, Response<ResponseBankList> response) {
@@ -228,6 +239,9 @@ public class BankList extends AppCompatActivity {
                     Log.i(TAG, "response register-->");
                 }
             });
+            }else{
+                sp.ShowDialog(BankList.this,"Please check your internet connection.");
+            }
         }
     }
 
@@ -266,6 +280,7 @@ public class BankList extends AppCompatActivity {
                 accName = txtAccName.getText().toString();
                 routingNum = txtRountngNum.getText().toString();
                 accNum = txtAccNum.getText().toString();
+                if(cr.isConnected(BankList.this)){
                 mAPIService.createAcc(token, coCode, coCurrency, accName, accType, routingNum, accNum).enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -279,7 +294,9 @@ public class BankList extends AppCompatActivity {
                         Log.i(TAG, "response register-->");
                     }
                 });
-
+                }else{
+                    sp.ShowDialog(BankList.this,"Please check your internet connection.");
+                }
             }
         });
         spinner.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -308,6 +325,7 @@ public class BankList extends AppCompatActivity {
                 up_arrow2.setVisibility(View.GONE);
             }
         });
+        if(cr.isConnected(BankList.this)){
         mAPIService.getCountryData().enqueue(new Callback<ArrayList<GetCountry>>() {
             @Override
             public void onResponse(Call<ArrayList<GetCountry>> call, Response<ArrayList<GetCountry>> response) {
@@ -331,7 +349,9 @@ public class BankList extends AppCompatActivity {
 
             }
         });
-
+        }else{
+            sp.ShowDialog(BankList.this,"Please check your internet connection.");
+        }
         up_arrow.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("NewApi")
             @Override

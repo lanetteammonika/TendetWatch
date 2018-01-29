@@ -158,7 +158,7 @@ public class NTenderDetail extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String token="Bearer "+sp.getPreferences(NTenderDetail.this,"token");
-                String id=object.getId().toString();
+                String id=object.getId();
                 sp.showProgressDialog(NTenderDetail.this);
 
                 mApiService.removeTender(token,id).enqueue(new Callback<ResponseBody>() {
@@ -180,9 +180,9 @@ public class NTenderDetail extends AppCompatActivity {
             }
         });
 
-        if(!object.getTenderPhoto().toString().equals("")){
+        if(!object.getTenderPhoto().equals("")){
             Picasso.with(NTenderDetail.this)
-                    .load(object.getTenderPhoto().toString())
+                    .load(object.getTenderPhoto())
                     .into(new Target() {
                         @Override
                         public void onBitmapLoaded(final Bitmap bitmap, Picasso.LoadedFrom from) {
@@ -204,39 +204,39 @@ public class NTenderDetail extends AppCompatActivity {
         }
         GetCategory();
         GetAllCountry();
-        tenderTitle.setText(object.getTenderName().toString());
+        tenderTitle.setText(object.getTenderName());
 
         ExpDay.setText(days+" days");
-        Description.setText(object.getDescription().toString());
-        City.setText(object.getCity().toString());
-        if(object.getContactNo().toString().equals("")){
+        Description.setText(object.getDescription());
+        City.setText(object.getCity());
+        if(object.getContactNo().equals("")){
             rlContact.setVisibility(View.GONE);
         }else{
-            Contact.setText(object.getContactNo().toString());}
+            Contact.setText(object.getContactNo());}
 
-        if(object.getLandlineNo().toString().equals("")){
+        if(object.getLandlineNo().equals("")){
             rlLandline.setVisibility(View.GONE);
         }else{
-            LandLine.setText(object.getLandlineNo().toString());
+            LandLine.setText(object.getLandlineNo());
         }
 
-        if(object.getEmail().toString().equals("")){
+        if(object.getEmail().equals("")){
             rlEmail.setVisibility(View.GONE);
         }else{
-            Email.setText(object.getEmail().toString());
+            Email.setText(object.getEmail());
         }
 
-        if(object.getAddress().toString().equals("")){
+        if(object.getAddress().equals("")){
             rlAddress.setVisibility(View.GONE);
         }else{
-            Address.setText(object.getAddress().toString());
+            Address.setText(object.getAddress());
         }
         flag3=(ImageView) findViewById(R.id.preview_flag_image);
     }
 
     private void CallInterestedApi(){
         String token = "Bearer " + sp.getPreferences(NTenderDetail.this, "token");
-        String tenderId=object.getId().toString();
+        String tenderId=object.getId();
         mApiService.callInterested(token,tenderId).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -260,12 +260,12 @@ public class NTenderDetail extends AppCompatActivity {
                 sp.hideProgressDialog();
                 Data2 = response.body();
                 for (int i = 0; i < Data2.size(); i++) {
-                    alpha2.add(response.body().get(i).getCategoryName().toString() + "~" + response.body().get(i).getImgString().toString());
-                    categoryName.add(response.body().get(i).getCategoryName().toString() + "~" + response.body().get(i).getId().toString());
+                    alpha2.add(response.body().get(i).getCategoryName() + "~" + response.body().get(i).getImgString());
+                    categoryName.add(response.body().get(i).getCategoryName() + "~" + response.body().get(i).getId());
                 }
                 for (int i = 0; i < Data2.size(); i++) {
-                    if(categoryName.get(i).split("~")[1].toString().equals(object.getCategory().toString())){
-                        categoryName1=response.body().get(i).getCategoryName().toString();
+                    if(categoryName.get(i).split("~")[1].equals(object.getCategory())){
+                        categoryName1=response.body().get(i).getCategoryName();
                         Category.setText(categoryName1);
 
                         day=response.body().get(i).getImgString();
@@ -293,15 +293,15 @@ public class NTenderDetail extends AppCompatActivity {
                 sp.hideProgressDialog();
                 Data = response.body();
                 for (int i = 0; i < Data.size(); i++) {
-                    alpha.add(response.body().get(i).getCountryName().toString() + "~" + response.body().get(i).getImageString().toString());
-                    countryName.add(response.body().get(i).getCountryName().toString() + "~" + response.body().get(i).getCountryCode().toString() + "~" + response.body().get(i).getId().toString());
+                    alpha.add(response.body().get(i).getCountryName() + "~" + response.body().get(i).getImageString());
+                    countryName.add(response.body().get(i).getCountryName() + "~" + response.body().get(i).getCountryCode() + "~" + response.body().get(i).getId());
                 }
                 Collections.sort(alpha);
                 Collections.sort(countryName);
                 for (int i = 0; i < Data2.size(); i++) {
-                    if(countryName.get(i).split("~")[2].toString().equals(object.getCountry().toString())){
-                        flag=response.body().get(i).getImageString().toString();
-                        countryName1=response.body().get(i).getCountryName().toString();
+                    if(countryName.get(i).split("~")[2].equals(object.getCountry())){
+                        flag=response.body().get(i).getImageString();
+                        countryName1=response.body().get(i).getCountryName();
                         Country.setText(countryName1);
                         Bflag = StringToBitMap(flag);
                         flag3.setImageBitmap(Bflag);

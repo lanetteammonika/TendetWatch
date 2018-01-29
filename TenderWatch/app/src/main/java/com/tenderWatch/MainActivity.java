@@ -14,12 +14,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.tenderWatch.ClientDrawer.ClientDrawer;
 import com.tenderWatch.ClientDrawer.TenderList;
@@ -29,9 +32,10 @@ import com.tenderWatch.SharedPreference.SharedPreference;
 import com.tenderWatch.app.Config;
 import com.tenderWatch.utils.NotificationUtils;
 
+import io.fabric.sdk.android.Fabric;
+
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private BroadcastReceiver mRegistrationBroadcastReceiver;
-
     private TextView aboutapp;
     Context context;
     private Button btnContractor, btnClient;
@@ -39,6 +43,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     SharedPreference sp = new SharedPreference();
     private static final String TAG = MainActivity.class.getSimpleName();
     Object user;
+    boolean doubleBackToExitPressedOnce = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +53,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         InitView();
         InitListener();
         user=sp.getPreferencesObject(MainActivity.this);
+       // FirebaseCrash.report(new Exception("My first Android non-fatal error"));
+
+        Button crashButton = new Button(this);
+        crashButton.setText("..");
+        crashButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                Crashlytics.getInstance().crash(); // Force a crash
+            }
+        });
+        addContentView(crashButton,
+                new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT));
+        final Fabric fabric = new Fabric.Builder(this)
+                .kits(new Crashlytics())
+                .debuggable(true)           // Enables Crashlytics debugger
+                .build();
+        Fabric.with(fabric);
         if(user!= null){
             String role=sp.getPreferences(MainActivity.this,"role");
             if(role.equals("client")) {
@@ -134,7 +156,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 });
 
                 WebView mWebView = (WebView) dialog.findViewById(R.id.about_webview);
-
                 WebSettings webSettings = mWebView.getSettings();
                 webSettings.setJavaScriptEnabled(true);
                 mWebView.loadUrl("file:///android_res/raw/about.htm");
@@ -146,7 +167,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 intent.putExtra("Role", "contractor");
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter, R.anim.exit);
-
                 break;
             case R.id.btn_client:
                 intent = new Intent(MainActivity.this, Login.class);
@@ -155,12 +175,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Log.i(TAG, "testing");
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter, R.anim.exit);
-
                 break;
         }
     }
 
-    boolean doubleBackToExitPressedOnce = true;
 
     @Override
     public void onBackPressed() {

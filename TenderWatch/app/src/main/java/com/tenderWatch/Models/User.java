@@ -3,6 +3,8 @@ package com.tenderWatch.Models;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -61,6 +63,7 @@ public class User {
     @SerializedName("invoiceURL")
     @Expose
     private String invoiceURL;
+
 
     public Boolean getIsActive() {
         return isActive;

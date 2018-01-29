@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
@@ -211,7 +212,10 @@ public class EditProfile extends Fragment implements View.OnClickListener{
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
                 sp.hideProgressDialog();
+//                WebView mWebView = null;
                 Log.i(TAG, "response register-->");
+//               String url="http://docs.google.com/gview?embedded=true&url="+response.body().getInvoiceURL();
+//                mWebView.loadUrl(url);
                 if (response.isSuccessful()) {
                     sp.setPreferencesObject(getActivity(),response.body());
                     sp.ShowDialog(getActivity(), "Profile Update Successful");
