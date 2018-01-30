@@ -27,6 +27,7 @@ import com.tenderWatch.Models.User;
 import com.tenderWatch.Retrofit.Api;
 import com.tenderWatch.Retrofit.ApiUtils;
 import com.tenderWatch.SharedPreference.SharedPreference;
+import com.tenderWatch.utils.ConnectivityReceiver;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -57,6 +58,7 @@ public class CardDemoDesign extends AppCompatActivity {
     String selCon;
     RequestPayment rp=new RequestPayment();
     RequestCharges rc=new RequestCharges();
+    ConnectivityReceiver cr = new ConnectivityReceiver();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,6 +89,7 @@ public class CardDemoDesign extends AppCompatActivity {
     private void Call(){
         Card card = new Card(number,expMonth,expYear,cvc);
         final Stripe stripe = new Stripe(CardDemoDesign.this, "pk_test_mjxYxMlj4K2WZfR6TwlHdIXW");
+       if(cr.isConnected(CardDemoDesign.this)){
         stripe.createToken(
                 card,
                 new TokenCallback() {
@@ -107,6 +110,9 @@ public class CardDemoDesign extends AppCompatActivity {
                     }
                 }
         );
+       }else{
+           sp.ShowDialog(CardDemoDesign.this,"Please check your internet connection");
+       }
 
     }
 
@@ -123,26 +129,30 @@ public class CardDemoDesign extends AppCompatActivity {
         }
         rp.setSubscribe(subscribe2);
         rp.setSelections(user.getSubscribe());
-        mAPIService.updateService(token,rp).enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                Log.i(TAG, "response register-->");
-            }
+        if(cr.isConnected(CardDemoDesign.this)) {
+            mAPIService.updateService(token, rp).enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    Log.i(TAG, "response register-->");
+                }
 
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Log.i(TAG, "response register-->");
-            }
-        });
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    Log.i(TAG, "response register-->");
+                }
+            });
+        }else{
+            sp.ShowDialog(CardDemoDesign.this,"Please check your internet connection.");
+        }
     }
 
     private void AddPaymentFromCard(String source) {
-
         String token = "Bearer " + sp.getPreferences(CardDemoDesign.this, "token");
 
         int payment = Integer.parseInt(sp.getPreferences(CardDemoDesign.this, "payment")) * 100;
         rc.setSource(source);
         rc.setAmount(payment);
+        if(cr.isConnected(CardDemoDesign.this)){
         mAPIService.payChargesCard(token, rc).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -157,6 +167,9 @@ public class CardDemoDesign extends AppCompatActivity {
                 Log.i(TAG, "response register-->");
             }
         });
+        }else{
+            sp.ShowDialog(CardDemoDesign.this,"Please check your internet connection.");
+        }
     }
     public void ShowMsg(Context context, String Msg) {
         AlertDialog.Builder builder = new AlertDialog.Builder(
@@ -220,7 +233,7 @@ public class CardDemoDesign extends AppCompatActivity {
 
         Call<Register> resultCall = mAPIService.uploadContractor(email1, password1, country1, contactNo1, occupation1, aboutMe1, role1, deviceId1, image1, subscribe1, selections1);
         sp.showProgressDialog(CardDemoDesign.this);
-
+        if(cr.isConnected(CardDemoDesign.this)){
         resultCall.enqueue(new Callback<Register>() {
             @Override
             public void onResponse(Call<Register> call, Response<Register> response) {
@@ -253,7 +266,9 @@ public class CardDemoDesign extends AppCompatActivity {
                 sp.ShowDialog(CardDemoDesign.this, "Server is down. Come back later!!");
             }
         });
-
+        }else{
+            sp.ShowDialog(CardDemoDesign.this,"Please check your internet connection.");
+        }
     }
 
 }

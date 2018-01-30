@@ -22,6 +22,7 @@ import com.tenderWatch.Models.User;
 import com.tenderWatch.Retrofit.Api;
 import com.tenderWatch.Retrofit.ApiUtils;
 import com.tenderWatch.SharedPreference.SharedPreference;
+import com.tenderWatch.utils.ConnectivityReceiver;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -58,6 +59,7 @@ public class Category extends AppCompatActivity {
     LinearLayout back;
     TextView txtContract;
     String contract,s,selCon,contractSelected;
+    ConnectivityReceiver cr = new ConnectivityReceiver();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,85 +88,89 @@ public class Category extends AppCompatActivity {
         user.setSelections(empNo.size());
         sp.showProgressDialog(Category.this);
 
-        mAPIService.getCategoryData().enqueue(new Callback<ArrayList<GetCategory>>() {
-            @Override
-            public void onResponse(Call<ArrayList<GetCategory>> call, Response<ArrayList<GetCategory>> response) {
+        if(cr.isConnected(Category.this)) {
+            mAPIService.getCategoryData().enqueue(new Callback<ArrayList<GetCategory>>() {
+                @Override
+                public void onResponse(Call<ArrayList<GetCategory>> call, Response<ArrayList<GetCategory>> response) {
 
-                if (response.isSuccessful()) {
-                    Log.i("array-------", response.body().get(0).getCategoryName().toString());
-                    Data = response.body();
-                    for (int i = 0; i < Data.size(); i++) {
-                        String name = response.body().get(i).getCategoryName().toString();
-                        String flag = response.body().get(i).getImgString().toString();
-                        String id = response.body().get(i).getId().toString();
-                        alpha.add(name + '~' + id + '~' + flag);
-                    }
-
-                    for (int y = 0; y < empNo.size(); y++) {
-                        String categoryName = countryListName.get(y).toString().split("~")[0];
-                        String categoryId = countryListName.get(y).toString().split("~")[2];
-                        String value = String.valueOf(categoryName.charAt(0));
-
-                        countryList.add(new SectionItem(categoryName, "", categoryId, categoryId, false));
-
+                    if (response.isSuccessful()) {
+                        Log.i("array-------", response.body().get(0).getCategoryName().toString());
+                        Data = response.body();
                         for (int i = 0; i < Data.size(); i++) {
-                            String name = alpha.get(i).split("~")[0];
-                            String id = alpha.get(i).split("~")[1];
-                            String flag = alpha.get(i).split("~")[2];
-                            if (!list.contains(value)) {
-                                list.add(value);
-                                alphabetS.concat(value);//alphabetlist.append(value);
-                                Log.i("array-------", String.valueOf(list));
-                                alpha2.add(value);
-                                alpha2.add(name);
-                                //set Country Header (Like:-A,B,C,...)
-                                //set Country Name
-                                countryList.add(new EntryItem(name, flag, id, categoryId, false));
-                            } else {
-                                alpha2.add(name);
-                                //set Country Name
-                                countryList.add(new EntryItem(name, flag, id, categoryId, false));
+                            String name = response.body().get(i).getCategoryName().toString();
+                            String flag = response.body().get(i).getImgString().toString();
+                            String id = response.body().get(i).getId().toString();
+                            alpha.add(name + '~' + id + '~' + flag);
+                        }
+
+                        for (int y = 0; y < empNo.size(); y++) {
+                            String categoryName = countryListName.get(y).toString().split("~")[0];
+                            String categoryId = countryListName.get(y).toString().split("~")[2];
+                            String value = String.valueOf(categoryName.charAt(0));
+
+                            countryList.add(new SectionItem(categoryName, "", categoryId, categoryId, false));
+
+                            for (int i = 0; i < Data.size(); i++) {
+                                String name = alpha.get(i).split("~")[0];
+                                String id = alpha.get(i).split("~")[1];
+                                String flag = alpha.get(i).split("~")[2];
+                                if (!list.contains(value)) {
+                                    list.add(value);
+                                    alphabetS.concat(value);//alphabetlist.append(value);
+                                    Log.i("array-------", String.valueOf(list));
+                                    alpha2.add(value);
+                                    alpha2.add(name);
+                                    //set Country Header (Like:-A,B,C,...)
+                                    //set Country Name
+                                    countryList.add(new EntryItem(name, flag, id, categoryId, false));
+                                } else {
+                                    alpha2.add(name);
+                                    //set Country Name
+                                    countryList.add(new EntryItem(name, flag, id, categoryId, false));
+                                }
                             }
                         }
+
+                        String str = list.toString().replaceAll(",", "");
+                        char[] chars = str.toCharArray();
+                        Log.i(TAG, "post submitted to API." + chars);
+                        char[] al = new char[27];
+                        for (int j = 1, i = 0; j < chars.length; j = j + 2, i++) {
+                            al[i] = chars[j];
+                            Log.i(TAG, "post." + chars[j]);
+                        }
+
+                        Log.i(TAG, "post submitted to API." + al);
+
+                        SideSelector ss = new SideSelector(getApplicationContext());
+                        ss.setAlphabet(al);
+                        alphabetlist = str.substring(1, str.length() - 1).replaceAll(" ", "").toCharArray();
+                        bAdapter = new ArrayAdapter(Category.this, R.id.lvCategory, countryList, alpha2, list, chars);
+                        // set adapter
+                        // adapter
+                        sp.hideProgressDialog();
+                        lvCountry.setAdapter(bAdapter);
+                        lvCountry.setTextFilterEnabled(true);
+                        if (sideSelector != null)
+                            sideSelector.setListView(lvCountry);
+                    } else {
+                        sp.ShowDialog(Category.this, response.errorBody().source().toString().split("\"")[3]);
                     }
-
-                    String str = list.toString().replaceAll(",", "");
-                    char[] chars = str.toCharArray();
-                    Log.i(TAG, "post submitted to API." + chars);
-                    char[] al = new char[27];
-                    for (int j = 1, i = 0; j < chars.length; j = j + 2, i++) {
-                        al[i] = chars[j];
-                        Log.i(TAG, "post." + chars[j]);
-                    }
-
-                    Log.i(TAG, "post submitted to API." + al);
-
-                    SideSelector ss = new SideSelector(getApplicationContext());
-                    ss.setAlphabet(al);
-                    alphabetlist = str.substring(1, str.length() - 1).replaceAll(" ", "").toCharArray();
-                    bAdapter = new ArrayAdapter(Category.this, R.id.lvCategory, countryList, alpha2, list, chars);
-                    // set adapter
-                    // adapter
-                    sp.hideProgressDialog();
-                    lvCountry.setAdapter(bAdapter);
-                    lvCountry.setTextFilterEnabled(true);
-                    if (sideSelector != null)
-                        sideSelector.setListView(lvCountry);
-                } else {
-                    sp.ShowDialog(Category.this, response.errorBody().source().toString().split("\"")[3]);
                 }
-            }
 
-            @Override
-            public void onFailure(Call<ArrayList<GetCategory>> call, Throwable t) {
-                sp.ShowDialog(Category.this, "Server is down. Come back later!!");
-                Log.i(TAG, "post submitted to API.");
-            }
-        });
-
+                @Override
+                public void onFailure(Call<ArrayList<GetCategory>> call, Throwable t) {
+                    sp.ShowDialog(Category.this, "Server is down. Come back later!!");
+                    Log.i(TAG, "post submitted to API.");
+                }
+            });
+        }else{
+            sp.ShowDialog(Category.this,"Please check your internet connection");
+        }
         String t="Bearer "+sp.getPreferences(Category.this,"token");
         User u= (User) sp.getPreferencesObject(Category.this);
         String id=u.getId();
+        if(cr.isConnected(Category.this)){
         mAPIService.getUserDetail(t,id).enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
@@ -176,7 +182,9 @@ public class Category extends AppCompatActivity {
                 Log.v(TAG,"selected country and category----"+t);
             }
         });
-
+        }else{
+            sp.ShowDialog(Category.this,"Please check your internet connection");
+        }
         lvCountry.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @SuppressLint("ResourceType")
             @Override

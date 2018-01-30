@@ -43,6 +43,7 @@ import com.tenderWatch.Retrofit.Api;
 import com.tenderWatch.Retrofit.ApiUtils;
 import com.tenderWatch.SharedPreference.SharedPreference;
 import com.tenderWatch.Validation.Validation;
+import com.tenderWatch.utils.ConnectivityReceiver;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -69,6 +70,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
     private Api mAPIService;
     String newString;
     SharedPreference sp = new SharedPreference();
+    ConnectivityReceiver cr=new ConnectivityReceiver();
 
     User user;
     @Override
@@ -164,7 +166,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
         btnSignIn.setSize(SignInButton.SIZE_STANDARD);
         btnSignIn.setScopes(gso.getScopeArray());
         fb.setOnClickListener(this);
-
+        if(cr.isConnected(Login.this)){
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
 
             @Override
@@ -195,7 +197,9 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
                 //  info.setText("Login attempt failed.");
             }
         });
-
+        }else{
+            sp.ShowDialog(Login.this,"Please check your internet connection");
+        }
     }
 
     private boolean checkValidation() {
@@ -238,7 +242,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
 
     public void savePostFB(String idToken, String role, String deviceId) {
         sp.showProgressDialog(Login.this);
-
+        if(cr.isConnected(Login.this)){
         mAPIService.savePostFB(idToken, role, deviceId).enqueue(new Callback<Register>() {
             @Override
             public void onResponse(Call<Register> call, Response<Register> response) {
@@ -268,11 +272,14 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
                 Log.e(TAG, "Unable to submit post to API.");
             }
         });
+        }else{
+            sp.ShowDialog(Login.this,"Please check your internet connection");
+        }
     }
 
     public void sendPostGoogle(String idToken, String role, String deviceId) {
         sp.showProgressDialog(Login.this);
-
+if(cr.isConnected(Login.this)){
         mAPIService.savePostGoogle(idToken, role, deviceId).enqueue(new Callback<Register>() {
             @Override
             public void onResponse(Call<Register> call, Response<Register> response) {
@@ -302,11 +309,14 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
                 Log.e(TAG, "Unable to submit post to API.");
             }
         });
+}else{
+    sp.ShowDialog(Login.this,"Please check your internet connection");
+}
     }
 
     public void sendPost(String email, String password, String role, final String deviceId) {
         sp.showProgressDialog(Login.this);
-
+if(cr.isConnected(Login.this)){
         mAPIService.savePost(email, password, role, deviceId).enqueue(new Callback<Register>() {
             @Override
             public void onResponse(Call<Register> call, Response<Register> response) {
@@ -347,11 +357,15 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
                 Log.e(TAG, "Unable to submit post to API.");
             }
         });
+}else{
+    sp.ShowDialog(Login.this,"Please check your internet connection");
+}
     }
 
     private void handleSignInResult(GoogleSignInResult result) {
         Log.d(TAG, "handleSignInResult:" + result.isSuccess());
         //  if(sp.getPreferences(Login.this,"Login") == null) {
+        if(cr.isConnected(Login.this)){
         if (result.isSuccess()) {
             SharedPreference sp = new SharedPreference();
             sp.setPreferences(getApplicationContext(), "Login", "GOOGLEYES");
@@ -364,6 +378,9 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
             Log.d(TAG, "idToken:" + idToken);
         } else {
             Log.e(TAG, "display name: ");
+        }
+        }else{
+            sp.ShowDialog(Login.this,"Please check your internet connection");
         }
         //  }
     }

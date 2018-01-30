@@ -29,6 +29,7 @@ import com.tenderWatch.Models.User;
 import com.tenderWatch.Retrofit.Api;
 import com.tenderWatch.Retrofit.ApiUtils;
 import com.tenderWatch.SharedPreference.SharedPreference;
+import com.tenderWatch.utils.ConnectivityReceiver;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -57,6 +58,7 @@ public class ClientDetail extends AppCompatActivity {
     private static final String TAG = ClientDetail.class.getSimpleName();
     String rate;
     Button btnClientSubmit;
+    ConnectivityReceiver cr =new ConnectivityReceiver();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -161,20 +163,23 @@ public class ClientDetail extends AppCompatActivity {
         String token = "Bearer " + sp.getPreferences(ClientDetail.this, "token");
         String userId=obj.getId().toString();
         sp.showProgressDialog(ClientDetail.this);
+        if(cr.isConnected(ClientDetail.this)) {
+            mApiService.getUserDetail(token, userId).enqueue(new Callback<User>() {
+                @Override
+                public void onResponse(Call<User> call, Response<User> response) {
+                    sp.hideProgressDialog();
+                    Log.i(TAG, "post submitted to API." + response);
+                    txtRate.setText(response.body().getAvg().toString() + "/5.0");
+                }
 
-        mApiService.getUserDetail(token,userId).enqueue(new Callback<User>() {
-            @Override
-            public void onResponse(Call<User> call, Response<User> response) {
-                sp.hideProgressDialog();
-                Log.i(TAG, "post submitted to API." + response);
-                txtRate.setText(response.body().getAvg().toString()+"/5.0");
-            }
-
-            @Override
-            public void onFailure(Call<User> call, Throwable t) {
-                Log.i(TAG, "post submitted to API." + t);
-            }
-        });
+                @Override
+                public void onFailure(Call<User> call, Throwable t) {
+                    Log.i(TAG, "post submitted to API." + t);
+                }
+            });
+        }else{
+            sp.ShowDialog(ClientDetail.this,"Please check your internet connection");
+        }
     }
 
 
@@ -182,7 +187,7 @@ public class ClientDetail extends AppCompatActivity {
         String token="Bearer " + sp.getPreferences(ClientDetail.this,"token");
         String clientId=obj.getId().toString();
         sp.showProgressDialog(ClientDetail.this);
-
+        if(cr.isConnected(ClientDetail.this)){
         mApiService.giveRating(token,clientId,rate).enqueue(new Callback<ResponseRating>() {
             @Override
             public void onResponse(Call<ResponseRating> call, Response<ResponseRating> response) {
@@ -197,11 +202,14 @@ public class ClientDetail extends AppCompatActivity {
                 Log.i(TAG, "post submitted to API." + t);
             }
         });
+        }else{
+            sp.ShowDialog(ClientDetail.this,"Please check your internet connection");
+        }
     }
 
     private void FGetAllCountry() {
         sp.showProgressDialog(ClientDetail.this);
-
+        if(cr.isConnected(ClientDetail.this)){
         mApiService.getCountryData().enqueue(new Callback<ArrayList<GetCountry>>() {
             @SuppressLint("ResourceType")
             @Override
@@ -229,7 +237,9 @@ public class ClientDetail extends AppCompatActivity {
 
             }
         });
-
+        }else{
+            sp.ShowDialog(ClientDetail.this,"Please check your internet connection");
+        }
     }
     @Override
     public void onBackPressed() {

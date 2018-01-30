@@ -29,6 +29,7 @@ import com.tenderWatch.Models.Tender;
 import com.tenderWatch.Retrofit.Api;
 import com.tenderWatch.Retrofit.ApiUtils;
 import com.tenderWatch.SharedPreference.SharedPreference;
+import com.tenderWatch.utils.ConnectivityReceiver;
 
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -61,6 +62,8 @@ public class NTenderDetail extends AppCompatActivity {
     Button removeTender,editTender,btnInterestedTender;
     SharedPreference sp=new SharedPreference();
     String sender;
+    ConnectivityReceiver cr=new ConnectivityReceiver();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -160,7 +163,7 @@ public class NTenderDetail extends AppCompatActivity {
                 String token="Bearer "+sp.getPreferences(NTenderDetail.this,"token");
                 String id=object.getId();
                 sp.showProgressDialog(NTenderDetail.this);
-
+if(cr.isConnected(NTenderDetail.this)){
                 mApiService.removeTender(token,id).enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -176,7 +179,9 @@ public class NTenderDetail extends AppCompatActivity {
 
                     }
                 });
-
+}else{
+    sp.ShowDialog(NTenderDetail.this,"Please check your internet connection");
+}
             }
         });
 
@@ -237,6 +242,7 @@ public class NTenderDetail extends AppCompatActivity {
     private void CallInterestedApi(){
         String token = "Bearer " + sp.getPreferences(NTenderDetail.this, "token");
         String tenderId=object.getId();
+        if(cr.isConnected(NTenderDetail.this)){
         mApiService.callInterested(token,tenderId).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -249,11 +255,14 @@ public class NTenderDetail extends AppCompatActivity {
                 Log.i(TAG, "post submitted to API." + t);
             }
         });
+        }else{
+            sp.ShowDialog(NTenderDetail.this,"Please check your internet connection");
+        }
     }
 
     private void GetCategory() {
         sp.showProgressDialog(NTenderDetail.this);
-
+        if(cr.isConnected(NTenderDetail.this)){
         mApiService.getCategoryData().enqueue(new Callback<ArrayList<GetCategory>>() {
             @Override
             public void onResponse(Call<ArrayList<GetCategory>> call, Response<ArrayList<GetCategory>> response) {
@@ -282,11 +291,14 @@ public class NTenderDetail extends AppCompatActivity {
 
             }
         });
+        }else{
+            sp.ShowDialog(NTenderDetail.this,"Please check your internet connection");
+        }
     }
 
     private void GetAllCountry() {
         sp.showProgressDialog(NTenderDetail.this);
-
+if(cr.isConnected(NTenderDetail.this)){
         mApiService.getCountryData().enqueue(new Callback<ArrayList<GetCountry>>() {
             @Override
             public void onResponse(Call<ArrayList<GetCountry>> call, Response<ArrayList<GetCountry>> response) {
@@ -315,6 +327,9 @@ public class NTenderDetail extends AppCompatActivity {
 
             }
         });
+}else{
+    sp.ShowDialog(NTenderDetail.this,"Please check your internet connection");
+}
     }
 
     @Override

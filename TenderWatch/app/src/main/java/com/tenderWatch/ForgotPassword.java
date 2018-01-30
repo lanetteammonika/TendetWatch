@@ -16,6 +16,7 @@ import com.tenderWatch.Retrofit.Api;
 import com.tenderWatch.Retrofit.ApiUtils;
 import com.tenderWatch.SharedPreference.SharedPreference;
 import com.tenderWatch.Validation.Validation;
+import com.tenderWatch.utils.ConnectivityReceiver;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -29,6 +30,7 @@ public class ForgotPassword extends AppCompatActivity implements View.OnClickLis
     private LinearLayout back;
     Intent intent;
     SharedPreference sp = new SharedPreference();
+    ConnectivityReceiver cr=new ConnectivityReceiver();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,7 +102,7 @@ public class ForgotPassword extends AppCompatActivity implements View.OnClickLis
         String email = txtEmail.getText().toString();
         String role = "contractor";
         sp.showProgressDialog(ForgotPassword.this);
-
+        if(cr.isConnected(ForgotPassword.this)){
         mAPIService.forgotPassword(email, role).enqueue(new Callback<LoginPost>() {
             @Override
             public void onResponse(Call<LoginPost> call, Response<LoginPost> response) {
@@ -118,5 +120,8 @@ public class ForgotPassword extends AppCompatActivity implements View.OnClickLis
                 Log.e(TAG, "Unable to submit post to API.");
             }
         });
+        }else{
+            sp.ShowDialog(ForgotPassword.this,"Please check your internet connection");
+        }
     }
 }

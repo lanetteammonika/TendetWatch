@@ -29,6 +29,7 @@ import com.stripe.android.Stripe;
 import com.stripe.android.TokenCallback;
 import com.stripe.android.model.BankAccount;
 import com.tenderWatch.SharedPreference.SharedPreference;
+import com.tenderWatch.utils.ConnectivityReceiver;
 
 import java.util.Arrays;
 
@@ -39,6 +40,8 @@ public class GooglePay extends AppCompatActivity {
     public static final int LOAD_PAYMENT_DATA_REQUEST_CODE=1;
     Button bank;
     SharedPreference sp=new SharedPreference();
+    ConnectivityReceiver cr=new ConnectivityReceiver();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,7 +54,7 @@ public class GooglePay extends AppCompatActivity {
                 stripe.setDefaultPublishableKey("pk_test_mjxYxMlj4K2WZfR6TwlHdIXW");
                 BankAccount bankAccount = new BankAccount("000123456789","US","usd","110000000");
                 sp.showProgressDialog(GooglePay.this);
-
+                if(cr.isConnected(GooglePay.this)){
                 stripe.createBankAccountToken(bankAccount, new TokenCallback() {
                     @Override
                     public void onError(Exception error) {
@@ -64,6 +67,9 @@ public class GooglePay extends AppCompatActivity {
                         Log.e("Bank Token", token.getId());
                     }
                 });
+                }else{
+                    sp.ShowDialog(GooglePay.this,"Please check your internet connection");
+                }
             }
         });
         paymentsClient =

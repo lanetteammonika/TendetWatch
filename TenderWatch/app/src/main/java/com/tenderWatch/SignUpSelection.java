@@ -54,6 +54,7 @@ import com.tenderWatch.Retrofit.Api;
 import com.tenderWatch.Retrofit.ApiUtils;
 import com.tenderWatch.SharedPreference.SharedPreference;
 import com.tenderWatch.Validation.Validation;
+import com.tenderWatch.utils.ConnectivityReceiver;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -98,6 +99,7 @@ public class SignUpSelection extends AppCompatActivity implements View.OnClickLi
     private Api mAPIService;
     String newString, profilePicUrl;
     Bitmap main;
+    ConnectivityReceiver cr =new ConnectivityReceiver();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -193,6 +195,7 @@ public class SignUpSelection extends AppCompatActivity implements View.OnClickLi
         btnSignIn.setScopes(gso.getScopeArray());
         fb.setOnClickListener(this);
         loginButton.setReadPermissions("email");
+        if(cr.isConnected(SignUpSelection.this)){
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
 
             @Override
@@ -269,7 +272,9 @@ public class SignUpSelection extends AppCompatActivity implements View.OnClickLi
                 Log.d(TAG, "onConnectionFailed:");
             }
         });
-
+        }else{
+            sp.ShowDialog(SignUpSelection.this,"Please check your internet connection");
+        }
     }
 
     private void InitView() {
@@ -346,6 +351,7 @@ public class SignUpSelection extends AppCompatActivity implements View.OnClickLi
     private void handleSignInResult(GoogleSignInResult result) {
         Log.d(TAG, "handleSignInResult:" + result.isSuccess());
         // if(sp.getPreferences(SignUpSelection.this,"Login") == null) {
+        if(cr.isConnected(SignUpSelection.this)){
         if (result.isSuccess()) {
             SharedPreference sp = new SharedPreference();
             sp.setPreferences(getApplicationContext(), "Login", "GOOGLEYES");
@@ -385,6 +391,9 @@ public class SignUpSelection extends AppCompatActivity implements View.OnClickLi
                     });
         } else {
             Log.e(TAG, "display name: ");
+        }
+        }else{
+            sp.ShowDialog(SignUpSelection.this,"Please check your internet connection");
         }
         //}
     }
@@ -467,7 +476,7 @@ public class SignUpSelection extends AppCompatActivity implements View.OnClickLi
     public void checkEmail() {
         String email = txtEmail.getText().toString();
         sp.showProgressDialog(SignUpSelection.this);
-
+if(cr.isConnected(SignUpSelection.this)){
         mAPIService.checkEmailExit(txtEmail.getText().toString(), sp.getPreferences(getApplicationContext(), "role")).enqueue(new Callback<Message>() {
             @Override
             public void onResponse(Call<Message> call, Response<Message> response) {
@@ -488,6 +497,9 @@ public class SignUpSelection extends AppCompatActivity implements View.OnClickLi
                 sp.ShowDialog(SignUpSelection.this, "Server is down. Come back later!!");
             }
         });
+}else{
+    sp.ShowDialog(SignUpSelection.this,"Please check your internet connection");
+}
     }
 
     private void signup() {

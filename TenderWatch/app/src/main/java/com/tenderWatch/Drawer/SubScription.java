@@ -19,6 +19,7 @@ import com.tenderWatch.R;
 import com.tenderWatch.Retrofit.Api;
 import com.tenderWatch.Retrofit.ApiUtils;
 import com.tenderWatch.SharedPreference.SharedPreference;
+import com.tenderWatch.utils.ConnectivityReceiver;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -35,6 +36,7 @@ public class SubScription extends Fragment {
     WebView mWebView;
     User user;
     String url;
+    ConnectivityReceiver cr=new ConnectivityReceiver();
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -56,16 +58,15 @@ public class SubScription extends Fragment {
         String token = "Bearer " + sp.getPreferences(getActivity(), "token");
         user = (User) sp.getPreferencesObject(getActivity());
         String userId=user.getId();
-
+        if(cr.isConnected(getActivity())){
         mAPIServices.getSubscriptionDetails(token).enqueue(new Callback<SubScriptionResponse>() {
             @Override
             public void onResponse(Call<SubScriptionResponse> call, Response<SubScriptionResponse> response) {
                 Log.i(TAG, "post submitted to API." + response);
-                sp.hideProgressDialog();
                 url="http://docs.google.com/gview?embedded=true&url="+response.body().getInvoiceURL();
                 startWebView(url);
                 mWebView.loadUrl(url);
-                //mWebView.loadUrl("http://docs.google.com/gview?embedded=true&url="+response.body().getInvoiceURL());
+                sp.hideProgressDialog();
             }
 
             @Override
@@ -74,7 +75,9 @@ public class SubScription extends Fragment {
                 Log.i(TAG, "post submitted to API." + t);
             }
         });
-
+        }else{
+            sp.ShowDialog(getActivity(),"Please check your internet connection");
+        }
 
     }
 
@@ -100,6 +103,8 @@ public class SubScription extends Fragment {
                     progressDialog.setMessage("Loading...");
                     progressDialog.show();
                 }
+                progressDialog.setCanceledOnTouchOutside(false);
+
             }
             public void onPageFinished(WebView view, String url) {
                 try{
@@ -111,8 +116,9 @@ public class SubScription extends Fragment {
                 }
                 progressDialog.dismiss();
             }
-
         });
 
     }
+
+
 }

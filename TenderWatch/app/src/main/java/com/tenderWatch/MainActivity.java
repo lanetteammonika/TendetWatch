@@ -30,6 +30,7 @@ import com.tenderWatch.Drawer.MainDrawer;
 import com.tenderWatch.Models.User;
 import com.tenderWatch.SharedPreference.SharedPreference;
 import com.tenderWatch.app.Config;
+import com.tenderWatch.utils.ConnectivityReceiver;
 import com.tenderWatch.utils.NotificationUtils;
 
 import io.fabric.sdk.android.Fabric;
@@ -44,6 +45,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final String TAG = MainActivity.class.getSimpleName();
     Object user;
     boolean doubleBackToExitPressedOnce = true;
+    ConnectivityReceiver cr= new ConnectivityReceiver();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,20 +58,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
        // FirebaseCrash.report(new Exception("My first Android non-fatal error"));
 
         Button crashButton = new Button(this);
-        crashButton.setText("..");
-        crashButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) {
-                Crashlytics.getInstance().crash(); // Force a crash
-            }
-        });
-        addContentView(crashButton,
-                new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                        ViewGroup.LayoutParams.WRAP_CONTENT));
-        final Fabric fabric = new Fabric.Builder(this)
-                .kits(new Crashlytics())
-                .debuggable(true)           // Enables Crashlytics debugger
-                .build();
-        Fabric.with(fabric);
+//        crashButton.setText("..");
+//        crashButton.setOnClickListener(new View.OnClickListener() {
+//            public void onClick(View view) {
+//                Crashlytics.getInstance().crash(); // Force a crash
+//            }
+//        });
+//        addContentView(crashButton,
+//                new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+//                        ViewGroup.LayoutParams.WRAP_CONTENT));
+//        final Fabric fabric = new Fabric.Builder(this)
+//                .kits(new Crashlytics())
+//                .debuggable(true)           // Enables Crashlytics debugger
+//                .build();
+//        Fabric.with(fabric);
         if(user!= null){
             String role=sp.getPreferences(MainActivity.this,"role");
             if(role.equals("client")) {
@@ -85,6 +87,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             startActivity(intent);
             overridePendingTransition(R.anim.enter, R.anim.exit);
         }
+        if(cr.isConnected(MainActivity.this)){
         mRegistrationBroadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -109,7 +112,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         };
 
+
         displayFirebaseRegId();
+        }else{
+            sp.ShowDialog(MainActivity.this,"Please check your internet connection");
+        }
     }
     // Fetches reg id from shared preferences
     // and displays on the screen

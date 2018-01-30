@@ -33,6 +33,7 @@ import com.tenderWatch.Models.Tender;
 import com.tenderWatch.Retrofit.Api;
 import com.tenderWatch.Retrofit.ApiUtils;
 import com.tenderWatch.SharedPreference.SharedPreference;
+import com.tenderWatch.utils.ConnectivityReceiver;
 
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -69,6 +70,7 @@ public class ContractotTenderDetail extends AppCompatActivity {
     Button removeTender, btnInterestedTender;
     SharedPreference sp = new SharedPreference();
     String sender;
+    ConnectivityReceiver cr=new ConnectivityReceiver();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -171,21 +173,24 @@ public class ContractotTenderDetail extends AppCompatActivity {
             public void onClick(View v) {
                 String token = "Bearer " + sp.getPreferences(ContractotTenderDetail.this, "token");
                 String id = object.getId().toString();
-                mApiService.removeTender(token, id).enqueue(new Callback<ResponseBody>() {
-                    @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                        Log.i(TAG, "response---" + response.body());
-                        Intent intent = new Intent(ContractotTenderDetail.this, ClientDrawer.class);
-                        startActivity(intent);
-                    }
+                if(cr.isConnected(ContractotTenderDetail.this)) {
+                    mApiService.removeTender(token, id).enqueue(new Callback<ResponseBody>() {
+                        @Override
+                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                            Log.i(TAG, "response---" + response.body());
+                            Intent intent = new Intent(ContractotTenderDetail.this, ClientDrawer.class);
+                            startActivity(intent);
+                        }
 
-                    @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-                        Log.i(TAG, "response---" + t);
+                        @Override
+                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+                            Log.i(TAG, "response---" + t);
 
-                    }
-                });
-
+                        }
+                    });
+                }else{
+                    sp.ShowDialog(ContractotTenderDetail.this,"Please check your internet connection");
+                }
             }
         });
 
@@ -246,7 +251,7 @@ public class ContractotTenderDetail extends AppCompatActivity {
 
     private void GetCategory() {
         sp.showProgressDialog(ContractotTenderDetail.this);
-
+        if(cr.isConnected(ContractotTenderDetail.this)){
         mApiService.getCategoryData().enqueue(new Callback<ArrayList<GetCategory>>() {
             @Override
             public void onResponse(Call<ArrayList<GetCategory>> call, Response<ArrayList<GetCategory>> response) {
@@ -275,11 +280,15 @@ public class ContractotTenderDetail extends AppCompatActivity {
                 Log.i(TAG, "post submitted to API." + t);
             }
         });
+        }else{
+            sp.ShowDialog(ContractotTenderDetail.this,"Please check your internet connection");
+        }
     }
 
     private void CallInterestedApi() {
         String token = "Bearer " + sp.getPreferences(ContractotTenderDetail.this, "token");
         String tenderId = object.getId().toString();
+        if(cr.isConnected(ContractotTenderDetail.this)){
         mApiService.callInterested(token, tenderId).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -293,12 +302,15 @@ public class ContractotTenderDetail extends AppCompatActivity {
                 Log.i(TAG, "post submitted to API." + t);
             }
         });
+        }else{
+            sp.ShowDialog(ContractotTenderDetail.this,"Please check your internet connection");
+        }
     }
 
 
     private void GetAllCountry() {
         sp.showProgressDialog(ContractotTenderDetail.this);
-
+        if(cr.isConnected(ContractotTenderDetail.this)){
         mApiService.getCountryData().enqueue(new Callback<ArrayList<GetCountry>>() {
             @Override
             public void onResponse(Call<ArrayList<GetCountry>> call, Response<ArrayList<GetCountry>> response) {
@@ -327,6 +339,9 @@ public class ContractotTenderDetail extends AppCompatActivity {
 
             }
         });
+        }else{
+            sp.ShowDialog(ContractotTenderDetail.this,"Please check your internet connection");
+        }
     }
 
     @Override

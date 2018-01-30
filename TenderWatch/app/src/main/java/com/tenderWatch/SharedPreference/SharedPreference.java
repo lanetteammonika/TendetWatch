@@ -78,7 +78,6 @@ public class SharedPreference {
                 context);
         builder.setTitle("Tender Watch");
         builder.setMessage(Msg);
-
         builder.setPositiveButton("OK",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog,
@@ -96,8 +95,8 @@ public class SharedPreference {
             mProgressDialog.setMessage("Loading....");
             mProgressDialog.setIndeterminate(true);
         }
-
         mProgressDialog.show();
+        mProgressDialog.setCanceledOnTouchOutside(false);
     }
 
     public void hideProgressDialog() {

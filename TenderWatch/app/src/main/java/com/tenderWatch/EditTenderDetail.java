@@ -43,6 +43,7 @@ import com.tenderWatch.Retrofit.ApiUtils;
 import com.tenderWatch.SharedPreference.SharedPreference;
 import com.tenderWatch.Validation.MyScrollView;
 import com.tenderWatch.Validation.Validation;
+import com.tenderWatch.utils.ConnectivityReceiver;
 
 import java.io.File;
 import java.io.IOException;
@@ -91,6 +92,8 @@ public class EditTenderDetail extends AppCompatActivity {
 
     private static final int REQUEST_CODE_SELECT_PICTURE = 0;
     private static final int REQUEST_CODE_CROP_PICTURE = 1;
+
+    ConnectivityReceiver cr = new ConnectivityReceiver();
     Tender object;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -432,7 +435,7 @@ public class EditTenderDetail extends AppCompatActivity {
 
     private void FGetCategory() {
         sp.showProgressDialog(EditTenderDetail.this);
-
+        if(cr.isConnected(EditTenderDetail.this)){
         mApiService.getCategoryData().enqueue(new Callback<ArrayList<GetCategory>>() {
             @Override
             public void onResponse(Call<ArrayList<GetCategory>> call, Response<ArrayList<GetCategory>> response) {
@@ -455,11 +458,14 @@ public class EditTenderDetail extends AppCompatActivity {
 
             }
         });
+        }else{
+            sp.ShowDialog(EditTenderDetail.this,"Please check your internet connection");
+        }
     }
 
     private void FGetAllCountry() {
         sp.showProgressDialog(EditTenderDetail.this);
-
+        if(cr.isConnected(EditTenderDetail.this)){
         mApiService.getCountryData().enqueue(new Callback<ArrayList<GetCountry>>() {
             @Override
             public void onResponse(Call<ArrayList<GetCountry>> call, Response<ArrayList<GetCountry>> response) {
@@ -484,7 +490,9 @@ public class EditTenderDetail extends AppCompatActivity {
 
             }
         });
-
+        }else{
+            sp.ShowDialog(EditTenderDetail.this,"Please check your internet connection");
+        }
     }
 
     public static File createPictureFile(String fileName) {
@@ -543,6 +551,7 @@ public class EditTenderDetail extends AppCompatActivity {
         isFollowTendeer1=MultipartBody.Part.createFormData("isFollowTender","true");
         countryId1 = MultipartBody.Part.createFormData("country", object.getCountry().toString());
         categoryId1 = MultipartBody.Part.createFormData("category", object.getCategory().toString());
+      if(cr.isConnected(EditTenderDetail.this)){
         mApiService.updateTender(token,id,email1,name1,city1,description1,contactNo1,landlineNo1,address1,countryId1,categoryId1,isFollowTendeer1,image1)
                 .enqueue(new Callback<UpdateTender>() {
                     @Override
@@ -558,12 +567,14 @@ public class EditTenderDetail extends AppCompatActivity {
                         Log.i(TAG,"response---"+t);
                     }
                 });
-
+      }else{
+          sp.ShowDialog(EditTenderDetail.this,"Please check your internet connection");
+      }
     }
 
     private void GetCategory() {
         sp.showProgressDialog(EditTenderDetail.this);
-
+        if(cr.isConnected(EditTenderDetail.this)){
         mApiService.getCategoryData().enqueue(new Callback<ArrayList<GetCategory>>() {
             @Override
             public void onResponse(Call<ArrayList<GetCategory>> call, Response<ArrayList<GetCategory>> response) {
@@ -582,11 +593,14 @@ public class EditTenderDetail extends AppCompatActivity {
 
             }
         });
+        }else{
+            sp.ShowDialog(EditTenderDetail.this,"Please check your internet connection");
+        }
     }
 
     private void GetAllCountry() {
         sp.showProgressDialog(EditTenderDetail.this);
-
+        if(cr.isConnected(EditTenderDetail.this)){
         mApiService.getCountryData().enqueue(new Callback<ArrayList<GetCountry>>() {
             @Override
             public void onResponse(Call<ArrayList<GetCountry>> call, Response<ArrayList<GetCountry>> response) {
@@ -607,6 +621,9 @@ public class EditTenderDetail extends AppCompatActivity {
 
             }
         });
+        }else{
+            sp.ShowDialog(EditTenderDetail.this,"Please check your internet connection");
+        }
     }
 
 

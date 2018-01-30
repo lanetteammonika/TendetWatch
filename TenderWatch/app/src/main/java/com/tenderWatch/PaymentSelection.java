@@ -62,6 +62,7 @@ import com.tenderWatch.Retrofit.Api;
 import com.tenderWatch.Retrofit.ApiUtils;
 import com.tenderWatch.SharedPreference.PayPalConfig;
 import com.tenderWatch.SharedPreference.SharedPreference;
+import com.tenderWatch.utils.ConnectivityReceiver;
 
 import org.json.JSONException;
 
@@ -111,6 +112,7 @@ public class PaymentSelection extends AppCompatActivity implements View.OnClickL
     Intent intent;
     SharedPreference sp=new SharedPreference();
 RequestCharges rc=new RequestCharges();
+ConnectivityReceiver cr=new ConnectivityReceiver();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -237,7 +239,7 @@ RequestCharges rc=new RequestCharges();
 
         Call<Register> resultCall = mAPIService.uploadContractor(email1, password1, country1, contactNo1, occupation1, aboutMe1, role1, deviceId1, image1, subscribe1, selections1);
         sp.showProgressDialog(PaymentSelection.this);
-
+        if(cr.isConnected(PaymentSelection.this)){
         resultCall.enqueue(new Callback<Register>() {
             @Override
             public void onResponse(Call<Register> call, Response<Register> response) {
@@ -270,7 +272,9 @@ RequestCharges rc=new RequestCharges();
                 sp.ShowDialog(PaymentSelection.this, "Server is down. Come back later!!");
             }
         });
-
+        }else{
+            sp.ShowDialog(PaymentSelection.this,"Please check your internet connection");
+        }
     }
 
 
@@ -281,6 +285,7 @@ RequestCharges rc=new RequestCharges();
         int payment2 = Integer.parseInt(sp.getPreferences(PaymentSelection.this, "payment")) * 100;
         rc.setAmount(payment2);
         //String token=
+        if(cr.isConnected(PaymentSelection.this)){
         mAPIService.createAcc(token, "US", "usd", "Jane Austen", "individual", "110000000", "000123456789").enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -294,11 +299,15 @@ RequestCharges rc=new RequestCharges();
                 Log.i(TAG, "response register-->");
             }
         });
+        }else{
+            sp.ShowDialog(PaymentSelection.this,"Please check your internet connection");
+        }
     }
 
     private void call() {
         Card card = new Card("4242424242424242", 12, 2018, "123");
         Stripe stripe = new Stripe(PaymentSelection.this, "pk_test_mjxYxMlj4K2WZfR6TwlHdIXW");
+        if(cr.isConnected(PaymentSelection.this)){
         stripe.createToken(
                 card,
                 new TokenCallback() {
@@ -316,6 +325,9 @@ RequestCharges rc=new RequestCharges();
                     }
                 }
         );
+        }else{
+            sp.ShowDialog(PaymentSelection.this,"Please check your internet connection");
+        }
     }
 
     private PaymentDataRequest createPaymentDataRequest() {

@@ -25,6 +25,7 @@ import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
+import com.tenderWatch.ClientDetail;
 import com.tenderWatch.Drawer.MainDrawer;
 import com.tenderWatch.Drawer.Notification;
 import com.tenderWatch.MainActivity;
@@ -56,7 +57,7 @@ public class ClientDrawer extends AppCompatActivity
     NavigationView navigationView;
     private static MenuItem Cmenu2, CeditMenu;
     static Boolean Cdisplay = false;
-
+    ConnectivityReceiver cr=new ConnectivityReceiver();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -248,6 +249,7 @@ public class ClientDrawer extends AppCompatActivity
 
     private void GetNotification() {
         String token = "Bearer " + sp.getPreferences(ClientDrawer.this, "token");
+        if(cr.isConnected(ClientDrawer.this)){
         mAPIService.getNotifications(token).enqueue(new Callback<ArrayList<ResponseNotifications>>() {
             @Override
             public void onResponse(Call<ArrayList<ResponseNotifications>> call, Response<ArrayList<ResponseNotifications>> response) {
@@ -270,6 +272,9 @@ public class ClientDrawer extends AppCompatActivity
                 Log.i(TAG, "post submitted to API." + t);
             }
         });
+        }else{
+            sp.ShowDialog(ClientDrawer.this,"Please check your internet connection");
+        }
     }
 
     private void Logout() {
@@ -277,6 +282,7 @@ public class ClientDrawer extends AppCompatActivity
         String deviceId = sp.getPreferences(getApplicationContext(), "deviceId");
         String role = sp.getPreferences(ClientDrawer.this, "role");
         sp.showProgressDialog(ClientDrawer.this);
+        if(cr.isConnected(ClientDrawer.this)){
         mAPIService.logout(token, deviceId, role).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -300,6 +306,9 @@ public class ClientDrawer extends AppCompatActivity
 
             }
         });
+        }else{
+            sp.ShowDialog(ClientDrawer.this,"Please check your internet connection");
+        }
     }
 
     boolean doubleBackToExitPressedOnce = false;

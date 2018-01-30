@@ -29,6 +29,7 @@ import com.tenderWatch.Models.Tender;
 import com.tenderWatch.Retrofit.Api;
 import com.tenderWatch.Retrofit.ApiUtils;
 import com.tenderWatch.SharedPreference.SharedPreference;
+import com.tenderWatch.utils.ConnectivityReceiver;
 
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -60,6 +61,7 @@ public class PreviewTenderDetail extends AppCompatActivity {
     RelativeLayout rlEmail,rlContact,rlLandline,rlAddress;
     Button removeTender,editTender;
     SharedPreference sp=new SharedPreference();
+    ConnectivityReceiver cr=new ConnectivityReceiver();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -154,7 +156,7 @@ public class PreviewTenderDetail extends AppCompatActivity {
                 String token="Bearer "+sp.getPreferences(PreviewTenderDetail.this,"token");
                 String id=object.getId().toString();
                 sp.showProgressDialog(PreviewTenderDetail.this);
-
+if(cr.isConnected(PreviewTenderDetail.this)){
                 mApiService.removeTender(token,id).enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -170,7 +172,9 @@ public class PreviewTenderDetail extends AppCompatActivity {
 
                     }
                 });
-
+}else{
+    sp.ShowDialog(PreviewTenderDetail.this,"Please check your internet connection");
+}
             }
         });
 
@@ -208,29 +212,29 @@ public class PreviewTenderDetail extends AppCompatActivity {
         }else{
             Contact.setText(object.getContactNo().toString());}
 
-        if(object.getLandlineNo().toString().equals("")){
+        if(object.getLandlineNo().equals("")){
             rlLandline.setVisibility(View.GONE);
         }else{
-            LandLine.setText(object.getLandlineNo().toString());
+            LandLine.setText(object.getLandlineNo());
         }
 
-        if(object.getEmail().toString().equals("")){
+        if(object.getEmail().equals("")){
             rlEmail.setVisibility(View.GONE);
         }else{
-            Email.setText(object.getEmail().toString());
+            Email.setText(object.getEmail());
         }
 
-        if(object.getAddress().toString().equals("")){
+        if(object.getAddress().equals("")){
             rlAddress.setVisibility(View.GONE);
         }else{
-            Address.setText(object.getAddress().toString());
+            Address.setText(object.getAddress());
         }
         flag3=(ImageView) findViewById(R.id.preview_flag_image);
     }
 
     private void GetCategory() {
         sp.showProgressDialog(PreviewTenderDetail.this);
-
+if(cr.isConnected(PreviewTenderDetail.this)){
         mApiService.getCategoryData().enqueue(new Callback<ArrayList<GetCategory>>() {
             @Override
             public void onResponse(Call<ArrayList<GetCategory>> call, Response<ArrayList<GetCategory>> response) {
@@ -260,6 +264,9 @@ public class PreviewTenderDetail extends AppCompatActivity {
 
             }
         });
+}else{
+    sp.ShowDialog(PreviewTenderDetail.this,"Please check your internet connection");
+}
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -284,7 +291,7 @@ public class PreviewTenderDetail extends AppCompatActivity {
     }
     private void GetAllCountry() {
         sp.showProgressDialog(PreviewTenderDetail.this);
-
+if(cr.isConnected(PreviewTenderDetail.this)){
         mApiService.getCountryData().enqueue(new Callback<ArrayList<GetCountry>>() {
             @Override
             public void onResponse(Call<ArrayList<GetCountry>> call, Response<ArrayList<GetCountry>> response) {
@@ -314,6 +321,9 @@ public class PreviewTenderDetail extends AppCompatActivity {
 
             }
         });
+}else{
+    sp.ShowDialog(PreviewTenderDetail.this,"Please check your internet connection");
+}
     }
 
     public Bitmap StringToBitMap(String encodedString) {

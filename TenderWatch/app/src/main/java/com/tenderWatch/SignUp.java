@@ -35,6 +35,7 @@ import com.tenderWatch.Models.Register;
 import com.tenderWatch.Retrofit.Api;
 import com.tenderWatch.Retrofit.ApiUtils;
 import com.tenderWatch.SharedPreference.SharedPreference;
+import com.tenderWatch.utils.ConnectivityReceiver;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -78,6 +79,7 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener {
     private Uri mPictureUri;
     private Api mAPIService;
     Bundle savedInstanceState;
+    ConnectivityReceiver cr=new ConnectivityReceiver();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

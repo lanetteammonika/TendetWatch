@@ -22,6 +22,7 @@ import com.tenderWatch.Retrofit.ApiUtils;
 import com.tenderWatch.SharedPreference.SharedPreference;
 import com.tenderWatch.SignUpSelection;
 import com.tenderWatch.Validation.Validation;
+import com.tenderWatch.utils.ConnectivityReceiver;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -39,6 +40,7 @@ public class ChangePassword  extends Fragment implements View.OnClickListener{
     Object user;
     Api mAPIService;
     Intent intent;
+    ConnectivityReceiver cr = new ConnectivityReceiver();
 
     @Nullable
     @Override
@@ -138,6 +140,7 @@ public class ChangePassword  extends Fragment implements View.OnClickListener{
         String newPassword=txt_newPassword.getText().toString();
         Call<Success> resultCall = mAPIService.ChangePassword(token,Id,oldPassword,newPassword);
         sp.showProgressDialog(getActivity());
+        if(cr.isConnected(getActivity())){
         resultCall.enqueue(new Callback<Success>() {
             @Override
             public void onResponse(Call<Success> call, Response<Success> response) {
@@ -158,6 +161,9 @@ public class ChangePassword  extends Fragment implements View.OnClickListener{
 
             }
         });
+        }else{
+            sp.ShowDialog(getActivity(),"Please check your internet connection");
+        }
 
     }
 

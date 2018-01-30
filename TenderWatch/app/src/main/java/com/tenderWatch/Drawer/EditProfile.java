@@ -32,6 +32,7 @@ import com.tenderWatch.R;
 import com.tenderWatch.Retrofit.Api;
 import com.tenderWatch.Retrofit.ApiUtils;
 import com.tenderWatch.SharedPreference.SharedPreference;
+import com.tenderWatch.utils.ConnectivityReceiver;
 
 import java.io.File;
 import java.io.IOException;
@@ -80,6 +81,7 @@ public class EditProfile extends Fragment implements View.OnClickListener{
 
     private static final int PICTURE_WIDTH = 600;
     private static final int PICTURE_HEIGHT = 600;
+    ConnectivityReceiver cr=new ConnectivityReceiver();
 
     @Nullable
     @Override
@@ -207,7 +209,7 @@ public class EditProfile extends Fragment implements View.OnClickListener{
         String token="Bearer "+sp.getPreferences(getActivity(),"token");
         Call<User> resultCall = mAPIService.UpdateUser(token,Id,country1, contactNo1, occupation1, aboutMe1, image1);
         sp.showProgressDialog(getActivity());
-
+if(cr.isConnected(getActivity())){
         resultCall.enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
@@ -234,7 +236,9 @@ public class EditProfile extends Fragment implements View.OnClickListener{
 
             }
         });
-
+}else{
+    sp.ShowDialog(getActivity(),"Please check your internet connection");
+}
     }
 
     @Override

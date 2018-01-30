@@ -194,6 +194,7 @@ public class BankList extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int id) {
                 String token = "Bearer " + sp.getPreferences(BankList.this, "token");
                 String tenderid = String.valueOf(adapter.bankList.get(0).getId());
+                if(cr.isConnected(BankList.this)){
                 mAPIService.deleteBank(token, tenderid).enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -207,6 +208,9 @@ public class BankList extends AppCompatActivity {
                         Log.i(TAG, "response---" + t);
                     }
                 });
+                }else{
+                    sp.ShowDialog(BankList.this,"Please check your internet connection");
+                }
             }
         });
 

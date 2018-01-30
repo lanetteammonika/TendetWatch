@@ -40,6 +40,7 @@ import com.tenderWatch.Retrofit.Api;
 import com.tenderWatch.Retrofit.ApiUtils;
 import com.tenderWatch.SharedPreference.SharedPreference;
 import com.tenderWatch.SignUpSelection;
+import com.tenderWatch.utils.ConnectivityReceiver;
 
 import java.util.ArrayList;
 
@@ -61,6 +62,7 @@ public class MainDrawer extends AppCompatActivity implements NavigationView.OnNa
     TextView emailText;
     NavigationView navigationView;
     static Boolean display = false;
+    ConnectivityReceiver cr=new ConnectivityReceiver();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -194,6 +196,7 @@ public class MainDrawer extends AppCompatActivity implements NavigationView.OnNa
 
     private void GetNotification() {
         String token = "Bearer " + sp.getPreferences(MainDrawer.this, "token");
+        if(cr.isConnected(MainDrawer.this)){
         mAPIService.getNotifications(token).enqueue(new Callback<ArrayList<ResponseNotifications>>() {
             @Override
             public void onResponse(Call<ArrayList<ResponseNotifications>> call, Response<ArrayList<ResponseNotifications>> response) {
@@ -216,7 +219,10 @@ public class MainDrawer extends AppCompatActivity implements NavigationView.OnNa
                 Log.i(TAG, "post submitted to API." + t);
             }
         });
-    }
+        }else{
+            sp.ShowDialog(MainDrawer.this,"Please check your internet connection");
+        }
+        }
 
     private void callEdit() {
         Fragment fragment = null;
@@ -320,7 +326,7 @@ public class MainDrawer extends AppCompatActivity implements NavigationView.OnNa
         String role = sp.getPreferences(MainDrawer.this, "role");
         String deviceId = sp.getPreferences(MainDrawer.this, "androidId");
         sp.showProgressDialog(MainDrawer.this);
-
+        if(cr.isConnected(MainDrawer.this)){
         mAPIService.logout(token, deviceId, role).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -345,6 +351,9 @@ public class MainDrawer extends AppCompatActivity implements NavigationView.OnNa
                 Log.i(TAG, "post submitted to API." + t);
             }
         });
+        }else{
+            sp.ShowDialog(MainDrawer.this,"Please check your internet connection");
+        }
     }
 
 

@@ -24,6 +24,7 @@ import com.tenderWatch.Models.GetCountry;
 import com.tenderWatch.Retrofit.Api;
 import com.tenderWatch.Retrofit.ApiUtils;
 import com.tenderWatch.SharedPreference.SharedPreference;
+import com.tenderWatch.utils.ConnectivityReceiver;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -61,6 +62,7 @@ public class CountryList extends AppCompatActivity {
     SharedPreference sp = new SharedPreference();
     ArrayList<String> a_country = new ArrayList<String>();
     ImageView imgClose;
+    ConnectivityReceiver cr=new ConnectivityReceiver();
 
     int pos = 0;
 
@@ -106,7 +108,7 @@ public class CountryList extends AppCompatActivity {
             txtSelectedContract.setVisibility(View.GONE);
         }
         sp.showProgressDialog(CountryList.this);
-
+if(cr.isConnected(CountryList.this)){
         mAPIService.getCountryData().enqueue(new Callback<ArrayList<GetCountry>>() {
             @Override
             public void onResponse(Call<ArrayList<GetCountry>> call, Response<ArrayList<GetCountry>> response) {
@@ -183,7 +185,9 @@ public class CountryList extends AppCompatActivity {
                 Log.i(TAG, "post submitted to API.");
             }
         });
-
+}else{
+    sp.ShowDialog(CountryList.this,"Please check your internet connection");
+}
         imgClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

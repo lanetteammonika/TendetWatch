@@ -23,6 +23,7 @@ import com.tenderWatch.R;
 import com.tenderWatch.Retrofit.Api;
 import com.tenderWatch.Retrofit.ApiUtils;
 import com.tenderWatch.SharedPreference.SharedPreference;
+import com.tenderWatch.utils.ConnectivityReceiver;
 
 import java.util.ArrayList;
 
@@ -46,6 +47,7 @@ public class Notification extends Fragment {
     ArrayList<String> idList = new ArrayList<String>();
     String edit;
     Tender obj;
+    ConnectivityReceiver cr=new ConnectivityReceiver();
 
     @Nullable
     @Override
@@ -90,7 +92,7 @@ public class Notification extends Fragment {
                 String token = "Bearer " + sp.getPreferences(getActivity(), "token");
                 String id2 = notification_list.get(i).getId().toString();
                 sp.showProgressDialog(getActivity());
-
+if(cr.isConnected(getActivity())){
                 mAPIServices.readNotification(token, id2).enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -103,7 +105,9 @@ public class Notification extends Fragment {
                         Log.i(TAG, "post submitted to API." + t);
                     }
                 });
-
+}else{
+    sp.ShowDialog(getActivity(),"Please check your internet connection");
+}
                 intent.putExtra("data",jsonString);
                 intent.putExtra("sender",sender);
                 startActivity(intent);
@@ -121,6 +125,7 @@ public class Notification extends Fragment {
     private void DeleteNotification(){
         String token = "Bearer " + sp.getPreferences(getActivity(), "token");
         sp.showProgressDialog(getActivity());
+        if(cr.isConnected(getActivity())){
         mAPIServices.deleteNotification(token,idList).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -134,12 +139,15 @@ public class Notification extends Fragment {
                 Log.i(TAG, "post submitted to API." + t);
             }
         });
+        }else{
+            sp.ShowDialog(getActivity(),"Please check your internet connection");
+        }
     }
 
     private void GetNotification() {
         String token = "Bearer " + sp.getPreferences(getActivity(), "token");
         sp.showProgressDialog(getActivity());
-
+if(cr.isConnected(getActivity())){
         mAPIServices.getNotifications(token).enqueue(new Callback<ArrayList<ResponseNotifications>>() {
             @Override
             public void onResponse(Call<ArrayList<ResponseNotifications>> call, Response<ArrayList<ResponseNotifications>> response) {
@@ -163,5 +171,8 @@ public class Notification extends Fragment {
                 Log.i(TAG, "post submitted to API." + t);
             }
         });
+}else{
+    sp.ShowDialog(getActivity(),"Please check your internet connection");
+}
     }
 }
