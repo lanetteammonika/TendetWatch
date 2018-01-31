@@ -2,6 +2,7 @@ package com.tenderWatch.ClientDrawer;
 
 
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -10,6 +11,7 @@ import android.support.annotation.IdRes;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -31,6 +33,7 @@ import com.tenderWatch.Drawer.Notification;
 import com.tenderWatch.MainActivity;
 import com.tenderWatch.Models.ResponseNotifications;
 import com.tenderWatch.Models.User;
+import com.tenderWatch.MyBroadcastReceiver;
 import com.tenderWatch.R;
 import com.tenderWatch.Retrofit.Api;
 import com.tenderWatch.Retrofit.ApiUtils;
@@ -58,7 +61,7 @@ public class ClientDrawer extends AppCompatActivity
     private static MenuItem Cmenu2, CeditMenu;
     static Boolean Cdisplay = false;
     ConnectivityReceiver cr=new ConnectivityReceiver();
-
+    private MyBroadcastReceiver myBroadcastReceiver;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,7 +70,7 @@ public class ClientDrawer extends AppCompatActivity
 
         setSupportActionBar(toolbar); //NO PROBLEM !!!!
         mAPIService = ApiUtils.getAPIService();
-
+myBroadcastReceiver=new MyBroadcastReceiver();
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle;
 
@@ -334,6 +337,32 @@ public class ClientDrawer extends AppCompatActivity
             return;
         }
         //finish();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+//        localBroadcastManager = LocalBroadcastManager.getInstance(MainDrawer.this);
+//        myBroadcastReceiver = new MyBroadcastReceiver();
+//        if (localBroadcastManager != null && myBroadcastReceiver != null)
+        LocalBroadcastManager.getInstance(ClientDrawer.this).registerReceiver(myBroadcastReceiver, new IntentFilter("android.content.BroadcastReceiver"));
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+//        localBroadcastManager = LocalBroadcastManager.getInstance(MainDrawer.this);
+//        myBroadcastReceiver = new MyBroadcastReceiver();
+//        if (localBroadcastManager != null && myBroadcastReceiver != null)
+        LocalBroadcastManager.getInstance(ClientDrawer.this).unregisterReceiver(myBroadcastReceiver);
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        LocalBroadcastManager.getInstance(ClientDrawer.this).unregisterReceiver(myBroadcastReceiver);
     }
 
 }

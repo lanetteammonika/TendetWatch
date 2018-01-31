@@ -1,12 +1,14 @@
 package com.tenderWatch;
 
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.icu.text.SimpleDateFormat;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Base64;
@@ -62,6 +64,8 @@ public class PreviewTenderDetail extends AppCompatActivity {
     Button removeTender,editTender;
     SharedPreference sp=new SharedPreference();
     ConnectivityReceiver cr=new ConnectivityReceiver();
+    private MyBroadcastReceiver myBroadcastReceiver;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,6 +75,7 @@ public class PreviewTenderDetail extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setTitle("Tender Detail");
         mApiService= ApiUtils.getAPIService();
+        myBroadcastReceiver=new MyBroadcastReceiver();
         tenderTitle=(TextView) findViewById(R.id.preview_tender_title);
         Country=(TextView) findViewById(R.id.preview_country_name);
         Category=(TextView) findViewById(R.id.preview_category);
@@ -335,5 +340,30 @@ if(cr.isConnected(PreviewTenderDetail.this)){
             e.getMessage();
             return null;
         }
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+//        localBroadcastManager = LocalBroadcastManager.getInstance(MainDrawer.this);
+//        myBroadcastReceiver = new MyBroadcastReceiver();
+//        if (localBroadcastManager != null && myBroadcastReceiver != null)
+        LocalBroadcastManager.getInstance(PreviewTenderDetail.this).registerReceiver(myBroadcastReceiver, new IntentFilter("android.content.BroadcastReceiver"));
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+//        localBroadcastManager = LocalBroadcastManager.getInstance(MainDrawer.this);
+//        myBroadcastReceiver = new MyBroadcastReceiver();
+//        if (localBroadcastManager != null && myBroadcastReceiver != null)
+        LocalBroadcastManager.getInstance(PreviewTenderDetail.this).unregisterReceiver(myBroadcastReceiver);
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        LocalBroadcastManager.getInstance(PreviewTenderDetail.this).unregisterReceiver(myBroadcastReceiver);
     }
 }

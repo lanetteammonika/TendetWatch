@@ -3,10 +3,12 @@ package com.tenderWatch;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.util.Log;
@@ -59,13 +61,14 @@ public class ClientDetail extends AppCompatActivity {
     String rate;
     Button btnClientSubmit;
     ConnectivityReceiver cr =new ConnectivityReceiver();
-
+    private MyBroadcastReceiver myBroadcastReceiver;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.layout_client_drawer);
         mApiService= ApiUtils.getAPIService();
+        myBroadcastReceiver=new MyBroadcastReceiver();
         sender=getIntent().getStringExtra("sender");
         jsonString=getIntent().getStringExtra("data");
         flag=(ImageView) findViewById(R.id.c_flag);
@@ -281,5 +284,29 @@ public class ClientDetail extends AppCompatActivity {
         });
 
     }
+    @Override
+    protected void onResume() {
+        super.onResume();
+//        localBroadcastManager = LocalBroadcastManager.getInstance(MainDrawer.this);
+//        myBroadcastReceiver = new MyBroadcastReceiver();
+//        if (localBroadcastManager != null && myBroadcastReceiver != null)
+        LocalBroadcastManager.getInstance(ClientDetail.this).registerReceiver(myBroadcastReceiver, new IntentFilter("android.content.BroadcastReceiver"));
 
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+//        localBroadcastManager = LocalBroadcastManager.getInstance(MainDrawer.this);
+//        myBroadcastReceiver = new MyBroadcastReceiver();
+//        if (localBroadcastManager != null && myBroadcastReceiver != null)
+        LocalBroadcastManager.getInstance(ClientDetail.this).unregisterReceiver(myBroadcastReceiver);
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        LocalBroadcastManager.getInstance(ClientDetail.this).unregisterReceiver(myBroadcastReceiver);
+    }
 }

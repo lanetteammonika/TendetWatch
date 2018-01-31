@@ -1,7 +1,10 @@
 package com.tenderWatch.ClientDrawer;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.icu.text.SimpleDateFormat;
 import android.os.Build;
@@ -12,6 +15,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,7 +23,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.Gson;
 import com.tenderWatch.Adapters.ContractorTenderListAdapter;
 import com.tenderWatch.Adapters.TenderListAdapter;
@@ -30,11 +36,13 @@ import com.tenderWatch.Models.Tender;
 import com.tenderWatch.Models.TenderUploader;
 import com.tenderWatch.Models.UpdateTender;
 import com.tenderWatch.Models.User;
+import com.tenderWatch.MyBroadcastReceiver;
 import com.tenderWatch.PreviewTenderDetail;
 import com.tenderWatch.R;
 import com.tenderWatch.Retrofit.Api;
 import com.tenderWatch.Retrofit.ApiUtils;
 import com.tenderWatch.SharedPreference.SharedPreference;
+import com.tenderWatch.app.Config;
 import com.tenderWatch.utils.ConnectivityReceiver;
 
 import java.text.ParseException;
@@ -64,7 +72,9 @@ public class TenderList extends Fragment {
     AllContractorTender contractorTender;
     String role;
     User user;
-    ConnectivityReceiver cr=new ConnectivityReceiver();
+    ConnectivityReceiver cr = new ConnectivityReceiver();
+    private BroadcastReceiver myBroadcastReceiver;
+
 
     @Nullable
     @Override
@@ -81,17 +91,17 @@ public class TenderList extends Fragment {
         mAPIService = ApiUtils.getAPIService();
         role = sp.getPreferences(getActivity(), "role");
 
+        myBroadcastReceiver=new MyBroadcastReceiver();
         if (role.equals("client")) {
             GetAllTender();
-        }else{
+        } else {
             Bundle bundle = getArguments();
-            if (bundle  != null) {
+            if (bundle != null) {
                 String value = bundle.getString("nav_fav");
-                if(value!=null) {
-                   GetAllFavorite();
+                if (value != null) {
+                    GetAllFavorite();
                 }
-            }
-            else{
+            } else {
                 AllContractorTender();
             }
         }
@@ -122,15 +132,14 @@ public class TenderList extends Fragment {
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 if (role.equals("client")) {
                     ShowBox(position);
-                }else{
+                } else {
                     Bundle bundle = getArguments();
-                    if (bundle  != null) {
+                    if (bundle != null) {
                         String value = bundle.getString("nav_fav");
-                        if(value!=null) {
+                        if (value != null) {
                             ShowBoxFavorite(position);
                         }
-                    }
-                    else{
+                    } else {
                         ShowBoxForContractor(position);
                     }
                 }
@@ -163,7 +172,7 @@ public class TenderList extends Fragment {
                     long seconds = diff / 1000;
                     long minutes = seconds / 60;
                     long hours = minutes / 60;
-                    long days = (hours / 24) ;
+                    long days = (hours / 24);
 
                     if (days == 0) {
                         sp.ShowDialog(getActivity(), "Tender is not Activated.");
@@ -176,20 +185,20 @@ public class TenderList extends Fragment {
                     contractorTender = contractoradapter.get(position);
                     String token = "Bearer " + sp.getPreferences(getActivity(), "token");
                     String id2 = contractorTender.getId().toString();
-                    if(cr.isConnected(getActivity())){
-                    mAPIService.getTender(token, id2).enqueue(new Callback<UpdateTender>() {
-                        @Override
-                        public void onResponse(Call<UpdateTender> call, Response<UpdateTender> response) {
-                            Log.i(TAG, "post submitted to API." + response.body());
-                        }
+                    if (cr.isConnected(getActivity())) {
+                        mAPIService.getTender(token, id2).enqueue(new Callback<UpdateTender>() {
+                            @Override
+                            public void onResponse(Call<UpdateTender> call, Response<UpdateTender> response) {
+                                Log.i(TAG, "post submitted to API." + response.body());
+                            }
 
-                        @Override
-                        public void onFailure(Call<UpdateTender> call, Throwable t) {
-                            Log.i(TAG, "post submitted to API." + t);
-                        }
-                    });
-                    }else{
-                        sp.ShowDialog(getActivity(),"Please check your internet connection");
+                            @Override
+                            public void onFailure(Call<UpdateTender> call, Throwable t) {
+                                Log.i(TAG, "post submitted to API." + t);
+                            }
+                        });
+                    } else {
+                        sp.ShowDialog(getActivity(), "Please check your internet connection");
                     }
 
                     user = (User) sp.getPreferencesObject(getActivity());
@@ -201,7 +210,7 @@ public class TenderList extends Fragment {
                     Intent intent = new Intent(getActivity(), ContractotTenderDetail.class);
                     intent.putExtra("data", jsonString);
                     intent.putExtra("sender", sender);
-                    if(contractoradapter.get(position).getAmendRead()!=null) {
+                    if (contractoradapter.get(position).getAmendRead() != null) {
                         if (contractoradapter.get(position).getAmendRead().size() > 0) {
                             for (int i = 0; i < contractoradapter.get(position).getAmendRead().size(); i++) {
                                 String Con_id = user.getId();
@@ -236,22 +245,23 @@ public class TenderList extends Fragment {
                 final String token = "Bearer " + sp.getPreferences(getActivity(), "token");
                 String tenderid = contractorTender.getId();
                 sp.showProgressDialog(getActivity());
-                if(cr.isConnected(getActivity())){
-                mAPIService.removeFavorite(token,tenderid).enqueue(new Callback<ResponseBody>() {
-                    @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                       sp.hideProgressDialog();
-                        Log.i(TAG, "post submitted to API." + response.body());
-                        GetAllFavorite();
-                    }
+                if (cr.isConnected(getActivity())) {
+                    mAPIService.removeFavorite(token, tenderid).enqueue(new Callback<ResponseBody>() {
+                        @Override
+                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                            sp.hideProgressDialog();
+                            sp.ShowDialog(getActivity(),"Tender Deleted Successfully");
+                            Log.i(TAG, "post submitted to API." + response.body());
+                            GetAllFavorite();
+                        }
 
-                    @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-                        Log.i(TAG, "post submitted to API." + t);
-                    }
-                });
-                }else{
-                    sp.ShowDialog(getActivity(),"Please check your internet connection");
+                        @Override
+                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+                            Log.i(TAG, "post submitted to API." + t);
+                        }
+                    });
+                } else {
+                    sp.ShowDialog(getActivity(), "Please check your internet connection");
                 }
             }
         });
@@ -265,89 +275,89 @@ public class TenderList extends Fragment {
         alertDialog.show();
     }
 
-    private void GetAllFavorite(){
+    private void GetAllFavorite() {
         String token = "Bearer " + sp.getPreferences(getActivity(), "token");
         sp.showProgressDialog(getActivity());
-        adapter=null;
-        if(cr.isConnected(getActivity())){
-        mAPIService.getAllFavoriteTender(token).enqueue(new Callback<ArrayList<AllContractorTender>>() {
-            @Override
-            public void onResponse(Call<ArrayList<AllContractorTender>> call, Response<ArrayList<AllContractorTender>> response) {
-                Log.i(TAG, "post submitted to API." + response.body());
-                if (response.body() != null) {
-                    contractoradapter = response.body();
-                    Con_adapter = new ContractorTenderListAdapter(getActivity(), response.body());
-                    list_tender.setAdapter(Con_adapter);
+        adapter = null;
+        if (cr.isConnected(getActivity())) {
+            mAPIService.getAllFavoriteTender(token).enqueue(new Callback<ArrayList<AllContractorTender>>() {
+                @Override
+                public void onResponse(Call<ArrayList<AllContractorTender>> call, Response<ArrayList<AllContractorTender>> response) {
+                    Log.i(TAG, "post submitted to API." + response.body());
+                    if (response.body() != null) {
+                        contractoradapter = response.body();
+                        Con_adapter = new ContractorTenderListAdapter(getActivity(), response.body());
+                        list_tender.setAdapter(Con_adapter);
+                    }
+                    sp.hideProgressDialog();
                 }
-                sp.hideProgressDialog();
-            }
 
-            @Override
-            public void onFailure(Call<ArrayList<AllContractorTender>> call, Throwable t) {
-                sp.hideProgressDialog();
-                list_tender.setAdapter(null);
+                @Override
+                public void onFailure(Call<ArrayList<AllContractorTender>> call, Throwable t) {
+                    sp.hideProgressDialog();
+                    list_tender.setAdapter(null);
 
-            }
-        });
-        }else{
-            sp.ShowDialog(getActivity(),"Please check your internet connection");
+                }
+            });
+        } else {
+            sp.ShowDialog(getActivity(), "Please check your internet connection");
         }
-        }
+    }
 
     private void AllContractorTender() {
         String token = "Bearer " + sp.getPreferences(getActivity(), "token");
         sp.showProgressDialog(getActivity());
-        if(cr.isConnected(getActivity())){
-        mAPIService.getAllContractorTender(token).enqueue(new Callback<ArrayList<AllContractorTender>>() {
-            @Override
-            public void onResponse(Call<ArrayList<AllContractorTender>> call, Response<ArrayList<AllContractorTender>> response) {
-                sp.hideProgressDialog();
-                Log.i(TAG, "post submitted to API." + response.body());
-                if (response.body() != null) {
-                    contractoradapter = response.body();
-                    Con_adapter = new ContractorTenderListAdapter(getActivity(), response.body());
-                    list_tender.setAdapter(Con_adapter);
+        if (cr.isConnected(getActivity())) {
+            mAPIService.getAllContractorTender(token).enqueue(new Callback<ArrayList<AllContractorTender>>() {
+                @Override
+                public void onResponse(Call<ArrayList<AllContractorTender>> call, Response<ArrayList<AllContractorTender>> response) {
+                    sp.hideProgressDialog();
+                    Log.i(TAG, "post submitted to API." + response.body());
+                    if (response.body() != null) {
+                        contractoradapter = response.body();
+                        Con_adapter = new ContractorTenderListAdapter(getActivity(), response.body());
+                        list_tender.setAdapter(Con_adapter);
+                    }
                 }
-            }
 
-            @Override
-            public void onFailure(Call<ArrayList<AllContractorTender>> call, Throwable t) {
-                Log.i(TAG, "post submitted to API." + t);
-                sp.hideProgressDialog();
-                sp.ShowDialog(getActivity(),"server is down");
-            }
-        });
-        }else{
-            sp.ShowDialog(getActivity(),"Please check your internet connection");
+                @Override
+                public void onFailure(Call<ArrayList<AllContractorTender>> call, Throwable t) {
+                    Log.i(TAG, "post submitted to API." + t);
+                    sp.hideProgressDialog();
+                    sp.ShowDialog(getActivity(), "server is down");
+                }
+            });
+        } else {
+            sp.ShowDialog(getActivity(), "Please check your internet connection");
         }
     }
 
     private void GetAllTender() {
         String token = "Bearer " + sp.getPreferences(getActivity(), "token");
         sp.showProgressDialog(getActivity());
-        adapter=null;
-        if(cr.isConnected(getActivity())){
-        mAPIService.getAllTender(token).enqueue(new Callback<ArrayList<Tender>>() {
-            @Override
-            public void onResponse(Call<ArrayList<Tender>> call, Response<ArrayList<Tender>> response) {
-                // Log.i(TAG, "post submitted to API." + response.body());
-                sp.hideProgressDialog();
-                if (response.body() != null) {
-                    allTender = response.body();
-                    adapter = new TenderListAdapter(getActivity(), response.body());
-                    list_tender.setAdapter(adapter);
+        adapter = null;
+        if (cr.isConnected(getActivity())) {
+            mAPIService.getAllTender(token).enqueue(new Callback<ArrayList<Tender>>() {
+                @Override
+                public void onResponse(Call<ArrayList<Tender>> call, Response<ArrayList<Tender>> response) {
+                    // Log.i(TAG, "post submitted to API." + response.body());
+                    sp.hideProgressDialog();
+                    if (response.body() != null) {
+                        allTender = response.body();
+                        adapter = new TenderListAdapter(getActivity(), response.body());
+                        list_tender.setAdapter(adapter);
+                    }
                 }
-            }
 
-            @Override
-            public void onFailure(Call<ArrayList<Tender>> call, Throwable t) {
-                Log.i(TAG, "post submitted to API." + t);
-                sp.hideProgressDialog();
-                sp.ShowDialog(getActivity(),"Tender not Found");
-            }
-        });
-        }else{
-            sp.ShowDialog(getActivity(),"Please check your internet connection");
+                @Override
+                public void onFailure(Call<ArrayList<Tender>> call, Throwable t) {
+                    Log.i(TAG, "post submitted to API." + t);
+                    sp.hideProgressDialog();
+                    sp.ShowDialog(getActivity(), "Tender not Found");
+                }
+            });
+        } else {
+            sp.ShowDialog(getActivity(), "Please check your internet connection");
         }
     }
 
@@ -355,7 +365,7 @@ public class TenderList extends Fragment {
         tender = allTender.get(i);
         final String token = "Bearer " + sp.getPreferences(getActivity(), "token");
         String tenderid = tender.getId().toString();
-        if(cr.isConnected(getActivity())) {
+        if (cr.isConnected(getActivity())) {
             mAPIService.removeTender(token, tenderid).enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -374,8 +384,8 @@ public class TenderList extends Fragment {
                     Log.i(TAG, "response---" + t);
                 }
             });
-        }else{
-            sp.ShowDialog(getActivity(),"Please check your internet connection");
+        } else {
+            sp.ShowDialog(getActivity(), "Please check your internet connection");
         }
     }
 
@@ -399,18 +409,17 @@ public class TenderList extends Fragment {
                 mAPIService.removeTender(token, tenderid).enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                       sp.hideProgressDialog();
+                        sp.hideProgressDialog();
                         if (role.equals("client")) {
                             GetAllTender();
-                        }else{
+                        } else {
                             Bundle bundle = getArguments();
-                            if (bundle  != null) {
+                            if (bundle != null) {
                                 String value = bundle.getString("nav_fav");
-                                if(value!=null) {
+                                if (value != null) {
                                     GetAllFavorite();
                                 }
-                            }
-                            else{
+                            } else {
                                 AllContractorTender();
                             }
                         }
@@ -454,8 +463,6 @@ public class TenderList extends Fragment {
         alertDialog.setMessage("Are you sure to Delete or add Favorite record?");
 
 
-
-
         alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Delete", new DialogInterface.OnClickListener() {
 
             public void onClick(DialogInterface dialog, int id) {
@@ -463,28 +470,29 @@ public class TenderList extends Fragment {
                 final String token = "Bearer " + sp.getPreferences(getActivity(), "token");
                 String tenderid = contractorTender.getId().toString();
                 sp.showProgressDialog(getActivity());
-                if(cr.isConnected(getActivity())){
-                mAPIService.removeTender(token, tenderid).enqueue(new Callback<ResponseBody>() {
-                    @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                        sp.hideProgressDialog();
-                        Log.i(TAG, "response---" + response.body());
-                        final Fragment fragment3 = new TenderList();
-                        FragmentManager fragmentManager = getFragmentManager();
-                        final FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                        fragmentTransaction.replace(R.id.content_frame, fragment3);
-                        //fragmentTransaction.addToBackStack(null);
-                        fragmentTransaction.commit();
-                        alertDialog.dismiss();
-                    }
+                if (cr.isConnected(getActivity())) {
+                    mAPIService.removeTender(token, tenderid).enqueue(new Callback<ResponseBody>() {
+                        @Override
+                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                            sp.hideProgressDialog();
+                            sp.ShowDialog(getActivity(),"Tender Deleted Successfully");
+                            Log.i(TAG, "response---" + response.body());
+                            final Fragment fragment3 = new TenderList();
+                            FragmentManager fragmentManager = getFragmentManager();
+                            final FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                            fragmentTransaction.replace(R.id.content_frame, fragment3);
+                            //fragmentTransaction.addToBackStack(null);
+                            fragmentTransaction.commit();
+                            alertDialog.dismiss();
+                        }
 
-                    @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-                        Log.i(TAG, "response---" + t);
-                    }
-                });
-                }else{
-                    sp.ShowDialog(getActivity(),"Please check your internet connection");
+                        @Override
+                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+                            Log.i(TAG, "response---" + t);
+                        }
+                    });
+                } else {
+                    sp.ShowDialog(getActivity(), "Please check your internet connection");
                 }
             }
         });
@@ -497,29 +505,31 @@ public class TenderList extends Fragment {
                 final String token = "Bearer " + sp.getPreferences(getActivity(), "token");
                 String tenderid = contractorTender.getId().toString();
                 sp.showProgressDialog(getActivity());
-if(cr.isConnected(getActivity())){
-                mAPIService.addFavorite(token,tenderid).enqueue(new Callback<UpdateTender>() {
-                    @Override
-                    public void onResponse(Call<UpdateTender> call, Response<UpdateTender> response) {
-                        sp.hideProgressDialog();
-                        Log.i(TAG, "response---" + response.body());
-                        final Fragment fragment3 = new TenderList();
-                        FragmentManager fragmentManager = getFragmentManager();
-                        final FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                        fragmentTransaction.replace(R.id.content_frame, fragment3);
-                        //fragmentTransaction.addToBackStack(null);
-                        fragmentTransaction.commit();
-                        alertDialog.dismiss();
-                    }
+                if (cr.isConnected(getActivity())) {
+                    mAPIService.addFavorite(token, tenderid).enqueue(new Callback<UpdateTender>() {
+                        @Override
+                        public void onResponse(Call<UpdateTender> call, Response<UpdateTender> response) {
+                            sp.hideProgressDialog();
+                            sp.ShowDialog(getActivity(),"Tender Added in Your Favorite List Successfully");
 
-                    @Override
-                    public void onFailure(Call<UpdateTender> call, Throwable t) {
-                        Log.i(TAG, "response---" + t);
-                    }
-                });
-}else{
-    sp.ShowDialog(getActivity(),"Please check your internet connection");
-}
+                            Log.i(TAG, "response---" + response.body());
+                            final Fragment fragment3 = new TenderList();
+                            FragmentManager fragmentManager = getFragmentManager();
+                            final FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                            fragmentTransaction.replace(R.id.content_frame, fragment3);
+                            //fragmentTransaction.addToBackStack(null);
+                            fragmentTransaction.commit();
+                            alertDialog.dismiss();
+                        }
+
+                        @Override
+                        public void onFailure(Call<UpdateTender> call, Throwable t) {
+                            Log.i(TAG, "response---" + t);
+                        }
+                    });
+                } else {
+                    sp.ShowDialog(getActivity(), "Please check your internet connection");
+                }
             }
         });
 
@@ -530,5 +540,44 @@ if(cr.isConnected(getActivity())){
             }
         });
         alertDialog.show();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (adapter != null) {
+            if (role.equals("client")) {
+                GetAllTender();
+            }else{
+                AllContractorTender();
+            }
+        }
+
+        if (Con_adapter != null) {
+            if (role.equals("client")) {
+                GetAllTender();
+            }else{
+                AllContractorTender();
+            }
+        }
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(myBroadcastReceiver, new IntentFilter("android.content.BroadcastReceiver"));
+
+    }
+
+
+    @Override
+    public void onPause() {
+        super.onPause();
+//        localBroadcastManager = LocalBroadcastManager.getInstance(MainDrawer.this);
+//        myBroadcastReceiver = new MyBroadcastReceiver();
+//        if (localBroadcastManager != null && myBroadcastReceiver != null)
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(myBroadcastReceiver);
+
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(myBroadcastReceiver);
     }
 }

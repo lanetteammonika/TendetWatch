@@ -3,12 +3,14 @@ package com.tenderWatch;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.icu.text.SimpleDateFormat;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -71,6 +73,7 @@ public class ContractotTenderDetail extends AppCompatActivity {
     SharedPreference sp = new SharedPreference();
     String sender;
     ConnectivityReceiver cr=new ConnectivityReceiver();
+    private MyBroadcastReceiver myBroadcastReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +83,7 @@ public class ContractotTenderDetail extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+        myBroadcastReceiver=new MyBroadcastReceiver();
         toolbar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -347,7 +351,8 @@ public class ContractotTenderDetail extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
-            getSupportFragmentManager().popBackStack();
+            Intent intent = new Intent(ContractotTenderDetail.this, MainDrawer.class);
+            startActivity(intent);
         } else {
             this.finish();
         }
@@ -375,6 +380,32 @@ public class ContractotTenderDetail extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+//        localBroadcastManager = LocalBroadcastManager.getInstance(MainDrawer.this);
+//        myBroadcastReceiver = new MyBroadcastReceiver();
+//        if (localBroadcastManager != null && myBroadcastReceiver != null)
+        LocalBroadcastManager.getInstance(ContractotTenderDetail.this).registerReceiver(myBroadcastReceiver, new IntentFilter("android.content.BroadcastReceiver"));
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+//        localBroadcastManager = LocalBroadcastManager.getInstance(MainDrawer.this);
+//        myBroadcastReceiver = new MyBroadcastReceiver();
+//        if (localBroadcastManager != null && myBroadcastReceiver != null)
+        LocalBroadcastManager.getInstance(ContractotTenderDetail.this).unregisterReceiver(myBroadcastReceiver);
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        LocalBroadcastManager.getInstance(ContractotTenderDetail.this).unregisterReceiver(myBroadcastReceiver);
     }
 }
 

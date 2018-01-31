@@ -4,6 +4,8 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
@@ -63,7 +65,7 @@ public class CountryList extends AppCompatActivity {
     ArrayList<String> a_country = new ArrayList<String>();
     ImageView imgClose;
     ConnectivityReceiver cr=new ConnectivityReceiver();
-
+    private MyBroadcastReceiver myBroadcastReceiver;
     int pos = 0;
 
     @Override
@@ -77,7 +79,7 @@ public class CountryList extends AppCompatActivity {
         back = (LinearLayout) findViewById(R.id.country_toolbar);
         subscription = (LinearLayout) findViewById(R.id.subscription);
         imgClose = (ImageView) findViewById(R.id.img_close);
-
+myBroadcastReceiver=new MyBroadcastReceiver();
         sideSelector = (SideSelector) findViewById(R.id.side_selector);
         mAPIService = ApiUtils.getAPIService();
         lvCountry.setDivider(null);
@@ -497,7 +499,31 @@ if(cr.isConnected(CountryList.this)){
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+//        localBroadcastManager = LocalBroadcastManager.getInstance(MainDrawer.this);
+//        myBroadcastReceiver = new MyBroadcastReceiver();
+//        if (localBroadcastManager != null && myBroadcastReceiver != null)
+        LocalBroadcastManager.getInstance(CountryList.this).registerReceiver(myBroadcastReceiver, new IntentFilter("android.content.BroadcastReceiver"));
 
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+//        localBroadcastManager = LocalBroadcastManager.getInstance(MainDrawer.this);
+//        myBroadcastReceiver = new MyBroadcastReceiver();
+//        if (localBroadcastManager != null && myBroadcastReceiver != null)
+        LocalBroadcastManager.getInstance(CountryList.this).unregisterReceiver(myBroadcastReceiver);
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        LocalBroadcastManager.getInstance(CountryList.this).unregisterReceiver(myBroadcastReceiver);
+    }
     /**
      * Adapter
      */

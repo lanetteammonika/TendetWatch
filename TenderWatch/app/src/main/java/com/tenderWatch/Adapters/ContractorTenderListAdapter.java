@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.icu.text.SimpleDateFormat;
 import android.os.Build;
@@ -130,10 +131,29 @@ public class ContractorTenderListAdapter extends BaseAdapter {
                     }
                 }
             }
+                if (tenderList.get(position).getAmendRead().size() == 0) {
+                    tender_image.setBorderColor(Color.RED);
+                    tender_image.setBorderWidth(2);
+                }
 
-            if (tenderList.get(position).getAmendRead().size() == 0) {
-                tender_image.setBorderColor(Color.RED);
-                tender_image.setBorderWidth(2);
+        }
+        if (tenderList.get(position).getReadby() != null) {
+
+            if (tenderList.get(position).getReadby().size() > 0) {
+                for (int i = 0; i < tenderList.get(position).getReadby().size(); i++) {
+                    String id = user.getId();
+                    if (!tenderList.get(position).getReadby().contains(id)) {
+                        txtTenderName.setTypeface(null, Typeface.BOLD);
+                        txtTenderTitle.setTypeface(null, Typeface.BOLD);
+                        txtTenderExpDate.setTypeface(null, Typeface.BOLD);
+                    }
+                }
+            }
+
+            if (tenderList.get(position).getReadby().size() == 0) {
+                txtTenderName.setTypeface(null, Typeface.BOLD);
+                txtTenderTitle.setTypeface(null, Typeface.BOLD);
+                txtTenderExpDate.setTypeface(null, Typeface.BOLD);
             }
         }
         return convertView;

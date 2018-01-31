@@ -1,9 +1,11 @@
 package com.tenderWatch.Drawer;
 
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +18,7 @@ import com.google.gson.Gson;
 import com.tenderWatch.Adapters.NotificationAdapter;
 import com.tenderWatch.Models.Sender;
 import com.tenderWatch.Models.UpdateTender;
+import com.tenderWatch.MyBroadcastReceiver;
 import com.tenderWatch.NTenderDetail;
 import com.tenderWatch.Models.ResponseNotifications;
 import com.tenderWatch.Models.Tender;
@@ -48,6 +51,8 @@ public class Notification extends Fragment {
     String edit;
     Tender obj;
     ConnectivityReceiver cr=new ConnectivityReceiver();
+    private MyBroadcastReceiver myBroadcastReceiver;
+
 
     @Nullable
     @Override
@@ -67,6 +72,7 @@ public class Notification extends Fragment {
         mAPIServices = ApiUtils.getAPIService();
         delNotification = (Button) view.findViewById(R.id.btn_del_notification);
         Bundle args = getArguments();
+        myBroadcastReceiver=new MyBroadcastReceiver();
         if (args != null) {
             edit = args.getString("edit");
             delNotification.setVisibility(View.VISIBLE);
@@ -174,5 +180,30 @@ if(cr.isConnected(getActivity())){
 }else{
     sp.ShowDialog(getActivity(),"Please check your internet connection");
 }
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+//        localBroadcastManager = LocalBroadcastManager.getInstance(MainDrawer.this);
+//        myBroadcastReceiver = new MyBroadcastReceiver();
+//        if (localBroadcastManager != null && myBroadcastReceiver != null)
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(myBroadcastReceiver, new IntentFilter("android.content.BroadcastReceiver"));
+
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+//        localBroadcastManager = LocalBroadcastManager.getInstance(MainDrawer.this);
+//        myBroadcastReceiver = new MyBroadcastReceiver();
+//        if (localBroadcastManager != null && myBroadcastReceiver != null)
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(myBroadcastReceiver);
+
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(myBroadcastReceiver);
     }
 }

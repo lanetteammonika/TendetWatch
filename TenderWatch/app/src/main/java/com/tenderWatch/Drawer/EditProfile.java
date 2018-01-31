@@ -2,6 +2,7 @@ package com.tenderWatch.Drawer;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -12,6 +13,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,6 +30,7 @@ import com.tenderWatch.AboutMe;
 import com.tenderWatch.CountryList;
 import com.tenderWatch.Models.CreateUser;
 import com.tenderWatch.Models.User;
+import com.tenderWatch.MyBroadcastReceiver;
 import com.tenderWatch.R;
 import com.tenderWatch.Retrofit.Api;
 import com.tenderWatch.Retrofit.ApiUtils;
@@ -82,6 +85,8 @@ public class EditProfile extends Fragment implements View.OnClickListener{
     private static final int PICTURE_WIDTH = 600;
     private static final int PICTURE_HEIGHT = 600;
     ConnectivityReceiver cr=new ConnectivityReceiver();
+    private MyBroadcastReceiver myBroadcastReceiver;
+
 
     @Nullable
     @Override
@@ -105,7 +110,7 @@ public class EditProfile extends Fragment implements View.OnClickListener{
         rlCountryList=(RelativeLayout) view.findViewById(R.id.edit_rlselectCountry);
         btnUpdate=(Button) view.findViewById(R.id.edit_btn_Update);
         profileImg = (CircleImageView) view.findViewById(R.id.edit_circleView);
-
+myBroadcastReceiver=new MyBroadcastReceiver();
         user=sp.getPreferencesObject(getActivity());
         Picasso.with(getApplicationContext()).load(((User) user).getProfilePhoto().toString())
                 .placeholder(R.drawable.avtar).error(R.drawable.avtar)
@@ -245,6 +250,8 @@ if(cr.isConnected(getActivity())){
     public void onResume() {
         super.onResume();
         requestPermissionWriteExternalStorage();
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(myBroadcastReceiver, new IntentFilter("android.content.BroadcastReceiver"));
+
     }
 
     @Override
@@ -370,5 +377,21 @@ if(cr.isConnected(getActivity())){
                 != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(getActivity(), new String[]{permission}, requestCode);
         }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+//        localBroadcastManager = LocalBroadcastManager.getInstance(MainDrawer.this);
+//        myBroadcastReceiver = new MyBroadcastReceiver();
+//        if (localBroadcastManager != null && myBroadcastReceiver != null)
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(myBroadcastReceiver);
+
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(myBroadcastReceiver);
     }
 }

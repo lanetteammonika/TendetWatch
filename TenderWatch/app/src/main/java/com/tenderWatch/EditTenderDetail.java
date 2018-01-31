@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -12,6 +13,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -34,6 +36,7 @@ import com.squareup.picasso.Target;
 import com.tenderWatch.Adapters.CustomList;
 import com.tenderWatch.ClientDrawer.ClientDrawer;
 import com.tenderWatch.ClientDrawer.Home;
+import com.tenderWatch.Drawer.MainDrawer;
 import com.tenderWatch.Models.GetCategory;
 import com.tenderWatch.Models.GetCountry;
 import com.tenderWatch.Models.Tender;
@@ -95,6 +98,8 @@ public class EditTenderDetail extends AppCompatActivity {
 
     ConnectivityReceiver cr = new ConnectivityReceiver();
     Tender object;
+    private MyBroadcastReceiver myBroadcastReceiver;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -102,7 +107,7 @@ public class EditTenderDetail extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
+myBroadcastReceiver=new MyBroadcastReceiver();
         mApiService= ApiUtils.getAPIService();
         spinner = (ListView) findViewById(R.id.spinner);
         spinner2 = (ListView) findViewById(R.id.spinner3);
@@ -557,6 +562,7 @@ public class EditTenderDetail extends AppCompatActivity {
                     @Override
                     public void onResponse(Call<UpdateTender> call, Response<UpdateTender> response) {
                         Log.i(TAG,"response---"+response.body());
+                        sp.ShowDialog(EditTenderDetail.this,"Tender Amended Successfully");
                         Intent intent = new Intent(EditTenderDetail.this,ClientDrawer.class);
                         startActivity(intent);
                         Log.i(TAG,"response---"+response.body());
@@ -581,7 +587,7 @@ public class EditTenderDetail extends AppCompatActivity {
                 Data2 = response.body();
                 sp.hideProgressDialog();
                 for (int i = 0; i < Data2.size(); i++) {
-                    alpha2.add(response.body().get(i).getCategoryName().toString() + "~" + response.body().get(i).getImgString().toString());
+                    alpha2.add(response.body().get(i).getCategoryName() + "~" + response.body().get(i).getId()+"~" +"dfsf~"+ response.body().get(i).getImgString());
                     categoryName.add(response.body().get(i).getCategoryName().toString() + "~" + response.body().get(i).getId().toString());
                 }
                 categoryAdapter = new CustomList(EditTenderDetail.this, alpha2);
@@ -607,7 +613,7 @@ public class EditTenderDetail extends AppCompatActivity {
                 sp.hideProgressDialog();
                 Data = response.body();
                 for (int i = 0; i < Data.size(); i++) {
-                    alpha.add(response.body().get(i).getCountryName().toString() + "~" + response.body().get(i).getImageString().toString());
+                    alpha.add(response.body().get(i).getCountryName() + "~" + response.body().get(i).getCountryCode() + "~" + response.body().get(i).getId()+"~" + response.body().get(i).getImageString());
                     countryName.add(response.body().get(i).getCountryName().toString() + "~" + response.body().get(i).getCountryCode().toString() + "~" + response.body().get(i).getId().toString());
                 }
                 Collections.sort(alpha);
@@ -697,5 +703,29 @@ public class EditTenderDetail extends AppCompatActivity {
                 break;
         }
     }
+    @Override
+    protected void onResume() {
+        super.onResume();
+//        localBroadcastManager = LocalBroadcastManager.getInstance(MainDrawer.this);
+//        myBroadcastReceiver = new MyBroadcastReceiver();
+//        if (localBroadcastManager != null && myBroadcastReceiver != null)
+        LocalBroadcastManager.getInstance(EditTenderDetail.this).registerReceiver(myBroadcastReceiver, new IntentFilter("android.content.BroadcastReceiver"));
 
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+//        localBroadcastManager = LocalBroadcastManager.getInstance(MainDrawer.this);
+//        myBroadcastReceiver = new MyBroadcastReceiver();
+//        if (localBroadcastManager != null && myBroadcastReceiver != null)
+        LocalBroadcastManager.getInstance(EditTenderDetail.this).unregisterReceiver(myBroadcastReceiver);
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        LocalBroadcastManager.getInstance(EditTenderDetail.this).unregisterReceiver(myBroadcastReceiver);
+    }
 }

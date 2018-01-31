@@ -2,8 +2,10 @@ package com.tenderWatch;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.media.session.MediaSession;
 import android.support.annotation.NonNull;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -28,6 +30,7 @@ import com.google.android.gms.wallet.WalletConstants;
 import com.stripe.android.Stripe;
 import com.stripe.android.TokenCallback;
 import com.stripe.android.model.BankAccount;
+import com.tenderWatch.Drawer.MainDrawer;
 import com.tenderWatch.SharedPreference.SharedPreference;
 import com.tenderWatch.utils.ConnectivityReceiver;
 
@@ -41,12 +44,14 @@ public class GooglePay extends AppCompatActivity {
     Button bank;
     SharedPreference sp=new SharedPreference();
     ConnectivityReceiver cr=new ConnectivityReceiver();
+    private MyBroadcastReceiver myBroadcastReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_google_pay);
         bank=(Button) findViewById(R.id.bank);
+        myBroadcastReceiver=new MyBroadcastReceiver();
         bank.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -174,5 +179,29 @@ public class GooglePay extends AppCompatActivity {
                 // Do nothing.
         }
     }
+    @Override
+    protected void onResume() {
+        super.onResume();
+//        localBroadcastManager = LocalBroadcastManager.getInstance(MainDrawer.this);
+//        myBroadcastReceiver = new MyBroadcastReceiver();
+//        if (localBroadcastManager != null && myBroadcastReceiver != null)
+        LocalBroadcastManager.getInstance(GooglePay.this).registerReceiver(myBroadcastReceiver, new IntentFilter("android.content.BroadcastReceiver"));
 
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+//        localBroadcastManager = LocalBroadcastManager.getInstance(MainDrawer.this);
+//        myBroadcastReceiver = new MyBroadcastReceiver();
+//        if (localBroadcastManager != null && myBroadcastReceiver != null)
+        LocalBroadcastManager.getInstance(GooglePay.this).unregisterReceiver(myBroadcastReceiver);
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        LocalBroadcastManager.getInstance(GooglePay.this).unregisterReceiver(myBroadcastReceiver);
+    }
 }

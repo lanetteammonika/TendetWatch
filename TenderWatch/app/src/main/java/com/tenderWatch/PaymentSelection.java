@@ -6,10 +6,12 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.media.session.MediaSession;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -113,6 +115,8 @@ public class PaymentSelection extends AppCompatActivity implements View.OnClickL
     SharedPreference sp=new SharedPreference();
 RequestCharges rc=new RequestCharges();
 ConnectivityReceiver cr=new ConnectivityReceiver();
+    private MyBroadcastReceiver myBroadcastReceiver;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,6 +132,7 @@ ConnectivityReceiver cr=new ConnectivityReceiver();
         btnBank.setOnClickListener(this);
         mAPIService = ApiUtils.getAPIService();
         selCon = getIntent().getStringExtra("selCon");
+        myBroadcastReceiver=new MyBroadcastReceiver();
         Intent intent = new Intent(this, PayPalService.class);
 
         intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, config);
@@ -459,5 +464,28 @@ ConnectivityReceiver cr=new ConnectivityReceiver();
     public void onDestroy() {
         stopService(new Intent(this, PayPalService.class));
         super.onDestroy();
+        LocalBroadcastManager.getInstance(PaymentSelection.this).unregisterReceiver(myBroadcastReceiver);
+
     }
+    @Override
+    protected void onResume() {
+        super.onResume();
+//        localBroadcastManager = LocalBroadcastManager.getInstance(MainDrawer.this);
+//        myBroadcastReceiver = new MyBroadcastReceiver();
+//        if (localBroadcastManager != null && myBroadcastReceiver != null)
+        LocalBroadcastManager.getInstance(PaymentSelection.this).registerReceiver(myBroadcastReceiver, new IntentFilter("android.content.BroadcastReceiver"));
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+//        localBroadcastManager = LocalBroadcastManager.getInstance(MainDrawer.this);
+//        myBroadcastReceiver = new MyBroadcastReceiver();
+//        if (localBroadcastManager != null && myBroadcastReceiver != null)
+        LocalBroadcastManager.getInstance(PaymentSelection.this).unregisterReceiver(myBroadcastReceiver);
+
+    }
+
+
 }

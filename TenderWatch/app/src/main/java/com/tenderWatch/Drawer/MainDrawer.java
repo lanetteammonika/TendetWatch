@@ -1,6 +1,7 @@
 package com.tenderWatch.Drawer;
 
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -8,6 +9,7 @@ import android.os.Handler;
 import android.support.annotation.IdRes;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -34,6 +36,7 @@ import com.tenderWatch.MainActivity;
 import com.tenderWatch.Models.ResponseNotifications;
 import com.tenderWatch.Models.Tender;
 import com.tenderWatch.Models.User;
+import com.tenderWatch.MyBroadcastReceiver;
 import com.tenderWatch.NTenderDetail;
 import com.tenderWatch.R;
 import com.tenderWatch.Retrofit.Api;
@@ -62,7 +65,8 @@ public class MainDrawer extends AppCompatActivity implements NavigationView.OnNa
     TextView emailText;
     NavigationView navigationView;
     static Boolean display = false;
-    ConnectivityReceiver cr=new ConnectivityReceiver();
+    ConnectivityReceiver cr = new ConnectivityReceiver();
+    private MyBroadcastReceiver myBroadcastReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,7 +102,6 @@ public class MainDrawer extends AppCompatActivity implements NavigationView.OnNa
         };
 
 
-
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
@@ -106,9 +109,10 @@ public class MainDrawer extends AppCompatActivity implements NavigationView.OnNa
         navigationView.setNavigationItemSelectedListener(this);
         circledrawerimage = navigationView.getHeaderView(0).findViewById(R.id.circledrawerimage2);
         emailText = navigationView.getHeaderView(0).findViewById(R.id.textView2);
-        user = (User)sp .getPreferencesObject(MainDrawer.this);
-        if(!user.getProfilePhoto().equals("no image")){
-        Picasso.with(this).load(user.getProfilePhoto()).into(circledrawerimage);}
+        user = (User) sp.getPreferencesObject(MainDrawer.this);
+        if (!user.getProfilePhoto().equals("no image")) {
+            Picasso.with(this).load(user.getProfilePhoto()).into(circledrawerimage);
+        }
         emailText.setText(user.getEmail());
         String get = getIntent().getStringExtra("nav_sub");
         String getnot = getIntent().getStringExtra("nav_not");
@@ -121,6 +125,7 @@ public class MainDrawer extends AppCompatActivity implements NavigationView.OnNa
             displaySelectedScreen(R.id.nav_home);
         }
         GetNotification();
+        myBroadcastReceiver = new MyBroadcastReceiver();
     }
 
     boolean doubleBackToExitPressedOnce = false;
@@ -196,33 +201,33 @@ public class MainDrawer extends AppCompatActivity implements NavigationView.OnNa
 
     private void GetNotification() {
         String token = "Bearer " + sp.getPreferences(MainDrawer.this, "token");
-        if(cr.isConnected(MainDrawer.this)){
-        mAPIService.getNotifications(token).enqueue(new Callback<ArrayList<ResponseNotifications>>() {
-            @Override
-            public void onResponse(Call<ArrayList<ResponseNotifications>> call, Response<ArrayList<ResponseNotifications>> response) {
-                Log.i(TAG, "post submitted to API." + response);
-                int count = 0;
-                if (response.body() != null) {
-                    for (int i = 0; i < response.body().size(); i++) {
-                        if (!response.body().get(i).getRead()) {
-                            count += 1;
+        if (cr.isConnected(MainDrawer.this)) {
+            mAPIService.getNotifications(token).enqueue(new Callback<ArrayList<ResponseNotifications>>() {
+                @Override
+                public void onResponse(Call<ArrayList<ResponseNotifications>> call, Response<ArrayList<ResponseNotifications>> response) {
+                    Log.i(TAG, "post submitted to API." + response);
+                    int count = 0;
+                    if (response.body() != null) {
+                        for (int i = 0; i < response.body().size(); i++) {
+                            if (!response.body().get(i).getRead()) {
+                                count += 1;
+                            }
                         }
                     }
+                    if (count > 0) {
+                        setMenuCounter(R.id.nav_notifications, count);
+                    }
                 }
-                if (count > 0) {
-                    setMenuCounter(R.id.nav_notifications, count);
-                }
-            }
 
-            @Override
-            public void onFailure(Call<ArrayList<ResponseNotifications>> call, Throwable t) {
-                Log.i(TAG, "post submitted to API." + t);
-            }
-        });
-        }else{
-            sp.ShowDialog(MainDrawer.this,"Please check your internet connection");
+                @Override
+                public void onFailure(Call<ArrayList<ResponseNotifications>> call, Throwable t) {
+                    Log.i(TAG, "post submitted to API." + t);
+                }
+            });
+        } else {
+            sp.ShowDialog(MainDrawer.this, "Please check your internet connection");
         }
-        }
+    }
 
     private void callEdit() {
         Fragment fragment = null;
@@ -326,35 +331,59 @@ public class MainDrawer extends AppCompatActivity implements NavigationView.OnNa
         String role = sp.getPreferences(MainDrawer.this, "role");
         String deviceId = sp.getPreferences(MainDrawer.this, "androidId");
         sp.showProgressDialog(MainDrawer.this);
-        if(cr.isConnected(MainDrawer.this)){
-        mAPIService.logout(token, deviceId, role).enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                // Log.i(TAG, "post submitted to API." + response);
-                sp.hideProgressDialog();
-                sp.removePreferences(MainDrawer.this, "role");
-                sp.removePreferences(MainDrawer.this, "email");
-                sp.removePreferences(MainDrawer.this, "id");
-                sp.removePreferences(MainDrawer.this, "profile");
-                sp.removePreferences(MainDrawer.this, "MyObject");
-                sp.removePreferences(MainDrawer.this, "token");
-                sp.removePreferences(MainDrawer.this,"sel_con");
+        if (cr.isConnected(MainDrawer.this)) {
+            mAPIService.logout(token, deviceId, role).enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    // Log.i(TAG, "post submitted to API." + response);
+                    sp.hideProgressDialog();
+                    sp.removePreferences(MainDrawer.this, "role");
+                    sp.removePreferences(MainDrawer.this, "email");
+                    sp.removePreferences(MainDrawer.this, "id");
+                    sp.removePreferences(MainDrawer.this, "profile");
+                    sp.removePreferences(MainDrawer.this, "MyObject");
+                    sp.removePreferences(MainDrawer.this, "token");
+                    sp.removePreferences(MainDrawer.this, "sel_con");
 
-                intent = new Intent(MainDrawer.this, MainActivity.class);
-                startActivity(intent);
-                overridePendingTransition(R.anim.enter, R.anim.exit);
-                finish();
-            }
+                    intent = new Intent(MainDrawer.this, MainActivity.class);
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.enter, R.anim.exit);
+                    finish();
+                }
 
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Log.i(TAG, "post submitted to API." + t);
-            }
-        });
-        }else{
-            sp.ShowDialog(MainDrawer.this,"Please check your internet connection");
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    Log.i(TAG, "post submitted to API." + t);
+                }
+            });
+        } else {
+            sp.ShowDialog(MainDrawer.this, "Please check your internet connection");
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+//        localBroadcastManager = LocalBroadcastManager.getInstance(MainDrawer.this);
+//        myBroadcastReceiver = new MyBroadcastReceiver();
+//        if (localBroadcastManager != null && myBroadcastReceiver != null)
+        LocalBroadcastManager.getInstance(MainDrawer.this).registerReceiver(myBroadcastReceiver, new IntentFilter("android.content.BroadcastReceiver"));
 
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+//        localBroadcastManager = LocalBroadcastManager.getInstance(MainDrawer.this);
+//        myBroadcastReceiver = new MyBroadcastReceiver();
+//        if (localBroadcastManager != null && myBroadcastReceiver != null)
+        LocalBroadcastManager.getInstance(MainDrawer.this).unregisterReceiver(myBroadcastReceiver);
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        LocalBroadcastManager.getInstance(MainDrawer.this).unregisterReceiver(myBroadcastReceiver);
+    }
 }

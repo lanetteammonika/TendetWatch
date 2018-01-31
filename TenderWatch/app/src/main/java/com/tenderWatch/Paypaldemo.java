@@ -2,6 +2,8 @@ package com.tenderWatch;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,6 +16,7 @@ import com.paypal.android.sdk.payments.PayPalPayment;
 import com.paypal.android.sdk.payments.PayPalService;
 import com.paypal.android.sdk.payments.PaymentActivity;
 import com.paypal.android.sdk.payments.PaymentConfirmation;
+import com.tenderWatch.Drawer.MainDrawer;
 import com.tenderWatch.SharedPreference.PayPalConfig;
 
 import org.json.JSONException;
@@ -29,7 +32,7 @@ public class Paypaldemo extends AppCompatActivity implements View.OnClickListene
     private String paymentAmount;
     //Paypal intent request code to track onActivityResult method
     public static final int PAYPAL_REQUEST_CODE = 123;
-
+    private MyBroadcastReceiver myBroadcastReceiver;
 
     //Paypal Configuration Object
     private static PayPalConfiguration config = new PayPalConfiguration()
@@ -48,13 +51,15 @@ public class Paypaldemo extends AppCompatActivity implements View.OnClickListene
         startService(intent);
         buttonPay = (Button) findViewById(R.id.buttonPay);
         editTextAmount = (EditText) findViewById(R.id.editTextAmount);
-
+myBroadcastReceiver=new MyBroadcastReceiver();
         buttonPay.setOnClickListener(this);
     }
     @Override
     public void onDestroy() {
         stopService(new Intent(this, PayPalService.class));
         super.onDestroy();
+        LocalBroadcastManager.getInstance(Paypaldemo.this).unregisterReceiver(myBroadcastReceiver);
+
     }
     @Override
     public void onClick(View view) {
@@ -115,4 +120,25 @@ public class Paypaldemo extends AppCompatActivity implements View.OnClickListene
             }
         }
     }
+    @Override
+    protected void onResume() {
+        super.onResume();
+//        localBroadcastManager = LocalBroadcastManager.getInstance(MainDrawer.this);
+//        myBroadcastReceiver = new MyBroadcastReceiver();
+//        if (localBroadcastManager != null && myBroadcastReceiver != null)
+        LocalBroadcastManager.getInstance(Paypaldemo.this).registerReceiver(myBroadcastReceiver, new IntentFilter("android.content.BroadcastReceiver"));
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+//        localBroadcastManager = LocalBroadcastManager.getInstance(MainDrawer.this);
+//        myBroadcastReceiver = new MyBroadcastReceiver();
+//        if (localBroadcastManager != null && myBroadcastReceiver != null)
+        LocalBroadcastManager.getInstance(Paypaldemo.this).unregisterReceiver(myBroadcastReceiver);
+
+    }
+
+
 }

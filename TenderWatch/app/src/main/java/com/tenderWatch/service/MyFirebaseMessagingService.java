@@ -1,19 +1,28 @@
 package com.tenderWatch.service;
 
+import android.app.NotificationManager;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.os.Looper;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.NotificationCompat;
 import android.text.TextUtils;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.tenderWatch.ClientDrawer.ClientDrawer;
 import com.tenderWatch.Main2Activity;
+import com.tenderWatch.R;
 import com.tenderWatch.app.Config;
 import com.tenderWatch.utils.NotificationUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.logging.Handler;
 
 /**
  * Created by lcom47 on 28/12/17.
@@ -28,11 +37,25 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         Log.e(TAG, "From: " + remoteMessage.getFrom());
-
+//        NotificationCompat.Builder builder = (NotificationCompat.Builder) new  NotificationCompat.Builder(this)
+//                .setSmallIcon(R.drawable.aicon_40_3x)
+//                .setContentTitle("test")
+//                .setContentText(remoteMessage.getData().get("message"));
+//        NotificationManager manager = (NotificationManager)     getSystemService(NOTIFICATION_SERVICE);
+//        manager.notify(0, builder.build());
         if (remoteMessage == null)
             return;
 
-        // Check if message contains a notification payload.
+        if (NotificationUtils.isAppIsInBackground(getApplicationContext())) {
+
+        } else {
+            Log.e(TAG, "onMessageReceived: ");
+//            LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(new Intent("android.content.BroadcastReceiver"));
+            Intent i = new Intent("android.content.BroadcastReceiver");
+            sendBroadcast(i);
+        }
+
+       /* // Check if message contains a notification payload.
         if (remoteMessage.getNotification() != null) {
             Log.e(TAG, "Notification Body: " + remoteMessage.getNotification().getBody());
             handleNotification(remoteMessage.getNotification().getBody());
@@ -48,7 +71,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             } catch (Exception e) {
                 Log.e(TAG, "Exception: " + e.getMessage());
             }
-        }
+        }*/
     }
 
     private void handleNotification(String message) {
@@ -61,7 +84,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             // play notification sound
             NotificationUtils notificationUtils = new NotificationUtils(getApplicationContext());
             notificationUtils.playNotificationSound();
-        }else{
+        } else {
             // If the app is in background, firebase itself handles the notification
         }
     }
@@ -80,7 +103,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             JSONObject payload = data.getJSONObject("payload");
 
             Log.e(TAG, "title: " + title);
-            Log.e(TAG, "message: " + message);
+            Log.e(TAG, "message7164: " + message);
             Log.e(TAG, "isBackground: " + isBackground);
             Log.e(TAG, "payload: " + payload.toString());
             Log.e(TAG, "imageUrl: " + imageUrl);
@@ -88,14 +111,16 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
             if (!NotificationUtils.isAppIsInBackground(getApplicationContext())) {
                 // app is in foreground, broadcast the push message
+                Log.e(TAG, "handleDataMessage: " + " In Foreground");
+                Toast.makeText(MyFirebaseMessagingService.this, message, Toast.LENGTH_LONG).show();
                 Intent pushNotification = new Intent(Config.PUSH_NOTIFICATION);
                 pushNotification.putExtra("message", message);
                 LocalBroadcastManager.getInstance(this).sendBroadcast(pushNotification);
-
                 // play notification sound
                 NotificationUtils notificationUtils = new NotificationUtils(getApplicationContext());
                 notificationUtils.playNotificationSound();
             } else {
+                Log.e(TAG, "handleDataMessage: " + " In BackGround");
                 // app is in background, show the notification in notification tray
                 Intent resultIntent = new Intent(getApplicationContext(), Main2Activity.class);
                 resultIntent.putExtra("message", message);

@@ -5,6 +5,8 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -59,6 +61,8 @@ public class CardDemoDesign extends AppCompatActivity {
     RequestPayment rp=new RequestPayment();
     RequestCharges rc=new RequestCharges();
     ConnectivityReceiver cr = new ConnectivityReceiver();
+    private MyBroadcastReceiver myBroadcastReceiver;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +88,7 @@ public class CardDemoDesign extends AppCompatActivity {
                 Call();
             }
         });
+        myBroadcastReceiver=new MyBroadcastReceiver();
 
     }
     private void Call(){
@@ -270,6 +275,30 @@ public class CardDemoDesign extends AppCompatActivity {
             sp.ShowDialog(CardDemoDesign.this,"Please check your internet connection.");
         }
     }
+    @Override
+    protected void onResume() {
+        super.onResume();
+//        localBroadcastManager = LocalBroadcastManager.getInstance(MainDrawer.this);
+//        myBroadcastReceiver = new MyBroadcastReceiver();
+//        if (localBroadcastManager != null && myBroadcastReceiver != null)
+        LocalBroadcastManager.getInstance(CardDemoDesign.this).registerReceiver(myBroadcastReceiver, new IntentFilter("android.content.BroadcastReceiver"));
 
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+//        localBroadcastManager = LocalBroadcastManager.getInstance(MainDrawer.this);
+//        myBroadcastReceiver = new MyBroadcastReceiver();
+//        if (localBroadcastManager != null && myBroadcastReceiver != null)
+        LocalBroadcastManager.getInstance(CardDemoDesign.this).unregisterReceiver(myBroadcastReceiver);
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        LocalBroadcastManager.getInstance(CardDemoDesign.this).unregisterReceiver(myBroadcastReceiver);
+    }
 }
 

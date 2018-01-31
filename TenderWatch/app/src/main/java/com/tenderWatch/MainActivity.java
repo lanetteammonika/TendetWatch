@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final String TAG = MainActivity.class.getSimpleName();
     Object user;
     boolean doubleBackToExitPressedOnce = true;
-    ConnectivityReceiver cr= new ConnectivityReceiver();
+    ConnectivityReceiver cr = new ConnectivityReceiver();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,8 +54,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         context = this;
         InitView();
         InitListener();
-        user=sp.getPreferencesObject(MainActivity.this);
-       // FirebaseCrash.report(new Exception("My first Android non-fatal error"));
+        user = sp.getPreferencesObject(MainActivity.this);
+        // FirebaseCrash.report(new Exception("My first Android non-fatal error"));
 
         Button crashButton = new Button(this);
 //        crashButton.setText("..");
@@ -72,52 +72,60 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //                .debuggable(true)           // Enables Crashlytics debugger
 //                .build();
 //        Fabric.with(fabric);
-        if(user!= null){
-            String role=sp.getPreferences(MainActivity.this,"role");
-            if(role.equals("client")) {
+        if (cr.isConnected(MainActivity.this)) {
+            mRegistrationBroadcastReceiver = new BroadcastReceiver() {
+                @Override
+                public void onReceive(Context context, Intent intent) {
+
+                    // checking for type intent filter
+                    if (intent.getAction().equals(Config.REGISTRATION_COMPLETE)) {
+                        // gcm successfully registered
+                        // now subscribe to `global` topic to receive app wide notifications
+                        FirebaseMessaging.getInstance().subscribeToTopic(Config.TOPIC_GLOBAL);
+
+                        displayFirebaseRegId();
+
+                    } else if (intent.getAction().equals(Config.PUSH_NOTIFICATION)) {
+                        // new push notification is received
+
+                        final String message = intent.getStringExtra("message");
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(getApplicationContext(), "Push notification: " + message, Toast.LENGTH_LONG).show();
+                            }
+                        });
+
+
+                        //txtMessage.setText(message);
+                    }
+                }
+            };
+
+
+            displayFirebaseRegId();
+        } else {
+            sp.ShowDialog(MainActivity.this, "Please check your internet connection");
+        }
+        if (user != null) {
+            String role = sp.getPreferences(MainActivity.this, "role");
+            if (role.equals("client")) {
                 intent = new Intent(MainActivity.this, ClientDrawer.class);
-            }else{
+            } else {
                 intent = new Intent(MainActivity.this, MainDrawer.class);
             }
-            sp.setPreferences(MainActivity.this, "role",role);
-           // intent.putExtra("Role", "client");
+            sp.setPreferences(MainActivity.this, "role", role);
+            // intent.putExtra("Role", "client");
             Log.i(TAG, "testing");
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
 
             startActivity(intent);
             overridePendingTransition(R.anim.enter, R.anim.exit);
         }
-        if(cr.isConnected(MainActivity.this)){
-        mRegistrationBroadcastReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
 
-                // checking for type intent filter
-                if (intent.getAction().equals(Config.REGISTRATION_COMPLETE)) {
-                    // gcm successfully registered
-                    // now subscribe to `global` topic to receive app wide notifications
-                    FirebaseMessaging.getInstance().subscribeToTopic(Config.TOPIC_GLOBAL);
-
-                    displayFirebaseRegId();
-
-                } else if (intent.getAction().equals(Config.PUSH_NOTIFICATION)) {
-                    // new push notification is received
-
-                    String message = intent.getStringExtra("message");
-
-                    Toast.makeText(getApplicationContext(), "Push notification: " + message, Toast.LENGTH_LONG).show();
-
-                    //txtMessage.setText(message);
-                }
-            }
-        };
-
-
-        displayFirebaseRegId();
-        }else{
-            sp.ShowDialog(MainActivity.this,"Please check your internet connection");
-        }
     }
+
     // Fetches reg id from shared preferences
     // and displays on the screen
     private void displayFirebaseRegId() {
@@ -127,9 +135,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Log.e(TAG, "Firebase reg id: " + regId);
 
         if (!TextUtils.isEmpty(regId))
-            Log.e(TAG,"Firebase Reg Id: " + regId);
+            Log.e(TAG, "Firebase Reg Id: " + regId);
         else
-            Log.e(TAG,"Firebase Reg Id is not received yet!");
+            Log.e(TAG, "Firebase Reg Id is not received yet!");
     }
 
     private void InitListener() {
@@ -208,6 +216,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             return;
         }
     }
+
     @Override
     protected void onResume() {
         super.onResume();

@@ -2,8 +2,10 @@ package com.tenderWatch;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -60,7 +62,7 @@ public class Category extends AppCompatActivity {
     TextView txtContract;
     String contract,s,selCon,contractSelected;
     ConnectivityReceiver cr = new ConnectivityReceiver();
-
+    private MyBroadcastReceiver myBroadcastReceiver;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,7 +76,7 @@ public class Category extends AppCompatActivity {
         mAPIService = ApiUtils.getAPIService();
         lvCountry.setDivider(null);
         lvCountry.clearChoices();
-
+myBroadcastReceiver=new MyBroadcastReceiver();
         Intent show = getIntent();
         //contractSelected=getIntent().getStringExtra("selectedCon");
 
@@ -398,5 +400,29 @@ public class Category extends AppCompatActivity {
             return false;
         }
     }
+    @Override
+    protected void onResume() {
+        super.onResume();
+//        localBroadcastManager = LocalBroadcastManager.getInstance(MainDrawer.this);
+//        myBroadcastReceiver = new MyBroadcastReceiver();
+//        if (localBroadcastManager != null && myBroadcastReceiver != null)
+        LocalBroadcastManager.getInstance(Category.this).registerReceiver(myBroadcastReceiver, new IntentFilter("android.content.BroadcastReceiver"));
 
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+//        localBroadcastManager = LocalBroadcastManager.getInstance(MainDrawer.this);
+//        myBroadcastReceiver = new MyBroadcastReceiver();
+//        if (localBroadcastManager != null && myBroadcastReceiver != null)
+        LocalBroadcastManager.getInstance(Category.this).unregisterReceiver(myBroadcastReceiver);
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        LocalBroadcastManager.getInstance(Category.this).unregisterReceiver(myBroadcastReceiver);
+    }
 }

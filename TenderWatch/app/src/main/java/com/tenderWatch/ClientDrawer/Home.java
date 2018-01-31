@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -33,6 +35,7 @@ import com.tenderWatch.BuildConfig;
 import com.tenderWatch.Models.GetCategory;
 import com.tenderWatch.Models.GetCountry;
 import com.tenderWatch.Models.UploadTender;
+import com.tenderWatch.MyBroadcastReceiver;
 import com.tenderWatch.R;
 import com.tenderWatch.Retrofit.Api;
 import com.tenderWatch.Retrofit.ApiUtils;
@@ -87,6 +90,8 @@ public class Home extends Fragment implements AdapterView.OnItemSelectedListener
 
     private static final int REQUEST_CODE_SELECT_PICTURE = 0;
     private static final int REQUEST_CODE_CROP_PICTURE = 1;
+    private MyBroadcastReceiver myBroadcastReceiver;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -102,7 +107,7 @@ public class Home extends Fragment implements AdapterView.OnItemSelectedListener
         spinner = (ListView) view.findViewById(R.id.spinner);
         spinner2 = (ListView) view.findViewById(R.id.spinner3);
         edtSearch=(EditText) view.findViewById(R.id.edtSearch);
-
+        myBroadcastReceiver=new MyBroadcastReceiver();
         city=(EditText) view.findViewById(R.id.home_city);
         title=(EditText) view.findViewById(R.id.home_title);
         description=(EditText) view.findViewById(R.id.home_address);
@@ -331,9 +336,12 @@ public class Home extends Fragment implements AdapterView.OnItemSelectedListener
         spinner.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                countryname = countryName.get(position).split("~")[0];
-                countryCode = countryName.get(position).split("~")[1];
-                String id1 = countryName.get(position).split("~")[2];
+
+                countryAdapter.setItemSelected(position);
+                countryAdapter.getItem(position);
+                countryname = countryAdapter.getItem(position).toString().split("~")[0];
+                countryCode = countryAdapter.getItem(position).toString().split("~")[1];
+                String id1 = countryAdapter.getItem(position).toString().split("~")[2];
                 countryId1 = MultipartBody.Part.createFormData("country", id1);
                 country.setText(countryname);
                 country_home.setVisibility(View.GONE);
@@ -415,6 +423,7 @@ public class Home extends Fragment implements AdapterView.OnItemSelectedListener
                 .enqueue(new Callback<UploadTender>() {
                     @Override
                     public void onResponse(Call<UploadTender> call, Response<UploadTender> response) {
+                        sp.ShowDialog(getActivity(),"Tender Uploaded Successfully");
                         sp.hideProgressDialog();
                         Intent intent = new Intent(getActivity(),ClientDrawer.class);
                         startActivity(intent);
@@ -441,7 +450,7 @@ public class Home extends Fragment implements AdapterView.OnItemSelectedListener
                 Data2 = response.body();
 
                 for (int i = 0; i < Data2.size(); i++) {
-                    alpha2.add(response.body().get(i).getCategoryName() + "~" + response.body().get(i).getImgString());
+                    alpha2.add(response.body().get(i).getCategoryName() + "~" + response.body().get(i).getId()+"~" +"dfsf~"+ response.body().get(i).getImgString());
                     categoryName.add(response.body().get(i).getCategoryName() + "~" + response.body().get(i).getId());
                }
                 categoryAdapter = new CustomList(getContext(), alpha2);
@@ -465,7 +474,7 @@ public class Home extends Fragment implements AdapterView.OnItemSelectedListener
             public void onResponse(Call<ArrayList<GetCountry>> call, Response<ArrayList<GetCountry>> response) {
                 Data = response.body();
                 for (int i = 0; i < Data.size(); i++) {
-                    alpha.add(response.body().get(i).getCountryName() + "~" + response.body().get(i).getImageString());
+                    alpha.add(response.body().get(i).getCountryName() + "~" + response.body().get(i).getCountryCode() + "~" + response.body().get(i).getId()+"~" + response.body().get(i).getImageString());
                     countryName.add(response.body().get(i).getCountryName() + "~" + response.body().get(i).getCountryCode() + "~" + response.body().get(i).getId());
                 }
                 Collections.sort(alpha);
@@ -570,6 +579,31 @@ public class Home extends Fragment implements AdapterView.OnItemSelectedListener
                 }
                 break;
         }
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+//        localBroadcastManager = LocalBroadcastManager.getInstance(MainDrawer.this);
+//        myBroadcastReceiver = new MyBroadcastReceiver();
+//        if (localBroadcastManager != null && myBroadcastReceiver != null)
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(myBroadcastReceiver, new IntentFilter("android.content.BroadcastReceiver"));
+
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+//        localBroadcastManager = LocalBroadcastManager.getInstance(MainDrawer.this);
+//        myBroadcastReceiver = new MyBroadcastReceiver();
+//        if (localBroadcastManager != null && myBroadcastReceiver != null)
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(myBroadcastReceiver);
+
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(myBroadcastReceiver);
     }
 
 }

@@ -17,6 +17,7 @@ import android.support.v7.app.NotificationCompat;
 import android.text.Html;
 import android.text.TextUtils;
 import android.util.Patterns;
+import android.widget.Toast;
 
 import com.google.firebase.messaging.RemoteMessage;
 import com.google.firebase.messaging.RemoteMessage.Notification;

@@ -50,7 +50,6 @@ public class Agreement extends AppCompatActivity implements View.OnClickListener
     LinearLayout back, webLayout;
     ConnectivityReceiver cr=new ConnectivityReceiver();
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,6 +57,7 @@ public class Agreement extends AppCompatActivity implements View.OnClickListener
         InitView();
         InitListener();
         Log.i(TAG, String.valueOf(user.getProfilePhoto()));
+
     }
 
     boolean doubleBackToExitPressedOnce = false;

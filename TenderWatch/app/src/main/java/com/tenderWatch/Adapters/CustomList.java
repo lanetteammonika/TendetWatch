@@ -24,7 +24,7 @@ public class CustomList extends BaseAdapter{
     private Context context;
     private ArrayList<String> countryNameList;
     private ArrayList<String> originalItem;
-
+    private ArrayList<String> item;
     public CustomList(Context context,ArrayList<String> countryNameList){
         this.context=context;
         this.countryNameList=countryNameList;
@@ -37,7 +37,7 @@ public class CustomList extends BaseAdapter{
 
     @Override
     public Object getItem(int position) {
-        return null;
+        return countryNameList.get(position);
     }
 
     @Override
@@ -56,7 +56,7 @@ public class CustomList extends BaseAdapter{
 
         txtCountryName.setText(countryNameList.get(position).split("~")[0]);
 
-        Bitmap flag1 = StringToBitMap(countryNameList.get(position).split("~")[1]);
+        Bitmap flag1 = StringToBitMap(countryNameList.get(position).split("~")[3]);
         flag_img.setImageBitmap(flag1);
 
         return convertView;
@@ -70,6 +70,10 @@ public class CustomList extends BaseAdapter{
             e.getMessage();
             return null;
         }
+    }
+    public void setItemSelected(int pos) {
+        String l=countryNameList.get(pos);
+        notifyDataSetChanged();
     }
     public Filter getFilter() {
         Filter filter = new Filter() {

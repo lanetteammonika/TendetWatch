@@ -1,10 +1,12 @@
 package com.tenderWatch.Drawer;
 
 import android.app.ProgressDialog;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +17,7 @@ import android.webkit.WebViewClient;
 
 import com.tenderWatch.Models.SubScriptionResponse;
 import com.tenderWatch.Models.User;
+import com.tenderWatch.MyBroadcastReceiver;
 import com.tenderWatch.R;
 import com.tenderWatch.Retrofit.Api;
 import com.tenderWatch.Retrofit.ApiUtils;
@@ -37,6 +40,8 @@ public class SubScription extends Fragment {
     User user;
     String url;
     ConnectivityReceiver cr=new ConnectivityReceiver();
+    private MyBroadcastReceiver myBroadcastReceiver;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -54,7 +59,7 @@ public class SubScription extends Fragment {
         mWebView.getSettings().setJavaScriptEnabled(true);
         mWebView.setBackgroundColor(Color.TRANSPARENT);
         sp.showProgressDialog(getActivity());
-
+        myBroadcastReceiver=new MyBroadcastReceiver();
         String token = "Bearer " + sp.getPreferences(getActivity(), "token");
         user = (User) sp.getPreferencesObject(getActivity());
         String userId=user.getId();
@@ -120,5 +125,29 @@ public class SubScription extends Fragment {
 
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+//        localBroadcastManager = LocalBroadcastManager.getInstance(MainDrawer.this);
+//        myBroadcastReceiver = new MyBroadcastReceiver();
+//        if (localBroadcastManager != null && myBroadcastReceiver != null)
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(myBroadcastReceiver, new IntentFilter("android.content.BroadcastReceiver"));
 
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+//        localBroadcastManager = LocalBroadcastManager.getInstance(MainDrawer.this);
+//        myBroadcastReceiver = new MyBroadcastReceiver();
+//        if (localBroadcastManager != null && myBroadcastReceiver != null)
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(myBroadcastReceiver);
+
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(myBroadcastReceiver);
+    }
 }

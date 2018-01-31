@@ -1,10 +1,12 @@
 package com.tenderWatch.ClientDrawer;
 
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -16,6 +18,7 @@ import android.widget.EditText;
 
 import com.tenderWatch.Models.Success;
 import com.tenderWatch.Models.User;
+import com.tenderWatch.MyBroadcastReceiver;
 import com.tenderWatch.R;
 import com.tenderWatch.Retrofit.Api;
 import com.tenderWatch.Retrofit.ApiUtils;
@@ -41,6 +44,8 @@ public class ChangePassword  extends Fragment implements View.OnClickListener{
     Api mAPIService;
     Intent intent;
     ConnectivityReceiver cr = new ConnectivityReceiver();
+    private MyBroadcastReceiver myBroadcastReceiver;
+
 
     @Nullable
     @Override
@@ -56,6 +61,7 @@ public class ChangePassword  extends Fragment implements View.OnClickListener{
         super.onViewCreated(view, savedInstanceState);
         //you can set the title for your toolbar here for different fragments different titles
         getActivity().setTitle("Change Password");
+        myBroadcastReceiver=new MyBroadcastReceiver();
         InitView(view);
         InitListener();
     }
@@ -147,7 +153,7 @@ public class ChangePassword  extends Fragment implements View.OnClickListener{
                 Log.i(TAG, "response register-->");
                 sp.hideProgressDialog();
                 if (response.isSuccessful()) {
-                    sp.ShowDialog(getActivity(), response.body().getMessage().toString());
+                    sp.ShowDialog(getActivity(), "Password Change Successfully");
                    intent = new Intent(getActivity(),ClientDrawer.class );startActivity(intent);
                 } else {
                     sp.ShowDialog(getActivity(), response.errorBody().source().toString().split("\"")[3]);
@@ -174,5 +180,31 @@ public class ChangePassword  extends Fragment implements View.OnClickListener{
         if (!Validation.isPassword(txt_confirmPassword, true)) ret = false;
 
         return ret;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+//        localBroadcastManager = LocalBroadcastManager.getInstance(MainDrawer.this);
+//        myBroadcastReceiver = new MyBroadcastReceiver();
+//        if (localBroadcastManager != null && myBroadcastReceiver != null)
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(myBroadcastReceiver, new IntentFilter("android.content.BroadcastReceiver"));
+
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+//        localBroadcastManager = LocalBroadcastManager.getInstance(MainDrawer.this);
+//        myBroadcastReceiver = new MyBroadcastReceiver();
+//        if (localBroadcastManager != null && myBroadcastReceiver != null)
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(myBroadcastReceiver);
+
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(myBroadcastReceiver);
     }
 }
