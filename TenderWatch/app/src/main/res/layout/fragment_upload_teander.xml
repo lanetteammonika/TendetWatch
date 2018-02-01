@@ -16,6 +16,7 @@
             android:orientation="vertical">
 
     <RelativeLayout
+        android:id="@+id/rlCon_select"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/textview_design"
@@ -96,6 +97,7 @@
 </LinearLayout>
 
     <RelativeLayout
+        android:id="@+id/rlcat_select"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/textview_design"
@@ -197,6 +199,7 @@
     </LinearLayout>
 
     <RelativeLayout
+        android:id="@+id/sel_cli_detail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/textview_design"

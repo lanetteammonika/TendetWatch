@@ -42,6 +42,7 @@ import com.tenderWatch.R;
 import com.tenderWatch.Retrofit.Api;
 import com.tenderWatch.Retrofit.ApiUtils;
 import com.tenderWatch.SharedPreference.SharedPreference;
+import com.tenderWatch.TenderDetail;
 import com.tenderWatch.app.Config;
 import com.tenderWatch.utils.ConnectivityReceiver;
 
@@ -155,30 +156,30 @@ public class TenderList extends Fragment {
                     tender = allTender.get(position);
                     Gson gson = new Gson();
                     String jsonString = gson.toJson(tender);
-                    Date startDateValue = null, endDateValue = null;
-                    try {
-                        // startDateValue = new SimpleDateFormat("yyyy-MM-dd").parse(formattedDate);
-                        startDateValue = new SimpleDateFormat("yyyy-MM-dd").parse(tender.getCreatedAt().split("T")[0]);
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-                    try {
-                        endDateValue = new SimpleDateFormat("yyyy-MM-dd").parse(tender.getExpiryDate().split("T")[0]);
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-                    //Date endDateValue = new Date(allTender.get(position).getExpiryDate().split("T")[0]);
-                    long diff = endDateValue.getTime() - startDateValue.getTime();
-                    long seconds = diff / 1000;
-                    long minutes = seconds / 60;
-                    long hours = minutes / 60;
-                    long days = (hours / 24);
-
+//                    Date startDateValue = null, endDateValue = null;
+//                    try {
+//                        // startDateValue = new SimpleDateFormat("yyyy-MM-dd").parse(formattedDate);
+//                        startDateValue = new SimpleDateFormat("yyyy-MM-dd").parse(tender.getCreatedAt().split("T")[0]);
+//                    } catch (ParseException e) {
+//                        e.printStackTrace();
+//                    }
+//                    try {
+//                        endDateValue = new SimpleDateFormat("yyyy-MM-dd").parse(tender.getExpiryDate().split("T")[0]);
+//                    } catch (ParseException e) {
+//                        e.printStackTrace();
+//                    }
+//                    //Date endDateValue = new Date(allTender.get(position).getExpiryDate().split("T")[0]);
+//                    long diff = endDateValue.getTime() - startDateValue.getTime();
+//                    long seconds = diff / 1000;
+//                    long minutes = seconds / 60;
+//                    long hours = minutes / 60;
+//                    long days = (hours / 24);
+int days = 2;
                     if (days == 0) {
                         sp.ShowDialog(getActivity(), "Tender is not Activated.");
                     } else {
-                        Intent intent = new Intent(getActivity(), PreviewTenderDetail.class);
-                        intent.putExtra("data", jsonString);
+                        Intent intent = new Intent(getActivity(), TenderDetail.class);
+                        intent.putExtra("id", allTender.get(position).getId());
                         startActivity(intent);
                     }
                 } else {

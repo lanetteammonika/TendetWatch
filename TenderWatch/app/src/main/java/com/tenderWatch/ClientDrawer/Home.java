@@ -25,6 +25,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -91,6 +92,7 @@ public class Home extends Fragment implements AdapterView.OnItemSelectedListener
     private static final int REQUEST_CODE_SELECT_PICTURE = 0;
     private static final int REQUEST_CODE_CROP_PICTURE = 1;
     private MyBroadcastReceiver myBroadcastReceiver;
+    RelativeLayout sel_cat,sel_con,sel_detail;
 
     @Nullable
     @Override
@@ -111,6 +113,9 @@ public class Home extends Fragment implements AdapterView.OnItemSelectedListener
         city=(EditText) view.findViewById(R.id.home_city);
         title=(EditText) view.findViewById(R.id.home_title);
         description=(EditText) view.findViewById(R.id.home_address);
+        sel_con=(RelativeLayout) view.findViewById(R.id.rlCon_select);
+        sel_cat=(RelativeLayout) view.findViewById(R.id.rlcat_select);
+        sel_detail=(RelativeLayout) view.findViewById(R.id.sel_cli_detail);
 
         btnUploadTender=(Button) view.findViewById(R.id.btn_uploadTender);
 
@@ -136,7 +141,7 @@ public class Home extends Fragment implements AdapterView.OnItemSelectedListener
             }
         });
 
-        down_arrow.setOnClickListener(new View.OnClickListener() {
+        sel_con.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("NewApi")
             @Override
             public void onClick(View v) {
@@ -193,7 +198,7 @@ public class Home extends Fragment implements AdapterView.OnItemSelectedListener
                 scrollView.setScrolling(true);
             }
         });
-        down_arrow2.setOnClickListener(new View.OnClickListener() {
+        sel_cat.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("NewApi")
             @Override
             public void onClick(View v) {
@@ -219,7 +224,7 @@ public class Home extends Fragment implements AdapterView.OnItemSelectedListener
                 scrollView.setScrolling(true);
             }
         });
-        down_arrow3.setOnClickListener(new View.OnClickListener() {
+        sel_detail.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("NewApi")
             @Override
             public void onClick(View v) {

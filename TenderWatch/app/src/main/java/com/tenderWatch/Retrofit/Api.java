@@ -8,6 +8,7 @@ import com.tenderWatch.Drawer.MainDrawer;
 import com.tenderWatch.Models.AllContractorTender;
 import com.tenderWatch.Models.GetCategory;
 import com.tenderWatch.Models.GetCountry;
+import com.tenderWatch.Models.GetTenderDetail;
 import com.tenderWatch.Models.LoginPost;
 import com.tenderWatch.Models.Message;
 import com.tenderWatch.Models.Register;
@@ -249,6 +250,11 @@ public interface Api {
 
     @GET("tender/{tenderDetailId}")
     Call<UpdateTender> getTender(
+            @Header("Authorization") String token,
+            @Path("tenderDetailId") String id
+    );
+    @GET("tender/{tenderDetailId}")
+    Call<GetTenderDetail> getTender2(
             @Header("Authorization") String token,
             @Path("tenderDetailId") String id
     );

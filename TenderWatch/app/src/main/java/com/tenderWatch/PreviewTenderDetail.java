@@ -11,6 +11,9 @@ import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
+import android.text.style.ImageSpan;
 import android.util.Base64;
 import android.util.Log;
 import android.view.MenuItem;
@@ -94,6 +97,8 @@ public class PreviewTenderDetail extends AppCompatActivity {
         editTender=(Button) findViewById(R.id.edit_tender);
         imagetender=(ImageView) findViewById(R.id.preview_tender_image);
         catFlag=(ImageView) findViewById(R.id.preview_catflag_image);
+
+
         String json=getIntent().getStringExtra("data");
         Gson gson=new Gson();
         object=gson.fromJson(json, Tender.class);
@@ -252,11 +257,16 @@ if(cr.isConnected(PreviewTenderDetail.this)){
                 for (int i = 0; i < Data2.size(); i++) {
                     if(categoryName.get(i).split("~")[1].toString().equals(object.getCategory().toString())){
                         categoryName1=response.body().get(i).getCategoryName().toString();
-
-                            Category.setText(categoryName1);
+                        Category.setText(categoryName1);
                         day=response.body().get(i).getImgString();
-                        catBflag = StringToBitMap(day);
-                        catFlag.setImageBitmap(catBflag);
+//                        catBflag = StringToBitMap(day);
+//                        //catFlag.setImageBitmap(catBflag);
+//                        SpannableStringBuilder ssb = new SpannableStringBuilder( categoryName1+"gggggggggggggggggggggggggggggggggggggggggggggg" );
+////                        //Bitmap smiley = BitmapFactory.
+//                        ImageSpan imagespan = new ImageSpan(PreviewTenderDetail.this, catBflag);
+//                        //text.setSpan(imagespan, i, i+ strLength, 0); //text is an object of TextView
+//                        ssb.setSpan(imagespan, ssb.length()-1,  ssb.length(), 0 );
+//                        Category.setText( ssb);
                         sp.hideProgressDialog();
 
                         break;

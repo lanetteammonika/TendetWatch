@@ -105,34 +105,34 @@ public class TenderListAdapter extends BaseAdapter {
         }
         CircleImageView imgTrue=(CircleImageView) convertView.findViewById(R.id.tender_image3);
         Calendar c = Calendar.getInstance();
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-        String formattedDate = df.format(c.getTime());
-        Date startDateValue = null,endDateValue = null;
-        try {
-              startDateValue = new SimpleDateFormat("yyyy-MM-dd").parse(formattedDate);
-            //  startDateValue = new SimpleDateFormat("yyyy-MM-dd").parse(tenderList.get(position).getCreatedAt().split("T")[0]);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        try {
-            endDateValue = new SimpleDateFormat("yyyy-MM-dd").parse(tenderList.get(position).getExpiryDate().split("T")[0]);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        //Date endDateValue = new Date(allTender.get(position).getExpiryDate().split("T")[0]);
-        long diff = endDateValue.getTime() - startDateValue.getTime();
-        long seconds = diff / 1000;
-        long minutes = seconds / 60;
-        long hours = minutes / 60;
-        long days = (hours / 24) ;
-
-        if(days==0 || days<0){
-            stampRemove.setVisibility(View.VISIBLE);
-            txtTenderExpDate.setText("Expired");
-        }else{
-            txtTenderExpDate.setText(days+" days");
-        }
-        Log.d("days", "" + days);
+//        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+//        String formattedDate = df.format(c.getTime());
+//        Date startDateValue = null,endDateValue = null;
+//        try {
+//              startDateValue = new SimpleDateFormat("yyyy-MM-dd").parse(formattedDate);
+//            //  startDateValue = new SimpleDateFormat("yyyy-MM-dd").parse(tenderList.get(position).getCreatedAt().split("T")[0]);
+//        } catch (ParseException e) {
+//            e.printStackTrace();
+//        }
+//        try {
+//            endDateValue = new SimpleDateFormat("yyyy-MM-dd").parse(tenderList.get(position).getExpiryDate().split("T")[0]);
+//        } catch (ParseException e) {
+//            e.printStackTrace();
+//        }
+//        //Date endDateValue = new Date(allTender.get(position).getExpiryDate().split("T")[0]);
+//        long diff = endDateValue.getTime() - startDateValue.getTime();
+//        long seconds = diff / 1000;
+//        long minutes = seconds / 60;
+//        long hours = minutes / 60;
+//        long days = (hours / 24) ;
+//
+//        if(days==0 || days<0){
+//            stampRemove.setVisibility(View.VISIBLE);
+//            txtTenderExpDate.setText("Expired");
+//        }else{
+//            txtTenderExpDate.setText(days+" days");
+//        }
+       // Log.d("days", "" + days);
         txtTenderName.setText(tenderList.get(position).getTenderName());
         txtTenderTitle.setText(tenderList.get(position).getTenderName());
         User user= (User) sp.getPreferencesObject(context);

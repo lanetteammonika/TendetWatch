@@ -23,6 +23,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/value_10"
             android:orientation="vertical">
 
             <LinearLayout
@@ -32,61 +33,69 @@
 
                 <ImageView
                     android:id="@+id/preview_tender_image"
-                    android:layout_width="180dp"
-                    android:layout_height="180dp"
+                    android:layout_width="300dp"
+                    android:layout_height="200dp"
                     android:scaleType="fitXY"
-                    android:src="@drawable/avtar" />
+                    android:src="@drawable/house" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/value_5"
-                android:weightSum="1"
-                android:orientation="horizontal">
+                android:layout_marginTop="@dimen/value_10"
+                android:orientation="horizontal"
+                android:weightSum="1">
 
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/value_5"
-                        android:text="Tender Title:"
-                        android:textColor="@color/colorBlack"
-                        android:textSize="@dimen/value_15"
-                        android:layout_weight="0.07"/>
-
-                    <TextView
-                        android:id="@+id/preview_tender_title"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/about_app"
-                        android:textColor="@color/colorBlack"
-                        android:textSize="@dimen/value_15"
-                        android:gravity="left"
-                        android:layout_gravity="left"
-                        />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:weightSum="1"
-                android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Country:"
-                        android:gravity="left"
-                        android:textColor="@color/colorBlack"
-                        android:layout_marginLeft="@dimen/value_5"
-                        android:textSize="@dimen/value_15"
-                        android:layout_weight="0.29"/>
-                <LinearLayout
-                    android:layout_width="wrap_content"
+                <TextView
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    >
+                    android:layout_marginLeft="@dimen/value_10"
+                    android:layout_weight="0.30"
+                    android:gravity="left"
+                    android:text="Tender Title:"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="@dimen/value_15" />
+
+                <TextView
+                    android:id="@+id/preview_tender_title"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.70"
+                    android:ellipsize="end"
+                    android:maxLines="2"
+                    android:text="@string/about_app"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="@dimen/value_15" />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginTop="@dimen/value_5"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:weightSum="1">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/value_10"
+                    android:layout_weight="0.30"
+                    android:gravity="left"
+                    android:text="Country:"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="@dimen/value_15" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="0.70"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
 
                     <TextView
                         android:id="@+id/preview_country_name"
@@ -110,359 +119,358 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:weightSum="1"
-                >
+                android:layout_marginTop="@dimen/value_5"
+                android:orientation="horizontal">
 
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/value_5"
-                        android:gravity="left"
-                        android:text="Category:"
-                        android:textColor="@color/colorBlack"
-                        android:textSize="@dimen/value_15"
-                        android:layout_weight="0.30"
-                        />
-
-                    <TextView
-                        android:id="@+id/preview_category"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:maxLines="3"
-                        android:text="@string/about_app"
-                        android:textColor="@color/colorBlack"
-                        android:textSize="@dimen/value_15"
-                        android:layout_gravity="left"
-                        android:layout_weight="0.54"
-                        />
-
-                    <ImageView
-                        android:id="@+id/preview_catflag_image"
-                        android:layout_width="0dp"
-                        android:layout_height="35dp"
-                        android:src="@drawable/avtar"
-                        android:layout_weight="0.18"
-                        />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/value_5"
-                    android:text="Expiry Day:"
-                    android:textColor="@color/colorBlack"
-                    android:textSize="@dimen/value_15" />
-
-                <TextView
-                    android:id="@+id/preview_exp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="100dp"
-                    android:text="@string/about_app"
-                    android:textColor="@color/colorBlack"
-                    android:textSize="@dimen/value_15" />
-            </RelativeLayout>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="#D3D3D3"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/value_5"
-                android:text="Description:"
-                android:textColor="@color/colorBlack"
-                android:textSize="@dimen/value_15"
-                android:textStyle="bold" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/preview_description"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/value_5"
-                android:text="@string/about_app"
-                android:textColor="@color/colorBlack"
-                android:textSize="@dimen/value_15" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="#D3D3D3"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/value_5"
-                android:text="How to Contact client for tender:"
-                android:textColor="@color/colorBlack"
-                android:textSize="@dimen/value_15"
-                android:textStyle="bold" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <LinearLayout
+                <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:layout_height="wrap_content">
 
-                    <RelativeLayout
-                        android:id="@+id/rl_preview_city"
+                    <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:weightSum="1">
 
                         <TextView
-                            android:layout_width="wrap_content"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginLeft="@dimen/value_5"
+                            android:layout_marginLeft="@dimen/value_10"
+                            android:layout_weight="0.30"
                             android:text="City:"
                             android:textColor="@color/colorBlack"
                             android:textSize="@dimen/value_15" />
 
                         <TextView
                             android:id="@+id/preview_tender_city"
-                            android:layout_width="wrap_content"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginLeft="100dp"
+                            android:layout_weight="0.70"
                             android:text="@string/about_app"
                             android:textColor="@color/colorBlack"
                             android:textSize="@dimen/value_15" />
-                    </RelativeLayout>
-                </LinearLayout>
-            </FrameLayout>
+                    </LinearLayout>
+                </FrameLayout>
+            </LinearLayout>
 
-            <FrameLayout
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginTop="@dimen/value_5"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:weightSum="1">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <TextView
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:layout_marginLeft="@dimen/value_10"
+                    android:layout_weight="0.30"
+                    android:gravity="center_vertical"
+                    android:text="Category:"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="@dimen/value_15" />
 
-                    <RelativeLayout
+                <TextView
+                    android:id="@+id/preview_category"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.70"
+                    android:ellipsize="end"
+                    android:maxLines="2"
+                    android:text="@string/about_app"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="@dimen/value_15" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/value_5"
+                android:layout_marginTop="@dimen/value_5"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/value_10"
+                    android:layout_weight="0.30"
+                    android:gravity="left"
+                    android:text="Expiry Day:"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="@dimen/value_15" />
+
+                <TextView
+                    android:id="@+id/preview_exp"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.70"
+                    android:ellipsize="end"
+                    android:maxLines="2"
+                    android:text="@string/about_app"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="@dimen/value_15" />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#D3D3D3"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/value_5"
+                    android:text="Description:"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="@dimen/value_15"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/value_10"
+                android:layout_marginTop="@dimen/value_10"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/preview_description"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/value_10"
+                    android:text="@string/about_app"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="@dimen/value_15" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#D3D3D3"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/value_5"
+                    android:text="How to Contact client for tender:"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="@dimen/value_15"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/value_10"
+                android:orientation="horizontal"
+                >
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/preview_follow"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/value_10"
+                        android:text="Follow Tender Process"
+                        android:textColor="@color/colorBlack"
+                        android:textSize="@dimen/value_15" />
+                </FrameLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/value_7"
+                android:orientation="vertical">
+
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
                         android:id="@+id/rl_preview_mobile"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:weightSum="1">
+
 
                         <TextView
-                            android:layout_width="wrap_content"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginLeft="@dimen/value_5"
-                            android:text="ContactNo:"
+                            android:layout_marginLeft="@dimen/value_10"
+                            android:layout_weight="0.30"
+                            android:text="Mobile No:"
                             android:textColor="@color/colorBlack"
                             android:textSize="@dimen/value_15" />
 
                         <TextView
                             android:id="@+id/preview_tender_mobile"
-                            android:layout_width="wrap_content"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginLeft="100dp"
+                            android:layout_weight="0.70"
                             android:text="@string/about_app"
                             android:textColor="@color/colorBlack"
                             android:textSize="@dimen/value_15" />
-                    </RelativeLayout>
-                </LinearLayout>
-            </FrameLayout>
+                    </LinearLayout>
+                </FrameLayout>
 
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <LinearLayout
+                <FrameLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <RelativeLayout
-                        android:id="@+id/rl_preview_landline"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="@dimen/value_5"
-                            android:text="LandlineNo.:"
-                            android:textColor="@color/colorBlack"
-                            android:textSize="@dimen/value_15" />
-
-                        <TextView
-                            android:id="@+id/preview_tender_landline"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="100dp"
-                            android:text="@string/about_app"
-                            android:textColor="@color/colorBlack"
-                            android:textSize="@dimen/value_15" />
-                    </RelativeLayout>
-                </LinearLayout>
-            </FrameLayout>
-
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                    android:layout_marginTop="@dimen/value_5">
 
                 <LinearLayout
+                    android:id="@+id/rl_preview_landline"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:weightSum="1">
 
-                    <RelativeLayout
-                        android:id="@+id/rl_preview_email"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/value_10"
+                        android:text="LandlineNo.:"
+                        android:textColor="@color/colorBlack"
+                        android:textSize="@dimen/value_15"
+                        android:layout_weight="0.30"/>
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="@dimen/value_5"
-                            android:text="Email:"
-                            android:textColor="@color/colorBlack"
-                            android:textSize="@dimen/value_15" />
+                    <TextView
+                        android:id="@+id/preview_tender_landline"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/about_app"
+                        android:textColor="@color/colorBlack"
+                        android:textSize="@dimen/value_15"
+                        android:layout_weight="0.70"/>
+            </LinearLayout>
+        </FrameLayout>
 
-                        <TextView
-                            android:id="@+id/preview_tender_email"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="100dp"
-                            android:text="@string/about_app"
-                            android:textColor="@color/colorBlack"
-                            android:textSize="@dimen/value_15" />
-                    </RelativeLayout>
-                </LinearLayout>
-            </FrameLayout>
-
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <RelativeLayout
-                        android:id="@+id/rl_preview_address"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="@dimen/value_5"
-                            android:text="Address:"
-                            android:textColor="@color/colorBlack"
-                            android:textSize="@dimen/value_15" />
-
-                        <TextView
-                            android:id="@+id/preview_tender_address"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="100dp"
-                            android:text="@string/about_app"
-                            android:textColor="@color/colorBlack"
-                            android:textSize="@dimen/value_15" />
-                    </RelativeLayout>
-                </LinearLayout>
-            </FrameLayout>
-        </LinearLayout>
-
-        <LinearLayout
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/value_5"
-            android:orientation="horizontal">
+            android:layout_marginTop="@dimen/value_5">
 
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:id="@+id/preview_follow"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/value_5"
-                    android:text="Follow Tender Process"
-                    android:textColor="@color/colorBlack"
-                    android:textSize="@dimen/value_15" />
-            </FrameLayout>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/value_50"
-            android:orientation="horizontal">
-
-            <RelativeLayout
+            <LinearLayout
+                android:id="@+id/rl_preview_email"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:gravity="center|center_horizontal">
+                android:orientation="horizontal"
+                android:weightSum="1">
 
-                <Button
-                    android:id="@+id/remove_tender"
-                    android:layout_width="@dimen/value_120"
-                    android:layout_height="@dimen/value_35"
-                    android:layout_gravity="center"
-                    android:background="@drawable/round_corner"
-                    android:backgroundTint="#F00"
-                    android:paddingLeft="@dimen/value_10"
-                    android:paddingRight="@dimen/value_10"
-                    android:text="Remove"
-                    android:textAllCaps="false"
-                    android:textColor="@color/colorWhite"
-                    android:textSize="@dimen/text_20" />
 
-                <Button
-                    android:id="@+id/edit_tender"
-                    android:layout_width="@dimen/value_120"
-                    android:layout_height="@dimen/value_35"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="@dimen/value_30"
-                    android:layout_toRightOf="@+id/remove_tender"
-                    android:background="@drawable/round_corner"
-                    android:backgroundTint="#787878"
-                    android:paddingLeft="@dimen/value_10"
-                    android:paddingRight="@dimen/value_10"
-                    android:text="Amend"
-                    android:textAllCaps="false"
-                    android:textColor="@color/colorWhite"
-                    android:textSize="@dimen/text_20" />
-            </RelativeLayout>
-        </LinearLayout>
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/value_10"
+                    android:layout_weight="0.30"
+                    android:text="Email:"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="@dimen/value_15" />
+
+                <TextView
+                    android:id="@+id/preview_tender_email"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.70"
+                    android:text="@string/about_app"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="@dimen/value_15" />
+            </LinearLayout>
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:id="@+id/rl_preview_address"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="1">
+
+
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/value_10"
+                        android:text="Address:"
+                        android:textColor="@color/colorBlack"
+                        android:textSize="@dimen/value_15"
+                        android:layout_weight="0.30"/>
+
+                    <TextView
+                        android:id="@+id/preview_tender_address"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/about_app"
+                        android:textColor="@color/colorBlack"
+                        android:textSize="@dimen/value_15"
+                        android:layout_weight="0.70"/>
+            </LinearLayout>
+        </FrameLayout>
     </LinearLayout>
-</ScrollView></LinearLayout></android.support.constraint.ConstraintLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/value_15"
+        android:layout_marginTop="@dimen/value_30"
+        android:orientation="horizontal">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center|center_horizontal">
+
+            <Button
+                android:id="@+id/remove_tender"
+                android:layout_width="@dimen/value_120"
+                android:layout_height="@dimen/value_35"
+                android:layout_gravity="center"
+                android:background="@drawable/round_corner"
+                android:backgroundTint="#F00"
+                android:paddingLeft="@dimen/value_10"
+                android:paddingRight="@dimen/value_10"
+                android:text="Remove"
+                android:textAllCaps="false"
+                android:textColor="@color/colorWhite"
+                android:textSize="@dimen/text_20" />
+
+            <Button
+                android:id="@+id/edit_tender"
+                android:layout_width="@dimen/value_120"
+                android:layout_height="@dimen/value_35"
+                android:layout_gravity="center"
+                android:layout_marginLeft="@dimen/value_30"
+                android:layout_toRightOf="@+id/remove_tender"
+                android:background="@drawable/round_corner"
+                android:backgroundTint="#787878"
+                android:paddingLeft="@dimen/value_10"
+                android:paddingRight="@dimen/value_10"
+                android:text="Amend"
+                android:textAllCaps="false"
+                android:textColor="@color/colorWhite"
+                android:textSize="@dimen/text_20" />
+        </RelativeLayout>
+    </LinearLayout>
+</LinearLayout></ScrollView></LinearLayout></android.support.constraint.ConstraintLayout>

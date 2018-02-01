@@ -26,6 +26,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.github.crazyorr.zoomcropimage.CropShape;
@@ -99,6 +100,8 @@ public class EditTenderDetail extends AppCompatActivity {
     ConnectivityReceiver cr = new ConnectivityReceiver();
     Tender object;
     private MyBroadcastReceiver myBroadcastReceiver;
+    RelativeLayout sel_cat,sel_con,sel_detail;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,7 +114,9 @@ myBroadcastReceiver=new MyBroadcastReceiver();
         mApiService= ApiUtils.getAPIService();
         spinner = (ListView) findViewById(R.id.spinner);
         spinner2 = (ListView) findViewById(R.id.spinner3);
-
+        sel_con=(RelativeLayout) findViewById(R.id.rlCon_select);
+        sel_cat=(RelativeLayout) findViewById(R.id.rlcat_select);
+        sel_detail=(RelativeLayout) findViewById(R.id.sel_cli_detail);
         city=(EditText) findViewById(R.id.home_city);
         title=(EditText) findViewById(R.id.home_title);
         description=(EditText) findViewById(R.id.home_address);
@@ -188,7 +193,7 @@ myBroadcastReceiver=new MyBroadcastReceiver();
             }
         });
 
-        down_arrow.setOnClickListener(new View.OnClickListener() {
+        sel_con.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("NewApi")
             @Override
             public void onClick(View v) {
@@ -230,7 +235,7 @@ myBroadcastReceiver=new MyBroadcastReceiver();
             }
         });
 
-        down_arrow2.setOnClickListener(new View.OnClickListener() {
+        sel_cat.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("NewApi")
             @Override
             public void onClick(View v) {
@@ -255,7 +260,7 @@ myBroadcastReceiver=new MyBroadcastReceiver();
                 scrollView.setScrolling(true);
             }
         });
-        down_arrow3.setOnClickListener(new View.OnClickListener() {
+        sel_detail.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("NewApi")
             @Override
             public void onClick(View v) {

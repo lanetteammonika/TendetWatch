@@ -61,6 +61,7 @@
         </activity>
         <activity android:name=".ForgotPassword" />
         <activity android:name=".SignUp" />
+        <activity android:name=".TenderDetail" />
         <activity android:name=".CountryList" />
         <activity
             android:name=".AboutMe"
