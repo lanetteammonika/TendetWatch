@@ -36,6 +36,7 @@ import java.util.List;
 import javax.xml.transform.Result;
 
 import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -127,17 +128,18 @@ public interface Api {
 
     @Multipart
     @POST("auth/register")
-    Call<Register> uploadContractor(@Part MultipartBody.Part email,
-                                    @Part MultipartBody.Part password,
-                                    @Part MultipartBody.Part country,
-                                    @Part MultipartBody.Part contactNo,
-                                    @Part MultipartBody.Part occupation,
-                                    @Part MultipartBody.Part aboutMe,
-                                    @Part MultipartBody.Part role,
-                                    @Part MultipartBody.Part androidDeviceId,
-                                    @Part MultipartBody.Part image,
-                                    @Part MultipartBody.Part selections,
-                                    @Part MultipartBody.Part subscribe
+    Call<Register> uploadContractor(
+            @Part MultipartBody.Part email,
+            @Part MultipartBody.Part password,
+            @Part MultipartBody.Part country,
+            @Part MultipartBody.Part contactNo,
+            @Part MultipartBody.Part occupation,
+            @Part MultipartBody.Part aboutMe,
+            @Part MultipartBody.Part role,
+            @Part MultipartBody.Part androidDeviceId,
+            @Part MultipartBody.Part image,
+            @Part MultipartBody.Part selections,
+            @Part MultipartBody.Part subscribe
     );
 
     @FormUrlEncoded
@@ -253,6 +255,7 @@ public interface Api {
             @Header("Authorization") String token,
             @Path("tenderDetailId") String id
     );
+
     @GET("tender/{tenderDetailId}")
     Call<GetTenderDetail> getTender2(
             @Header("Authorization") String token,
@@ -264,6 +267,7 @@ public interface Api {
             @Header("Authorization") String token,
             @Path("tenderId") String id
     );
+
     @PUT("tender/favorite/{tenderId}")
     Call<UpdateTender> addFavorite(
             @Header("Authorization") String token,
@@ -281,6 +285,7 @@ public interface Api {
             @Header("Authorization") String token,
             @Path("notificationId") String id
     );
+
     @DELETE("tender/favorite/{favoriteId}")
     Call<ResponseBody> removeFavorite(
             @Header("Authorization") String token,
@@ -291,7 +296,7 @@ public interface Api {
     Call<ResponseBody> updateService(
             @Header("Authorization") String token,
             @Body RequestPayment rp
-            );
+    );
 
     @GET("payments/bank/charges")
     Call<ResponseBankList> getBankList(
@@ -302,7 +307,8 @@ public interface Api {
     Call<ResponseBody> payCharges(
             @Header("Authorization") String token,
             @Body RequestCharges rc
-            );
+    );
+
     @POST("payments/bank/android/charges")
     @FormUrlEncoded
     Call<ResponseBody> createAcc(
@@ -314,11 +320,13 @@ public interface Api {
             @Field("routingNum") String routingNum,
             @Field("accNum") String accNum
     );
+
     @FormUrlEncoded
     @HTTP(method = "DELETE", path = "payments/bank/charges", hasBody = true)
     Call<ResponseBody> deleteBank(@Header("Authorization") String token,
-                                          @Field("bankId") String bankId
+                                  @Field("bankId") String bankId
     );
+
     @POST("payments/charges")
     Call<ResponseBody> payChargesCard(
             @Header("Authorization") String token,

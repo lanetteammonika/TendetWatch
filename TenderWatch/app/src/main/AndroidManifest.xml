@@ -69,6 +69,8 @@
         <activity android:name=".SignUpSelection" />
         <activity android:name=".Agreement" />
         <activity android:name=".Category" />
+        <activity android:name=".EditTender"
+            android:windowSoftInputMode="stateAlwaysHidden"/>
         <activity
             android:name=".PaymentSelection"
             android:theme="@style/App" />
@@ -93,6 +95,7 @@
         <activity android:name=".ConfirmationActivity" />
         <activity android:name=".GooglePay" />
         <activity android:name=".ClientDetail" />
+        <activity android:name=".ContractorTenderDetail" />
 
         <!-- Firebase Notifications -->
         <service android:name=".service.MyFirebaseMessagingService">

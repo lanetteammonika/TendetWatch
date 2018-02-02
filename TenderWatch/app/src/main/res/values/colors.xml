@@ -8,5 +8,5 @@
     <color name="colorBlack">#000</color>
     <color name="colorGray">#CFCFCF</color>
     <color name="colorTender">#007bF9</color>
-    <color name="transparent_grey">#00FFFFFF</color>
+    <color name="transparent_grey">#46cfcfcf</color>
 </resources>

@@ -473,4 +473,5 @@
                 android:textSize="@dimen/text_20" />
         </RelativeLayout>
     </LinearLayout>
-</LinearLayout></ScrollView></LinearLayout></android.support.constraint.ConstraintLayout>
+</LinearLayout>
+        </ScrollView></LinearLayout></android.support.constraint.ConstraintLayout>

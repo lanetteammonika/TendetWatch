@@ -220,14 +220,18 @@ if(cr.isConnected(Agreement.this)) {
             if (sp.getPreferences(Agreement.this, "role").equals("contractor")) {
               if(sp.getPreferences(Agreement.this,"sel_con") !=null){
                   if(sp.getPreferences(Agreement.this,"sel_con").equals("$15 / month")){
-                      uploadContractor();
+
+                          intent = new Intent(Agreement.this, PaymentSelection.class);
+                          intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                          startActivity(intent);
+
+                  }else{
                       intent = new Intent(Agreement.this, PaymentSelection.class);
                       intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                       startActivity(intent);
-                  }else {
-                      uploadContractor();
                   }
               }else{
+
                   uploadContractor();
               }
 
@@ -266,6 +270,19 @@ if(cr.isConnected(Agreement.this)) {
             image1 = MultipartBody.Part.createFormData("image", "");
 
         }
+        RequestBody email2 = RequestBody.create(MediaType.parse("text/plain"),email);
+        RequestBody password2 = RequestBody.create(MediaType.parse("text/plain"),email);
+        RequestBody country2 = RequestBody.create(MediaType.parse("text/plain"),email);
+        RequestBody contactNo2 = RequestBody.create(MediaType.parse("text/plain"),email);
+        RequestBody occupation2 = RequestBody.create(MediaType.parse("text/plain"),email);
+        RequestBody aboutMe2 = RequestBody.create(MediaType.parse("text/plain"),email);
+        RequestBody role2 = RequestBody.create(MediaType.parse("text/plain"),email);
+        RequestBody androidDeviceId2 = RequestBody.create(MediaType.parse("text/plain"),email);
+//        RequestBody image2 = RequestBody.create(MediaType.parse("text/plain"),email);
+        RequestBody selections2 = RequestBody.create(MediaType.parse("text/plain"),email);
+        RequestBody subscribe2 = RequestBody.create(MediaType.parse("text/plain"),email);
+
+
         email1 = MultipartBody.Part.createFormData("email", email);
         password1 = MultipartBody.Part.createFormData("password", password);
         country1 = MultipartBody.Part.createFormData("country", country);

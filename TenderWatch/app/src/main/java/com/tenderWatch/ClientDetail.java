@@ -2,6 +2,8 @@ package com.tenderWatch;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
@@ -9,6 +11,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.util.Log;
@@ -21,6 +24,7 @@ import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
+import com.tenderWatch.ClientDrawer.ClientDrawer;
 import com.tenderWatch.Drawer.MainDrawer;
 import com.tenderWatch.Drawer.Notification;
 import com.tenderWatch.Models.GetCountry;
@@ -50,7 +54,6 @@ public class ClientDetail extends AppCompatActivity {
     CircleImageView clientImage;
     ImageView close,flag,eRat1,eRat2,eRat3,eRat4,eRat5,fRat1,fRat2,fRat3,fRat4,fRat5;
     TextView email,mobile,country,occcupation,aboutMe,txtRate;
-    String sender,jsonString;
     Sender obj;
     Api mApiService;
     private List Data;
@@ -58,8 +61,9 @@ public class ClientDetail extends AppCompatActivity {
     private static final ArrayList<String> fcountryName = new ArrayList<String>();
     SharedPreference sp=new SharedPreference();
     private static final String TAG = ClientDetail.class.getSimpleName();
-    String rate;
+    String rate,uId;
     Button btnClientSubmit;
+    User user;
     ConnectivityReceiver cr =new ConnectivityReceiver();
     private MyBroadcastReceiver myBroadcastReceiver;
     @Override
@@ -69,8 +73,10 @@ public class ClientDetail extends AppCompatActivity {
         setContentView(R.layout.layout_client_drawer);
         mApiService= ApiUtils.getAPIService();
         myBroadcastReceiver=new MyBroadcastReceiver();
-        sender=getIntent().getStringExtra("sender");
-        jsonString=getIntent().getStringExtra("data");
+        uId=getIntent().getStringExtra("uid");
+        if(uId ==null){
+            uId=getIntent().getStringExtra("uId");
+        }
         flag=(ImageView) findViewById(R.id.c_flag);
         eRat1=(ImageView) findViewById(R.id.e_s1);
         eRat2=(ImageView) findViewById(R.id.e_s2);
@@ -147,7 +153,7 @@ public class ClientDetail extends AppCompatActivity {
                 rate= String.valueOf(5);
             }
         });
-        DisplayDetail();
+
         GetUser();
         btnClientSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -164,7 +170,7 @@ public class ClientDetail extends AppCompatActivity {
     }
     private void GetUser() {
         String token = "Bearer " + sp.getPreferences(ClientDetail.this, "token");
-        String userId=obj.getId().toString();
+        String userId=uId;
         sp.showProgressDialog(ClientDetail.this);
         if(cr.isConnected(ClientDetail.this)) {
             mApiService.getUserDetail(token, userId).enqueue(new Callback<User>() {
@@ -173,6 +179,9 @@ public class ClientDetail extends AppCompatActivity {
                     sp.hideProgressDialog();
                     Log.i(TAG, "post submitted to API." + response);
                     txtRate.setText(response.body().getAvg().toString() + "/5.0");
+                    user=response.body();
+                    FGetAllCountry();
+                    DisplayDetail();
                 }
 
                 @Override
@@ -185,7 +194,6 @@ public class ClientDetail extends AppCompatActivity {
         }
     }
 
-
     private void callRatingApi() {
         String token="Bearer " + sp.getPreferences(ClientDetail.this,"token");
         String clientId=obj.getId().toString();
@@ -196,8 +204,7 @@ public class ClientDetail extends AppCompatActivity {
             public void onResponse(Call<ResponseRating> call, Response<ResponseRating> response) {
                 sp.hideProgressDialog();
                 Log.i(TAG, "post submitted to API." + response);
-                Intent intent = new Intent(ClientDetail.this,MainDrawer.class);
-                startActivity(intent);
+                ShowDialog2(ClientDetail.this,"Rating");
             }
 
             @Override
@@ -210,40 +217,7 @@ public class ClientDetail extends AppCompatActivity {
         }
     }
 
-    private void FGetAllCountry() {
-        sp.showProgressDialog(ClientDetail.this);
-        if(cr.isConnected(ClientDetail.this)){
-        mApiService.getCountryData().enqueue(new Callback<ArrayList<GetCountry>>() {
-            @SuppressLint("ResourceType")
-            @Override
-            public void onResponse(Call<ArrayList<GetCountry>> call, Response<ArrayList<GetCountry>> response) {
-               sp.hideProgressDialog();
-                Data = response.body();
-                for (int i = 0; i < Data.size(); i++) {
-                    falpha.add(response.body().get(i).getCountryName().toString() + "~" + response.body().get(i).getImageString().toString());
-                    fcountryName.add(response.body().get(i).getCountryName().toString() + "~" + response.body().get(i).getCountryCode().toString() + "~" + response.body().get(i).getImageString().toString());
-                }
-                Collections.sort(falpha);
-                Collections.sort(fcountryName);
-                for (int i = 0; i < Data.size(); i++) {
-                    if(fcountryName.get(i).split("~")[0].toString().equals(obj.getCountry().toString())){
-                        country.setText(fcountryName.get(i).split("~")[0].toString());
-                        Bitmap bitmap=StringToBitMap(fcountryName.get(i).split("~")[2].toString());
-                        flag.setImageBitmap(bitmap);
-                        break;
-                    }
-                }
-            }
 
-            @Override
-            public void onFailure(Call<ArrayList<GetCountry>> call, Throwable t) {
-
-            }
-        });
-        }else{
-            sp.ShowDialog(ClientDetail.this,"Please check your internet connection");
-        }
-    }
     @Override
     public void onBackPressed() {
         if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
@@ -263,27 +237,118 @@ public class ClientDetail extends AppCompatActivity {
             return null;
         }
     }
+    private void FGetAllCountry() {
+        sp.showProgressDialog(ClientDetail.this);
+        if(cr.isConnected(ClientDetail.this)){
+            mApiService.getCountryData().enqueue(new Callback<ArrayList<GetCountry>>() {
+                @SuppressLint("ResourceType")
+                @Override
+                public void onResponse(Call<ArrayList<GetCountry>> call, Response<ArrayList<GetCountry>> response) {
+                    sp.hideProgressDialog();
+                    Data = response.body();
+                    for (int i = 0; i < Data.size(); i++) {
+                        falpha.add(response.body().get(i).getCountryName() + "~" + response.body().get(i).getImageString());
+                        fcountryName.add(response.body().get(i).getCountryName() + "~" + response.body().get(i).getCountryCode() + "~" + response.body().get(i).getImageString());
+                    }
+                    Collections.sort(falpha);
+                    Collections.sort(fcountryName);
+                    for (int i = 0; i < Data.size(); i++) {
+                        if(fcountryName.get(i).split("~")[0].equals(user.getCountry())){
+                            country.setText(fcountryName.get(i).split("~")[0]);
+                            Bitmap bitmap=StringToBitMap(fcountryName.get(i).split("~")[2]);
+                            flag.setImageBitmap(bitmap);
+                            break;
+                        }
+                    }
+                }
 
+                @Override
+                public void onFailure(Call<ArrayList<GetCountry>> call, Throwable t) {
+
+                }
+            });
+        }else{
+            sp.ShowDialog(ClientDetail.this,"Please check your internet connection");
+        }
+    }
     private void DisplayDetail() {
-
-        Gson gson=new Gson();
-        obj=gson.fromJson(sender, Sender.class);
-        Picasso.with(this).load(obj.getProfilePhoto()).into(clientImage);FGetAllCountry();
-        email.setText(obj.getEmail().toString());
-        mobile.setText(obj.getContactNo().toString());
-        occcupation.setText(obj.getOccupation().toString());
+        Picasso.with(this).load(user.getProfilePhoto()).into(clientImage);
+        email.setText(user.getEmail());
+        mobile.setText(user.getContactNo());
+        occcupation.setText(user.getOccupation());
         aboutMe.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 final Dialog dialog = new Dialog(ClientDetail.this);
                 dialog.setContentView(R.layout.client_detail);
                 final TextView code=(TextView) dialog.findViewById(R.id.dialog_aboutMe);
-                code.setText(obj.getAboutMe().toString());
+                code.setText(user.getAboutMe());
                 dialog.show();
             }
         });
 
+        int r=user.getReview().getRating();
+        if(r==1){
+            fRat1.setVisibility(View.VISIBLE);
+            fRat2.setVisibility(View.GONE);
+            fRat3.setVisibility(View.GONE);
+            fRat4.setVisibility(View.GONE);
+            fRat5.setVisibility(View.GONE);
+        }else if(r==2){
+            fRat1.setVisibility(View.VISIBLE);
+            fRat2.setVisibility(View.VISIBLE);
+            fRat3.setVisibility(View.GONE);
+            fRat4.setVisibility(View.GONE);
+            fRat5.setVisibility(View.GONE);
+        }else if(r==3){
+            fRat1.setVisibility(View.VISIBLE);
+            fRat2.setVisibility(View.VISIBLE);
+            fRat3.setVisibility(View.VISIBLE);
+            fRat4.setVisibility(View.GONE);
+            fRat5.setVisibility(View.GONE);
+        }else if(r==4){
+            fRat1.setVisibility(View.VISIBLE);
+            fRat2.setVisibility(View.VISIBLE);
+            fRat3.setVisibility(View.VISIBLE);
+            fRat4.setVisibility(View.VISIBLE);
+            fRat5.setVisibility(View.GONE);
+        }else if(r==5){
+            fRat1.setVisibility(View.VISIBLE);
+            fRat2.setVisibility(View.VISIBLE);
+            fRat3.setVisibility(View.VISIBLE);
+            fRat4.setVisibility(View.VISIBLE);
+            fRat5.setVisibility(View.VISIBLE);
+        }else {
+            fRat1.setVisibility(View.GONE);
+            fRat2.setVisibility(View.GONE);
+            fRat3.setVisibility(View.GONE);
+            fRat4.setVisibility(View.GONE);
+            fRat5.setVisibility(View.GONE);
+        }
+
+
+
     }
+
+
+    private void ShowDialog2(Context context, String Msg){
+        AlertDialog.Builder builder = new AlertDialog.Builder(
+                context);
+        builder.setTitle("Tender Watch");
+        builder.setMessage(Msg);
+        builder.setPositiveButton("OK",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog,
+                                        int which) {
+                        Intent intent = new Intent(ClientDetail.this, MainDrawer.class);
+                        startActivity(intent);
+                        //  Toast.makeText(getApplicationContext(),"Yes is clicked",Toast.LENGTH_LONG).show();
+                    }
+                });
+
+        builder.show();
+    }
+
     @Override
     protected void onResume() {
         super.onResume();

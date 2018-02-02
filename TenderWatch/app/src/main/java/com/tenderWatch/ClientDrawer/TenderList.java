@@ -29,6 +29,7 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.Gson;
 import com.tenderWatch.Adapters.ContractorTenderListAdapter;
 import com.tenderWatch.Adapters.TenderListAdapter;
+import com.tenderWatch.ContractorTenderDetail;
 import com.tenderWatch.ContractotTenderDetail;
 import com.tenderWatch.EditTenderDetail;
 import com.tenderWatch.Models.AllContractorTender;
@@ -48,6 +49,7 @@ import com.tenderWatch.utils.ConnectivityReceiver;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
 import okhttp3.ResponseBody;
@@ -156,26 +158,34 @@ public class TenderList extends Fragment {
                     tender = allTender.get(position);
                     Gson gson = new Gson();
                     String jsonString = gson.toJson(tender);
-//                    Date startDateValue = null, endDateValue = null;
-//                    try {
-//                        // startDateValue = new SimpleDateFormat("yyyy-MM-dd").parse(formattedDate);
-//                        startDateValue = new SimpleDateFormat("yyyy-MM-dd").parse(tender.getCreatedAt().split("T")[0]);
-//                    } catch (ParseException e) {
-//                        e.printStackTrace();
-//                    }
-//                    try {
-//                        endDateValue = new SimpleDateFormat("yyyy-MM-dd").parse(tender.getExpiryDate().split("T")[0]);
-//                    } catch (ParseException e) {
-//                        e.printStackTrace();
-//                    }
-//                    //Date endDateValue = new Date(allTender.get(position).getExpiryDate().split("T")[0]);
-//                    long diff = endDateValue.getTime() - startDateValue.getTime();
-//                    long seconds = diff / 1000;
-//                    long minutes = seconds / 60;
-//                    long hours = minutes / 60;
-//                    long days = (hours / 24);
-int days = 2;
-                    if (days == 0) {
+                    java.text.SimpleDateFormat df = new java.text.SimpleDateFormat("yyyy-MM-dd");
+                    Calendar c = Calendar.getInstance();
+
+                    String formattedDate = null;
+                    formattedDate = df.format(c.getTime());
+
+                    Date startDateValue = null;
+                    Date endDateValue = null;
+
+                    try {
+                        startDateValue = new java.text.SimpleDateFormat("yyyy-MM-dd").parse(formattedDate);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+
+                    try {
+                        endDateValue = new java.text.SimpleDateFormat("yyyy-MM-dd").parse(allTender.get(position).getExpiryDate().split("T")[0]);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    //Date endDateValue = new Date(allTender.get(position).getExpiryDate().split("T")[0]);
+                    long diff = endDateValue.getTime() - startDateValue.getTime();
+                    long seconds = diff / 1000;
+                    long minutes = seconds / 60;
+                    long hours = minutes / 60;
+                    long days = (hours / 24) + 1;
+
+                    if (days == 0 || days<0) {
                         sp.ShowDialog(getActivity(), "Tender is not Activated.");
                     } else {
                         Intent intent = new Intent(getActivity(), TenderDetail.class);
@@ -208,7 +218,10 @@ int days = 2;
                     Gson gson = new Gson();
                     String jsonString = gson.toJson(contractorTender);
                     String sender = gson.toJson(client);
-                    Intent intent = new Intent(getActivity(), ContractotTenderDetail.class);
+                   // Intent intent = new Intent(getActivity(), ContractotTenderDetail.class);
+                    Intent intent = new Intent(getActivity(), ContractorTenderDetail.class);
+                    intent.putExtra("id", contractoradapter.get(position).getId());
+//                    startActivity(intent);
                     intent.putExtra("data", jsonString);
                     intent.putExtra("sender", sender);
                     if (contractoradapter.get(position).getAmendRead() != null) {
@@ -297,7 +310,6 @@ int days = 2;
                 public void onFailure(Call<ArrayList<AllContractorTender>> call, Throwable t) {
                     sp.hideProgressDialog();
                     list_tender.setAdapter(null);
-
                 }
             });
         } else {

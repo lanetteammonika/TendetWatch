@@ -87,7 +87,6 @@ myBroadcastReceiver=new MyBroadcastReceiver();
         countryListName = show.getStringArrayListExtra("Country");
         contract = show.getStringExtra("version");
         txtContract.setText(contract);
-        user.setSelections(empNo.size());
         sp.showProgressDialog(Category.this);
 
         if(cr.isConnected(Category.this)) {
@@ -169,24 +168,7 @@ myBroadcastReceiver=new MyBroadcastReceiver();
         }else{
             sp.ShowDialog(Category.this,"Please check your internet connection");
         }
-        String t="Bearer "+sp.getPreferences(Category.this,"token");
-        User u= (User) sp.getPreferencesObject(Category.this);
-        String id=u.getId();
-        if(cr.isConnected(Category.this)){
-        mAPIService.getUserDetail(t,id).enqueue(new Callback<User>() {
-            @Override
-            public void onResponse(Call<User> call, Response<User> response) {
-                Log.v(TAG,"selected country and category----"+response);
-            }
 
-            @Override
-            public void onFailure(Call<User> call, Throwable t) {
-                Log.v(TAG,"selected country and category----"+t);
-            }
-        });
-        }else{
-            sp.ShowDialog(Category.this,"Please check your internet connection");
-        }
         lvCountry.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @SuppressLint("ResourceType")
             @Override

@@ -29,7 +29,6 @@ import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 import com.tenderWatch.ClientDetail;
 import com.tenderWatch.Drawer.MainDrawer;
-import com.tenderWatch.Drawer.Notification;
 import com.tenderWatch.MainActivity;
 import com.tenderWatch.Models.ResponseNotifications;
 import com.tenderWatch.Models.User;

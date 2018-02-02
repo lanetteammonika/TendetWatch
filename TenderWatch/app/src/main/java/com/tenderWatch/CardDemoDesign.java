@@ -197,10 +197,7 @@ public class CardDemoDesign extends AppCompatActivity {
         builder.show();
     }
     private void uploadContractor() {
-        final ProgressDialog progressDialog;
-        progressDialog = new ProgressDialog(CardDemoDesign.this);
-        progressDialog.setMessage(getString(R.string.string_title_upload_progressbar_));
-        progressDialog.show();
+
 
         String email = user.getEmail();
         String password = user.getPassword();

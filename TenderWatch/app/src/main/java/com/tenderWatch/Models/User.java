@@ -203,29 +203,3 @@ public class User {
 
 }
 
-class Review {
-
-    @SerializedName("_id")
-    @Expose
-    private String id;
-    @SerializedName("rating")
-    @Expose
-    private Integer rating;
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public Integer getRating() {
-        return rating;
-    }
-
-    public void setRating(Integer rating) {
-        this.rating = rating;
-    }
-
-}

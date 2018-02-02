@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         InitView();
         InitListener();
         user = sp.getPreferencesObject(MainActivity.this);
-        // FirebaseCrash.report(new Exception("My first Android non-fatal error"));
+         FirebaseCrash.report(new Exception("My first Android non-fatal error"));
 
         Button crashButton = new Button(this);
 //        crashButton.setText("..");
@@ -177,18 +177,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 dialog.show();
                 break;
             case R.id.btn_contractor:
-                intent = new Intent(MainActivity.this, Login.class);
+                Intent i = new Intent(MainActivity.this, Login.class);
                 sp.setPreferences(getApplicationContext(), "role", "contractor");
-                intent.putExtra("Role", "contractor");
-                startActivity(intent);
+                i.putExtra("Role", "contractor");
+                startActivity(i);
                 overridePendingTransition(R.anim.enter, R.anim.exit);
                 break;
             case R.id.btn_client:
-                intent = new Intent(MainActivity.this, Login.class);
+                Intent i2 = new Intent(MainActivity.this, Login.class);
                 sp.setPreferences(MainActivity.this, "role", "client");
-                intent.putExtra("Role", "client");
+                i2.putExtra("Role", "client");
                 Log.i(TAG, "testing");
-                startActivity(intent);
+                startActivity(i2);
                 overridePendingTransition(R.anim.enter, R.anim.exit);
                 break;
         }

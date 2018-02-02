@@ -22,6 +22,7 @@ import android.widget.TextView;
 
 import com.tenderWatch.Adapters.IndexingArrayAdapter;
 import com.tenderWatch.Drawer.MainDrawer;
+import com.tenderWatch.Models.CreateUser;
 import com.tenderWatch.Models.GetCountry;
 import com.tenderWatch.Retrofit.Api;
 import com.tenderWatch.Retrofit.ApiUtils;
@@ -67,6 +68,7 @@ public class CountryList extends AppCompatActivity {
     ConnectivityReceiver cr=new ConnectivityReceiver();
     private MyBroadcastReceiver myBroadcastReceiver;
     int pos = 0;
+    CreateUser user=new CreateUser();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -362,6 +364,7 @@ if(cr.isConnected(CountryList.this)){
                 txtSelectedContract.setText("$15 / month");
                 sp.setPreferences(CountryList.this, "sel_con", "$15 / month");
                 sp.setPreferences(CountryList.this,"payment","15");
+                user.setSelections(2);
                 dialog.dismiss();
             }
         });
@@ -371,6 +374,8 @@ if(cr.isConnected(CountryList.this)){
                 txtSelectedContract.setText("$120 / year");
                 sp.setPreferences(CountryList.this, "sel_con", "$120 / year");
                 sp.setPreferences(CountryList.this,"payment","120");
+                user.setSelections(0);
+
                 dialog.dismiss();
             }
         });

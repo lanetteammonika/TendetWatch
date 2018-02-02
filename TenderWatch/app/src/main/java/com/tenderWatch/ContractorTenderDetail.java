@@ -1,15 +1,15 @@
 package com.tenderWatch;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
-import android.icu.text.SimpleDateFormat;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.SpannableStringBuilder;
@@ -21,9 +21,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
+import java.text.SimpleDateFormat;
 
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
@@ -31,18 +30,15 @@ import com.squareup.picasso.Target;
 import com.tenderWatch.ClientDrawer.ClientDrawer;
 import com.tenderWatch.Drawer.MainDrawer;
 import com.tenderWatch.Models.GetTenderDetail;
-import com.tenderWatch.Models.Tender;
-import com.tenderWatch.Models.UpdateTender;
+import com.tenderWatch.Models.User;
 import com.tenderWatch.Retrofit.Api;
 import com.tenderWatch.Retrofit.ApiUtils;
 import com.tenderWatch.SharedPreference.SharedPreference;
 import com.tenderWatch.utils.ConnectivityReceiver;
 
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -50,12 +46,12 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 /**
- * Created by lcom47 on 1/2/18.
+ * Created by lcom47 on 2/2/18.
  */
 
-public class TenderDetail extends AppCompatActivity {
+public class ContractorTenderDetail extends AppCompatActivity {
     Api mApiService;
-    private static final String TAG = TenderDetail.class.getSimpleName();
+    private static final String TAG = ContractorTenderDetail.class.getSimpleName();
 
     GetTenderDetail object;
 
@@ -67,21 +63,23 @@ public class TenderDetail extends AppCompatActivity {
     SharedPreference sp = new SharedPreference();
     ConnectivityReceiver cr = new ConnectivityReceiver();
     private MyBroadcastReceiver myBroadcastReceiver;
+    TextView lblClientDetail;User user;
+    String uId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_preview_tender_detail);
+        setContentView(R.layout.activity_ntender_detail);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setTitle("Tender Detail");
         mApiService = ApiUtils.getAPIService();
         myBroadcastReceiver = new MyBroadcastReceiver();
+        user= (User) sp.getPreferencesObject(ContractorTenderDetail.this);
         String id = getIntent().getStringExtra("id");
-        String token = "Bearer " + sp.getPreferences(TenderDetail.this, "token");
-        sp.showProgressDialog(TenderDetail.this);
-        if(cr.isConnected(TenderDetail.this)){
+        uId=getIntent().getStringExtra("uid");
+        String token = "Bearer " + sp.getPreferences(ContractorTenderDetail.this, "token");
         mApiService.getTender2(token, id).enqueue(new Callback<GetTenderDetail>() {
             @Override
             public void onResponse(Call<GetTenderDetail> call, Response<GetTenderDetail> response) {
@@ -95,9 +93,6 @@ public class TenderDetail extends AppCompatActivity {
                 Log.v(TAG, String.valueOf(t));
             }
         });
-        }else{
-            sp.ShowDialog(TenderDetail.this,"Please check your internet connection");
-        }
 
     }
 
@@ -117,9 +112,31 @@ public class TenderDetail extends AppCompatActivity {
         rlLandline = (LinearLayout) findViewById(R.id.rl_preview_landline);
         rlEmail = (LinearLayout) findViewById(R.id.rl_preview_email);
         removeTender = (Button) findViewById(R.id.remove_tender);
-        editTender = (Button) findViewById(R.id.edit_tender);
+        editTender = (Button) findViewById(R.id.btn_interested_tender);
         imagetender = (ImageView) findViewById(R.id.preview_tender_image);
         flag3 = (ImageView) findViewById(R.id.preview_flag_image);
+        lblClientDetail = (TextView) findViewById(R.id.lbl_clientDetail);
+        if (object.getInterested().size() > 0) {
+            for (int i = 0; i < object.getInterested().size(); i++) {
+                String id = user.getId();
+                if (object.getInterested().contains(id)) {
+                    editTender.setAlpha((float) 0.5);
+                    editTender.setEnabled(false);
+
+                }
+            }
+        }
+        lblClientDetail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Gson gson = new Gson();
+                String jsonString = gson.toJson(object.getTenderUploader());
+                Intent intent = new Intent(ContractorTenderDetail.this, ClientDetail.class);
+                intent.putExtra("uid", uId);
+                intent.putExtra("uId",object.getTenderUploader().getId());
+                startActivity(intent);
+            }
+        });
 
         removeTender.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -132,7 +149,7 @@ public class TenderDetail extends AppCompatActivity {
         editTender.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                EditTender();
+                CallInterestedApi();
             }
         });
 
@@ -171,11 +188,11 @@ public class TenderDetail extends AppCompatActivity {
             SpannableStringBuilder ssb = new SpannableStringBuilder(object.getCategory().getCategoryName() + "  ");
             Bitmap smiley = StringToBitMap(object.getCategory().getImgString());
             smiley = Bitmap.createScaledBitmap(smiley, 60, 60, false);
-            ImageSpan imagespan = new ImageSpan(TenderDetail.this, smiley);
+            ImageSpan imagespan = new ImageSpan(ContractorTenderDetail.this, smiley);
             ssb.setSpan(imagespan, ssb.length() - 1, ssb.length(), 0);
             Category.setText(ssb);
             flag3.setImageBitmap(flag);
-            java.text.SimpleDateFormat df = new java.text.SimpleDateFormat("yyyy-MM-dd");
+            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
             Calendar c = Calendar.getInstance();
 
             String formattedDate = null;
@@ -185,13 +202,13 @@ public class TenderDetail extends AppCompatActivity {
             Date endDateValue = null;
 
             try {
-                startDateValue = new java.text.SimpleDateFormat("yyyy-MM-dd").parse(formattedDate);
+                startDateValue = new SimpleDateFormat("yyyy-MM-dd").parse(formattedDate);
             } catch (ParseException e) {
                 e.printStackTrace();
             }
 
             try {
-                endDateValue = new java.text.SimpleDateFormat("yyyy-MM-dd").parse(object.getExpiryDate().split("T")[0]);
+                endDateValue = new SimpleDateFormat("yyyy-MM-dd").parse(object.getExpiryDate().split("T")[0]);
             } catch (ParseException e) {
                 e.printStackTrace();
             }
@@ -202,8 +219,8 @@ public class TenderDetail extends AppCompatActivity {
             long hours = minutes / 60;
             long days = (hours / 24) + 1;
             ExpDay.setText(days + " days");
-            if(!object.getTenderPhoto().equals("")){
-                Picasso.with(TenderDetail.this)
+            if (!object.getTenderPhoto().equals("")) {
+                Picasso.with(ContractorTenderDetail.this)
                         .load(object.getTenderPhoto())
                         .into(new Target() {
                             @Override
@@ -227,46 +244,81 @@ public class TenderDetail extends AppCompatActivity {
         }
     }
 
-    private void EditTender() {
-
-        Intent intent = new Intent(TenderDetail.this,EditTender.class);
-        intent.putExtra("id",object.getId());
-        startActivity(intent);
-    }
-
-    private void RemoveTender() {
-        String token="Bearer "+sp.getPreferences(TenderDetail.this,"token");
-        String id=object.getId();
-        sp.showProgressDialog(TenderDetail.this);
-        if(cr.isConnected(TenderDetail.this)){
-            mApiService.removeTender(token,id).enqueue(new Callback<ResponseBody>() {
+    private void CallInterestedApi() {
+        String token = "Bearer " + sp.getPreferences(ContractorTenderDetail.this, "token");
+        String tenderId = object.getId().toString();
+        if(cr.isConnected(ContractorTenderDetail.this)){
+            mApiService.callInterested(token, tenderId).enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                    sp.hideProgressDialog();
-                    Log.i(TAG,"response---"+response.body());
-                    Intent intent = new Intent(TenderDetail.this,ClientDrawer.class);
-                    startActivity(intent);
-                    sp.ShowDialog(TenderDetail.this,"Removed!!!");
+                    Log.i(TAG, "post submitted to API." + response);
+                   ShowDialog2(ContractorTenderDetail.this,"Interested!!!");
 
                 }
 
                 @Override
                 public void onFailure(Call<ResponseBody> call, Throwable t) {
-                    Log.i(TAG,"response---"+t);
-
+                    Log.i(TAG, "post submitted to API." + t);
                 }
             });
         }else{
-            sp.ShowDialog(TenderDetail.this,"Please check your internet connection");
+            sp.ShowDialog(ContractorTenderDetail.this,"Please check your internet connection");
         }
     }
+
+
+    private void RemoveTender() {
+        String token = "Bearer " + sp.getPreferences(ContractorTenderDetail.this, "token");
+        String id = object.getId();
+        sp.showProgressDialog(ContractorTenderDetail.this);
+        if (cr.isConnected(ContractorTenderDetail.this)) {
+            mApiService.removeTender(token, id).enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    sp.hideProgressDialog();
+                    Log.i(TAG, "response---" + response.body());
+                    Intent intent = new Intent(ContractorTenderDetail.this, ClientDrawer.class);
+                    startActivity(intent);
+                    ShowDialog2(ContractorTenderDetail.this,"Removed!!!");
+
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    Log.i(TAG, "response---" + t);
+
+                }
+            });
+        } else {
+            sp.ShowDialog(ContractorTenderDetail.this, "Please check your internet connection");
+        }
+    }
+
+    private void ShowDialog2(Context context, String Msg){
+        AlertDialog.Builder builder = new AlertDialog.Builder(
+                context);
+        builder.setTitle("Tender Watch");
+        builder.setMessage(Msg);
+        builder.setPositiveButton("OK",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog,
+                                        int which) {
+                        Intent intent = new Intent(ContractorTenderDetail.this, MainDrawer.class);
+                        startActivity(intent);
+                        //  Toast.makeText(getApplicationContext(),"Yes is clicked",Toast.LENGTH_LONG).show();
+                    }
+                });
+
+        builder.show();
+    }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 // todo: goto back activity from here
-                this.onBackPressed();
+                onBackPressed();
                 return true;
 
             default:
@@ -276,9 +328,10 @@ public class TenderDetail extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-
+        super.onBackPressed();
         finish();
     }
+
     public Bitmap StringToBitMap(String encodedString) {
         try {
             byte[] encodeByte = Base64.decode(encodedString, Base64.DEFAULT);
@@ -293,18 +346,18 @@ public class TenderDetail extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        LocalBroadcastManager.getInstance(TenderDetail.this).registerReceiver(myBroadcastReceiver, new IntentFilter("android.content.BroadcastReceiver"));
+        LocalBroadcastManager.getInstance(ContractorTenderDetail.this).registerReceiver(myBroadcastReceiver, new IntentFilter("android.content.BroadcastReceiver"));
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        LocalBroadcastManager.getInstance(TenderDetail.this).unregisterReceiver(myBroadcastReceiver);
+        LocalBroadcastManager.getInstance(ContractorTenderDetail.this).unregisterReceiver(myBroadcastReceiver);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        LocalBroadcastManager.getInstance(TenderDetail.this).unregisterReceiver(myBroadcastReceiver);
+        LocalBroadcastManager.getInstance(ContractorTenderDetail.this).unregisterReceiver(myBroadcastReceiver);
     }
 }

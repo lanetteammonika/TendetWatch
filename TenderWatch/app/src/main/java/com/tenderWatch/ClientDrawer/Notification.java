@@ -1,4 +1,4 @@
-package com.tenderWatch.Drawer;
+package com.tenderWatch.ClientDrawer;
 
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -16,6 +16,7 @@ import android.widget.ListView;
 
 import com.google.gson.Gson;
 import com.tenderWatch.Adapters.NotificationAdapter;
+import com.tenderWatch.ClientDetail;
 import com.tenderWatch.ContractorTenderDetail;
 import com.tenderWatch.Models.Sender;
 import com.tenderWatch.Models.UpdateTender;
@@ -95,28 +96,28 @@ public class Notification extends Fragment {
                 Gson gson = new Gson();
                 String jsonString = gson.toJson(obj);
                 String sender=gson.toJson(s);
-                Intent intent = new Intent(getActivity(),ContractorTenderDetail.class);
+                Intent intent = new Intent(getActivity(),ClientDetail.class);
                 String token = "Bearer " + sp.getPreferences(getActivity(), "token");
                 String id2 = notification_list.get(i).getId().toString();
                 sp.showProgressDialog(getActivity());
-if(cr.isConnected(getActivity())){
-                mAPIServices.readNotification(token, id2).enqueue(new Callback<ResponseBody>() {
-                    @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                        sp.hideProgressDialog();
-                        Log.i(TAG, "post submitted to API." + response.body());
-                    }
+                if(cr.isConnected(getActivity())){
+                    mAPIServices.readNotification(token, id2).enqueue(new Callback<ResponseBody>() {
+                        @Override
+                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                            sp.hideProgressDialog();
+                            Log.i(TAG, "post submitted to API." + response.body());
+                        }
 
-                    @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-                        Log.i(TAG, "post submitted to API." + t);
-                    }
-                });
-}else{
-    sp.ShowDialog(getActivity(),"Please check your internet connection");
-}
+                        @Override
+                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+                            Log.i(TAG, "post submitted to API." + t);
+                        }
+                    });
+                }else{
+                    sp.ShowDialog(getActivity(),"Please check your internet connection");
+                }
                 intent.putExtra("id",obj.getId());
-                intent.putExtra("uid",obj.getTenderUploader());
+                intent.putExtra("uid",notification_list.get(i).getSender().getId());
                 startActivity(intent);
             }
         });
@@ -133,19 +134,19 @@ if(cr.isConnected(getActivity())){
         String token = "Bearer " + sp.getPreferences(getActivity(), "token");
         sp.showProgressDialog(getActivity());
         if(cr.isConnected(getActivity())){
-        mAPIServices.deleteNotification(token,idList).enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                sp.hideProgressDialog();
-                Log.i(TAG, "post submitted to API." + response);
-                GetNotification();
-            }
+            mAPIServices.deleteNotification(token,idList).enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    sp.hideProgressDialog();
+                    Log.i(TAG, "post submitted to API." + response);
+                    GetNotification();
+                }
 
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Log.i(TAG, "post submitted to API." + t);
-            }
-        });
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    Log.i(TAG, "post submitted to API." + t);
+                }
+            });
         }else{
             sp.ShowDialog(getActivity(),"Please check your internet connection");
         }
@@ -154,33 +155,33 @@ if(cr.isConnected(getActivity())){
     private void GetNotification() {
         String token = "Bearer " + sp.getPreferences(getActivity(), "token");
         sp.showProgressDialog(getActivity());
-if(cr.isConnected(getActivity())){
-        mAPIServices.getNotifications(token).enqueue(new Callback<ArrayList<ResponseNotifications>>() {
-            @Override
-            public void onResponse(Call<ArrayList<ResponseNotifications>> call, Response<ArrayList<ResponseNotifications>> response) {
-               sp.hideProgressDialog();
-                Log.i(TAG, "post submitted to API." + response);
-                int size = response.body().size();
-                if(size==0){
-                    delNotification.setVisibility(View.GONE);
+        if(cr.isConnected(getActivity())){
+            mAPIServices.getNotifications(token).enqueue(new Callback<ArrayList<ResponseNotifications>>() {
+                @Override
+                public void onResponse(Call<ArrayList<ResponseNotifications>> call, Response<ArrayList<ResponseNotifications>> response) {
+                    sp.hideProgressDialog();
+                    Log.i(TAG, "post submitted to API." + response);
+                    int size = response.body().size();
+                    if(size==0){
+                        delNotification.setVisibility(View.GONE);
+                    }
+                    notification_list = response.body();
+                    if (edit != null) {
+                        adapter = new NotificationAdapter(getActivity(), notification_list, edit);
+                    } else {
+                        adapter = new NotificationAdapter(getActivity(), notification_list, "");
+                    }
+                    notificationList.setAdapter(adapter);
                 }
-                notification_list = response.body();
-                if (edit != null) {
-                    adapter = new NotificationAdapter(getActivity(), notification_list, edit);
-                } else {
-                    adapter = new NotificationAdapter(getActivity(), notification_list, "");
-                }
-                notificationList.setAdapter(adapter);
-            }
 
-            @Override
-            public void onFailure(Call<ArrayList<ResponseNotifications>> call, Throwable t) {
-                Log.i(TAG, "post submitted to API." + t);
-            }
-        });
-}else{
-    sp.ShowDialog(getActivity(),"Please check your internet connection");
-}
+                @Override
+                public void onFailure(Call<ArrayList<ResponseNotifications>> call, Throwable t) {
+                    Log.i(TAG, "post submitted to API." + t);
+                }
+            });
+        }else{
+            sp.ShowDialog(getActivity(),"Please check your internet connection");
+        }
     }
     @Override
     public void onResume() {

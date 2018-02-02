@@ -153,7 +153,7 @@ ConnectivityReceiver cr=new ConnectivityReceiver();
                 break;
             case R.id.payment_creditcard:
                 Intent i = new Intent(PaymentSelection.this, CardDemoDesign.class);
-                //i.putExtra("selCon","true");
+                i.putExtra("selCon","true");
                 startActivity(i);
                 //call();
 //                curl https://api.stripe.com/v1/transfers \

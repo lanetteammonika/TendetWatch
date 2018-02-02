@@ -24,7 +24,8 @@
                 android:orientation="vertical">
 
                 <RelativeLayout
-                    android:id="@+id/rlCon_select"
+                    android:layout_marginTop="@dimen/value_10"
+                    android:id="@+id/rlcon_select"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/textview_design"
@@ -106,7 +107,6 @@
 
                 <RelativeLayout
                     android:id="@+id/rlcat_select"
-
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/textview_design"
