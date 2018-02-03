@@ -8,6 +8,7 @@
     android:background="@drawable/dialog_design"
     android:paddingTop="@dimen/value_10"
     android:paddingBottom="@dimen/value_10"
+    android:focusable="false" android:focusableInTouchMode="true"
     >
     <RelativeLayout
         android:layout_width="match_parent"
@@ -67,6 +68,10 @@
             android:layout_marginLeft="@dimen/value_30"
             android:gravity="center"
             android:layout_marginTop="15dp"
+            android:selectAllOnFocus="false"
+            android:focusable="false"
+            android:enabled="false"
+
             />
         <EditText
             android:layout_toRightOf="@+id/contact_code"
@@ -80,6 +85,7 @@
             android:singleLine="true"
             android:textColor="@color/colorBlack"
             android:imeOptions="actionDone"
+
             />
             </RelativeLayout>
     <View

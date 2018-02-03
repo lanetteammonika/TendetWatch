@@ -1,0 +1,91 @@
+No Internet - If there is no Internet
+`We can't access your information from Facebook because of your account privacy.` - If you don’t get email from favebook
+`Enter Email`
+`Enter Password`
+`Enter Confirm Password`
+`Email & Password required!`
+`This Email is already used.\n\nPlease use another email to signup in TenderWatch` - checkEmail Api - if status code 404
+`Password don't Match!!!`
+`Enter confirm Password`
+`Enter password with 8 characters which contain at least one alphabet, one number and special character`
+`Invalid Email` - after check reg exp
+`You can't able to sign up using facebook.\nplease check your privacy or email verification in your facebook profile`
+`Please check your connection`
+*SELECT COUNTRY*
+`During Free Trial Period you can choose only 1 Country` - if free user
+`You have to choose at least 1 Country`
+*ABOUT*
+`Enter some information about yourself` - on save btn click (edited)
+*Singnupvc*
+`Invalid Number` - number digits less then 9 (edited)
+`Delete Succesfully`
+`Welcome to TenderWatch.\n\nCurrently there are no active tenders in your scope and area of work.Tenders will show up here as soon as they are uploaded by Clients.\n\nThank you for your patience.`  - *home page*
+`can't add to favorite`
+`Added Successfully to Favorites`
+`can't Remove tender`
+`Services can't Updated.` - *subscription *
+*change password*
+`Password is Successfully Changed `
+`Old password is wrong!!!`
+`NewPassword can't Empty`
+`Confirm Password can't Match`
+`Enter password with 8 characters which contain at least one alphabet, one number and special character`
+`Old Password is required`
+*UPload tender* (edited)
+`Select Country & Category First`
+*popup*
+`Enter valid Email`
+`Enter valid Number` (edited)
+`Enter valid LandLine Number` - 10 char (edited)
+`at least one Field Manadatory`
+`Select Country`
+`Select Category`
+`Enter valid Contact Details`
+`Enter Valid City Name`
+`Enter Title`
+*Forgot password*
+`Password has been sent to your registered email address`
+*subscription*
+`try again` - getserviced api if responsecode != 200 (edited)
+*Favourite*
+`can't add to favorite` statuscode  != 202 -> Remove favourite api
+*Notification*
+`Tender Deleted.\n\nCan't show tender details.` - if tender is not active and user click on notification
+`can't Remove Notification`- status 1= 202
+*Payment*
+`No publish key` - stripe
+`Please Try Again!!!`- payment method
+`Payment Failed`
+`Thank You.\n\nEnjoy your services in particular country and category.` - add subscription successfully
+`Services can't Updated.` -failed add subscripition (edited)
+`Services can't Updated.` - if staus code != 200
+*TenderWatchDetail*
+-at remove
+can’t Remove tender
+show alert by client-`Tender will be completely removed from TenderWatch?`
+else`Are you sure you want to remove this Tender completely from your Account?`
+-at Interested
+`Already interested`
+`We have notified the Client about your interest in this Tender.\nTo pursue please continue with the process as specified in the Tender Details`
+if Contractor tender amended
+`Tender has been amended by Client`
+*Support*
+[“subject”: self.txfSubject.text!,
+                                            “body”: self.txtVwDesc.text!,
+                                            “email”: self.txfEmailSender.text!,
+                                            “password”: (addressAlert.textFields?[0].text)!]
+-success-- `Thank You for contacting. We respond to it within 72 hours` 200 (edited)
+`Enter valid Credential` (edited)
+failed-- `Email can't send. Please Enter Your password`
+body validtioon-- `Enter your Questions or Complain`
+*Rating*
+-`Thank you for Giving rating`
+*BankPayment* (edited)
+-validation
+`Account number can't empty`
+`Country can't empty`
+payment success
+`Please Try Again!!!` !=200
+updated then `Thank You.\n\nEnjoy your services in particular country and category.`
+if not `Services can't Updated.`
+

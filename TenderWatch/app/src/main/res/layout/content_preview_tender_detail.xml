@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.tenderWatch.PreviewTenderDetail"
+    tools:context="com.tenderWatch.TenderDetail"
     tools:showIn="@layout/activity_preview_tender_detail">
 
     <LinearLayout

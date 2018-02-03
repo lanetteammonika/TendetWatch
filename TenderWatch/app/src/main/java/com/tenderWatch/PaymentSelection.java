@@ -400,12 +400,12 @@ ConnectivityReceiver cr=new ConnectivityReceiver();
                 case Activity.RESULT_OK:
                     PaymentData paymentData = PaymentData.getFromIntent(data);
                     String token = paymentData.getPaymentMethodToken().getToken();
-                    if (selCon != null) {
-                        uploadContractor();
-                    } else {
+//                    if (selCon != null) {
+//                        uploadContractor();
+//                    } else {
                         intent = new Intent(PaymentSelection.this, MainDrawer.class);
                         startActivity(intent);
-                    }
+                  //  }
                     break;
                 case Activity.RESULT_CANCELED:
                     break;
@@ -435,12 +435,12 @@ ConnectivityReceiver cr=new ConnectivityReceiver();
                         Log.i("paymentExample", paymentDetails);
 
                         //Starting a new activity for the payment details and also putting the payment details with intent
-                        if (selCon != null) {
-                            uploadContractor();
-                        } else {
+//                        if (selCon != null) {
+//                            uploadContractor();
+//                        } else {
                             intent = new Intent(PaymentSelection.this, MainDrawer.class);
                             startActivity(intent);
-                        }
+                      //  }
 
 
 //                        uploadContractor();

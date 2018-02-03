@@ -91,7 +91,11 @@ public class NotificationAdapter extends BaseAdapter {
         spanText.setSpan(new ForegroundColorSpan(context.getResources().getColor(R.color.colorTender)), x+1,p, 0);
         txtCountryName.setText(spanText);
         txtTime.setText(countryNameList.get(position).getCreatedAt().split("T")[0]);
+
+       if(!countryNameList.get(position).getSender().getProfilePhoto().equals("no image"))
         Picasso.with(context).load(countryNameList.get(position).getSender().getProfilePhoto()).into(flag_img);
+
+
         if(test.equals("true")){
             tick2.setVisibility(View.VISIBLE);
         }

@@ -220,12 +220,14 @@ if(cr.isConnected(Agreement.this)) {
             if (sp.getPreferences(Agreement.this, "role").equals("contractor")) {
               if(sp.getPreferences(Agreement.this,"sel_con") !=null){
                   if(sp.getPreferences(Agreement.this,"sel_con").equals("$15 / month")){
-
+                      uploadContractor();
                           intent = new Intent(Agreement.this, PaymentSelection.class);
                           intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                           startActivity(intent);
 
                   }else{
+                      uploadContractor();
+
                       intent = new Intent(Agreement.this, PaymentSelection.class);
                       intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                       startActivity(intent);

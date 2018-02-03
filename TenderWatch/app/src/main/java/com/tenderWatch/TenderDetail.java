@@ -1,5 +1,7 @@
 package com.tenderWatch;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
@@ -10,6 +12,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.SpannableStringBuilder;
@@ -87,6 +90,7 @@ public class TenderDetail extends AppCompatActivity {
             public void onResponse(Call<GetTenderDetail> call, Response<GetTenderDetail> response) {
                 Log.v(TAG, String.valueOf(response.body()));
                 object = response.body();
+                sp.hideProgressDialog();
                 InitView();
             }
 
@@ -244,9 +248,7 @@ public class TenderDetail extends AppCompatActivity {
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                     sp.hideProgressDialog();
                     Log.i(TAG,"response---"+response.body());
-                    Intent intent = new Intent(TenderDetail.this,ClientDrawer.class);
-                    startActivity(intent);
-                    sp.ShowDialog(TenderDetail.this,"Removed!!!");
+                    ShowDialog2(TenderDetail.this,"Removed!!!");
 
                 }
 
@@ -259,6 +261,23 @@ public class TenderDetail extends AppCompatActivity {
         }else{
             sp.ShowDialog(TenderDetail.this,"Please check your internet connection");
         }
+    }
+    private void ShowDialog2(Context context, String Msg){
+        AlertDialog.Builder builder = new AlertDialog.Builder(
+                context);
+        builder.setTitle("Tender Watch");
+        builder.setMessage(Msg);
+        builder.setPositiveButton("OK",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog,
+                                        int which) {
+                        Intent intent = new Intent(TenderDetail.this, ClientDrawer.class);
+                        startActivity(intent);
+                        //  Toast.makeText(getApplicationContext(),"Yes is clicked",Toast.LENGTH_LONG).show();
+                    }
+                });
+
+        builder.show();
     }
 
     @Override

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.tenderWatch.EditTenderDetail"
+    tools:context="com.tenderWatch.EditTender"
     tools:showIn="@layout/activity_edit_tender_detail">
     <LinearLayout
         android:orientation="vertical"
@@ -24,7 +24,6 @@
                 android:orientation="vertical">
 
                 <RelativeLayout
-                    android:layout_marginTop="@dimen/value_10"
                     android:id="@+id/rlcon_select"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

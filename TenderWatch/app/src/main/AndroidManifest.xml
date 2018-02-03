@@ -77,19 +77,15 @@
         <activity
             android:name=".Drawer.MainDrawer"
             android:label="@string/title_activity_main_drawer"
-            android:theme="@style/AppThemeAction" />
+            android:theme="@style/AppThemeAction"
+android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".ClientDrawer.ClientDrawer"
             android:label="@string/title_activity_client_drawer"
-            android:theme="@style/AppThemeAction" />
-        <activity
-            android:name=".PreviewTenderDetail"
-            android:label="@string/title_activity_preview_tender_detail"
-            android:theme="@style/AppThemeAction" />
-        <activity
-            android:name=".EditTenderDetail"
-            android:label="@string/title_activity_edit_tender_detail"
-            android:theme="@style/AppThemeAction" />
+            android:theme="@style/AppThemeAction"
+            android:windowSoftInputMode="stateAlwaysHidden"/>
+
+
         <activity android:name=".SubscriptionDetail" />
         <activity android:name=".Paypaldemo" />
         <activity android:name=".ConfirmationActivity" />
@@ -111,11 +107,7 @@
 
         <!-- ./Firebase Notifications -->
         <activity android:name=".Main2Activity" />
-        <activity android:name=".ContractotTenderDetail" />
-        <activity
-            android:name=".NTenderDetail"
-            android:label="@string/title_activity_client_detail"
-            android:theme="@style/AppThemeAction" />
+
         <activity android:name=".CardDemoDesign"></activity>
 
         <receiver

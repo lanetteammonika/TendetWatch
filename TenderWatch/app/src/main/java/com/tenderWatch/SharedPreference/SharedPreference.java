@@ -83,6 +83,7 @@ public class SharedPreference {
                     public void onClick(DialogInterface dialog,
                                         int which) {
                         dialog.dismiss();
+                        hideProgressDialog();
                       //  Toast.makeText(getApplicationContext(),"Yes is clicked",Toast.LENGTH_LONG).show();
                     }
                 });

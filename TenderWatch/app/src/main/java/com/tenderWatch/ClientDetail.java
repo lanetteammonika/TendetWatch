@@ -196,7 +196,7 @@ public class ClientDetail extends AppCompatActivity {
 
     private void callRatingApi() {
         String token="Bearer " + sp.getPreferences(ClientDetail.this,"token");
-        String clientId=obj.getId().toString();
+        String clientId=user.getId();
         sp.showProgressDialog(ClientDetail.this);
         if(cr.isConnected(ClientDetail.this)){
         mApiService.giveRating(token,clientId,rate).enqueue(new Callback<ResponseRating>() {
@@ -272,6 +272,7 @@ public class ClientDetail extends AppCompatActivity {
         }
     }
     private void DisplayDetail() {
+        if(!user.getProfilePhoto().equals("no image"))
         Picasso.with(this).load(user.getProfilePhoto()).into(clientImage);
         email.setText(user.getEmail());
         mobile.setText(user.getContactNo());
@@ -340,7 +341,12 @@ public class ClientDetail extends AppCompatActivity {
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog,
                                         int which) {
-                        Intent intent = new Intent(ClientDetail.this, MainDrawer.class);
+                        Intent intent;
+                        if(sp.getPreferences(ClientDetail.this,"role").equals("client")) {
+                             intent = new Intent(ClientDetail.this, ClientDrawer.class);
+                        }else{
+                             intent = new Intent(ClientDetail.this, MainDrawer.class);
+                        }
                         startActivity(intent);
                         //  Toast.makeText(getApplicationContext(),"Yes is clicked",Toast.LENGTH_LONG).show();
                     }

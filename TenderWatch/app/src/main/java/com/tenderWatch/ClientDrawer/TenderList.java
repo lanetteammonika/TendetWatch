@@ -30,15 +30,14 @@ import com.google.gson.Gson;
 import com.tenderWatch.Adapters.ContractorTenderListAdapter;
 import com.tenderWatch.Adapters.TenderListAdapter;
 import com.tenderWatch.ContractorTenderDetail;
-import com.tenderWatch.ContractotTenderDetail;
-import com.tenderWatch.EditTenderDetail;
+import com.tenderWatch.EditTender;
 import com.tenderWatch.Models.AllContractorTender;
 import com.tenderWatch.Models.Tender;
 import com.tenderWatch.Models.TenderUploader;
 import com.tenderWatch.Models.UpdateTender;
 import com.tenderWatch.Models.User;
 import com.tenderWatch.MyBroadcastReceiver;
-import com.tenderWatch.PreviewTenderDetail;
+import com.tenderWatch.TenderDetail;
 import com.tenderWatch.R;
 import com.tenderWatch.Retrofit.Api;
 import com.tenderWatch.Retrofit.ApiUtils;
@@ -218,7 +217,6 @@ public class TenderList extends Fragment {
                     Gson gson = new Gson();
                     String jsonString = gson.toJson(contractorTender);
                     String sender = gson.toJson(client);
-                   // Intent intent = new Intent(getActivity(), ContractotTenderDetail.class);
                     Intent intent = new Intent(getActivity(), ContractorTenderDetail.class);
                     intent.putExtra("id", contractoradapter.get(position).getId());
 //                    startActivity(intent);
@@ -354,11 +352,12 @@ public class TenderList extends Fragment {
                 @Override
                 public void onResponse(Call<ArrayList<Tender>> call, Response<ArrayList<Tender>> response) {
                     // Log.i(TAG, "post submitted to API." + response.body());
-                    sp.hideProgressDialog();
+
                     if (response.body() != null) {
                         allTender = response.body();
                         adapter = new TenderListAdapter(getActivity(), response.body());
                         list_tender.setAdapter(adapter);
+                        sp.hideProgressDialog();
                     }
                 }
 
@@ -374,33 +373,7 @@ public class TenderList extends Fragment {
         }
     }
 
-    private void RemoveTender(int i, final AlertDialog alertDialog) {
-        tender = allTender.get(i);
-        final String token = "Bearer " + sp.getPreferences(getActivity(), "token");
-        String tenderid = tender.getId().toString();
-        if (cr.isConnected(getActivity())) {
-            mAPIService.removeTender(token, tenderid).enqueue(new Callback<ResponseBody>() {
-                @Override
-                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                    Log.i(TAG, "response---" + response.body());
-                    final Fragment fragment3 = new TenderList();
-                    FragmentManager fragmentManager = getFragmentManager();
-                    final FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                    fragmentTransaction.replace(R.id.content_frame, fragment3);
-                    //fragmentTransaction.addToBackStack(null);
-                    fragmentTransaction.commit();
-                    alertDialog.dismiss();
-                }
 
-                @Override
-                public void onFailure(Call<ResponseBody> call, Throwable t) {
-                    Log.i(TAG, "response---" + t);
-                }
-            });
-        } else {
-            sp.ShowDialog(getActivity(), "Please check your internet connection");
-        }
-    }
 
     private void ShowBox(final int i) {
         final AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
@@ -450,11 +423,8 @@ public class TenderList extends Fragment {
 
             @RequiresApi(api = Build.VERSION_CODES.N)
             public void onClick(DialogInterface dialog, int id) {
-                tender = allTender.get(i);
-                Gson gson = new Gson();
-                String jsonString = gson.toJson(tender);
-                Intent intent = new Intent(getActivity(), EditTenderDetail.class);
-                intent.putExtra("data", jsonString);
+                Intent intent = new Intent(getActivity(), EditTender.class);
+                intent.putExtra("id", allTender.get(i).getId());
                 startActivity(intent);
             }
         });

@@ -91,6 +91,7 @@ public class BankList extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 GetBankDetail();
+
             }
         });
         //
@@ -279,6 +280,8 @@ public class BankList extends AppCompatActivity {
         planetList.addAll(Arrays.asList(planets));
         // Create ArrayAdapter using the planet list.
         listAdapter = new ArrayAdapter<String>(this, R.layout.simplerow, planetList);
+        spinnerbanktype.setAdapter(listAdapter);
+
         sp.showProgressDialog(BankList.this);
 
         save.setOnClickListener(new View.OnClickListener() {
@@ -313,12 +316,14 @@ public class BankList extends AppCompatActivity {
         spinner.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                countryname = countryName.get(position).split("~")[0];
-                countryCode = countryName.get(position).split("~")[1];
+                countryAdapter.setItemSelected(position);
+                countryAdapter.getItem(position);
+                countryname = countryAdapter.getItem(position).toString().split("~")[0];
+                countryCode = countryAdapter.getItem(position).toString().split("~")[1];
                 String id1 = countryName.get(position).split("~")[2];
                 //countryId1 = MultipartBody.Part.createFormData("country", id1);
-                coCode = countryName.get(position).split("~")[3];
-                coCurrency = countryName.get(position).split("~")[4];
+                coCode = countryAdapter.getItem(position).toString().split("~")[4];
+                coCurrency = countryAdapter.getItem(position).toString().split("~")[5];
                 country.setText(countryname);
                 country_home.setVisibility(View.GONE);
                 up_arrow.setVisibility(View.GONE);
@@ -336,33 +341,7 @@ public class BankList extends AppCompatActivity {
                 up_arrow2.setVisibility(View.GONE);
             }
         });
-        if(cr.isConnected(BankList.this)){
-        mAPIService.getCountryData().enqueue(new Callback<ArrayList<GetCountry>>() {
-            @Override
-            public void onResponse(Call<ArrayList<GetCountry>> call, Response<ArrayList<GetCountry>> response) {
-                sp.hideProgressDialog();
-                Data = response.body();
-                alpha.clear();
-                gc = response.body();
-                for (int i = 0; i < Data.size(); i++) {
-                    alpha.add(response.body().get(i).getCountryName().toString() + "~" + response.body().get(i).getImageString().toString());
-                    countryName.add(response.body().get(i).getCountryName().toString() + "~" + response.body().get(i).getCountryCode().toString() + "~" + response.body().get(i).getId() + "~" + response.body().get(i).getIsoCode() + "~" + response.body().get(i).getIsoCurrencyCode());
-                }
-                Collections.sort(alpha);
-                Collections.sort(countryName);
-                spinnerbanktype.setAdapter(listAdapter);
-                countryAdapter = new CustomList(BankList.this, alpha);
-                spinner.setAdapter(countryAdapter);
-            }
 
-            @Override
-            public void onFailure(Call<ArrayList<GetCountry>> call, Throwable t) {
-
-            }
-        });
-        }else{
-            sp.ShowDialog(BankList.this,"Please check your internet connection.");
-        }
         up_arrow.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("NewApi")
             @Override
@@ -377,6 +356,7 @@ public class BankList extends AppCompatActivity {
             @SuppressLint("NewApi")
             @Override
             public void onClick(View v) {
+                GetAllCountry();
                 country_home.setVisibility(View.VISIBLE);
                 up_arrow.setVisibility(View.VISIBLE);
                 down_arrow.setVisibility(View.GONE);
@@ -406,7 +386,34 @@ public class BankList extends AppCompatActivity {
         });
         dialog.show();
     }
+    private void GetAllCountry() {
+        if(cr.isConnected(BankList.this)){
+            mAPIService.getCountryData().enqueue(new Callback<ArrayList<GetCountry>>() {
+                @Override
+                public void onResponse(Call<ArrayList<GetCountry>> call, Response<ArrayList<GetCountry>> response) {
+                    sp.hideProgressDialog();
+                    Data = response.body();
+                    alpha.clear();
+                    gc = response.body();
+                    for (int i = 0; i < Data.size(); i++) {
+                        alpha.add(response.body().get(i).getCountryName() + "~" + response.body().get(i).getCountryCode() + "~" + response.body().get(i).getId()+"~" + response.body().get(i).getImageString()+ "~" + response.body().get(i).getIsoCode() + "~" + response.body().get(i).getIsoCurrencyCode());
+                        countryName.add(response.body().get(i).getCountryName().toString() + "~" + response.body().get(i).getCountryCode().toString() + "~" + response.body().get(i).getId() + "~" + response.body().get(i).getIsoCode() + "~" + response.body().get(i).getIsoCurrencyCode());
+                    }
+                    Collections.sort(alpha);
+                    Collections.sort(countryName);
+                    countryAdapter = new CustomList(BankList.this, alpha);
+                    spinner.setAdapter(countryAdapter);
+                }
 
+                @Override
+                public void onFailure(Call<ArrayList<GetCountry>> call, Throwable t) {
+
+                }
+            });
+        }else{
+            sp.ShowDialog(BankList.this,"Please check your internet connection.");
+        }
+    }
     @Override
     protected void onResume() {
         super.onResume();

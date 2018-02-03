@@ -105,12 +105,8 @@ public class CardDemoDesign extends AppCompatActivity {
                     @Override
                     public void onSuccess(com.stripe.android.model.Token token) {
                         Log.e("Bank Token", token.getId());
-                        if( selCon != null){
-                            uploadContractor();
-                        }else{
+                        AddPaymentFromCard(token.getId());
 
-                            AddPaymentFromCard(token.getId());
-                        }
                         token.getBankAccount();
                     }
                 }
@@ -196,82 +192,7 @@ public class CardDemoDesign extends AppCompatActivity {
 
         builder.show();
     }
-    private void uploadContractor() {
 
-
-        String email = user.getEmail();
-        String password = user.getPassword();
-        String country = user.getCountry();
-        String contact = user.getContactNo();
-        String occupation = user.getOccupation();
-        String aboutMe = user.getAboutMe();
-        String role = user.getRole();
-        String deviceId = FirebaseInstanceId.getInstance().getToken();
-        String selections = String.valueOf(user.getSelections());
-        HashMap<String, ArrayList<String>> subscribe = user.getSubscribe();
-        String[] device = new String[1];
-
-        File file1 = user.getProfilePhoto();
-        RequestBody requestFile;
-        if (user.getProfilePhoto() != null) {
-            requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file1);
-            image1 = MultipartBody.Part.createFormData("image", file1.getName(), requestFile);
-
-        } else {
-            image1 = MultipartBody.Part.createFormData("image", "");
-
-        }
-        email1 = MultipartBody.Part.createFormData("email", email);
-        password1 = MultipartBody.Part.createFormData("password", password);
-        country1 = MultipartBody.Part.createFormData("country", country);
-        contactNo1 = MultipartBody.Part.createFormData("contactNo", contact);
-        occupation1 = MultipartBody.Part.createFormData("occupation", occupation);
-        aboutMe1 = MultipartBody.Part.createFormData("aboutMe", aboutMe);
-        role1 = MultipartBody.Part.createFormData("role", role);
-        deviceId1 = MultipartBody.Part.createFormData("androidDeviceId", deviceId);
-        deviceId2 = MultipartBody.Part.createFormData("deviceId", "");
-        subscribe1 = MultipartBody.Part.createFormData("subscribe", selections);
-        selections1 = MultipartBody.Part.createFormData("selections", new Gson().toJson(subscribe));
-
-        Call<Register> resultCall = mAPIService.uploadContractor(email1, password1, country1, contactNo1, occupation1, aboutMe1, role1, deviceId1, image1, subscribe1, selections1);
-        sp.showProgressDialog(CardDemoDesign.this);
-        if(cr.isConnected(CardDemoDesign.this)){
-        resultCall.enqueue(new Callback<Register>() {
-            @Override
-            public void onResponse(Call<Register> call, Response<Register> response) {
-                Log.i(TAG, "response register-->");
-                sp.hideProgressDialog();
-                if (response.isSuccessful()) {
-                    ///String role = sp.getPreferences(Agreement.this, "role");
-                    Gson gson = new Gson();
-                    String jsonString = gson.toJson(user);
-                    User u1 = response.body().getUser();
-                    sp.setPreferencesObject(CardDemoDesign.this, u1);
-                    sp.setPreferences(CardDemoDesign.this, "token", response.body().getToken());
-                    User u2 = (User) sp.getPreferencesObject(CardDemoDesign.this);
-                    String t = sp.getPreferences(CardDemoDesign.this, "token");
-
-                    intent = new Intent(CardDemoDesign.this, MainDrawer.class);
-                    intent.putExtra("data", jsonString);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-
-                    startActivity(intent);
-                    Log.i(TAG, "post submitted to API." + response.body());
-                } else {
-                    sp.ShowDialog(CardDemoDesign.this, response.errorBody().source().toString().split("\"")[3]);
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Register> call, Throwable t) {
-                Log.i(TAG, "error register-->");
-                sp.ShowDialog(CardDemoDesign.this, "Server is down. Come back later!!");
-            }
-        });
-        }else{
-            sp.ShowDialog(CardDemoDesign.this,"Please check your internet connection.");
-        }
-    }
     @Override
     protected void onResume() {
         super.onResume();

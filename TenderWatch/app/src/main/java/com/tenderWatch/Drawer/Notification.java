@@ -20,7 +20,6 @@ import com.tenderWatch.ContractorTenderDetail;
 import com.tenderWatch.Models.Sender;
 import com.tenderWatch.Models.UpdateTender;
 import com.tenderWatch.MyBroadcastReceiver;
-import com.tenderWatch.NTenderDetail;
 import com.tenderWatch.Models.ResponseNotifications;
 import com.tenderWatch.Models.Tender;
 import com.tenderWatch.R;

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
@@ -13,11 +14,14 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -36,6 +40,7 @@ import com.squareup.picasso.Target;
 import com.tenderWatch.Adapters.CustomList;
 import com.tenderWatch.ClientDrawer.ClientDrawer;
 import com.tenderWatch.ClientDrawer.Home;
+import com.tenderWatch.Drawer.MainDrawer;
 import com.tenderWatch.Models.GetCategory;
 import com.tenderWatch.Models.GetCountry;
 import com.tenderWatch.Models.GetTenderDetail;
@@ -84,7 +89,7 @@ public class EditTender extends AppCompatActivity {
     ImageView down_arrow, up_arrow, down_arrow2, up_arrow2, down_arrow3, up_arrow3,tenderImage;
     LinearLayout country_home, category_home;
     TextView country, category;
-    String countryCode, categoryname, countryname,Conid1,Catid1, follow = "false",id;
+    String countryCode, categoryname, countryname,Conid1,Catid1, follow = "",id;
     SharedPreference sp = new SharedPreference();
     MyScrollView scrollView;
     MultipartBody.Part name1, id1, email1, countryId1,image1, categoryId1, landlineNo1, contactNo1, city1, description1, address1, isFollowTendeer1, tenderPhono1;
@@ -113,6 +118,16 @@ public class EditTender extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        alpha.clear();
+        countryName.clear();
+        alpha2.clear();
+        categoryName.clear();
+        falpha.clear();
+        fcountryName.clear();
+        falpha2.clear();
+        fcategoryName.clear();
+        countryAdapter=null;
+        categoryAdapter=null;
         myBroadcastReceiver=new MyBroadcastReceiver();
         mApiService= ApiUtils.getAPIService();
         spinner = (ListView) findViewById(R.id.spinner);
@@ -155,6 +170,11 @@ public class EditTender extends AppCompatActivity {
                 Log.v(TAG, String.valueOf(t));
             }
         });
+
+
+
+
+
     }
 
     private void SetView() {
@@ -182,7 +202,7 @@ public class EditTender extends AppCompatActivity {
                     final EditText address = (EditText) dialog.findViewById(R.id.contact_address);
                     final ImageView box = (ImageView) dialog.findViewById(R.id.home_box);
                     final ImageView boxright = (ImageView) dialog.findViewById(R.id.home_box_checked);
-                    TextView code=(TextView) dialog.findViewById(R.id.contact_code);
+                    final TextView code=(TextView) dialog.findViewById(R.id.contact_code);
 
                     if(object.getContactNo().equals("")){
                         mobile.setText("");
@@ -243,7 +263,16 @@ public class EditTender extends AppCompatActivity {
                         code.setText("+" + countryCode + "-");
                         mobile.setText("");
                     }
-
+                    code.setOnKeyListener(new View.OnKeyListener() {
+                        @Override
+                        public boolean onKey(View v, int keyCode, KeyEvent event) {
+                            //You can identify which key pressed buy checking keyCode value with KeyEvent.KEYCODE_
+                            if(keyCode == KeyEvent.KEYCODE_DEL) {
+                                code.setText("+" + countryCode + "-");
+                            }
+                            return false;
+                        }
+                    });
                     email2.addTextChangedListener(new TextWatcher() {
                         @Override
                         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -282,9 +311,9 @@ public class EditTender extends AppCompatActivity {
                     dismissButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            if (follow.equals("true")) {
+
                                 //submit
-                                if (email2.getText().toString().equals("") && mobile.getText().toString().equals("") && address.getText().toString().equals("") && landline.getText().toString().equals("")) {
+                                if (email2.getText().toString().equals("") && mobile.getText().toString().equals("") && address.getText().toString().equals("") && landline.getText().toString().equals("") && follow.equals("")) {
                                     sp.ShowDialog(EditTender.this, "please fill at least one information");
                                 } else {
 
@@ -300,9 +329,7 @@ public class EditTender extends AppCompatActivity {
                                     dialog.dismiss();
                                 }
 
-                            } else {
-                                sp.ShowDialog(EditTender.this, "please check the agree");
-                            }
+
 
 
                         }
@@ -476,6 +503,18 @@ public class EditTender extends AppCompatActivity {
 
         return picture;
     }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                // todo: goto back activity from here
+                this.onBackPressed();
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -619,7 +658,9 @@ public class EditTender extends AppCompatActivity {
         if(image1==null) {
             image1 = MultipartBody.Part.createFormData("image", "");
         }
-        isFollowTendeer1=MultipartBody.Part.createFormData("isFollowTender","true");
+        if(follow.equals(""))
+            follow="false";
+        isFollowTendeer1=MultipartBody.Part.createFormData("isFollowTender",follow);
         countryId1 = MultipartBody.Part.createFormData("country", Conid1);
         categoryId1 = MultipartBody.Part.createFormData("category", Catid1);
         if(cr.isConnected(EditTender.this)){
@@ -628,9 +669,7 @@ public class EditTender extends AppCompatActivity {
                         @Override
                         public void onResponse(Call<UpdateTender> call, Response<UpdateTender> response) {
                             Log.i(TAG,"response---"+response.body());
-                            sp.ShowDialog(EditTender.this,"Tender Amended Successfully");
-                            Intent intent = new Intent(EditTender.this,ClientDrawer.class);
-                            startActivity(intent);
+                            ShowDialog2(EditTender.this,"Tender Amended Successfully");
                             Log.i(TAG,"response---"+response.body());
                         }
 
@@ -643,7 +682,28 @@ public class EditTender extends AppCompatActivity {
             sp.ShowDialog(EditTender.this,"Please check your internet connection");
         }
     }
+    private void ShowDialog2(Context context, String Msg){
+        AlertDialog.Builder builder = new AlertDialog.Builder(
+                context);
+        builder.setTitle("Tender Watch");
+        builder.setMessage(Msg);
+        builder.setPositiveButton("OK",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog,
+                                        int which) {
+                        Intent intent = new Intent(EditTender.this, ClientDrawer.class);
+                        startActivity(intent);
+                        //  Toast.makeText(getApplicationContext(),"Yes is clicked",Toast.LENGTH_LONG).show();
+                    }
+                });
 
+        builder.show();
+    }
+    @Override
+    public void onBackPressed() {
+
+        finish();
+    }
     @Override
     protected void onResume() {
         super.onResume();

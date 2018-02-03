@@ -3,6 +3,8 @@ package com.tenderWatch.ClientDrawer;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
@@ -13,9 +15,11 @@ import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +37,8 @@ import com.github.crazyorr.zoomcropimage.CropShape;
 import com.github.crazyorr.zoomcropimage.ZoomCropImageActivity;
 import com.tenderWatch.Adapters.CustomList;
 import com.tenderWatch.BuildConfig;
+import com.tenderWatch.ClientDetail;
+import com.tenderWatch.Drawer.MainDrawer;
 import com.tenderWatch.Models.GetCategory;
 import com.tenderWatch.Models.GetCountry;
 import com.tenderWatch.Models.UploadTender;
@@ -76,7 +82,7 @@ public class Home extends Fragment implements AdapterView.OnItemSelectedListener
     ImageView down_arrow, up_arrow, down_arrow2, up_arrow2, down_arrow3, up_arrow3,tenderImage;
     LinearLayout country_home, category_home;
     TextView country, category;
-    String countryCode, categoryname, countryname, follow = "false";
+    String countryCode, categoryname, countryname, follow = "";
     SharedPreference sp = new SharedPreference();
     MyScrollView scrollView;
     MultipartBody.Part name1, email1, countryId1,image1, categoryId1, landlineNo1, contactNo1, city1, description1, address1, isFollowTendeer1, tenderPhono1;
@@ -107,11 +113,19 @@ public class Home extends Fragment implements AdapterView.OnItemSelectedListener
         //you can set the title for your toolbar here for different fragments different titles
         getActivity().setTitle("Upload Tender");
         spinner = (ListView) view.findViewById(R.id.spinner);
+                alpha.clear();
+        countryName.clear();
+        alpha2.clear();
+        categoryName.clear();
+
+        countryAdapter=null;
+        categoryAdapter=null;;
         spinner2 = (ListView) view.findViewById(R.id.spinner3);
         edtSearch=(EditText) view.findViewById(R.id.edtSearch);
         myBroadcastReceiver=new MyBroadcastReceiver();
         city=(EditText) view.findViewById(R.id.home_city);
         title=(EditText) view.findViewById(R.id.home_title);
+
         description=(EditText) view.findViewById(R.id.home_address);
         sel_con=(RelativeLayout) view.findViewById(R.id.rlCon_select);
         sel_cat=(RelativeLayout) view.findViewById(R.id.rlcat_select);
@@ -297,13 +311,21 @@ public class Home extends Fragment implements AdapterView.OnItemSelectedListener
                         }
                     });
                     code.setText("+" + countryCode + "-");
-
+                    code.setOnKeyListener(new View.OnKeyListener() {
+                        @Override
+                        public boolean onKey(View v, int keyCode, KeyEvent event) {
+                            //You can identify which key pressed buy checking keyCode value with KeyEvent.KEYCODE_
+                            if(keyCode == KeyEvent.KEYCODE_DEL) {
+                                code.setText("+" + countryCode + "-");
+                            }
+                            return false;
+                        }
+                    });
                     dismissButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            if (follow.equals("true")) {
                                 //submit
-                                if (email2.getText().toString().equals("") && mobile.getText().toString().equals("") && address.getText().toString().equals("") && landline.getText().toString().equals("")) {
+                                if (email2.getText().toString().equals("") && mobile.getText().toString().equals("") && address.getText().toString().equals("") && landline.getText().toString().equals("") && follow.equals("")) {
                                     sp.ShowDialog(getActivity(), "please fill at least one information");
                                 } else {
                                     String e = email2.getText().toString() != "" ? email2.getText().toString() : "";
@@ -318,9 +340,7 @@ public class Home extends Fragment implements AdapterView.OnItemSelectedListener
                                     dialog.dismiss();
                                 }
 
-                            } else {
-                                sp.ShowDialog(getActivity(), "please check the agree");
-                            }
+
 
 
                         }
@@ -422,17 +442,17 @@ public class Home extends Fragment implements AdapterView.OnItemSelectedListener
         if(image1==null) {
             image1 = MultipartBody.Part.createFormData("image", "");
         }
-        isFollowTendeer1=MultipartBody.Part.createFormData("isFollowTender","true");
+        if(follow.equals(""))
+            follow="false";
+        isFollowTendeer1=MultipartBody.Part.createFormData("isFollowTender",follow);
         sp.showProgressDialog(getActivity());
         mApiService.uploadTender(token,email1,name1,city1,description1,contactNo1,landlineNo1,address1,countryId1,categoryId1,isFollowTendeer1,image1)
                 .enqueue(new Callback<UploadTender>() {
                     @Override
                     public void onResponse(Call<UploadTender> call, Response<UploadTender> response) {
-                        sp.ShowDialog(getActivity(),"Tender Uploaded Successfully");
+                       ShowDialog2(getActivity(),"Tender Uploaded Successfully");
                         sp.hideProgressDialog();
-                        Intent intent = new Intent(getActivity(),ClientDrawer.class);
-                        startActivity(intent);
-                        Log.i(TAG,"response---"+response.body());
+                       Log.i(TAG,"response---"+response.body());
 
                     }
 
@@ -445,7 +465,24 @@ public class Home extends Fragment implements AdapterView.OnItemSelectedListener
 
     }
     //
+    private void ShowDialog2(Context context, String Msg){
+        AlertDialog.Builder builder = new AlertDialog.Builder(
+                context);
+        builder.setTitle("Tender Watch");
+        builder.setMessage(Msg);
+        builder.setPositiveButton("OK",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog,
+                                        int which) {
+                        Intent intent;
+                        intent = new Intent(getActivity(), ClientDrawer.class);
+                        startActivity(intent);
+                        //  Toast.makeText(getApplicationContext(),"Yes is clicked",Toast.LENGTH_LONG).show();
+                    }
+                });
 
+        builder.show();
+    }
     private void GetCategory(final View v) {
         final View v1 = v;
         sp.showProgressDialog(getActivity());

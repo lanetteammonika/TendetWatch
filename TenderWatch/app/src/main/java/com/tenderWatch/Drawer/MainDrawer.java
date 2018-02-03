@@ -37,7 +37,6 @@ import com.tenderWatch.Models.ResponseNotifications;
 import com.tenderWatch.Models.Tender;
 import com.tenderWatch.Models.User;
 import com.tenderWatch.MyBroadcastReceiver;
-import com.tenderWatch.NTenderDetail;
 import com.tenderWatch.R;
 import com.tenderWatch.Retrofit.Api;
 import com.tenderWatch.Retrofit.ApiUtils;

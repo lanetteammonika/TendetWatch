@@ -21,7 +21,6 @@ import com.tenderWatch.ContractorTenderDetail;
 import com.tenderWatch.Models.Sender;
 import com.tenderWatch.Models.UpdateTender;
 import com.tenderWatch.MyBroadcastReceiver;
-import com.tenderWatch.NTenderDetail;
 import com.tenderWatch.Models.ResponseNotifications;
 import com.tenderWatch.Models.Tender;
 import com.tenderWatch.R;
@@ -122,13 +121,9 @@ public class Notification extends Fragment {
             }
         });
         GetNotification();
-        GetUser();
     }
 
-    private void GetUser() {
-        String token = "Bearer " + sp.getPreferences(getActivity(), "token");
 
-    }
 
     private void DeleteNotification(){
         String token = "Bearer " + sp.getPreferences(getActivity(), "token");
