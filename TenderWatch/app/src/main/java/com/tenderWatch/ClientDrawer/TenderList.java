@@ -23,12 +23,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.Gson;
 import com.tenderWatch.Adapters.ContractorTenderListAdapter;
 import com.tenderWatch.Adapters.TenderListAdapter;
+import com.tenderWatch.ClientDetail;
 import com.tenderWatch.ContractorTenderDetail;
 import com.tenderWatch.EditTender;
 import com.tenderWatch.Models.AllContractorTender;
@@ -37,6 +39,7 @@ import com.tenderWatch.Models.TenderUploader;
 import com.tenderWatch.Models.UpdateTender;
 import com.tenderWatch.Models.User;
 import com.tenderWatch.MyBroadcastReceiver;
+import com.tenderWatch.PaymentSelection;
 import com.tenderWatch.TenderDetail;
 import com.tenderWatch.R;
 import com.tenderWatch.Retrofit.Api;
@@ -76,7 +79,7 @@ public class TenderList extends Fragment {
     User user;
     ConnectivityReceiver cr = new ConnectivityReceiver();
     private BroadcastReceiver myBroadcastReceiver;
-
+TextView homeText;
 
     @Nullable
     @Override
@@ -97,6 +100,7 @@ public class TenderList extends Fragment {
         if (role.equals("client")) {
             GetAllTender();
         } else {
+
             Bundle bundle = getArguments();
             if (bundle != null) {
                 String value = bundle.getString("nav_fav");
@@ -109,6 +113,7 @@ public class TenderList extends Fragment {
         }
 
         list_tender = (ListView) view.findViewById(R.id.list_tender);
+        homeText=(TextView) view.findViewById(R.id.home_text);
         final Fragment fragment2 = new Home();
 
         FragmentManager fragmentManager = getFragmentManager();
@@ -243,6 +248,8 @@ public class TenderList extends Fragment {
         getActivity().setTitle("Tender Watch");
     }
 
+
+
     private void ShowBoxFavorite(final int i) {
         final AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
 
@@ -307,7 +314,13 @@ public class TenderList extends Fragment {
                 @Override
                 public void onFailure(Call<ArrayList<AllContractorTender>> call, Throwable t) {
                     sp.hideProgressDialog();
-                    list_tender.setAdapter(null);
+                    if(t.getMessage().equals("Expected BEGIN_ARRAY but was BEGIN_OBJECT at line 1 column 2 path $")){
+                        homeText.setVisibility(View.VISIBLE);
+                        homeText.setText("No Favorite Tenders");
+                    }else{
+                        sp.ShowDialog(getActivity(), "Server is down!!!!");
+
+                    }
                 }
             });
         } else {
@@ -328,6 +341,12 @@ public class TenderList extends Fragment {
                         contractoradapter = response.body();
                         Con_adapter = new ContractorTenderListAdapter(getActivity(), response.body());
                         list_tender.setAdapter(Con_adapter);
+                    }else{
+                        if(response.code()==404){
+                            homeText.setVisibility(View.VISIBLE);
+                            homeText.setText("Welcome to TenderWatch.\n\nCurrently there are no active tenders in your scope and area of work.Tenders will show up here as soon as they are uploaded by Clients.\n\nThank you for your patience.");
+
+                        }
                     }
                 }
 
@@ -335,8 +354,13 @@ public class TenderList extends Fragment {
                 public void onFailure(Call<ArrayList<AllContractorTender>> call, Throwable t) {
                     Log.i(TAG, "post submitted to API." + t);
                     sp.hideProgressDialog();
-                    sp.ShowDialog(getActivity(), "server is down");
-                }
+                    if(t.getMessage().equals("Expected BEGIN_ARRAY but was BEGIN_OBJECT at line 1 column 2 path $")){
+                        homeText.setVisibility(View.VISIBLE);
+                        homeText.setText("Welcome to TenderWatch.\n\nCurrently there are no active tenders in your scope and area of work.Tenders will show up here as soon as they are uploaded by Clients.\n\nThank you for your patience.");
+                    }else{
+                        sp.ShowDialog(getActivity(), "Server is down!!!!");
+
+                    }                }
             });
         } else {
             sp.ShowDialog(getActivity(), "Please check your internet connection");
@@ -363,9 +387,15 @@ public class TenderList extends Fragment {
 
                 @Override
                 public void onFailure(Call<ArrayList<Tender>> call, Throwable t) {
-                    Log.i(TAG, "post submitted to API." + t);
-                    sp.hideProgressDialog();
-                    sp.ShowDialog(getActivity(), "Tender not Found");
+                    Log.i(TAG, "post submitted to API." + t);//Failed to connect to /202.47.116.116:4000
+                    sp.hideProgressDialog();//Expected BEGIN_ARRAY but was BEGIN_OBJECT at line 1 column 2 path $
+                    if(t.getMessage().equals("Expected BEGIN_ARRAY but was BEGIN_OBJECT at line 1 column 2 path $")){
+                        homeText.setVisibility(View.VISIBLE);
+                        homeText.setText("No Uploaded Tender.\nYou may upload new Tender /\nContract by clicking on the \"+\"\nbutton below.");
+                    }else{
+                        sp.ShowDialog(getActivity(), "Server is down!!!!");
+
+                    }
                 }
             });
         } else {

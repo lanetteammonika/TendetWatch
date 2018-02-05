@@ -341,21 +341,13 @@ myBroadcastReceiver=new MyBroadcastReceiver();
     @Override
     protected void onResume() {
         super.onResume();
-//        localBroadcastManager = LocalBroadcastManager.getInstance(MainDrawer.this);
-//        myBroadcastReceiver = new MyBroadcastReceiver();
-//        if (localBroadcastManager != null && myBroadcastReceiver != null)
         LocalBroadcastManager.getInstance(ClientDrawer.this).registerReceiver(myBroadcastReceiver, new IntentFilter("android.content.BroadcastReceiver"));
-
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-//        localBroadcastManager = LocalBroadcastManager.getInstance(MainDrawer.this);
-//        myBroadcastReceiver = new MyBroadcastReceiver();
-//        if (localBroadcastManager != null && myBroadcastReceiver != null)
         LocalBroadcastManager.getInstance(ClientDrawer.this).unregisterReceiver(myBroadcastReceiver);
-
     }
 
     @Override

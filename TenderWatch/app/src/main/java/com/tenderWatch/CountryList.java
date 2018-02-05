@@ -355,6 +355,8 @@ if(cr.isConnected(CountryList.this)){
             @Override
             public void onClick(View v) {
                 txtSelectedContract.setText("Trial Version");
+                user.setSelections(1);
+
                 dialog.dismiss();
             }
         });
@@ -374,7 +376,7 @@ if(cr.isConnected(CountryList.this)){
                 txtSelectedContract.setText("$120 / year");
                 sp.setPreferences(CountryList.this, "sel_con", "$120 / year");
                 sp.setPreferences(CountryList.this,"payment","120");
-                user.setSelections(0);
+                user.setSelections(3);
 
                 dialog.dismiss();
             }

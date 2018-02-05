@@ -28,12 +28,17 @@ import com.tenderWatch.ClientDrawer.ClientDrawer;
 import com.tenderWatch.ClientDrawer.TenderList;
 import com.tenderWatch.Drawer.MainDrawer;
 import com.tenderWatch.Models.User;
+import com.tenderWatch.Retrofit.Api;
+import com.tenderWatch.Retrofit.ApiUtils;
 import com.tenderWatch.SharedPreference.SharedPreference;
 import com.tenderWatch.app.Config;
 import com.tenderWatch.utils.ConnectivityReceiver;
 import com.tenderWatch.utils.NotificationUtils;
 
 import io.fabric.sdk.android.Fabric;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private BroadcastReceiver mRegistrationBroadcastReceiver;
@@ -46,6 +51,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     Object user;
     boolean doubleBackToExitPressedOnce = true;
     ConnectivityReceiver cr = new ConnectivityReceiver();
+    Api mAPIService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +60,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         context = this;
         InitView();
         InitListener();
+        mAPIService = ApiUtils.getAPIService();
         user = sp.getPreferencesObject(MainActivity.this);
          FirebaseCrash.report(new Exception("My first Android non-fatal error"));
 
@@ -112,20 +119,55 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             String role = sp.getPreferences(MainActivity.this, "role");
             if (role.equals("client")) {
                 intent = new Intent(MainActivity.this, ClientDrawer.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+
+                startActivity(intent);
+                overridePendingTransition(R.anim.enter, R.anim.exit);
             } else {
-                intent = new Intent(MainActivity.this, MainDrawer.class);
+                ContractorPaymentManage();
             }
             sp.setPreferences(MainActivity.this, "role", role);
             // intent.putExtra("Role", "client");
             Log.i(TAG, "testing");
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
 
-            startActivity(intent);
-            overridePendingTransition(R.anim.enter, R.anim.exit);
+
         }
 
     }
+    private void ContractorPaymentManage() {
+        sp.showProgressDialog(MainActivity.this);
+        if(cr.isConnected(MainActivity.this)) {
+            String token = "Bearer " + sp.getPreferences(MainActivity.this, "token");
+            User u2= (User) sp.getPreferencesObject(MainActivity.this);
+            String userId=u2.getId();
+            mAPIService.getUserDetail(token, userId).enqueue(new Callback<User>() {
+                @Override
+                public void onResponse(Call<User> call, Response<User> response) {
+                    sp.hideProgressDialog();
+                    Log.i(TAG, "post submitted to API." + response);
+                    user=response.body();
+                    Intent i;
+                    if(response.body().getIsPayment()){
+                        intent = new Intent(MainActivity.this, MainDrawer.class);
+                    }else{
+                        intent=new Intent(MainActivity.this, PaymentSelection.class);
+                    }
 
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.enter, R.anim.exit);
+                }
+
+                @Override
+                public void onFailure(Call<User> call, Throwable t) {
+                    Log.i(TAG, "post submitted to API." + t);
+                }
+            });
+        }else{
+            sp.ShowDialog(MainActivity.this,"Please check your internet connection");
+        }
+    }
     // Fetches reg id from shared preferences
     // and displays on the screen
     private void displayFirebaseRegId() {

@@ -74,6 +74,7 @@ public class ContractorTenderListAdapter extends BaseAdapter {
         TextView txtTenderTitle = (TextView) convertView.findViewById(R.id.tender_title);
         TextView txtTenderExpDate = (TextView) convertView.findViewById(R.id.tender_expdate);
         LinearLayout stampRemove = (LinearLayout) convertView.findViewById(R.id.stamp_remove);
+        TextView txtRemoved = (TextView) convertView.findViewById(R.id.removed);
         CircleImageView imgTrue = (CircleImageView) convertView.findViewById(R.id.tender_image3);
 
         if (!tenderList.get(position).getTenderPhoto().equals("no image")) {
@@ -102,15 +103,21 @@ public class ContractorTenderListAdapter extends BaseAdapter {
         long hours = minutes / 60;
         long days = (hours / 24);
 
-        if (days == 0) {
+        if (!tenderList.get(position).getIsActive()) {
             stampRemove.setVisibility(View.VISIBLE);
-            txtTenderExpDate.setText("Expired");
+            if (days == 0 || days <0) {
+                txtTenderExpDate.setText("Expired");
+            }else {
+                txtTenderExpDate.setText(days + " days");
+            }
+
+            txtRemoved.setVisibility(View.VISIBLE);
         } else {
             txtTenderExpDate.setText(days + " days");
         }
         Log.d("days", "" + days);
         txtTenderName.setText(tenderList.get(position).getTenderUploader().getEmail());
-        txtTenderTitle.setText(tenderList.get(position).getEmail());
+        txtTenderTitle.setText(tenderList.get(position).getTenderName());
         User user = (User) sp.getPreferencesObject(context);
         if (tenderList.get(position).getInterested().size() > 0) {
             for (int i = 0; i < tenderList.get(position).getInterested().size(); i++) {

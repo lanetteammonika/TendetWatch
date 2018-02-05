@@ -120,15 +120,17 @@ public class CardDemoDesign extends AppCompatActivity {
     private void CallUpdateServices() {
         String token="Bearer " +sp.getPreferences(CardDemoDesign.this,"token");
 
-        int payment2= Integer.parseInt(sp.getPreferences(CardDemoDesign.this,"payment"));
-        rp.setPayment(payment2);
-        String subscribe2;
-        if(payment2==15){
-            subscribe2="2";
-        }else {
-            subscribe2="0";
+        int payment=0;
+        User u2= (User) sp.getPreferencesObject(CardDemoDesign.this);
+        if(u2.getSubscribe().equals("2")){
+            payment = 15 * 100;
+        }else{
+            payment = 120 * 100;
         }
-        rp.setSubscribe(subscribe2);
+        rp.setPayment(payment);
+        String subscribe2;
+
+        rp.setSubscribe(u2.getSubscribe());
         rp.setSelections(user.getSubscribe());
         if(cr.isConnected(CardDemoDesign.this)) {
             mAPIService.updateService(token, rp).enqueue(new Callback<ResponseBody>() {
@@ -149,8 +151,13 @@ public class CardDemoDesign extends AppCompatActivity {
 
     private void AddPaymentFromCard(String source) {
         String token = "Bearer " + sp.getPreferences(CardDemoDesign.this, "token");
-
-        int payment = Integer.parseInt(sp.getPreferences(CardDemoDesign.this, "payment")) * 100;
+        int payment=0;
+        User u2= (User) sp.getPreferencesObject(CardDemoDesign.this);
+if(u2.getSubscribe().equals("2")){
+    payment = 15 * 100;
+}else{
+    payment = 120 * 100;
+}
         rc.setSource(source);
         rc.setAmount(payment);
         if(cr.isConnected(CardDemoDesign.this)){

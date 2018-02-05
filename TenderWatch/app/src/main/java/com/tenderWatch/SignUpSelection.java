@@ -202,7 +202,7 @@ public class SignUpSelection extends AppCompatActivity implements View.OnClickLi
             public void onSuccess(LoginResult loginResult) {
                 Log.d(TAG, String.valueOf(loginResult));
 
-                SharedPreference sp = new SharedPreference();
+                final SharedPreference sp = new SharedPreference();
 
                 String accessToken = loginResult.getAccessToken().getToken();
                 GraphRequest request = GraphRequest.newMeRequest(
@@ -213,35 +213,45 @@ public class SignUpSelection extends AppCompatActivity implements View.OnClickLi
                             public void onCompleted(JSONObject object, GraphResponse response) {
                                 Log.v("Main", response.toString());
                                 try {
-                                    Log.i(TAG, object.getString("email"));
-                                    JSONObject data = response.getJSONObject();
-                                    if (data.has("picture")) {
-                                        profilePicUrl = data.getJSONObject("picture").getJSONObject("data").getString("url");
-                                        String src = profilePicUrl.toString();
-                                        URL url = new URL(profilePicUrl);
-                                        txtEmail.setText(object.getString("email"));
-                                        Picasso.with(SignUpSelection.this)
-                                                .load(profilePicUrl)
-                                                .into(new Target() {
-                                                    @Override
-                                                    public void onBitmapLoaded(final Bitmap bitmap, Picasso.LoadedFrom from) {
-                                                        Log.v("Main", String.valueOf(bitmap));
-                                                        main = bitmap;
-                                                        Picasso.with(SignUpSelection.this).load(profilePicUrl).into(target);
-                                                    }
+                                    if(object.has("email")) {
+                                        Log.i(TAG, object.getString("email"));
+                                        JSONObject data = response.getJSONObject();
+                                        if (data.has("picture")) {
+                                            profilePicUrl = data.getJSONObject("picture").getJSONObject("data").getString("url");
+                                            String src = profilePicUrl.toString();
+                                            URL url = new URL(profilePicUrl);
+                                            if(object.getString("email").equals("")) {
+                                                txtEmail.setText(object.getString("email"));
+                                                Picasso.with(SignUpSelection.this)
+                                                        .load(profilePicUrl)
+                                                        .into(new Target() {
+                                                            @Override
+                                                            public void onBitmapLoaded(final Bitmap bitmap, Picasso.LoadedFrom from) {
+                                                                Log.v("Main", String.valueOf(bitmap));
+                                                                main = bitmap;
+                                                                Picasso.with(SignUpSelection.this).load(profilePicUrl).into(target);
+                                                            }
 
-                                                    @Override
-                                                    public void onBitmapFailed(Drawable errorDrawable) {
-                                                        Log.v("Main", "errrorrrr");
+                                                            @Override
+                                                            public void onBitmapFailed(Drawable errorDrawable) {
+                                                                Log.v("Main", "errrorrrr");
 
-                                                    }
+                                                            }
 
-                                                    @Override
-                                                    public void onPrepareLoad(Drawable placeHolderDrawable) {
+                                                            @Override
+                                                            public void onPrepareLoad(Drawable placeHolderDrawable) {
 
-                                                    }
-                                                });
-                                        Log.i(TAG, profilePicUrl);
+                                                            }
+                                                        });
+                                                Log.i(TAG, profilePicUrl);
+                                            }else{
+                                                sp.ShowDialog(SignUpSelection.this,"You can't able to sign up using facebook.\nplease check your privacy or email verification in your facebook profile");
+                                            }
+                                        }else{
+                                            sp.ShowDialog(SignUpSelection.this,"You can't able to sign up using facebook.\nplease check your privacy or email verification in your facebook profile");
+                                        }
+                                    }else{
+                                        sp.ShowDialog(SignUpSelection.this,"We can't access your information from Facebook because of your account privacy.");
                                     }
                                 } catch (JSONException e) {
                                     e.printStackTrace();
@@ -353,7 +363,6 @@ public class SignUpSelection extends AppCompatActivity implements View.OnClickLi
         // if(sp.getPreferences(SignUpSelection.this,"Login") == null) {
         if(cr.isConnected(SignUpSelection.this)){
         if (result.isSuccess()) {
-            SharedPreference sp = new SharedPreference();
             sp.setPreferences(getApplicationContext(), "Login", "GOOGLEYES");
             GoogleSignInAccount acct = result.getSignInAccount();
             String personName = acct.getDisplayName();
@@ -483,7 +492,7 @@ if(cr.isConnected(SignUpSelection.this)){
                 //  if (response.isSuccessful()) {
                 sp.hideProgressDialog();
                 if (response.message().equals("Found")) {
-                     sp.ShowDialog(SignUpSelection.this, response.errorBody().source().toString().split("\"")[3]);
+                     sp.ShowDialog(SignUpSelection.this, "This Email is already used.\n\nPlease use another email to signup in TenderWatch");
                      txtEmail.setError("change Email");
                     // break;
                 } else {
