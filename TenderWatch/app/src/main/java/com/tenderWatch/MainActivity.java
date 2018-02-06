@@ -109,8 +109,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     }
                 }
             };
-
-
             displayFirebaseRegId();
         } else {
             sp.ShowDialog(MainActivity.this, "Please check your internet connection");
@@ -120,7 +118,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             if (role.equals("client")) {
                 intent = new Intent(MainActivity.this, ClientDrawer.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter, R.anim.exit);
             } else {

@@ -38,15 +38,15 @@ public class IndexingArrayAdapter extends BaseAdapter implements SectionIndexer 
     int position;
     private static final String TAG = "IndexingArrayAdapter";
     char[] chars;
-    public HashMap<String,String> checked = new HashMap<String,String>();
+    public HashMap<String, String> checked = new HashMap<String, String>();
 
-    public IndexingArrayAdapter(Context context, int textViewResourceId, ArrayList<CountryList.Item> item, ArrayList<String> alpha2, ArrayList<String> list,char[] chars) {
+    public IndexingArrayAdapter(Context context, int textViewResourceId, ArrayList<CountryList.Item> item, ArrayList<String> alpha2, ArrayList<String> list, char[] chars) {
         this.context = context;
         this.textViewResourceId = textViewResourceId;
         this.item = item;
         this.alpha2 = alpha2;
         this.list = list;
-        this.chars=chars;
+        this.chars = chars;
         holder = new ViewHolder();
         holderSection = new ViewHolderSection();
     }
@@ -63,18 +63,17 @@ public class IndexingArrayAdapter extends BaseAdapter implements SectionIndexer 
     public void setCheckedItem(int i) {
 
 
-        if (checked.containsKey(String.valueOf(i))){
+        if (checked.containsKey(String.valueOf(i))) {
             checked.remove(String.valueOf(i));
-        }
-
-        else {
-            checked.put(String.valueOf(i), String.valueOf(item.get(i).getTitle())+"~"+String.valueOf(item.get(i).getCode())+"~"+String.valueOf(item.get(i).getId()));
+        } else {
+            checked.put(String.valueOf(i), String.valueOf(item.get(i).getTitle()) + "~" + String.valueOf(item.get(i).getCode()) + "~" + String.valueOf(item.get(i).getId()));
         }
     }
 
-    public HashMap<String, String> getallitems(){
+    public HashMap<String, String> getallitems() {
         return checked;
     }
+
     @Override
     public int getPositionForSection(int i) {
         //String indexer= String.valueOf(SideSelector.ALPHABET[i]);
@@ -116,36 +115,36 @@ public class IndexingArrayAdapter extends BaseAdapter implements SectionIndexer 
         this.position = position;
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         //if (convertView == null) {
-            if (item.get(position).isSection()) {
-                convertView = inflater.inflate(R.layout.layout_section, parent, false);
-                holderSection.tvSectionTitle = convertView.findViewById(R.id.tvSectionTitle);
-                holderSection.tvSectionTitle.setText((item.get(position).getTitle()));
-                holderSection.sectionLayout = convertView.findViewById(R.id.itemlayout);
+        if (item.get(position).isSection()) {
+            convertView = inflater.inflate(R.layout.layout_section, parent, false);
+            holderSection.tvSectionTitle = convertView.findViewById(R.id.tvSectionTitle);
+            holderSection.tvSectionTitle.setText((item.get(position).getTitle()));
+            holderSection.sectionLayout = convertView.findViewById(R.id.itemlayout);
 //                holderSection.sectionLayout.setBackgroundColor(Color.GREEN);
-                convertView.setTag(holderSection);
+            convertView.setTag(holderSection);
+        } else {
+            convertView = inflater.inflate(R.layout.layout_item, parent, false);
+            holder.itemLayout = (RelativeLayout) convertView.findViewById(R.id.itemlayout);
+            holder.flag = (ImageView) convertView.findViewById(R.id.img);
+            holder.tvItemTitle = (TextView) convertView.findViewById(R.id.tvItemTitle);
+            holder.tvItemCode = (TextView) convertView.findViewById(R.id.tvItemCode);
+
+            holder.imgtrue = (ImageView) convertView.findViewById(R.id.imgtrue);
+            holder.tvItemTitle.setText(item.get(position).getTitle());
+            Bitmap flag1 = StringToBitMap(item.get(position).getFlag());
+            String code = item.get(position).getCode();
+            holder.tvItemCode.setText(item.get(position).getCode());
+            holder.flag.setImageBitmap(flag1);
+            // holder.itemLayout.setBackgroundColor(Color.argb(255, 207, 207, 207));
+
+            if (item.get(position).getSelected()) {
+                holder.imgtrue.setVisibility(View.VISIBLE);
+                holder.itemLayout.setBackgroundColor(Color.argb(255, 207, 207, 207));
             } else {
-                convertView = inflater.inflate(R.layout.layout_item, parent, false);
-                holder.itemLayout=(RelativeLayout) convertView.findViewById(R.id.itemlayout);
-                holder.flag = (ImageView) convertView.findViewById(R.id.img);
-                holder.tvItemTitle = (TextView) convertView.findViewById(R.id.tvItemTitle);
-                holder.tvItemCode = (TextView) convertView.findViewById(R.id.tvItemCode);
-
-                holder.imgtrue = (ImageView) convertView.findViewById(R.id.imgtrue);
-                holder.tvItemTitle.setText(item.get(position).getTitle());
-                Bitmap flag1 = StringToBitMap(item.get(position).getFlag());
-               String code=item.get(position).getCode();
-                holder.tvItemCode.setText(item.get(position).getCode());
-                holder.flag.setImageBitmap(flag1);
-               // holder.itemLayout.setBackgroundColor(Color.argb(255, 207, 207, 207));
-
-                if (item.get(position).getSelected()) {
-                    holder.imgtrue.setVisibility(View.VISIBLE);
-                    holder.itemLayout.setBackgroundColor(Color.argb(255, 207, 207, 207));
-                } else {
-                    holder.imgtrue.setVisibility(View.GONE);
-                    holder.itemLayout.setBackgroundColor(Color.argb(255, 255, 255, 255));
-                }
-                convertView.setTag(holder);
+                holder.imgtrue.setVisibility(View.GONE);
+                holder.itemLayout.setBackgroundColor(Color.argb(255, 255, 255, 255));
+            }
+            convertView.setTag(holder);
 
         }
 
@@ -205,9 +204,9 @@ public class IndexingArrayAdapter extends BaseAdapter implements SectionIndexer 
     }
 
     public void setItemSelected(int pos) {
-        if( item.get(pos).getSelected()){
+        if (item.get(pos).getSelected()) {
             item.get(pos).setSelected(false);
-        }else {
+        } else {
             item.get(pos).setSelected(true);
             item.get(pos).getSelected();
         }

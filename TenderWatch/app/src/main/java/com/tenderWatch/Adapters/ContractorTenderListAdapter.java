@@ -105,9 +105,9 @@ public class ContractorTenderListAdapter extends BaseAdapter {
 
         if (!tenderList.get(position).getIsActive()) {
             stampRemove.setVisibility(View.VISIBLE);
-            if (days == 0 || days <0) {
+            if (days == 0 || days < 0) {
                 txtTenderExpDate.setText("Expired");
-            }else {
+            } else {
                 txtTenderExpDate.setText(days + " days");
             }
 
@@ -138,10 +138,10 @@ public class ContractorTenderListAdapter extends BaseAdapter {
                     }
                 }
             }
-                if (tenderList.get(position).getAmendRead().size() == 0) {
-                    tender_image.setBorderColor(Color.RED);
-                    tender_image.setBorderWidth(2);
-                }
+            if (tenderList.get(position).getAmendRead().size() == 0) {
+                tender_image.setBorderColor(Color.RED);
+                tender_image.setBorderWidth(2);
+            }
 
         }
         if (tenderList.get(position).getReadby() != null) {

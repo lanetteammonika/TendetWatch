@@ -53,7 +53,7 @@ import retrofit2.Response;
 public class ClientDetail extends AppCompatActivity {
     CircleImageView clientImage;
     ImageView close,flag,eRat1,eRat2,eRat3,eRat4,eRat5,fRat1,fRat2,fRat3,fRat4,fRat5;
-    TextView email,mobile,country,occcupation,aboutMe,txtRate;
+    TextView email,mobile,country,occcupation,aboutMe,txtRate,txtDetailLabel;
     Sender obj;
     Api mApiService;
     private List Data;
@@ -77,6 +77,7 @@ public class ClientDetail extends AppCompatActivity {
         if(uId ==null){
             uId=getIntent().getStringExtra("uId");
         }
+        txtDetailLabel=(TextView) findViewById(R.id.detailLabel);
         flag=(ImageView) findViewById(R.id.c_flag);
         eRat1=(ImageView) findViewById(R.id.e_s1);
         eRat2=(ImageView) findViewById(R.id.e_s2);
@@ -97,6 +98,13 @@ public class ClientDetail extends AppCompatActivity {
         clientImage=(CircleImageView) findViewById(R.id.client_circleView);
         btnClientSubmit=(Button) findViewById(R.id.btn_client_submit);
         txtRate=(TextView) findViewById(R.id.txt_avgRate);
+
+        String role = sp.getPreferences(ClientDetail.this, "role");
+        if (role.equals("client")) {
+            txtDetailLabel.setText("Contractor Detail");
+        }else{
+            txtDetailLabel.setText("Client Detail");
+        }
 
         eRat1.setOnClickListener(new View.OnClickListener() {
             @Override

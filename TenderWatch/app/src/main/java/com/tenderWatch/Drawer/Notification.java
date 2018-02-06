@@ -142,6 +142,8 @@ if(cr.isConnected(getActivity())){
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
+                sp.hideProgressDialog();
+
                 Log.i(TAG, "post submitted to API." + t);
             }
         });
@@ -174,6 +176,8 @@ if(cr.isConnected(getActivity())){
 
             @Override
             public void onFailure(Call<ArrayList<ResponseNotifications>> call, Throwable t) {
+                sp.hideProgressDialog();
+
                 Log.i(TAG, "post submitted to API." + t);
             }
         });

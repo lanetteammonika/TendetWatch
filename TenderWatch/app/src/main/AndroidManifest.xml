@@ -69,8 +69,9 @@
         <activity android:name=".SignUpSelection" />
         <activity android:name=".Agreement" />
         <activity android:name=".Category" />
-        <activity android:name=".EditTender"
-            android:windowSoftInputMode="stateAlwaysHidden"/>
+        <activity
+            android:name=".EditTender"
+            android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".PaymentSelection"
             android:theme="@style/App" />
@@ -78,12 +79,12 @@
             android:name=".Drawer.MainDrawer"
             android:label="@string/title_activity_main_drawer"
             android:theme="@style/AppThemeAction"
-android:windowSoftInputMode="stateAlwaysHidden" />
+            android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".ClientDrawer.ClientDrawer"
             android:label="@string/title_activity_client_drawer"
             android:theme="@style/AppThemeAction"
-            android:windowSoftInputMode="stateAlwaysHidden"/>
+            android:windowSoftInputMode="stateAlwaysHidden" />
 
 
         <activity android:name=".SubscriptionDetail" />

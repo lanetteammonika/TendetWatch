@@ -43,17 +43,19 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class TenderListAdapter extends BaseAdapter {
     private Context context;
     private ArrayList<Tender> tenderList;
-    SharedPreference sp=new SharedPreference();
+    SharedPreference sp = new SharedPreference();
 
-    public TenderListAdapter(Context context, ArrayList<Tender> tenderList){
-        this.context=context;
-        this.tenderList=tenderList;
+    public TenderListAdapter(Context context, ArrayList<Tender> tenderList) {
+        this.context = context;
+        this.tenderList = tenderList;
     }
+
     public void updateReceiptsList(ArrayList<Tender> tenderList) {
         this.tenderList.clear();
         this.tenderList.addAll(tenderList);
         this.notifyDataSetChanged();
     }
+
     @Override
     public int getCount() {
         return tenderList.size();
@@ -75,12 +77,12 @@ public class TenderListAdapter extends BaseAdapter {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         convertView = inflater.inflate(R.layout.tender_list, parent, false);
-        final CircleImageView tender_image=(CircleImageView) convertView.findViewById(R.id.tender_image2) ;
-        TextView txtTenderName=(TextView) convertView.findViewById(R.id.tender_name);
-        TextView txtTenderTitle=(TextView) convertView.findViewById(R.id.tender_title);
-        TextView txtTenderExpDate=(TextView) convertView.findViewById(R.id.tender_expdate);
-        LinearLayout stampRemove=(LinearLayout) convertView.findViewById(R.id.stamp_remove);
-        if(!tenderList.get(position).getTenderPhoto().toString().equals("")) {
+        final CircleImageView tender_image = (CircleImageView) convertView.findViewById(R.id.tender_image2);
+        TextView txtTenderName = (TextView) convertView.findViewById(R.id.tender_name);
+        TextView txtTenderTitle = (TextView) convertView.findViewById(R.id.tender_title);
+        TextView txtTenderExpDate = (TextView) convertView.findViewById(R.id.tender_expdate);
+        LinearLayout stampRemove = (LinearLayout) convertView.findViewById(R.id.stamp_remove);
+        if (!tenderList.get(position).getTenderPhoto().toString().equals("")) {
             Picasso.with(context)
                     .load(tenderList.get(position).getTenderPhoto().toString())
                     .into(new Target() {
@@ -100,10 +102,10 @@ public class TenderListAdapter extends BaseAdapter {
                         public void onPrepareLoad(Drawable placeHolderDrawable) {
                         }
                     });
-          //  Log.i(TAG, profilePicUrl);
-        //}
+            //  Log.i(TAG, profilePicUrl);
+            //}
         }
-        CircleImageView imgTrue=(CircleImageView) convertView.findViewById(R.id.tender_image3);
+        CircleImageView imgTrue = (CircleImageView) convertView.findViewById(R.id.tender_image3);
         Calendar c = Calendar.getInstance();
         java.text.SimpleDateFormat df = new java.text.SimpleDateFormat("yyyy-MM-dd");
 
@@ -131,19 +133,19 @@ public class TenderListAdapter extends BaseAdapter {
         long hours = minutes / 60;
         long days = (hours / 24) + 1;
 
-        if(days==0 || days<0){
+        if (days == 0 || days < 0) {
             stampRemove.setVisibility(View.VISIBLE);
             txtTenderExpDate.setText("Expired");
-        }else{
-            txtTenderExpDate.setText(days+" days");
+        } else {
+            txtTenderExpDate.setText(days + " days");
         }
         Log.d("days", "" + days);
         txtTenderName.setText(tenderList.get(position).getTenderName());
         txtTenderTitle.setText(tenderList.get(position).getTenderName());
-        User user= (User) sp.getPreferencesObject(context);
-        if(tenderList.get(position).getFavorite().size()>0){
-            for(int i=0;i<tenderList.get(position).getFavorite().size();i++){
-                String id=user.getId();
+        User user = (User) sp.getPreferencesObject(context);
+        if (tenderList.get(position).getFavorite().size() > 0) {
+            for (int i = 0; i < tenderList.get(position).getFavorite().size(); i++) {
+                String id = user.getId();
                 if (tenderList.get(position).getFavorite().contains(id)) {
                     imgTrue.setVisibility(View.VISIBLE);
                 }

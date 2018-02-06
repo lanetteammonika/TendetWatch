@@ -25,9 +25,9 @@ public class TenderList extends BaseAdapter {
     private Context context;
     private ArrayList<Object> tenderList;
 
-    public TenderList(Context context,ArrayList<Object> tenderList){
-        this.context=context;
-        this.tenderList=tenderList;
+    public TenderList(Context context, ArrayList<Object> tenderList) {
+        this.context = context;
+        this.tenderList = tenderList;
     }
 
     @Override

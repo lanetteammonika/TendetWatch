@@ -189,7 +189,7 @@ TextView homeText;
                     long hours = minutes / 60;
                     long days = (hours / 24) + 1;
 
-                    if (days == 0 || days<0) {
+                    if (!allTender.get(position).getIsActive()) {
                         sp.ShowDialog(getActivity(), "Tender is not Activated.");
                     } else {
                         Intent intent = new Intent(getActivity(), TenderDetail.class);
@@ -222,25 +222,31 @@ TextView homeText;
                     Gson gson = new Gson();
                     String jsonString = gson.toJson(contractorTender);
                     String sender = gson.toJson(client);
-                    Intent intent = new Intent(getActivity(), ContractorTenderDetail.class);
-                    intent.putExtra("id", contractoradapter.get(position).getId());
+                    if (!contractoradapter.get(position).getIsActive()) {
+                        sp.ShowDialog(getActivity(), "Tender is not Activated.");
+                    } else {
+
+
+                        Intent intent = new Intent(getActivity(), ContractorTenderDetail.class);
+                        intent.putExtra("id", contractoradapter.get(position).getId());
 //                    startActivity(intent);
-                    intent.putExtra("data", jsonString);
-                    intent.putExtra("sender", sender);
-                    if (contractoradapter.get(position).getAmendRead() != null) {
-                        if (contractoradapter.get(position).getAmendRead().size() > 0) {
-                            for (int i = 0; i < contractoradapter.get(position).getAmendRead().size(); i++) {
-                                String Con_id = user.getId();
-                                if (!contractoradapter.get(position).getAmendRead().contains(Con_id)) {
-                                    intent.putExtra("amended", "true");
+                        intent.putExtra("data", jsonString);
+                        intent.putExtra("sender", sender);
+                        if (contractoradapter.get(position).getAmendRead() != null) {
+                            if (contractoradapter.get(position).getAmendRead().size() > 0) {
+                                for (int i = 0; i < contractoradapter.get(position).getAmendRead().size(); i++) {
+                                    String Con_id = user.getId();
+                                    if (!contractoradapter.get(position).getAmendRead().contains(Con_id)) {
+                                        intent.putExtra("amended", "true");
+                                    }
                                 }
                             }
+                            if (contractoradapter.get(position).getAmendRead().size() == 0) {
+                                intent.putExtra("amended", "true");
+                            }
                         }
-                        if (contractoradapter.get(position).getAmendRead().size() == 0) {
-                            intent.putExtra("amended", "true");
-                        }
+                        startActivity(intent);
                     }
-                    startActivity(intent);
                 }
             }
         });
@@ -277,6 +283,8 @@ TextView homeText;
                         @Override
                         public void onFailure(Call<ResponseBody> call, Throwable t) {
                             Log.i(TAG, "post submitted to API." + t);
+                            sp.hideProgressDialog();
+
                         }
                     });
                 } else {
@@ -419,7 +427,7 @@ TextView homeText;
                 String Client_msg = "Are you sure you want to remove this Tender completely from your Account?";
                 tender = allTender.get(i);
                 final String token = "Bearer " + sp.getPreferences(getActivity(), "token");
-                String tenderid = tender.getId().toString();
+                String tenderid = tender.getId();
                 sp.showProgressDialog(getActivity());
 
                 mAPIService.removeTender(token, tenderid).enqueue(new Callback<ResponseBody>() {
@@ -501,6 +509,8 @@ TextView homeText;
 
                         @Override
                         public void onFailure(Call<ResponseBody> call, Throwable t) {
+                            sp.hideProgressDialog();
+
                             Log.i(TAG, "response---" + t);
                         }
                     });
@@ -581,11 +591,7 @@ TextView homeText;
     @Override
     public void onPause() {
         super.onPause();
-//        localBroadcastManager = LocalBroadcastManager.getInstance(MainDrawer.this);
-//        myBroadcastReceiver = new MyBroadcastReceiver();
-//        if (localBroadcastManager != null && myBroadcastReceiver != null)
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(myBroadcastReceiver);
-
     }
 
     @Override

@@ -42,20 +42,18 @@ public class ArrayAdapter extends BaseAdapter implements SectionIndexer {
     int position;
     private static final String TAG = "IndexingArrayAdapter";
     char[] chars;
-    public HashMap<String,String> checked = new HashMap<String,String>();
+    public HashMap<String, String> checked = new HashMap<String, String>();
 
-    public ArrayAdapter(Context context, int textViewResourceId, ArrayList<Category.Item> item, ArrayList<String> alpha2, ArrayList<String> list,char[] chars) {
+    public ArrayAdapter(Context context, int textViewResourceId, ArrayList<Category.Item> item, ArrayList<String> alpha2, ArrayList<String> list, char[] chars) {
         this.context = context;
         this.textViewResourceId = textViewResourceId;
         this.item = item;
         this.alpha2 = alpha2;
         this.list = list;
-        this.chars=chars;
+        this.chars = chars;
         holder = new ViewHolder();
         holderSection = new ViewHolderSection();
     }
-
-
 
 
     public Object[] getSections() {
@@ -70,18 +68,17 @@ public class ArrayAdapter extends BaseAdapter implements SectionIndexer {
     public void setCheckedItem(int i) {
 
 
-        if (checked.containsKey(String.valueOf(i))){
+        if (checked.containsKey(String.valueOf(i))) {
             checked.remove(String.valueOf(i));
-        }
-
-        else {
-            checked.put(String.valueOf(i), String.valueOf(item.get(i).getTitle())+"~"+String.valueOf(item.get(i).getId())+"~"+String.valueOf(item.get(i).getcountryId()));
+        } else {
+            checked.put(String.valueOf(i), String.valueOf(item.get(i).getTitle()) + "~" + String.valueOf(item.get(i).getId()) + "~" + String.valueOf(item.get(i).getcountryId()));
         }
     }
 
-    public HashMap<String, String> getallitems(){
+    public HashMap<String, String> getallitems() {
         return checked;
     }
+
     @Override
     public int getPositionForSection(int i) {
         //String indexer= String.valueOf(SideSelector.ALPHABET[i]);
@@ -112,8 +109,9 @@ public class ArrayAdapter extends BaseAdapter implements SectionIndexer {
     }
 
     @Override
-    public long getItemId(int position) {  return position  ;}
-
+    public long getItemId(int position) {
+        return position;
+    }
 
 
     @Override
@@ -132,7 +130,7 @@ public class ArrayAdapter extends BaseAdapter implements SectionIndexer {
             convertView.setTag(holderSection);
         } else {
             convertView = inflater.inflate(R.layout.layout_item, parent, false);
-            holder.itemLayout=(RelativeLayout) convertView.findViewById(R.id.itemlayout);
+            holder.itemLayout = (RelativeLayout) convertView.findViewById(R.id.itemlayout);
             holder.flag = (ImageView) convertView.findViewById(R.id.img);
             holder.tvItemTitle = (TextView) convertView.findViewById(R.id.tvItemTitle);
 
@@ -210,9 +208,9 @@ public class ArrayAdapter extends BaseAdapter implements SectionIndexer {
     }
 
     public void setItemSelected(int pos) {
-        if( item.get(pos).getSelected()){
+        if (item.get(pos).getSelected()) {
             item.get(pos).setSelected(false);
-        }else {
+        } else {
             item.get(pos).setSelected(true);
             item.get(pos).getSelected();
         }

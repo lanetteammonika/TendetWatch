@@ -109,6 +109,7 @@ public class Notification extends Fragment {
 
                         @Override
                         public void onFailure(Call<ResponseBody> call, Throwable t) {
+                            sp.hideProgressDialog();
                             Log.i(TAG, "post submitted to API." + t);
                         }
                     });
@@ -139,6 +140,7 @@ public class Notification extends Fragment {
 
                 @Override
                 public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    sp.hideProgressDialog();
                     Log.i(TAG, "post submitted to API." + t);
                 }
             });
@@ -171,6 +173,7 @@ public class Notification extends Fragment {
 
                 @Override
                 public void onFailure(Call<ArrayList<ResponseNotifications>> call, Throwable t) {
+                    sp.hideProgressDialog();
                     Log.i(TAG, "post submitted to API." + t);
                 }
             });
@@ -181,21 +184,13 @@ public class Notification extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-//        localBroadcastManager = LocalBroadcastManager.getInstance(MainDrawer.this);
-//        myBroadcastReceiver = new MyBroadcastReceiver();
-//        if (localBroadcastManager != null && myBroadcastReceiver != null)
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(myBroadcastReceiver, new IntentFilter("android.content.BroadcastReceiver"));
-
     }
 
     @Override
     public void onPause() {
         super.onPause();
-//        localBroadcastManager = LocalBroadcastManager.getInstance(MainDrawer.this);
-//        myBroadcastReceiver = new MyBroadcastReceiver();
-//        if (localBroadcastManager != null && myBroadcastReceiver != null)
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(myBroadcastReceiver);
-
     }
 
     @Override

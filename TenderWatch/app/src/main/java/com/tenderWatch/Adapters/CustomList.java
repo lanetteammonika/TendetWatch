@@ -20,14 +20,15 @@ import com.tenderWatch.R;
 import java.util.ArrayList;
 import java.util.Locale;
 
-public class CustomList extends BaseAdapter{
+public class CustomList extends BaseAdapter {
     private Context context;
     private ArrayList<String> countryNameList;
     private ArrayList<String> originalItem;
     private ArrayList<String> item;
-    public CustomList(Context context,ArrayList<String> countryNameList){
-        this.context=context;
-        this.countryNameList=countryNameList;
+
+    public CustomList(Context context, ArrayList<String> countryNameList) {
+        this.context = context;
+        this.countryNameList = countryNameList;
     }
 
     @Override
@@ -51,8 +52,8 @@ public class CustomList extends BaseAdapter{
 
         convertView = inflater.inflate(R.layout.country_name, parent, false);
 
-        TextView txtCountryName=(TextView) convertView.findViewById(R.id.name);
-        ImageView flag_img=(ImageView) convertView.findViewById(R.id.flag_img);
+        TextView txtCountryName = (TextView) convertView.findViewById(R.id.name);
+        ImageView flag_img = (ImageView) convertView.findViewById(R.id.flag_img);
 
         txtCountryName.setText(countryNameList.get(position).split("~")[0]);
 
@@ -61,6 +62,7 @@ public class CustomList extends BaseAdapter{
 
         return convertView;
     }
+
     public Bitmap StringToBitMap(String encodedString) {
         try {
             byte[] encodeByte = Base64.decode(encodedString, Base64.DEFAULT);
@@ -71,10 +73,12 @@ public class CustomList extends BaseAdapter{
             return null;
         }
     }
+
     public void setItemSelected(int pos) {
-        String l=countryNameList.get(pos);
+        String l = countryNameList.get(pos);
         notifyDataSetChanged();
     }
+
     public Filter getFilter() {
         Filter filter = new Filter() {
 
