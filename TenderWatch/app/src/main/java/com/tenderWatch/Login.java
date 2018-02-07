@@ -9,7 +9,9 @@ import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
+import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -66,7 +68,9 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
     private SignInButton btnSignIn;
     private Button btnSignOut, btnRevokeAccess, btngoogle, btnlogin;
     private LinearLayout back;
-    private ImageView imgProfilePic;
+    private ImageView showPassword,hidePassword;
+    private boolean showPass=false;
+
     private Api mAPIService;
     String newString;
     SharedPreference sp = new SharedPreference();
@@ -109,6 +113,8 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
         lblCreateAccount = (TextView) findViewById(R.id.create_account);
         back = (LinearLayout) findViewById(R.id.login_toolbar);
         lblForgotPassword = (TextView) findViewById(R.id.lbl_forgotPassword);
+        showPassword=(ImageView) findViewById(R.id.show_password);
+        hidePassword=(ImageView) findViewById(R.id.hide_password);
     }
 
     private void InitListener() {
@@ -150,6 +156,8 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
         btngoogle.setOnClickListener(this);
         btnlogin.setOnClickListener(this);
         lblCreateAccount.setOnClickListener(this);
+        showPassword.setOnClickListener(this);
+        hidePassword.setOnClickListener(this);
         back.setOnClickListener(this);
         lblForgotPassword.setOnClickListener(this);
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -179,10 +187,8 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
                 savePostFB(accessToken, role, deviceId);
                 if (AccessToken.getCurrentAccessToken() != null) {
                     Log.v("User is login", "YES");
-
                 }
                 sp.setPreferences(getApplicationContext(), "Login", "FBYES");
-
             }
 
             @Override
@@ -326,10 +332,10 @@ if(cr.isConnected(Login.this)){
                     sp.setPreferencesObject(Login.this,response.body().getUser());
                     Object user=sp.getPreferencesObject(Login.this);
                     String role = sp.getPreferences(Login.this, "role");
-                    String profile=response.body().getUser().getProfilePhoto().toString();
-                    String email=response.body().getUser().getEmail().toString();
-                    String id=response.body().getUser().getId().toString();
-                    String token=response.body().getToken().toString();
+                    String profile=response.body().getUser().getProfilePhoto();
+                    String email=response.body().getUser().getEmail();
+                    String id=response.body().getUser().getId();
+                    String token=response.body().getToken();
                     sp.setPreferences(Login.this,"profile",profile);
                     sp.setPreferences(Login.this,"email",email);
                     sp.setPreferences(Login.this,"id",id);
@@ -432,6 +438,28 @@ if(cr.isConnected(Login.this)){
                 intent = new Intent(Login.this, MainActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter, R.anim.exit);
+                break;
+            case R.id.show_password:
+                showPassword.setVisibility(View.GONE);
+                hidePassword.setVisibility(View.VISIBLE);
+                if (!showPass) {
+                    txtPassword.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                    showPass = true;
+                } else {
+                    txtPassword.setInputType(129);
+                    showPass = false;
+                }
+                break;
+            case R.id.hide_password:
+                hidePassword.setVisibility(View.GONE);
+                showPassword.setVisibility(View.VISIBLE);
+                if (!showPass) {
+                    txtPassword.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                    showPass = true;
+                } else {
+                    txtPassword.setInputType(129);
+                    showPass = false;
+                }
                 break;
         }
     }

@@ -15,6 +15,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Base64;
 import android.util.Log;
@@ -99,7 +100,11 @@ public class SignUpSelection extends AppCompatActivity implements View.OnClickLi
     private Api mAPIService;
     String newString, profilePicUrl;
     Bitmap main;
-    ConnectivityReceiver cr =new ConnectivityReceiver();
+    ConnectivityReceiver cr = new ConnectivityReceiver();
+
+    private ImageView showPassword, hidePassword, showConPassword, hideConPassword;
+    private boolean showPass = false, showConPass = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -126,6 +131,10 @@ public class SignUpSelection extends AppCompatActivity implements View.OnClickLi
         btngoogle.setOnClickListener(this);
         signUp.setOnClickListener(this);
         back.setOnClickListener(this);
+        showConPassword.setOnClickListener(this);
+        hideConPassword.setOnClickListener(this);
+        showPassword.setOnClickListener(this);
+        hidePassword.setOnClickListener(this);
 
         txtEmail.addTextChangedListener(new TextWatcher() {
             @Override
@@ -159,6 +168,7 @@ public class SignUpSelection extends AppCompatActivity implements View.OnClickLi
             public void afterTextChanged(Editable s) {
                 Validation.isPassword(txtPassword, true);
                 Log.i(TAG, "post submitted to API." + Validation.isValidPassword(txtPassword.getText().toString()));
+
             }
         });
 
@@ -195,95 +205,95 @@ public class SignUpSelection extends AppCompatActivity implements View.OnClickLi
         btnSignIn.setScopes(gso.getScopeArray());
         fb.setOnClickListener(this);
         loginButton.setReadPermissions("email");
-        if(cr.isConnected(SignUpSelection.this)){
-        loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+        if (cr.isConnected(SignUpSelection.this)) {
+            loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
 
-            @Override
-            public void onSuccess(LoginResult loginResult) {
-                Log.d(TAG, String.valueOf(loginResult));
+                @Override
+                public void onSuccess(LoginResult loginResult) {
+                    Log.d(TAG, String.valueOf(loginResult));
 
-                final SharedPreference sp = new SharedPreference();
+                    final SharedPreference sp = new SharedPreference();
 
-                String accessToken = loginResult.getAccessToken().getToken();
-                GraphRequest request = GraphRequest.newMeRequest(
-                        loginResult.getAccessToken(),
-                        new GraphRequest.GraphJSONObjectCallback() {
+                    String accessToken = loginResult.getAccessToken().getToken();
+                    GraphRequest request = GraphRequest.newMeRequest(
+                            loginResult.getAccessToken(),
+                            new GraphRequest.GraphJSONObjectCallback() {
 
-                            @Override
-                            public void onCompleted(JSONObject object, GraphResponse response) {
-                                Log.v("Main", response.toString());
-                                try {
-                                    if(object.has("email")) {
-                                        Log.i(TAG, object.getString("email"));
-                                        JSONObject data = response.getJSONObject();
-                                        if (data.has("picture")) {
-                                            profilePicUrl = data.getJSONObject("picture").getJSONObject("data").getString("url");
-                                            String src = profilePicUrl.toString();
-                                            URL url = new URL(profilePicUrl);
-                                            if(object.getString("email").equals("")) {
-                                                txtEmail.setText(object.getString("email"));
-                                                Picasso.with(SignUpSelection.this)
-                                                        .load(profilePicUrl)
-                                                        .into(new Target() {
-                                                            @Override
-                                                            public void onBitmapLoaded(final Bitmap bitmap, Picasso.LoadedFrom from) {
-                                                                Log.v("Main", String.valueOf(bitmap));
-                                                                main = bitmap;
-                                                                Picasso.with(SignUpSelection.this).load(profilePicUrl).into(target);
-                                                            }
+                                @Override
+                                public void onCompleted(JSONObject object, GraphResponse response) {
+                                    Log.v("Main", response.toString());
+                                    try {
+                                        if (object.has("email")) {
+                                            Log.i(TAG, object.getString("email"));
+                                            JSONObject data = response.getJSONObject();
+                                            if (data.has("picture")) {
+                                                profilePicUrl = data.getJSONObject("picture").getJSONObject("data").getString("url");
+                                                String src = profilePicUrl.toString();
+                                                URL url = new URL(profilePicUrl);
+                                                if (object.getString("email").equals("")) {
+                                                    txtEmail.setText(object.getString("email"));
+                                                    Picasso.with(SignUpSelection.this)
+                                                            .load(profilePicUrl)
+                                                            .into(new Target() {
+                                                                @Override
+                                                                public void onBitmapLoaded(final Bitmap bitmap, Picasso.LoadedFrom from) {
+                                                                    Log.v("Main", String.valueOf(bitmap));
+                                                                    main = bitmap;
+                                                                    Picasso.with(SignUpSelection.this).load(profilePicUrl).into(target);
+                                                                }
 
-                                                            @Override
-                                                            public void onBitmapFailed(Drawable errorDrawable) {
-                                                                Log.v("Main", "errrorrrr");
+                                                                @Override
+                                                                public void onBitmapFailed(Drawable errorDrawable) {
+                                                                    Log.v("Main", "errrorrrr");
 
-                                                            }
+                                                                }
 
-                                                            @Override
-                                                            public void onPrepareLoad(Drawable placeHolderDrawable) {
+                                                                @Override
+                                                                public void onPrepareLoad(Drawable placeHolderDrawable) {
 
-                                                            }
-                                                        });
-                                                Log.i(TAG, profilePicUrl);
-                                            }else{
-                                                sp.ShowDialog(SignUpSelection.this,"You can't able to sign up using facebook.\nplease check your privacy or email verification in your facebook profile");
+                                                                }
+                                                            });
+                                                    Log.i(TAG, profilePicUrl);
+                                                } else {
+                                                    sp.ShowDialog(SignUpSelection.this, "You can't able to sign up using facebook.\nplease check your privacy or email verification in your facebook profile");
+                                                }
+                                            } else {
+                                                sp.ShowDialog(SignUpSelection.this, "You can't able to sign up using facebook.\nplease check your privacy or email verification in your facebook profile");
                                             }
-                                        }else{
-                                            sp.ShowDialog(SignUpSelection.this,"You can't able to sign up using facebook.\nplease check your privacy or email verification in your facebook profile");
+                                        } else {
+                                            sp.ShowDialog(SignUpSelection.this, "We can't access your information from Facebook because of your account privacy.");
                                         }
-                                    }else{
-                                        sp.ShowDialog(SignUpSelection.this,"We can't access your information from Facebook because of your account privacy.");
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
                                     }
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                } catch (IOException e) {
-                                    e.printStackTrace();
                                 }
-                            }
-                        });
-                Bundle parameters = new Bundle();
-                parameters.putString("fields", "id,name,email,gender, birthday,cover,picture.type(large)");
-                request.setParameters(parameters);
-                request.executeAsync();
-                String deviceId = Settings.Secure.getString(getContentResolver(),
-                        Settings.Secure.ANDROID_ID);
-                if (AccessToken.getCurrentAccessToken() != null) {
-                    Log.v("User is login", "YES");
+                            });
+                    Bundle parameters = new Bundle();
+                    parameters.putString("fields", "id,name,email,gender, birthday,cover,picture.type(large)");
+                    request.setParameters(parameters);
+                    request.executeAsync();
+                    String deviceId = Settings.Secure.getString(getContentResolver(),
+                            Settings.Secure.ANDROID_ID);
+                    if (AccessToken.getCurrentAccessToken() != null) {
+                        Log.v("User is login", "YES");
+                    }
+                    sp.setPreferences(getApplicationContext(), "Login", "FBYES");
                 }
-                sp.setPreferences(getApplicationContext(), "Login", "FBYES");
-            }
 
-            @Override
-            public void onCancel() {
-                Log.d(TAG, "onConnectionFailed:");
-            }
+                @Override
+                public void onCancel() {
+                    Log.d(TAG, "onConnectionFailed:");
+                }
 
-            @Override
-            public void onError(FacebookException e) {
-                Log.d(TAG, "onConnectionFailed:");
-            }
-        });
-        }else{
-            sp.ShowDialog(SignUpSelection.this,"Please check your internet connection");
+                @Override
+                public void onError(FacebookException e) {
+                    Log.d(TAG, "onConnectionFailed:");
+                }
+            });
+        } else {
+            sp.ShowDialog(SignUpSelection.this, "Please check your internet connection");
         }
     }
 
@@ -300,6 +310,10 @@ public class SignUpSelection extends AppCompatActivity implements View.OnClickLi
         signUp = (Button) findViewById(R.id.btn_client_signup);
         txtConfirmPassword = (EditText) findViewById(R.id.signup_confirmpassword);
         back = (LinearLayout) findViewById(R.id.client_signup_back);
+        showPassword = (ImageView) findViewById(R.id.show_password);
+        hidePassword = (ImageView) findViewById(R.id.hide_password);
+        showConPassword = (ImageView) findViewById(R.id.show_conPassword);
+        hideConPassword = (ImageView) findViewById(R.id.hide_conPassword);
     }
 
     private void signIn() {
@@ -333,22 +347,6 @@ public class SignUpSelection extends AppCompatActivity implements View.OnClickLi
         }
     }
 
-    private void showProgressDialog() {
-        if (mProgressDialog == null) {
-            mProgressDialog = new ProgressDialog(this);
-            //  mProgressDialog.setMessage(getString(R.string.loading));
-            mProgressDialog.setIndeterminate(true);
-        }
-
-        mProgressDialog.show();
-    }
-
-    private void hideProgressDialog() {
-        if (mProgressDialog != null && mProgressDialog.isShowing()) {
-            mProgressDialog.hide();
-        }
-    }
-
     private boolean checkValidation() {
         boolean ret = true;
 
@@ -361,48 +359,48 @@ public class SignUpSelection extends AppCompatActivity implements View.OnClickLi
     private void handleSignInResult(GoogleSignInResult result) {
         Log.d(TAG, "handleSignInResult:" + result.isSuccess());
         // if(sp.getPreferences(SignUpSelection.this,"Login") == null) {
-        if(cr.isConnected(SignUpSelection.this)){
-        if (result.isSuccess()) {
-            sp.setPreferences(getApplicationContext(), "Login", "GOOGLEYES");
-            GoogleSignInAccount acct = result.getSignInAccount();
-            String personName = acct.getDisplayName();
-            String personGivenName = acct.getGivenName();
-            String personFamilyName = acct.getFamilyName();
-            String personEmail = acct.getEmail();
-            String personId = acct.getId();
-            final Uri personPhoto = acct.getPhotoUrl();
-            txtEmail.setText(personEmail);
+        if (cr.isConnected(SignUpSelection.this)) {
+            if (result.isSuccess()) {
+                sp.setPreferences(getApplicationContext(), "Login", "GOOGLEYES");
+                GoogleSignInAccount acct = result.getSignInAccount();
+                String personName = acct.getDisplayName();
+                String personGivenName = acct.getGivenName();
+                String personFamilyName = acct.getFamilyName();
+                String personEmail = acct.getEmail();
+                String personId = acct.getId();
+                final Uri personPhoto = acct.getPhotoUrl();
+                txtEmail.setText(personEmail);
 
-            String idToken = acct.getIdToken();
-            String deviceId = Settings.Secure.getString(getContentResolver(),
-                    Settings.Secure.ANDROID_ID);
-            Log.d(TAG, "idToken:" + idToken);
-            Picasso.with(SignUpSelection.this)
-                    .load(personPhoto)
-                    .into(new Target() {
-                        @Override
-                        public void onBitmapLoaded(final Bitmap bitmap, Picasso.LoadedFrom from) {
+                String idToken = acct.getIdToken();
+                String deviceId = Settings.Secure.getString(getContentResolver(),
+                        Settings.Secure.ANDROID_ID);
+                Log.d(TAG, "idToken:" + idToken);
+                Picasso.with(SignUpSelection.this)
+                        .load(personPhoto)
+                        .into(new Target() {
+                            @Override
+                            public void onBitmapLoaded(final Bitmap bitmap, Picasso.LoadedFrom from) {
             /* Save the bitmap or do something with it here */
-                            Log.v("Main", String.valueOf(bitmap));
-                            main = bitmap;
-                            Picasso.with(SignUpSelection.this).load(personPhoto).into(target);
-                        }
+                                Log.v("Main", String.valueOf(bitmap));
+                                main = bitmap;
+                                Picasso.with(SignUpSelection.this).load(personPhoto).into(target);
+                            }
 
-                        @Override
-                        public void onBitmapFailed(Drawable errorDrawable) {
-                            Log.v("Main", "errrorrrr");
-                        }
+                            @Override
+                            public void onBitmapFailed(Drawable errorDrawable) {
+                                Log.v("Main", "errrorrrr");
+                            }
 
-                        @Override
-                        public void onPrepareLoad(Drawable placeHolderDrawable) {
+                            @Override
+                            public void onPrepareLoad(Drawable placeHolderDrawable) {
 
-                        }
-                    });
+                            }
+                        });
+            } else {
+                Log.e(TAG, "display name: ");
+            }
         } else {
-            Log.e(TAG, "display name: ");
-        }
-        }else{
-            sp.ShowDialog(SignUpSelection.this,"Please check your internet connection");
+            sp.ShowDialog(SignUpSelection.this, "Please check your internet connection");
         }
         //}
     }
@@ -416,6 +414,7 @@ public class SignUpSelection extends AppCompatActivity implements View.OnClickLi
             handleSignInResult(result);
         }
     }
+
     private void handleSignInResult2(Task<GoogleSignInAccount> completedTask) {
         try {
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
@@ -426,7 +425,7 @@ public class SignUpSelection extends AppCompatActivity implements View.OnClickLi
             // The ApiException status code indicates the detailed failure reason.
             // Please refer to the GoogleSignInStatusCodes class reference for more information.
             Log.w(TAG, "signInResult:failed code=" + e.getStatusCode());
-           // updateUI(null);
+            // updateUI(null);
         }
     }
 
@@ -479,36 +478,80 @@ public class SignUpSelection extends AppCompatActivity implements View.OnClickLi
                     }
                 });
                 break;
+            case R.id.show_password:
+                showPassword.setVisibility(View.GONE);
+                hidePassword.setVisibility(View.VISIBLE);
+                if (!showPass) {
+                    txtPassword.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                    showPass = true;
+                } else {
+                    txtPassword.setInputType(129);
+                    showPass = false;
+                }
+                break;
+            case R.id.hide_password:
+                hidePassword.setVisibility(View.GONE);
+                showPassword.setVisibility(View.VISIBLE);
+                if (!showPass) {
+                    txtPassword.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                    showPass = true;
+                } else {
+                    txtPassword.setInputType(129);
+                    showPass = false;
+                }
+                break;
+            case R.id.show_conPassword:
+                showConPassword.setVisibility(View.GONE);
+                hideConPassword.setVisibility(View.VISIBLE);
+                if (!showConPass) {
+                    txtConfirmPassword.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                    showConPass = true;
+                } else {
+                    txtConfirmPassword.setInputType(129);
+                    showConPass = false;
+                }
+                break;
+            case R.id.hide_conPassword:
+                hideConPassword.setVisibility(View.GONE);
+                showConPassword.setVisibility(View.VISIBLE);
+                if (!showConPass) {
+                    txtConfirmPassword.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                    showConPass = true;
+                } else {
+                    txtConfirmPassword.setInputType(129);
+                    showConPass = false;
+                }
+                break;
         }
     }
 
     public void checkEmail() {
         String email = txtEmail.getText().toString();
         sp.showProgressDialog(SignUpSelection.this);
-if(cr.isConnected(SignUpSelection.this)){
-        mAPIService.checkEmailExit(txtEmail.getText().toString(), sp.getPreferences(getApplicationContext(), "role")).enqueue(new Callback<Message>() {
-            @Override
-            public void onResponse(Call<Message> call, Response<Message> response) {
-                //  if (response.isSuccessful()) {
-                sp.hideProgressDialog();
-                if (response.message().equals("Found")) {
-                     sp.ShowDialog(SignUpSelection.this, "This Email is already used.\n\nPlease use another email to signup in TenderWatch");
-                     txtEmail.setError("change Email");
-                    // break;
-                } else {
-                    signup();
+        if (cr.isConnected(SignUpSelection.this)) {
+            mAPIService.checkEmailExit(txtEmail.getText().toString(), sp.getPreferences(getApplicationContext(), "role")).enqueue(new Callback<Message>() {
+                @Override
+                public void onResponse(Call<Message> call, Response<Message> response) {
+                    //  if (response.isSuccessful()) {
+                    sp.hideProgressDialog();
+                    if (response.message().equals("Found")) {
+                        sp.ShowDialog(SignUpSelection.this, "This Email is already used.\n\nPlease use another email to signup in TenderWatch");
+                        txtEmail.setError("change Email");
+                        // break;
+                    } else {
+                        signup();
+                    }
                 }
-            }
 
-            @Override
-            public void onFailure(Call<Message> call, Throwable t) {
-                String email = txtEmail.getText().toString();
-                sp.ShowDialog(SignUpSelection.this, "Server is down. Come back later!!");
-            }
-        });
-}else{
-    sp.ShowDialog(SignUpSelection.this,"Please check your internet connection");
-}
+                @Override
+                public void onFailure(Call<Message> call, Throwable t) {
+                    String email = txtEmail.getText().toString();
+                    sp.ShowDialog(SignUpSelection.this, "Server is down. Come back later!!");
+                }
+            });
+        } else {
+            sp.ShowDialog(SignUpSelection.this, "Please check your internet connection");
+        }
     }
 
     private void signup() {
