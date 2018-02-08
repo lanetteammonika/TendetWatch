@@ -133,7 +133,7 @@ public class TenderListAdapter extends BaseAdapter {
         long hours = minutes / 60;
         long days = (hours / 24) + 1;
 
-        if (days == 0 || days < 0) {
+        if (days == 0 || days < 0 || !tenderList.get(position).getIsActive()) {
             stampRemove.setVisibility(View.VISIBLE);
             txtTenderExpDate.setText("Expired");
         } else {

@@ -74,7 +74,7 @@ public class BankList extends AppCompatActivity {
     ArrayList<GetCountry> gc = new ArrayList<>();
     String coCurrency, coCode, accName, accType, routingNum, accNum;
     EditText txtAccNum, txtAccName, txtRountngNum;
-    RequestPayment rp=new RequestPayment();
+    RequestPayment rp = new RequestPayment();
     CreateUser user = new CreateUser();
     ConnectivityReceiver cr = new ConnectivityReceiver();
     private MyBroadcastReceiver myBroadcastReceiver;
@@ -112,7 +112,7 @@ public class BankList extends AppCompatActivity {
                 int payment = Integer.parseInt(sp.getPreferences(BankList.this, "payment")) * 100;
                 rc.setSource(b_id);
                 rc.setAmount(payment);
-                if(cr.isConnected(BankList.this)) {
+                if (cr.isConnected(BankList.this)) {
                     mAPIService.payCharges(token, rc).enqueue(new Callback<ResponseBody>() {
                         @Override
                         public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -127,8 +127,8 @@ public class BankList extends AppCompatActivity {
                             Log.i(TAG, "response register-->");
                         }
                     });
-                }else{
-                    sp.ShowDialog(BankList.this,"Please check your internet connection.");
+                } else {
+                    sp.ShowDialog(BankList.this, "Please check your internet connection.");
                 }
             }
         });
@@ -158,33 +158,33 @@ public class BankList extends AppCompatActivity {
     }
 
     private void CallUpdateServices() {
-        String token="Bearer " +sp.getPreferences(BankList.this,"token");
+        String token = "Bearer " + sp.getPreferences(BankList.this, "token");
 
-        int payment2= Integer.parseInt(sp.getPreferences(BankList.this,"payment"));
+        int payment2 = Integer.parseInt(sp.getPreferences(BankList.this, "payment"));
         rp.setPayment(payment2);
         String subscribe2;
-        if(payment2==15){
-            subscribe2="2";
-        }else {
-            subscribe2="0";
+        if (payment2 == 15) {
+            subscribe2 = "2";
+        } else {
+            subscribe2 = "0";
         }
         rp.setSubscribe(subscribe2);
         rp.setSelections(user.getSubscribe());
-        if(cr.isConnected(BankList.this)){
-        mAPIService.updateService(token,rp).enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                Log.i(TAG, "response register-->");
-                ShowMsg(BankList.this, "Payment Successfull ");
-            }
+        if (cr.isConnected(BankList.this)) {
+            mAPIService.updateService(token, rp).enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    Log.i(TAG, "response register-->");
+                    ShowMsg(BankList.this, "Payment Successfull ");
+                }
 
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Log.i(TAG, "response register-->");
-            }
-        });
-        }else{
-            sp.ShowDialog(BankList.this,"Please check your internet connection.");
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    Log.i(TAG, "response register-->");
+                }
+            });
+        } else {
+            sp.ShowDialog(BankList.this, "Please check your internet connection.");
         }
     }
 
@@ -201,22 +201,22 @@ public class BankList extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int id) {
                 String token = "Bearer " + sp.getPreferences(BankList.this, "token");
                 String tenderid = String.valueOf(adapter.bankList.get(0).getId());
-                if(cr.isConnected(BankList.this)){
-                mAPIService.deleteBank(token, tenderid).enqueue(new Callback<ResponseBody>() {
-                    @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                        sp.hideProgressDialog();
-                        Log.i(TAG, "response---" + response);
-                        GetBankList();
-                    }
+                if (cr.isConnected(BankList.this)) {
+                    mAPIService.deleteBank(token, tenderid).enqueue(new Callback<ResponseBody>() {
+                        @Override
+                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                            sp.hideProgressDialog();
+                            Log.i(TAG, "response---" + response);
+                            GetBankList();
+                        }
 
-                    @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-                        Log.i(TAG, "response---" + t);
-                    }
-                });
-                }else{
-                    sp.ShowDialog(BankList.this,"Please check your internet connection");
+                        @Override
+                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+                            Log.i(TAG, "response---" + t);
+                        }
+                    });
+                } else {
+                    sp.ShowDialog(BankList.this, "Please check your internet connection");
                 }
             }
         });
@@ -233,25 +233,25 @@ public class BankList extends AppCompatActivity {
 
     private void GetBankList() {
 //        sp.showProgressDialog(getApplicationContext());
-        if( sp.getPreferences(BankList.this, "token")!=null) {
+        if (sp.getPreferences(BankList.this, "token") != null) {
             String token = "Bearer " + sp.getPreferences(BankList.this, "token");
-            if(cr.isConnected(BankList.this)){
-            mAPIService.getBankList(token).enqueue(new Callback<ResponseBankList>() {
-                @Override
-                public void onResponse(Call<ResponseBankList> call, Response<ResponseBankList> response) {
-                    Log.i(TAG, "response register-->");
-                    adapter = new BankListAdapter(getApplicationContext(), (ArrayList<Datum>) response.body().getData());
-                    bank.setAdapter(adapter);
-                    sp.hideProgressDialog();
-                }
+            if (cr.isConnected(BankList.this)) {
+                mAPIService.getBankList(token).enqueue(new Callback<ResponseBankList>() {
+                    @Override
+                    public void onResponse(Call<ResponseBankList> call, Response<ResponseBankList> response) {
+                        Log.i(TAG, "response register-->");
+                        adapter = new BankListAdapter(getApplicationContext(), (ArrayList<Datum>) response.body().getData());
+                        bank.setAdapter(adapter);
+                        sp.hideProgressDialog();
+                    }
 
-                @Override
-                public void onFailure(Call<ResponseBankList> call, Throwable t) {
-                    Log.i(TAG, "response register-->");
-                }
-            });
-            }else{
-                sp.ShowDialog(BankList.this,"Please check your internet connection.");
+                    @Override
+                    public void onFailure(Call<ResponseBankList> call, Throwable t) {
+                        Log.i(TAG, "response register-->");
+                    }
+                });
+            } else {
+                sp.ShowDialog(BankList.this, "Please check your internet connection.");
             }
         }
     }
@@ -293,23 +293,23 @@ public class BankList extends AppCompatActivity {
                 accName = txtAccName.getText().toString();
                 routingNum = txtRountngNum.getText().toString();
                 accNum = txtAccNum.getText().toString();
-                if(cr.isConnected(BankList.this)){
-                mAPIService.createAcc(token, coCode, coCurrency, accName, accType, routingNum, accNum).enqueue(new Callback<ResponseBody>() {
-                    @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                        Log.i(TAG, "response register-->");
-                        sp.ShowDialog(BankList.this,"Your Bank Account created Successfully");
-                        GetBankList();
-                        dialog.dismiss();
-                    }
+                if (cr.isConnected(BankList.this)) {
+                    mAPIService.createAcc(token, coCode, coCurrency, accName, accType, routingNum, accNum).enqueue(new Callback<ResponseBody>() {
+                        @Override
+                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                            Log.i(TAG, "response register-->");
+                            sp.ShowDialog(BankList.this, "Your Bank Account created Successfully");
+                            GetBankList();
+                            dialog.dismiss();
+                        }
 
-                    @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-                        Log.i(TAG, "response register-->");
-                    }
-                });
-                }else{
-                    sp.ShowDialog(BankList.this,"Please check your internet connection.");
+                        @Override
+                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+                            Log.i(TAG, "response register-->");
+                        }
+                    });
+                } else {
+                    sp.ShowDialog(BankList.this, "Please check your internet connection.");
                 }
             }
         });
@@ -386,8 +386,9 @@ public class BankList extends AppCompatActivity {
         });
         dialog.show();
     }
+
     private void GetAllCountry() {
-        if(cr.isConnected(BankList.this)){
+        if (cr.isConnected(BankList.this)) {
             mAPIService.getCountryData().enqueue(new Callback<ArrayList<GetCountry>>() {
                 @Override
                 public void onResponse(Call<ArrayList<GetCountry>> call, Response<ArrayList<GetCountry>> response) {
@@ -396,7 +397,7 @@ public class BankList extends AppCompatActivity {
                     alpha.clear();
                     gc = response.body();
                     for (int i = 0; i < Data.size(); i++) {
-                        alpha.add(response.body().get(i).getCountryName() + "~" + response.body().get(i).getCountryCode() + "~" + response.body().get(i).getId()+"~" + response.body().get(i).getImageString()+ "~" + response.body().get(i).getIsoCode() + "~" + response.body().get(i).getIsoCurrencyCode());
+                        alpha.add(response.body().get(i).getCountryName() + "~" + response.body().get(i).getCountryCode() + "~" + response.body().get(i).getId() + "~" + response.body().get(i).getImageString() + "~" + response.body().get(i).getIsoCode() + "~" + response.body().get(i).getIsoCurrencyCode());
                         countryName.add(response.body().get(i).getCountryName().toString() + "~" + response.body().get(i).getCountryCode().toString() + "~" + response.body().get(i).getId() + "~" + response.body().get(i).getIsoCode() + "~" + response.body().get(i).getIsoCurrencyCode());
                     }
                     Collections.sort(alpha);
@@ -410,10 +411,11 @@ public class BankList extends AppCompatActivity {
 
                 }
             });
-        }else{
-            sp.ShowDialog(BankList.this,"Please check your internet connection.");
+        } else {
+            sp.ShowDialog(BankList.this, "Please check your internet connection.");
         }
     }
+
     @Override
     protected void onResume() {
         super.onResume();

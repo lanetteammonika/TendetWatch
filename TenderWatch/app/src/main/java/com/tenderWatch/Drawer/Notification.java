@@ -188,6 +188,9 @@ if(cr.isConnected(getActivity())){
     @Override
     public void onResume() {
         super.onResume();
+        if (adapter != null) {
+           GetNotification();
+        }
 //        localBroadcastManager = LocalBroadcastManager.getInstance(MainDrawer.this);
 //        myBroadcastReceiver = new MyBroadcastReceiver();
 //        if (localBroadcastManager != null && myBroadcastReceiver != null)

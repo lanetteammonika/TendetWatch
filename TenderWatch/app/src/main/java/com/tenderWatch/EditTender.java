@@ -86,14 +86,14 @@ public class EditTender extends AppCompatActivity {
     private List Data, Data2;
     CustomList countryAdapter, categoryAdapter;
     ListView spinner, spinner2;
-    ImageView down_arrow, up_arrow, down_arrow2, up_arrow2, down_arrow3, up_arrow3,tenderImage;
+    ImageView down_arrow, up_arrow, down_arrow2, up_arrow2, down_arrow3, up_arrow3, tenderImage;
     LinearLayout country_home, category_home;
     TextView country, category;
-    String countryCode, categoryname, countryname,Conid1,Catid1, follow = "",id;
+    String countryCode, categoryname, countryname, Conid1, Catid1, follow = "", id;
     SharedPreference sp = new SharedPreference();
     MyScrollView scrollView;
-    MultipartBody.Part name1, id1, email1, countryId1,image1, categoryId1, landlineNo1, contactNo1, city1, description1, address1, isFollowTendeer1, tenderPhono1;
-    EditText city,title,description;
+    MultipartBody.Part name1, id1, email1, countryId1, image1, categoryId1, landlineNo1, contactNo1, city1, description1, address1, isFollowTendeer1, tenderPhono1;
+    EditText city, title, description;
     Button btnUploadTender;
     private Uri mPictureUri;
     private static final int PICTURE_WIDTH = 1100;
@@ -108,7 +108,7 @@ public class EditTender extends AppCompatActivity {
     ConnectivityReceiver cr = new ConnectivityReceiver();
     GetTenderDetail object;
     private MyBroadcastReceiver myBroadcastReceiver;
-    RelativeLayout sel_cat,sel_con,sel_detail;
+    RelativeLayout sel_cat, sel_con, sel_detail;
 
 
     @Override
@@ -126,20 +126,20 @@ public class EditTender extends AppCompatActivity {
         fcountryName.clear();
         falpha2.clear();
         fcategoryName.clear();
-        countryAdapter=null;
-        categoryAdapter=null;
-        myBroadcastReceiver=new MyBroadcastReceiver();
-        mApiService= ApiUtils.getAPIService();
+        countryAdapter = null;
+        categoryAdapter = null;
+        myBroadcastReceiver = new MyBroadcastReceiver();
+        mApiService = ApiUtils.getAPIService();
         spinner = (ListView) findViewById(R.id.spinner);
         spinner2 = (ListView) findViewById(R.id.spinner3);
-        sel_con=(RelativeLayout) findViewById(R.id.rlcon_select);
-        sel_cat=(RelativeLayout) findViewById(R.id.rlcat_select);
-        sel_detail=(RelativeLayout) findViewById(R.id.sel_cli_detail);
-        city=(EditText) findViewById(R.id.home_city);
-        title=(EditText) findViewById(R.id.home_title);
-        description=(EditText) findViewById(R.id.home_address);
+        sel_con = (RelativeLayout) findViewById(R.id.rlcon_select);
+        sel_cat = (RelativeLayout) findViewById(R.id.rlcat_select);
+        sel_detail = (RelativeLayout) findViewById(R.id.sel_cli_detail);
+        city = (EditText) findViewById(R.id.home_city);
+        title = (EditText) findViewById(R.id.home_title);
+        description = (EditText) findViewById(R.id.home_address);
 
-        btnUploadTender=(Button) findViewById(R.id.btn_uploadTender);
+        btnUploadTender = (Button) findViewById(R.id.btn_uploadTender);
 
         down_arrow = (ImageView) findViewById(R.id.down_arrow);
         up_arrow = (ImageView) findViewById(R.id.up_arrow);
@@ -162,7 +162,7 @@ public class EditTender extends AppCompatActivity {
             public void onResponse(Call<GetTenderDetail> call, Response<GetTenderDetail> response) {
                 Log.v(TAG, String.valueOf(response.body()));
                 object = response.body();
-               SetView();
+                SetView();
             }
 
             @Override
@@ -170,9 +170,6 @@ public class EditTender extends AppCompatActivity {
                 Log.v(TAG, String.valueOf(t));
             }
         });
-
-
-
 
 
     }
@@ -183,8 +180,8 @@ public class EditTender extends AppCompatActivity {
         city.setText(object.getCity());
         title.setText(object.getTenderName());
         description.setText(object.getDescription());
-        Conid1=object.getCountry().getId();
-        Catid1=object.getCategory().getId();
+        Conid1 = object.getCountry().getId();
+        Catid1 = object.getCategory().getId();
 
         sel_detail.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("NewApi")
@@ -202,38 +199,38 @@ public class EditTender extends AppCompatActivity {
                     final EditText address = (EditText) dialog.findViewById(R.id.contact_address);
                     final ImageView box = (ImageView) dialog.findViewById(R.id.home_box);
                     final ImageView boxright = (ImageView) dialog.findViewById(R.id.home_box_checked);
-                    final TextView code=(TextView) dialog.findViewById(R.id.contact_code);
+                    final TextView code = (TextView) dialog.findViewById(R.id.contact_code);
 
-                    if(object.getContactNo().equals("")){
+                    if (object.getContactNo().equals("")) {
                         mobile.setText("");
-                    }else{
+                    } else {
                         mobile.setText(object.getContactNo());
                     }
 
-                    if(object.getLandlineNo().equals("")){
+                    if (object.getLandlineNo().equals("")) {
                         landline.setText("");
-                    }else{
+                    } else {
                         landline.setText(object.getLandlineNo());
                     }
 
-                    if(object.getEmail().equals("")){
+                    if (object.getEmail().equals("")) {
                         email2.setText("");
-                    }else{
+                    } else {
                         email2.setText(object.getEmail());
                     }
 
-                    if(object.getAddress().equals("")){
+                    if (object.getAddress().equals("")) {
                         address.setText("");
-                    }else{
+                    } else {
                         address.setText(object.getAddress());
                     }
 
-                    if(object.getIsFollowTender()){
+                    if (object.getIsFollowTender()) {
                         boxright.setVisibility(View.VISIBLE);
                         box.setVisibility(View.GONE);
                         dismissButton.setAlpha((float) 1);
                         follow = "true";
-                    }else{
+                    } else {
                         boxright.setVisibility(View.GONE);
                         box.setVisibility(View.VISIBLE);
                         dismissButton.setAlpha((float) 0.7);
@@ -267,7 +264,7 @@ public class EditTender extends AppCompatActivity {
                         @Override
                         public boolean onKey(View v, int keyCode, KeyEvent event) {
                             //You can identify which key pressed buy checking keyCode value with KeyEvent.KEYCODE_
-                            if(keyCode == KeyEvent.KEYCODE_DEL) {
+                            if (keyCode == KeyEvent.KEYCODE_DEL) {
                                 code.setText("+" + countryCode + "-");
                             }
                             return false;
@@ -286,7 +283,7 @@ public class EditTender extends AppCompatActivity {
 
                         @Override
                         public void afterTextChanged(Editable s) {
-                            Validation.isEmailAddress(email2,true);
+                            Validation.isEmailAddress(email2, true);
 
                         }
                     });
@@ -303,7 +300,7 @@ public class EditTender extends AppCompatActivity {
 
                         @Override
                         public void afterTextChanged(Editable s) {
-                            Validation.isPhoneNumber(mobile,true);
+                            Validation.isPhoneNumber(mobile, true);
 
                         }
                     });
@@ -312,24 +309,22 @@ public class EditTender extends AppCompatActivity {
                         @Override
                         public void onClick(View v) {
 
-                                //submit
-                                if (email2.getText().toString().equals("") && mobile.getText().toString().equals("") && address.getText().toString().equals("") && landline.getText().toString().equals("") && follow.equals("")) {
-                                    sp.ShowDialog(EditTender.this, "please fill at least one information");
-                                } else {
+                            //submit
+                            if (email2.getText().toString().equals("") && mobile.getText().toString().equals("") && address.getText().toString().equals("") && landline.getText().toString().equals("") && follow.equals("")) {
+                                sp.ShowDialog(EditTender.this, "please fill at least one information");
+                            } else {
 
-                                    String e = email2.getText().toString() != "" ? email2.getText().toString() : "";
-                                    String m = mobile.getText().toString() != "" ? mobile.getText().toString() : "";
-                                    String l = landline.getText().toString() != "" ? landline.getText().toString() : "";
-                                    String a = address.getText().toString() != "" ? address.getText().toString() : "";
+                                String e = email2.getText().toString() != "" ? email2.getText().toString() : "";
+                                String m = mobile.getText().toString() != "" ? mobile.getText().toString() : "";
+                                String l = landline.getText().toString() != "" ? landline.getText().toString() : "";
+                                String a = address.getText().toString() != "" ? address.getText().toString() : "";
 
-                                    email1 = MultipartBody.Part.createFormData("email", e);
-                                    contactNo1 = MultipartBody.Part.createFormData("contactNo", m);
-                                    landlineNo1 = MultipartBody.Part.createFormData("landlineNo", l);
-                                    address1 = MultipartBody.Part.createFormData("address", a);
-                                    dialog.dismiss();
-                                }
-
-
+                                email1 = MultipartBody.Part.createFormData("email", e);
+                                contactNo1 = MultipartBody.Part.createFormData("contactNo", m);
+                                landlineNo1 = MultipartBody.Part.createFormData("landlineNo", l);
+                                address1 = MultipartBody.Part.createFormData("address", a);
+                                dialog.dismiss();
+                            }
 
 
                         }
@@ -406,7 +401,7 @@ public class EditTender extends AppCompatActivity {
             }
         });
 
-        if(!object.getTenderPhoto().equals("")){
+        if (!object.getTenderPhoto().equals("")) {
             Picasso.with(EditTender.this)
                     .load(object.getTenderPhoto())
                     .into(new Target() {
@@ -503,6 +498,7 @@ public class EditTender extends AppCompatActivity {
 
         return picture;
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -588,14 +584,14 @@ public class EditTender extends AppCompatActivity {
 
     private void GetCategory() {
         sp.showProgressDialog(EditTender.this);
-        if(cr.isConnected(EditTender.this)){
+        if (cr.isConnected(EditTender.this)) {
             mApiService.getCategoryData().enqueue(new Callback<ArrayList<GetCategory>>() {
                 @Override
                 public void onResponse(Call<ArrayList<GetCategory>> call, Response<ArrayList<GetCategory>> response) {
                     Data2 = response.body();
                     sp.hideProgressDialog();
                     for (int i = 0; i < Data2.size(); i++) {
-                        alpha2.add(response.body().get(i).getCategoryName() + "~" + response.body().get(i).getId()+"~" +"dfsf~"+ response.body().get(i).getImgString());
+                        alpha2.add(response.body().get(i).getCategoryName() + "~" + response.body().get(i).getId() + "~" + "dfsf~" + response.body().get(i).getImgString());
                         categoryName.add(response.body().get(i).getCategoryName().toString() + "~" + response.body().get(i).getId().toString());
                     }
                     categoryAdapter = new CustomList(EditTender.this, alpha2);
@@ -607,21 +603,21 @@ public class EditTender extends AppCompatActivity {
 
                 }
             });
-        }else{
-            sp.ShowDialog(EditTender.this,"Please check your internet connection");
+        } else {
+            sp.ShowDialog(EditTender.this, "Please check your internet connection");
         }
     }
 
     private void GetAllCountry() {
         sp.showProgressDialog(EditTender.this);
-        if(cr.isConnected(EditTender.this)){
+        if (cr.isConnected(EditTender.this)) {
             mApiService.getCountryData().enqueue(new Callback<ArrayList<GetCountry>>() {
                 @Override
                 public void onResponse(Call<ArrayList<GetCountry>> call, Response<ArrayList<GetCountry>> response) {
                     sp.hideProgressDialog();
                     Data = response.body();
                     for (int i = 0; i < Data.size(); i++) {
-                        alpha.add(response.body().get(i).getCountryName() + "~" + response.body().get(i).getCountryCode() + "~" + response.body().get(i).getId()+"~" + response.body().get(i).getImageString());
+                        alpha.add(response.body().get(i).getCountryName() + "~" + response.body().get(i).getCountryCode() + "~" + response.body().get(i).getId() + "~" + response.body().get(i).getImageString());
                         countryName.add(response.body().get(i).getCountryName().toString() + "~" + response.body().get(i).getCountryCode().toString() + "~" + response.body().get(i).getId().toString());
                     }
                     Collections.sort(alpha);
@@ -635,54 +631,55 @@ public class EditTender extends AppCompatActivity {
 
                 }
             });
-        }else{
-            sp.ShowDialog(EditTender.this,"Please check your internet connection");
+        } else {
+            sp.ShowDialog(EditTender.this, "Please check your internet connection");
         }
     }
 
 
     private void CallApi() {
-        String City=city.getText().toString();
-        String Title=title.getText().toString();
-        String Des=description.getText().toString();
-        if(City.equals("") || Title.equals("") || Des.equals("")){
-            sp.ShowDialog(EditTender.this,"fill all detail");
-        }else {
-            city1 = MultipartBody.Part.createFormData("city",City);
-            name1=MultipartBody.Part.createFormData("tenderName",Title);
-            description1=MultipartBody.Part.createFormData("description",Des);
+        String City = city.getText().toString();
+        String Title = title.getText().toString();
+        String Des = description.getText().toString();
+        if (City.equals("") || Title.equals("") || Des.equals("")) {
+            sp.ShowDialog(EditTender.this, "fill all detail");
+        } else {
+            city1 = MultipartBody.Part.createFormData("city", City);
+            name1 = MultipartBody.Part.createFormData("tenderName", Title);
+            description1 = MultipartBody.Part.createFormData("description", Des);
         }
-        String token="Bearer " +sp.getPreferences(EditTender.this,"token");
-        id=object.getId().toString();
+        String token = "Bearer " + sp.getPreferences(EditTender.this, "token");
+        id = object.getId().toString();
 
-        if(image1==null) {
+        if (image1 == null) {
             image1 = MultipartBody.Part.createFormData("image", "");
         }
-        if(follow.equals(""))
-            follow="false";
-        isFollowTendeer1=MultipartBody.Part.createFormData("isFollowTender",follow);
+        if (follow.equals(""))
+            follow = "false";
+        isFollowTendeer1 = MultipartBody.Part.createFormData("isFollowTender", follow);
         countryId1 = MultipartBody.Part.createFormData("country", Conid1);
         categoryId1 = MultipartBody.Part.createFormData("category", Catid1);
-        if(cr.isConnected(EditTender.this)){
-            mApiService.updateTender(token,id,email1,name1,city1,description1,contactNo1,landlineNo1,address1,countryId1,categoryId1,isFollowTendeer1,image1)
+        if (cr.isConnected(EditTender.this)) {
+            mApiService.updateTender(token, id, email1, name1, city1, description1, contactNo1, landlineNo1, address1, countryId1, categoryId1, isFollowTendeer1, image1)
                     .enqueue(new Callback<UpdateTender>() {
                         @Override
                         public void onResponse(Call<UpdateTender> call, Response<UpdateTender> response) {
-                            Log.i(TAG,"response---"+response.body());
-                            ShowDialog2(EditTender.this,"Tender Amended Successfully");
-                            Log.i(TAG,"response---"+response.body());
+                            Log.i(TAG, "response---" + response.body());
+                            ShowDialog2(EditTender.this, "Tender Amended Successfully");
+                            Log.i(TAG, "response---" + response.body());
                         }
 
                         @Override
                         public void onFailure(Call<UpdateTender> call, Throwable t) {
-                            Log.i(TAG,"response---"+t);
+                            Log.i(TAG, "response---" + t);
                         }
                     });
-        }else{
-            sp.ShowDialog(EditTender.this,"Please check your internet connection");
+        } else {
+            sp.ShowDialog(EditTender.this, "Please check your internet connection");
         }
     }
-    private void ShowDialog2(Context context, String Msg){
+
+    private void ShowDialog2(Context context, String Msg) {
         AlertDialog.Builder builder = new AlertDialog.Builder(
                 context);
         builder.setTitle("Tender Watch");
@@ -699,11 +696,13 @@ public class EditTender extends AppCompatActivity {
 
         builder.show();
     }
+
     @Override
     public void onBackPressed() {
 
         finish();
     }
+
     @Override
     protected void onResume() {
         super.onResume();

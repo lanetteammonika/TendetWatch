@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+
 import com.braintreepayments.cardform.view.CardForm;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.gson.Gson;
@@ -49,17 +50,17 @@ import retrofit2.Response;
 
 public class CardDemoDesign extends AppCompatActivity {
     Button btnClick;
-    String number,cvc;
-    int expMonth,expYear;
+    String number, cvc;
+    int expMonth, expYear;
     CreateUser user = new CreateUser();
     private static final String TAG = CardDemoDesign.class.getSimpleName();
-    MultipartBody.Part payment,subscribe,select,deviceId2, selections1, email1, password1, country1, deviceType1, subscribe1, contactNo1, occupation1, aboutMe1, role1, deviceId1, image1;
+    MultipartBody.Part payment, subscribe, select, deviceId2, selections1, email1, password1, country1, deviceType1, subscribe1, contactNo1, occupation1, aboutMe1, role1, deviceId1, image1;
     SharedPreference sp = new SharedPreference();
     Intent intent;
     private Api mAPIService;
     String selCon;
-    RequestPayment rp=new RequestPayment();
-    RequestCharges rc=new RequestCharges();
+    RequestPayment rp = new RequestPayment();
+    RequestCharges rc = new RequestCharges();
     ConnectivityReceiver cr = new ConnectivityReceiver();
     private MyBroadcastReceiver myBroadcastReceiver;
 
@@ -68,10 +69,10 @@ public class CardDemoDesign extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_card_demo_design);
-        btnClick=(Button) findViewById(R.id.btnClick);
+        btnClick = (Button) findViewById(R.id.btnClick);
         final CardForm cardForm = (CardForm) findViewById(R.id.card_form);
-        mAPIService= ApiUtils.getAPIService();
-        selCon=getIntent().getStringExtra("selCon");
+        mAPIService = ApiUtils.getAPIService();
+        selCon = getIntent().getStringExtra("selCon");
 
         cardForm.cardRequired(true)
                 .expirationRequired(true)
@@ -81,50 +82,51 @@ public class CardDemoDesign extends AppCompatActivity {
         btnClick.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                number=cardForm.getCardNumber();
-                expMonth= Integer.parseInt(cardForm.getExpirationMonth());
-                expYear= Integer.parseInt(cardForm.getExpirationYear());
-                cvc=cardForm.getCvv();
+                number = cardForm.getCardNumber();
+                expMonth = Integer.parseInt(cardForm.getExpirationMonth());
+                expYear = Integer.parseInt(cardForm.getExpirationYear());
+                cvc = cardForm.getCvv();
                 Call();
             }
         });
-        myBroadcastReceiver=new MyBroadcastReceiver();
+        myBroadcastReceiver = new MyBroadcastReceiver();
 
     }
-    private void Call(){
-        Card card = new Card(number,expMonth,expYear,cvc);
+
+    private void Call() {
+        Card card = new Card(number, expMonth, expYear, cvc);
         final Stripe stripe = new Stripe(CardDemoDesign.this, "pk_test_mjxYxMlj4K2WZfR6TwlHdIXW");
-       if(cr.isConnected(CardDemoDesign.this)){
-        stripe.createToken(
-                card,
-                new TokenCallback() {
-                    public void onError(Exception error) {
-                        Log.e("Stripe Error", error.getMessage());
-                    }
+        if (cr.isConnected(CardDemoDesign.this)) {
+            stripe.createToken(
+                    card,
+                    new TokenCallback() {
+                        public void onError(Exception error) {
+                            Log.e("Stripe Error", error.getMessage());
+                        }
 
-                    @Override
-                    public void onSuccess(com.stripe.android.model.Token token) {
-                        Log.e("Bank Token", token.getId());
-                        AddPaymentFromCard(token.getId());
+                        @Override
+                        public void onSuccess(com.stripe.android.model.Token token) {
+                            Log.e("Bank Token", token.getId());
+                            AddPaymentFromCard(token.getId());
 
-                        token.getBankAccount();
+                            token.getBankAccount();
+                        }
                     }
-                }
-        );
-       }else{
-           sp.ShowDialog(CardDemoDesign.this,"Please check your internet connection");
-       }
+            );
+        } else {
+            sp.ShowDialog(CardDemoDesign.this, "Please check your internet connection");
+        }
 
     }
 
     private void CallUpdateServices() {
-        String token="Bearer " +sp.getPreferences(CardDemoDesign.this,"token");
+        String token = "Bearer " + sp.getPreferences(CardDemoDesign.this, "token");
 
-        int payment=0;
-        User u2= (User) sp.getPreferencesObject(CardDemoDesign.this);
-        if(u2.getSubscribe().equals("2")){
+        int payment = 0;
+        User u2 = (User) sp.getPreferencesObject(CardDemoDesign.this);
+        if (u2.getSubscribe().equals("2")) {
             payment = 15 * 100;
-        }else{
+        } else {
             payment = 120 * 100;
         }
         rp.setPayment(payment);
@@ -132,7 +134,7 @@ public class CardDemoDesign extends AppCompatActivity {
 
         rp.setSubscribe(u2.getSubscribe());
         rp.setSelections(user.getSubscribe());
-        if(cr.isConnected(CardDemoDesign.this)) {
+        if (cr.isConnected(CardDemoDesign.this)) {
             mAPIService.updateService(token, rp).enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -144,41 +146,42 @@ public class CardDemoDesign extends AppCompatActivity {
                     Log.i(TAG, "response register-->");
                 }
             });
-        }else{
-            sp.ShowDialog(CardDemoDesign.this,"Please check your internet connection.");
+        } else {
+            sp.ShowDialog(CardDemoDesign.this, "Please check your internet connection.");
         }
     }
 
     private void AddPaymentFromCard(String source) {
         String token = "Bearer " + sp.getPreferences(CardDemoDesign.this, "token");
-        int payment=0;
-        User u2= (User) sp.getPreferencesObject(CardDemoDesign.this);
-if(u2.getSubscribe().equals("2")){
-    payment = 15 * 100;
-}else{
-    payment = 120 * 100;
-}
+        int payment = 0;
+        User u2 = (User) sp.getPreferencesObject(CardDemoDesign.this);
+        if (u2.getSubscribe().equals("2")) {
+            payment = 15 * 100;
+        } else {
+            payment = 120 * 100;
+        }
         rc.setSource(source);
         rc.setAmount(payment);
-        if(cr.isConnected(CardDemoDesign.this)){
-        mAPIService.payChargesCard(token, rc).enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                Log.i(TAG, "response register-->");
-                CallUpdateServices();
-                ShowMsg(CardDemoDesign.this, "Payment Successfull ");
+        if (cr.isConnected(CardDemoDesign.this)) {
+            mAPIService.payChargesCard(token, rc).enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    Log.i(TAG, "response register-->");
+                    CallUpdateServices();
+                    ShowMsg(CardDemoDesign.this, "Payment Successfull ");
 
-            }
+                }
 
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Log.i(TAG, "response register-->");
-            }
-        });
-        }else{
-            sp.ShowDialog(CardDemoDesign.this,"Please check your internet connection.");
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    Log.i(TAG, "response register-->");
+                }
+            });
+        } else {
+            sp.ShowDialog(CardDemoDesign.this, "Please check your internet connection.");
         }
     }
+
     public void ShowMsg(Context context, String Msg) {
         AlertDialog.Builder builder = new AlertDialog.Builder(
                 context);

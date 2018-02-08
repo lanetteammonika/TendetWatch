@@ -22,6 +22,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import java.text.SimpleDateFormat;
 
 import com.google.gson.Gson;
@@ -63,7 +64,8 @@ public class ContractorTenderDetail extends AppCompatActivity {
     SharedPreference sp = new SharedPreference();
     ConnectivityReceiver cr = new ConnectivityReceiver();
     private MyBroadcastReceiver myBroadcastReceiver;
-    TextView lblClientDetail;User user;
+    TextView lblClientDetail;
+    User user;
     String uId;
 
     @Override
@@ -76,9 +78,9 @@ public class ContractorTenderDetail extends AppCompatActivity {
         setTitle("Tender Detail");
         mApiService = ApiUtils.getAPIService();
         myBroadcastReceiver = new MyBroadcastReceiver();
-        user= (User) sp.getPreferencesObject(ContractorTenderDetail.this);
+        user = (User) sp.getPreferencesObject(ContractorTenderDetail.this);
         String id = getIntent().getStringExtra("id");
-        uId=getIntent().getStringExtra("uid");
+        uId = getIntent().getStringExtra("uid");
         String token = "Bearer " + sp.getPreferences(ContractorTenderDetail.this, "token");
         mApiService.getTender2(token, id).enqueue(new Callback<GetTenderDetail>() {
             @Override
@@ -133,7 +135,7 @@ public class ContractorTenderDetail extends AppCompatActivity {
                 String jsonString = gson.toJson(object.getTenderUploader());
                 Intent intent = new Intent(ContractorTenderDetail.this, ClientDetail.class);
                 intent.putExtra("uid", uId);
-                intent.putExtra("uId",object.getTenderUploader().getId());
+                intent.putExtra("uId", object.getTenderUploader().getId());
                 startActivity(intent);
             }
         });
@@ -247,12 +249,12 @@ public class ContractorTenderDetail extends AppCompatActivity {
     private void CallInterestedApi() {
         String token = "Bearer " + sp.getPreferences(ContractorTenderDetail.this, "token");
         String tenderId = object.getId().toString();
-        if(cr.isConnected(ContractorTenderDetail.this)){
+        if (cr.isConnected(ContractorTenderDetail.this)) {
             mApiService.callInterested(token, tenderId).enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                     Log.i(TAG, "post submitted to API." + response);
-                   ShowDialog2(ContractorTenderDetail.this,"Interested!!!");
+                    ShowDialog2(ContractorTenderDetail.this, "Interested!!!");
 
                 }
 
@@ -261,8 +263,8 @@ public class ContractorTenderDetail extends AppCompatActivity {
                     Log.i(TAG, "post submitted to API." + t);
                 }
             });
-        }else{
-            sp.ShowDialog(ContractorTenderDetail.this,"Please check your internet connection");
+        } else {
+            sp.ShowDialog(ContractorTenderDetail.this, "Please check your internet connection");
         }
     }
 
@@ -279,7 +281,7 @@ public class ContractorTenderDetail extends AppCompatActivity {
                     Log.i(TAG, "response---" + response.body());
                     Intent intent = new Intent(ContractorTenderDetail.this, ClientDrawer.class);
                     startActivity(intent);
-                    ShowDialog2(ContractorTenderDetail.this,"Removed!!!");
+                    ShowDialog2(ContractorTenderDetail.this, "Removed!!!");
 
                 }
 
@@ -294,7 +296,7 @@ public class ContractorTenderDetail extends AppCompatActivity {
         }
     }
 
-    private void ShowDialog2(Context context, String Msg){
+    private void ShowDialog2(Context context, String Msg) {
         AlertDialog.Builder builder = new AlertDialog.Builder(
                 context);
         builder.setTitle("Tender Watch");

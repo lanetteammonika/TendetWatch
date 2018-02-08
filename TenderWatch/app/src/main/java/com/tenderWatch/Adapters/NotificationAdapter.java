@@ -13,11 +13,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.tenderWatch.Models.ResponseNotifications;
+import com.tenderWatch.Models.User;
 import com.tenderWatch.R;
+import com.tenderWatch.SharedPreference.SharedPreference;
 
 import java.util.ArrayList;
 
@@ -32,7 +35,7 @@ public class NotificationAdapter extends BaseAdapter {
     private ArrayList<ResponseNotifications> countryNameList;
     private String test;
     private ArrayList<String> selectedItem = new ArrayList<String>();
-    ;
+    SharedPreference sp=new SharedPreference();
 
     public NotificationAdapter(Context context, ArrayList<ResponseNotifications> countryNameList, String test) {
         this.context = context;
@@ -79,7 +82,7 @@ public class NotificationAdapter extends BaseAdapter {
         CircleImageView flag_img = (CircleImageView) convertView.findViewById(R.id.not_tender_image2);
         final ImageView tick = (ImageView) convertView.findViewById(R.id.round_checked);
         final ImageView tick2 = (ImageView) convertView.findViewById(R.id.round);
-
+        final LinearLayout layout=(LinearLayout) convertView.findViewById(R.id.stamp_remove);
         String s1 = countryNameList.get(position).getMessage().split("\"")[0];
         String s2 = countryNameList.get(position).getMessage().split("\"")[1];
         int y = s2.length();
@@ -92,6 +95,10 @@ public class NotificationAdapter extends BaseAdapter {
         spanText.setSpan(new ForegroundColorSpan(context.getResources().getColor(R.color.colorTender)), x + 1, p, 0);
         txtCountryName.setText(spanText);
         txtTime.setText(countryNameList.get(position).getCreatedAt().split("T")[0]);
+
+if(!countryNameList.get(position).getRead()){
+    layout.setVisibility(View.VISIBLE);
+}
 
         if (!countryNameList.get(position).getSender().getProfilePhoto().equals("no image"))
             Picasso.with(context).load(countryNameList.get(position).getSender().getProfilePhoto()).into(flag_img);

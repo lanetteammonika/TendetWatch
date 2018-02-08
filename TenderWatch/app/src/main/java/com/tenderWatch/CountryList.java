@@ -65,10 +65,10 @@ public class CountryList extends AppCompatActivity {
     SharedPreference sp = new SharedPreference();
     ArrayList<String> a_country = new ArrayList<String>();
     ImageView imgClose;
-    ConnectivityReceiver cr=new ConnectivityReceiver();
+    ConnectivityReceiver cr = new ConnectivityReceiver();
     private MyBroadcastReceiver myBroadcastReceiver;
     int pos = 0;
-    CreateUser user=new CreateUser();
+    CreateUser user = new CreateUser();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,7 +81,7 @@ public class CountryList extends AppCompatActivity {
         back = (LinearLayout) findViewById(R.id.country_toolbar);
         subscription = (LinearLayout) findViewById(R.id.subscription);
         imgClose = (ImageView) findViewById(R.id.img_close);
-myBroadcastReceiver=new MyBroadcastReceiver();
+        myBroadcastReceiver = new MyBroadcastReceiver();
         sideSelector = (SideSelector) findViewById(R.id.side_selector);
         mAPIService = ApiUtils.getAPIService();
         lvCountry.setDivider(null);
@@ -92,10 +92,9 @@ myBroadcastReceiver=new MyBroadcastReceiver();
         check = show.getStringExtra("check");
         s = show.getStringExtra("sub");
         selCon = sp.getPreferences(CountryList.this, "sel_con");
-        if (check == null ) {
+        if (check == null) {
             CallContractorSignUp();
-        }
-        else{
+        } else {
             txtSelectedContract.setText(selCon);
             lltext.setVisibility(View.VISIBLE);
             subscription.setVisibility(View.VISIBLE);
@@ -112,86 +111,86 @@ myBroadcastReceiver=new MyBroadcastReceiver();
             txtSelectedContract.setVisibility(View.GONE);
         }
         sp.showProgressDialog(CountryList.this);
-if(cr.isConnected(CountryList.this)){
-        mAPIService.getCountryData().enqueue(new Callback<ArrayList<GetCountry>>() {
-            @Override
-            public void onResponse(Call<ArrayList<GetCountry>> call, Response<ArrayList<GetCountry>> response) {
-                Log.i("array-------", response.body().get(0).getCountryName().toString());
-                Data = response.body();
-                for (int i = 0; i < Data.size(); i++) {
-                    String name = response.body().get(i).getCountryName().toString();
-                    String flag = response.body().get(i).getImageString().toString();
-                    String countryCode = response.body().get(i).getCountryCode().toString();
-                    String id = response.body().get(i).getId().toString();
-                    alpha.add(name + '~' + id + '~' + countryCode + '`' + flag);
-                }
+        if (cr.isConnected(CountryList.this)) {
+            mAPIService.getCountryData().enqueue(new Callback<ArrayList<GetCountry>>() {
+                @Override
+                public void onResponse(Call<ArrayList<GetCountry>> call, Response<ArrayList<GetCountry>> response) {
+                    Log.i("array-------", response.body().get(0).getCountryName().toString());
+                    Data = response.body();
+                    for (int i = 0; i < Data.size(); i++) {
+                        String name = response.body().get(i).getCountryName().toString();
+                        String flag = response.body().get(i).getImageString().toString();
+                        String countryCode = response.body().get(i).getCountryCode().toString();
+                        String id = response.body().get(i).getId().toString();
+                        alpha.add(name + '~' + id + '~' + countryCode + '`' + flag);
+                    }
 
-                Collections.sort(alpha);
-                for (int i = 0; i < Data.size(); i++) {
-                    String name = alpha.get(i).split("~")[0];
-                    String id = alpha.get(i).split("~")[1].split("~")[0];
-                    String countryCode = alpha.get(i).split("~")[2].split("`")[0];
-                    String flag = alpha.get(i).split("~")[2].split("`")[1];
-                    String value = String.valueOf(name.charAt(0));
-                    if (!list.contains(value)) {
-                        list.add(value);
-                        alphabetS.concat(value);//alphabetlist.append(value);
-                        Log.i("array-------", String.valueOf(list));
-                        alpha2.add(value);
-                        alpha2.add(name);
+                    Collections.sort(alpha);
+                    for (int i = 0; i < Data.size(); i++) {
+                        String name = alpha.get(i).split("~")[0];
+                        String id = alpha.get(i).split("~")[1].split("~")[0];
+                        String countryCode = alpha.get(i).split("~")[2].split("`")[0];
+                        String flag = alpha.get(i).split("~")[2].split("`")[1];
+                        String value = String.valueOf(name.charAt(0));
+                        if (!list.contains(value)) {
+                            list.add(value);
+                            alphabetS.concat(value);//alphabetlist.append(value);
+                            Log.i("array-------", String.valueOf(list));
+                            alpha2.add(value);
+                            alpha2.add(name);
 
-                        //set Country Header (Like:-A,B,C,...)
-                        countryList.add(new SectionItem(value, "", "", "", false));
-                        //set Country Name
-                        countryList.add(new EntryItem(name, flag, countryCode, id, false));
+                            //set Country Header (Like:-A,B,C,...)
+                            countryList.add(new SectionItem(value, "", "", "", false));
+                            //set Country Name
+                            countryList.add(new EntryItem(name, flag, countryCode, id, false));
 
-                        //Log.i("array section-------",alpha.get(n).getTitle());
+                            //Log.i("array section-------",alpha.get(n).getTitle());
 
-                    } else {
-                        alpha2.add(name);
+                        } else {
+                            alpha2.add(name);
 
-                        //set Country Name
-                        countryList.add(new EntryItem(name, flag, countryCode, id, false));
+                            //set Country Name
+                            countryList.add(new EntryItem(name, flag, countryCode, id, false));
+                        }
+                    }
+
+                    alpha.clear();
+                    String str = list.toString().replaceAll(",", "");
+                    char[] chars = str.toCharArray();
+                    Log.i(TAG, "post submitted to API." + chars);
+                    char[] al = new char[27];
+
+                    for (int j = 1, i = 0; j < chars.length; j = j + 2, i++) {
+                        al[i] = chars[j];
+                        Log.i(TAG, "post." + chars[j]);
+                    }
+
+                    Log.i(TAG, "post submitted to API." + al);
+                    SideSelector ss = new SideSelector(getApplicationContext());
+                    ss.setAlphabet(al);
+                    alphabetlist = str.substring(1, str.length() - 1).replaceAll(" ", "").toCharArray();
+                    adapter = new IndexingArrayAdapter(getApplicationContext(), R.id.lvCountry, countryList, alpha2, list, chars);
+                    lvCountry.clearChoices();
+                    lvCountry.setAdapter(adapter);
+                    sp.hideProgressDialog();
+                    lvCountry.clearChoices();
+                    lvCountry.setTextFilterEnabled(true);
+                    if (sideSelector != null)
+                        sideSelector.setListView(lvCountry);
+                    else {
+                        sp.ShowDialog(CountryList.this, response.errorBody().source().toString().split("\"")[3]);
                     }
                 }
 
-                alpha.clear();
-                String str = list.toString().replaceAll(",", "");
-                char[] chars = str.toCharArray();
-                Log.i(TAG, "post submitted to API." + chars);
-                char[] al = new char[27];
-
-                for (int j = 1, i = 0; j < chars.length; j = j + 2, i++) {
-                    al[i] = chars[j];
-                    Log.i(TAG, "post." + chars[j]);
+                @Override
+                public void onFailure(Call<ArrayList<GetCountry>> call, Throwable t) {
+                    sp.ShowDialog(CountryList.this, "Server is down. Come back later!!");
+                    Log.i(TAG, "post submitted to API.");
                 }
-
-                Log.i(TAG, "post submitted to API." + al);
-                SideSelector ss = new SideSelector(getApplicationContext());
-                ss.setAlphabet(al);
-                alphabetlist = str.substring(1, str.length() - 1).replaceAll(" ", "").toCharArray();
-                adapter = new IndexingArrayAdapter(getApplicationContext(), R.id.lvCountry, countryList, alpha2, list, chars);
-                lvCountry.clearChoices();
-                lvCountry.setAdapter(adapter);
-                sp.hideProgressDialog();
-                lvCountry.clearChoices();
-                lvCountry.setTextFilterEnabled(true);
-                if (sideSelector != null)
-                    sideSelector.setListView(lvCountry);
-                else {
-                    sp.ShowDialog(CountryList.this, response.errorBody().source().toString().split("\"")[3]);
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ArrayList<GetCountry>> call, Throwable t) {
-                sp.ShowDialog(CountryList.this, "Server is down. Come back later!!");
-                Log.i(TAG, "post submitted to API.");
-            }
-        });
-}else{
-    sp.ShowDialog(CountryList.this,"Please check your internet connection");
-}
+            });
+        } else {
+            sp.ShowDialog(CountryList.this, "Please check your internet connection");
+        }
         imgClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -289,9 +288,9 @@ if(cr.isConnected(CountryList.this)){
 
                     }
                 } else {
-                    if(check!=null) {
+                    if (check != null) {
                         intent = new Intent(CountryList.this, SignUp.class);
-                    }else {
+                    } else {
                         intent = new Intent(CountryList.this, Category.class);
                     }
                     intent.putExtra("sub", s);
@@ -365,7 +364,7 @@ if(cr.isConnected(CountryList.this)){
             public void onClick(View v) {
                 txtSelectedContract.setText("$15 / month");
                 sp.setPreferences(CountryList.this, "sel_con", "$15 / month");
-                sp.setPreferences(CountryList.this,"payment","15");
+                sp.setPreferences(CountryList.this, "payment", "15");
                 user.setSelections(2);
                 dialog.dismiss();
             }
@@ -375,7 +374,7 @@ if(cr.isConnected(CountryList.this)){
             public void onClick(View v) {
                 txtSelectedContract.setText("$120 / year");
                 sp.setPreferences(CountryList.this, "sel_con", "$120 / year");
-                sp.setPreferences(CountryList.this,"payment","120");
+                sp.setPreferences(CountryList.this, "payment", "120");
                 user.setSelections(3);
 
                 dialog.dismiss();

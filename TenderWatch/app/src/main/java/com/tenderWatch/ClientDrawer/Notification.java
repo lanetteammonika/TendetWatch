@@ -184,6 +184,9 @@ public class Notification extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        if (adapter != null) {
+            GetNotification();
+        }
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(myBroadcastReceiver, new IntentFilter("android.content.BroadcastReceiver"));
     }
 

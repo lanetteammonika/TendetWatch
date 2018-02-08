@@ -48,7 +48,7 @@ public class Agreement extends AppCompatActivity implements View.OnClickListener
     SharedPreference sp = new SharedPreference();
     Intent intent;
     LinearLayout back, webLayout;
-    ConnectivityReceiver cr=new ConnectivityReceiver();
+    ConnectivityReceiver cr = new ConnectivityReceiver();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -181,61 +181,61 @@ public class Agreement extends AppCompatActivity implements View.OnClickListener
         }
         Call<Register> resultCall = mAPIService.uploadImage(email1, password1, country1, contactNo1, occupation1, aboutMe1, role1, deviceId1, image1);
         sp.showProgressDialog(Agreement.this);
-if(cr.isConnected(Agreement.this)) {
-    resultCall.enqueue(new Callback<Register>() {
-        @Override
-        public void onResponse(Call<Register> call, Response<Register> response) {
-            sp.hideProgressDialog();
-            Log.i(TAG, "response register-->");
-            if (response.isSuccessful()) {
-                User u1 = response.body().getUser();
-                sp.setPreferencesObject(Agreement.this, u1);
-                sp.setPreferences(Agreement.this, "token", response.body().getToken());
-                User u2 = (User) sp.getPreferencesObject(Agreement.this);
-                String t = sp.getPreferences(Agreement.this, "token");
-                intent = new Intent(Agreement.this, ClientDrawer.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        if (cr.isConnected(Agreement.this)) {
+            resultCall.enqueue(new Callback<Register>() {
+                @Override
+                public void onResponse(Call<Register> call, Response<Register> response) {
+                    sp.hideProgressDialog();
+                    Log.i(TAG, "response register-->");
+                    if (response.isSuccessful()) {
+                        User u1 = response.body().getUser();
+                        sp.setPreferencesObject(Agreement.this, u1);
+                        sp.setPreferences(Agreement.this, "token", response.body().getToken());
+                        User u2 = (User) sp.getPreferencesObject(Agreement.this);
+                        String t = sp.getPreferences(Agreement.this, "token");
+                        intent = new Intent(Agreement.this, ClientDrawer.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
 
-                startActivity(intent);
-                sp.ShowDialog(Agreement.this, "Successful Registration");
-            } else {
-                sp.ShowDialog(Agreement.this, response.errorBody().source().toString().split("\"")[3]);
-            }
+                        startActivity(intent);
+                        sp.ShowDialog(Agreement.this, "Successful Registration");
+                    } else {
+                        sp.ShowDialog(Agreement.this, response.errorBody().source().toString().split("\"")[3]);
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Register> call, Throwable t) {
+                    Log.i(TAG, "error register-->");
+                    sp.ShowDialog(Agreement.this, "Server is down. Come back later!!");
+
+                }
+            });
+        } else {
+            sp.ShowDialog(Agreement.this, "Please check your internet connection.");
         }
-
-        @Override
-        public void onFailure(Call<Register> call, Throwable t) {
-            Log.i(TAG, "error register-->");
-            sp.ShowDialog(Agreement.this, "Server is down. Come back later!!");
-
-        }
-    });
-}else{
-    sp.ShowDialog(Agreement.this,"Please check your internet connection.");
-}
     }
 
     private void SignUpPost() {
         if (signUp.getAlpha() == 1) {
             if (sp.getPreferences(Agreement.this, "role").equals("contractor")) {
-              if(sp.getPreferences(Agreement.this,"sel_con") !=null){
-                  if(sp.getPreferences(Agreement.this,"sel_con").equals("$15 / month")){
-                      uploadContractor();
-                          intent = new Intent(Agreement.this, PaymentSelection.class);
-                          intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                          startActivity(intent);
+                if (sp.getPreferences(Agreement.this, "sel_con") != null) {
+                    if (sp.getPreferences(Agreement.this, "sel_con").equals("$15 / month")) {
+                        uploadContractor();
+                        intent = new Intent(Agreement.this, PaymentSelection.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
 
-                  }else{
-                      uploadContractor();
+                    } else {
+                        uploadContractor();
 
-                      intent = new Intent(Agreement.this, PaymentSelection.class);
-                      intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                      startActivity(intent);
-                  }
-              }else{
+                        intent = new Intent(Agreement.this, PaymentSelection.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                    }
+                } else {
 
-                  uploadContractor();
-              }
+                    uploadContractor();
+                }
 
             } else {
                 uploadImage();
@@ -247,7 +247,7 @@ if(cr.isConnected(Agreement.this)) {
     private void uploadContractor() {
         final ProgressDialog progressDialog;
         progressDialog = new ProgressDialog(Agreement.this);
-      //  progressDialog.setMessage(getString(R.string.string_title_upload_progressbar_));
+        //  progressDialog.setMessage(getString(R.string.string_title_upload_progressbar_));
         progressDialog.show();
 
         String email = user.getEmail();
@@ -272,17 +272,17 @@ if(cr.isConnected(Agreement.this)) {
             image1 = MultipartBody.Part.createFormData("image", "");
 
         }
-        RequestBody email2 = RequestBody.create(MediaType.parse("text/plain"),email);
-        RequestBody password2 = RequestBody.create(MediaType.parse("text/plain"),email);
-        RequestBody country2 = RequestBody.create(MediaType.parse("text/plain"),email);
-        RequestBody contactNo2 = RequestBody.create(MediaType.parse("text/plain"),email);
-        RequestBody occupation2 = RequestBody.create(MediaType.parse("text/plain"),email);
-        RequestBody aboutMe2 = RequestBody.create(MediaType.parse("text/plain"),email);
-        RequestBody role2 = RequestBody.create(MediaType.parse("text/plain"),email);
-        RequestBody androidDeviceId2 = RequestBody.create(MediaType.parse("text/plain"),email);
+        RequestBody email2 = RequestBody.create(MediaType.parse("text/plain"), email);
+        RequestBody password2 = RequestBody.create(MediaType.parse("text/plain"), email);
+        RequestBody country2 = RequestBody.create(MediaType.parse("text/plain"), email);
+        RequestBody contactNo2 = RequestBody.create(MediaType.parse("text/plain"), email);
+        RequestBody occupation2 = RequestBody.create(MediaType.parse("text/plain"), email);
+        RequestBody aboutMe2 = RequestBody.create(MediaType.parse("text/plain"), email);
+        RequestBody role2 = RequestBody.create(MediaType.parse("text/plain"), email);
+        RequestBody androidDeviceId2 = RequestBody.create(MediaType.parse("text/plain"), email);
 //        RequestBody image2 = RequestBody.create(MediaType.parse("text/plain"),email);
-        RequestBody selections2 = RequestBody.create(MediaType.parse("text/plain"),email);
-        RequestBody subscribe2 = RequestBody.create(MediaType.parse("text/plain"),email);
+        RequestBody selections2 = RequestBody.create(MediaType.parse("text/plain"), email);
+        RequestBody subscribe2 = RequestBody.create(MediaType.parse("text/plain"), email);
 
 
         email1 = MultipartBody.Part.createFormData("email", email);
@@ -299,45 +299,45 @@ if(cr.isConnected(Agreement.this)) {
 
         Call<Register> resultCall = mAPIService.uploadContractor(email1, password1, country1, contactNo1, occupation1, aboutMe1, role1, deviceId1, image1, subscribe1, selections1);
         sp.showProgressDialog(Agreement.this);
-if(cr.isConnected(Agreement.this)) {
-    resultCall.enqueue(new Callback<Register>() {
-        @Override
-        public void onResponse(Call<Register> call, Response<Register> response) {
-            Log.i(TAG, "response register-->");
-            sp.hideProgressDialog();
-            if (response.isSuccessful()) {
-                ///String role = sp.getPreferences(Agreement.this, "role");
-                Gson gson = new Gson();
-                String jsonString = gson.toJson(user);
-                User u1 = response.body().getUser();
-                sp.setPreferencesObject(Agreement.this, u1);
-                sp.setPreferences(Agreement.this, "token", response.body().getToken());
-                User u2 = (User) sp.getPreferencesObject(Agreement.this);
-                String t = sp.getPreferences(Agreement.this, "token");
-                if (sp.getPreferences(Agreement.this, "sel_con") != null) {
-                    intent = new Intent(Agreement.this, PaymentSelection.class);
-                } else {
-                    intent = new Intent(Agreement.this, MainDrawer.class);
+        if (cr.isConnected(Agreement.this)) {
+            resultCall.enqueue(new Callback<Register>() {
+                @Override
+                public void onResponse(Call<Register> call, Response<Register> response) {
+                    Log.i(TAG, "response register-->");
+                    sp.hideProgressDialog();
+                    if (response.isSuccessful()) {
+                        ///String role = sp.getPreferences(Agreement.this, "role");
+                        Gson gson = new Gson();
+                        String jsonString = gson.toJson(user);
+                        User u1 = response.body().getUser();
+                        sp.setPreferencesObject(Agreement.this, u1);
+                        sp.setPreferences(Agreement.this, "token", response.body().getToken());
+                        User u2 = (User) sp.getPreferencesObject(Agreement.this);
+                        String t = sp.getPreferences(Agreement.this, "token");
+                        if (sp.getPreferences(Agreement.this, "sel_con") != null) {
+                            intent = new Intent(Agreement.this, PaymentSelection.class);
+                        } else {
+                            intent = new Intent(Agreement.this, MainDrawer.class);
+                        }
+                        intent.putExtra("data", jsonString);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+
+                        startActivity(intent);
+                        Log.i(TAG, "post submitted to API." + response.body().toString());
+                    } else {
+                        sp.ShowDialog(Agreement.this, response.errorBody().source().toString().split("\"")[3]);
+                    }
                 }
-                intent.putExtra("data", jsonString);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
 
-                startActivity(intent);
-                Log.i(TAG, "post submitted to API." + response.body().toString());
-            } else {
-                sp.ShowDialog(Agreement.this, response.errorBody().source().toString().split("\"")[3]);
-            }
+                //-resloved bug regarding signup and login in android given by client-changes some design of listview in
+                @Override
+                public void onFailure(Call<Register> call, Throwable t) {
+                    Log.i(TAG, "error register-->");
+                    sp.ShowDialog(Agreement.this, "Server is down. Come back later!!");
+                }
+            });
+        } else {
+            sp.ShowDialog(Agreement.this, "Please check your internet connection.");
         }
-
-        //-resloved bug regarding signup and login in android given by client-changes some design of listview in
-        @Override
-        public void onFailure(Call<Register> call, Throwable t) {
-            Log.i(TAG, "error register-->");
-            sp.ShowDialog(Agreement.this, "Server is down. Come back later!!");
-        }
-    });
-}else{
-    sp.ShowDialog(Agreement.this,"Please check your internet connection.");
-}
     }
 }

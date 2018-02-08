@@ -60,9 +60,10 @@ public class Category extends AppCompatActivity {
     SharedPreference sp = new SharedPreference();
     LinearLayout back;
     TextView txtContract;
-    String contract,s,selCon,contractSelected;
+    String contract, s, selCon, contractSelected;
     ConnectivityReceiver cr = new ConnectivityReceiver();
     private MyBroadcastReceiver myBroadcastReceiver;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,20 +77,20 @@ public class Category extends AppCompatActivity {
         mAPIService = ApiUtils.getAPIService();
         lvCountry.setDivider(null);
         lvCountry.clearChoices();
-myBroadcastReceiver=new MyBroadcastReceiver();
+        myBroadcastReceiver = new MyBroadcastReceiver();
         Intent show = getIntent();
         //contractSelected=getIntent().getStringExtra("selectedCon");
 
         empNo = show.getStringArrayListExtra("CountryAtContractor");
-        s=show.getStringExtra("sub");
-        selCon=sp.getPreferences(Category.this,"sel_con");
+        s = show.getStringExtra("sub");
+        selCon = sp.getPreferences(Category.this, "sel_con");
 
         countryListName = show.getStringArrayListExtra("Country");
         contract = show.getStringExtra("version");
         txtContract.setText(contract);
         sp.showProgressDialog(Category.this);
 
-        if(cr.isConnected(Category.this)) {
+        if (cr.isConnected(Category.this)) {
             mAPIService.getCategoryData().enqueue(new Callback<ArrayList<GetCategory>>() {
                 @Override
                 public void onResponse(Call<ArrayList<GetCategory>> call, Response<ArrayList<GetCategory>> response) {
@@ -165,8 +166,8 @@ myBroadcastReceiver=new MyBroadcastReceiver();
                     Log.i(TAG, "post submitted to API.");
                 }
             });
-        }else{
-            sp.ShowDialog(Category.this,"Please check your internet connection");
+        } else {
+            sp.ShowDialog(Category.this, "Please check your internet connection");
         }
 
         lvCountry.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -194,17 +195,17 @@ myBroadcastReceiver=new MyBroadcastReceiver();
                     if (items.size() > 1) {
                         ss.ShowDialog(Category.this, "During Free Trial Period you can choose only 1 category");
                     } else {
-                        if(s!=null && selCon==null){
+                        if (s != null && selCon == null) {
 
-                            if(contractSelected!=null){
+                            if (contractSelected != null) {
                                 intent = new Intent(
                                         Category.this, MainDrawer.class);
-                            }else{
+                            } else {
                                 intent = new Intent(
                                         Category.this, PaymentSelection.class);
                             }
                             //intent.putExtra("selCon","true");
-                        }                        else{
+                        } else {
                             intent = new Intent(
                                     Category.this, Agreement.class);
                         }
@@ -214,19 +215,20 @@ myBroadcastReceiver=new MyBroadcastReceiver();
                     }
                 } else {
                     user.setSubscribe(map);
-                    Log.v(TAG,"selected country and category----"+map);
-                    if(s!=null){
-                        if(contractSelected!=null){
+                    Log.v(TAG, "selected country and category----" + map);
+                    if (s != null) {
+                        if (contractSelected != null) {
                             intent = new Intent(
                                     Category.this, MainDrawer.class);
-                        }else{
+                        } else {
                             intent = new Intent(
                                     Category.this, PaymentSelection.class);
                         }
-                       // intent.putExtra("selCon","true");
-                    }else{
-                    intent = new Intent(
-                            Category.this, Agreement.class);}
+                        // intent.putExtra("selCon","true");
+                    } else {
+                        intent = new Intent(
+                                Category.this, Agreement.class);
+                    }
                     startActivity(intent);
                     finish();
                 }
@@ -238,7 +240,7 @@ myBroadcastReceiver=new MyBroadcastReceiver();
             public void onClick(View v) {
                 intent = new Intent(
                         Category.this, CountryList.class);
-                intent.putExtra("sub","1234");
+                intent.putExtra("sub", "1234");
                 startActivity(intent);
                 finish();
             }
@@ -382,6 +384,7 @@ myBroadcastReceiver=new MyBroadcastReceiver();
             return false;
         }
     }
+
     @Override
     protected void onResume() {
         super.onResume();
