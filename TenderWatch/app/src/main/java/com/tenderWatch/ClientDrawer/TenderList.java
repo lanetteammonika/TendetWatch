@@ -199,7 +199,7 @@ TextView homeText;
                 } else {
                     contractorTender = contractoradapter.get(position);
                     String token = "Bearer " + sp.getPreferences(getActivity(), "token");
-                    String id2 = contractorTender.getId().toString();
+                    String id2 = contractorTender.getId();
                     if (cr.isConnected(getActivity())) {
                         mAPIService.getTender(token, id2).enqueue(new Callback<UpdateTender>() {
                             @Override
@@ -353,7 +353,6 @@ TextView homeText;
                         if(response.code()==404){
                             homeText.setVisibility(View.VISIBLE);
                             homeText.setText("Welcome to TenderWatch.\n\nCurrently there are no active tenders in your scope and area of work.Tenders will show up here as soon as they are uploaded by Clients.\n\nThank you for your patience.");
-
                         }
                     }
                 }

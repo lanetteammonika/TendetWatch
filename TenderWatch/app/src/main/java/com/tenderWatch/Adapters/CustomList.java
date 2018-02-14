@@ -112,7 +112,7 @@ public class CustomList extends BaseAdapter {
                 } else {
                     constraint = constraint.toString().toLowerCase(Locale.ENGLISH);
                     for (int i = 0; i < originalItem.size(); i++) {
-                        String title = originalItem.get(i).toString().split("~")[0].toLowerCase(Locale.ENGLISH);
+                        String title = originalItem.get(i).split("~")[0].toLowerCase(Locale.ENGLISH);
                         if (title.startsWith(constraint.toString())) {
                             filteredArrayList.add(originalItem.get(i));
                         }

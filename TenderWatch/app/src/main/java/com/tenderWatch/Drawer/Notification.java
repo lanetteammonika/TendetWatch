@@ -96,7 +96,7 @@ public class Notification extends Fragment {
                 String sender=gson.toJson(s);
                 Intent intent = new Intent(getActivity(),ContractorTenderDetail.class);
                 String token = "Bearer " + sp.getPreferences(getActivity(), "token");
-                String id2 = notification_list.get(i).getId().toString();
+                String id2 = notification_list.get(i).getId();
                 sp.showProgressDialog(getActivity());
 if(cr.isConnected(getActivity())){
                 mAPIServices.readNotification(token, id2).enqueue(new Callback<ResponseBody>() {

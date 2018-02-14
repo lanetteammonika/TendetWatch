@@ -112,18 +112,18 @@ public class EditProfile extends Fragment implements View.OnClickListener{
         profileImg = (CircleImageView) view.findViewById(R.id.edit_circleView);
 myBroadcastReceiver=new MyBroadcastReceiver();
         user=sp.getPreferencesObject(getActivity());
-        Picasso.with(getApplicationContext()).load(((User) user).getProfilePhoto().toString())
+        Picasso.with(getApplicationContext()).load(((User) user).getProfilePhoto())
                 .placeholder(R.drawable.avtar).error(R.drawable.avtar)
                 .into(profileImg);
-        String c=((User) user).getCountry().toString();
+        String c=((User) user).getCountry();
         txtCountry.setText(c);
-        txtaboutMe=((User) user).getAboutMe().toString();
+        txtaboutMe=((User) user).getAboutMe();
         if(txtaboutMe.equals("")){
             txtaboutMe="About Me";
         }
-        txtMobileNo.setText(((User) user).getContactNo().toString());
+        txtMobileNo.setText(((User) user).getContactNo());
         txtAboutMe.setText(txtaboutMe);
-        txtOccupation.setText(((User) user).getOccupation().toString());
+        txtOccupation.setText(((User) user).getOccupation());
         InitListener();
     }
 
@@ -203,7 +203,7 @@ myBroadcastReceiver=new MyBroadcastReceiver();
         String mobile = txtMobileNo.getText().toString();
         String occupation = txtOccupation.getText().toString();
         String about=txtaboutMe;
-        String Id=((User) user).getId().toString();
+        String Id=((User) user).getId();
 
 
         country1 = MultipartBody.Part.createFormData("country", country);
@@ -315,8 +315,8 @@ if(cr.isConnected(getActivity())){
                         if (data.getStringArrayListExtra("Country") != null) {
                             ArrayList<String> result = data.getStringArrayListExtra("Country");
                             Log.i(TAG, String.valueOf(result));
-                            countryName1 = result.get(0).toString().split("~")[0];
-                            countryCode1 = result.get(0).toString().split("~")[1].split("~")[0];
+                            countryName1 = result.get(0).split("~")[0];
+                            countryCode1 = result.get(0).split("~")[1].split("~")[0];
                             txtCountry.setText(countryName1);
                             txtMobileNo.setText(countryCode1 + '-');
                         }

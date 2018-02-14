@@ -117,18 +117,18 @@ public class EditProfile extends Fragment implements View.OnClickListener{
         profileImg = (CircleImageView) view.findViewById(R.id.edit_circleView);
 myBroadcastReceiver=new MyBroadcastReceiver();
         user=sp.getPreferencesObject(getActivity());
-        Picasso.with(getApplicationContext()).load(((User) user).getProfilePhoto().toString())
+        Picasso.with(getApplicationContext()).load(((User) user).getProfilePhoto())
                 .placeholder(R.drawable.avtar).error(R.drawable.avtar)
                 .into(profileImg);
-        String c=((User) user).getCountry().toString();
+        String c=((User) user).getCountry();
         txtCountry.setText(c);
-        txtaboutMe=((User) user).getAboutMe().toString();
+        txtaboutMe=((User) user).getAboutMe();
         if(txtaboutMe.equals("")){
             txtaboutMe="About Me";
         }
-        txtMobileNo.setText(((User) user).getContactNo().toString());
+        txtMobileNo.setText(((User) user).getContactNo());
         txtAboutMe.setText(txtaboutMe);
-        txtOccupation.setText(((User) user).getOccupation().toString());
+        txtOccupation.setText(((User) user).getOccupation());
         InitListener();
     }
 

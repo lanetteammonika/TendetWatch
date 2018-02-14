@@ -115,9 +115,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         if (user != null) {
             String role = sp.getPreferences(MainActivity.this, "role");
+            String getnot = getIntent().getStringExtra("nav_not");
+
             if (role.equals("client")) {
                 intent = new Intent(MainActivity.this, ClientDrawer.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                if (getnot != null) {
+                    intent.putExtra("nav_not","ggge");
+
+                }
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter, R.anim.exit);
             } else {
@@ -146,6 +152,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     Intent i;
                     if(response.body().getIsPayment()){
                         intent = new Intent(MainActivity.this, MainDrawer.class);
+                        String getnot = getIntent().getStringExtra("nav_not");
+
+                        if (getnot != null) {
+                            intent.putExtra("nav_not","ggge");
+
+                        }
                     }else{
                         intent=new Intent(MainActivity.this, PaymentSelection.class);
                     }

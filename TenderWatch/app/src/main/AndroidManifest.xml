@@ -107,7 +107,6 @@
         </service>
 
         <!-- ./Firebase Notifications -->
-        <activity android:name=".Main2Activity" />
 
         <activity android:name=".CardDemoDesign"></activity>
 

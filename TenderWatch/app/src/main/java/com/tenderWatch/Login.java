@@ -266,7 +266,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
 
                     startActivity(intent);
-                    Log.i(TAG, "post submitted to API." + response.body().toString());
+                    Log.i(TAG, "post submitted to API." + response.body());
                 } else {
                     sp.ShowDialog(Login.this, response.errorBody().source().toString().split("\"")[3]);
                 }

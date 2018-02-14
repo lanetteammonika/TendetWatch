@@ -82,9 +82,9 @@ public class TenderListAdapter extends BaseAdapter {
         TextView txtTenderTitle = (TextView) convertView.findViewById(R.id.tender_title);
         TextView txtTenderExpDate = (TextView) convertView.findViewById(R.id.tender_expdate);
         LinearLayout stampRemove = (LinearLayout) convertView.findViewById(R.id.stamp_remove);
-        if (!tenderList.get(position).getTenderPhoto().toString().equals("")) {
+        if (!tenderList.get(position).getTenderPhoto().equals("")) {
             Picasso.with(context)
-                    .load(tenderList.get(position).getTenderPhoto().toString())
+                    .load(tenderList.get(position).getTenderPhoto())
                     .into(new Target() {
                         @Override
                         public void onBitmapLoaded(final Bitmap bitmap, Picasso.LoadedFrom from) {

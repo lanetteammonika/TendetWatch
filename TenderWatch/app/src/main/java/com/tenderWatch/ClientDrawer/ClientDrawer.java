@@ -104,7 +104,12 @@ myBroadcastReceiver=new MyBroadcastReceiver();
         }
         emailText.setText(user.getEmail());
         if (checkConnection()) {
-            displaySelectedScreen(R.id.nav_home);
+            String getnot = getIntent().getStringExtra("nav_not");
+            if (getnot != null) {
+                displaySelectedScreen(R.id.nav_notifications);
+            }else {
+                displaySelectedScreen(R.id.nav_home);
+            }
         } else {
             sp.ShowDialog(ClientDrawer.this, "Please Check your internet Connection");
         }
@@ -218,8 +223,10 @@ myBroadcastReceiver=new MyBroadcastReceiver();
                 }
                 break;
             case R.id.nav_notifications:
-                CeditMenu.setVisible(true);
-                Cmenu2.setVisible(false);
+                if (Cdisplay) {
+                    CeditMenu.setVisible(true);
+                    Cmenu2.setVisible(false);
+                }
                 fragment = new Notification();
                 break;
             case R.id.nav_contactsupportteam:

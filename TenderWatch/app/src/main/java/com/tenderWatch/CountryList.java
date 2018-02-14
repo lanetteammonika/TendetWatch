@@ -115,13 +115,13 @@ public class CountryList extends AppCompatActivity {
             mAPIService.getCountryData().enqueue(new Callback<ArrayList<GetCountry>>() {
                 @Override
                 public void onResponse(Call<ArrayList<GetCountry>> call, Response<ArrayList<GetCountry>> response) {
-                    Log.i("array-------", response.body().get(0).getCountryName().toString());
+                    Log.i("array-------", response.body().get(0).getCountryName());
                     Data = response.body();
                     for (int i = 0; i < Data.size(); i++) {
-                        String name = response.body().get(i).getCountryName().toString();
-                        String flag = response.body().get(i).getImageString().toString();
-                        String countryCode = response.body().get(i).getCountryCode().toString();
-                        String id = response.body().get(i).getId().toString();
+                        String name = response.body().get(i).getCountryName();
+                        String flag = response.body().get(i).getImageString();
+                        String countryCode = response.body().get(i).getCountryCode();
+                        String id = response.body().get(i).getId();
                         alpha.add(name + '~' + id + '~' + countryCode + '`' + flag);
                     }
 

@@ -299,8 +299,10 @@ public class MainDrawer extends AppCompatActivity implements NavigationView.OnNa
                 }
                 break;
             case R.id.nav_notifications:
-                editMenu.setVisible(true);
-                menu2.setVisible(false);
+                if (display) {
+                    editMenu.setVisible(true);
+                    menu2.setVisible(false);
+                }
                 fragment = new Notification();
                 break;
             case R.id.nav_contactsupportteam:

@@ -287,6 +287,8 @@ public class ContractorTenderDetail extends AppCompatActivity {
 
                 @Override
                 public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    sp.hideProgressDialog();
+
                     Log.i(TAG, "response---" + t);
 
                 }

@@ -81,18 +81,24 @@ public class ContractorTenderListAdapter extends BaseAdapter {
             Picasso.with(context).load(tenderList.get(position).getTenderPhoto()).into(tender_image);
         }
 
+
         Calendar c = Calendar.getInstance();
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-        String formattedDate = df.format(c.getTime());
-        Date startDateValue = null, endDateValue = null;
+        java.text.SimpleDateFormat df = new java.text.SimpleDateFormat("yyyy-MM-dd");
+
+        String formattedDate = null;
+        formattedDate = df.format(c.getTime());
+
+        Date startDateValue = null;
+        Date endDateValue = null;
+
         try {
-            startDateValue = new SimpleDateFormat("yyyy-MM-dd").parse(formattedDate);
-            //  startDateValue = new SimpleDateFormat("yyyy-MM-dd").parse(tenderList.get(position).getCreatedAt().split("T")[0]);
+            startDateValue = new java.text.SimpleDateFormat("yyyy-MM-dd").parse(formattedDate);
         } catch (ParseException e) {
             e.printStackTrace();
         }
+
         try {
-            endDateValue = new SimpleDateFormat("yyyy-MM-dd").parse(tenderList.get(position).getExpiryDate().split("T")[0]);
+            endDateValue = new java.text.SimpleDateFormat("yyyy-MM-dd").parse(tenderList.get(position).getExpiryDate().split("T")[0]);
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -101,7 +107,7 @@ public class ContractorTenderListAdapter extends BaseAdapter {
         long seconds = diff / 1000;
         long minutes = seconds / 60;
         long hours = minutes / 60;
-        long days = (hours / 24);
+        long days = (hours / 24) + 1;
 
         if (!tenderList.get(position).getIsActive()) {
             stampRemove.setVisibility(View.VISIBLE);

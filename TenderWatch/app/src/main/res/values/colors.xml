@@ -10,4 +10,5 @@
     <color name="colorGray">#CFCFCF</color>
     <color name="colorTender">#007bF9</color>
     <color name="transparent_grey">#a0ffffff</color>
+    <color name="transparent_not">#46cfcfcf</color>
 </resources>
