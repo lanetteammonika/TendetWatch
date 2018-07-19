@@ -54,9 +54,9 @@ public class CustomList extends BaseAdapter{
         TextView txtCountryName=(TextView) convertView.findViewById(R.id.name);
         ImageView flag_img=(ImageView) convertView.findViewById(R.id.flag_img);
 
-        txtCountryName.setText(countryNameList.get(position).toString().split("~")[0]);
+        txtCountryName.setText(countryNameList.get(position).split("~")[0]);
 
-        Bitmap flag1 = StringToBitMap(countryNameList.get(position).toString().split("~")[1]);
+        Bitmap flag1 = StringToBitMap(countryNameList.get(position).split("~")[1]);
         flag_img.setImageBitmap(flag1);
 
         return convertView;
@@ -98,13 +98,13 @@ public class CustomList extends BaseAdapter{
                      * if constraint is null then return original value
                      * else return filtered value
                      */
-                if (constraint == null && constraint.length() == 0) {
+                if (constraint == null || constraint.length() == 0) {
                     results.count = originalItem.size();
                     results.values = originalItem;
                 } else {
                     constraint = constraint.toString().toLowerCase(Locale.ENGLISH);
                     for (int i = 0; i < originalItem.size(); i++) {
-                        String title = originalItem.get(i).toString().split("~")[0].toLowerCase(Locale.ENGLISH);
+                        String title = originalItem.get(i).split("~")[0].toLowerCase(Locale.ENGLISH);
                         if (title.startsWith(constraint.toString())) {
                             filteredArrayList.add(originalItem.get(i));
                         }

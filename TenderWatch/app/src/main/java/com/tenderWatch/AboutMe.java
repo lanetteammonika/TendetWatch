@@ -70,7 +70,7 @@ public class AboutMe extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 intent = new Intent(AboutMe.this, SignUp.class);
-                if (edtAbotMe.getText().toString() == "") {
+                if (edtAbotMe.getText().toString().equals("")) {
                     intent.putExtra("aboutMe", "About Me");
                 } else {
                     intent.putExtra("aboutMe", AboutMe);

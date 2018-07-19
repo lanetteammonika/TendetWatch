@@ -54,10 +54,10 @@ public class CountryList extends AppCompatActivity {
     IndexingArrayAdapter adapter;
     Button btn_next;
     String alphabetS = "";
-    LinearLayout lltext, back,subscription;
+    LinearLayout lltext, back, subscription;
     TextView txtSelectedContract;
     Intent intent;
-    String check,s;
+    String check, s;
     SharedPreference sp = new SharedPreference();
     ArrayList<String> a_country = new ArrayList<String>();
     ImageView imgClose;
@@ -73,8 +73,8 @@ public class CountryList extends AppCompatActivity {
         lvCountry = (ListView) findViewById(R.id.lvCountry);
         lltext = (LinearLayout) findViewById(R.id.lltext);
         back = (LinearLayout) findViewById(R.id.country_toolbar);
-        subscription=(LinearLayout) findViewById(R.id.subscription);
-        imgClose=(ImageView) findViewById(R.id.img_close);
+        subscription = (LinearLayout) findViewById(R.id.subscription);
+        imgClose = (ImageView) findViewById(R.id.img_close);
 
         sideSelector = (SideSelector) findViewById(R.id.side_selector);
         mAPIService = ApiUtils.getAPIService();
@@ -84,81 +84,89 @@ public class CountryList extends AppCompatActivity {
         lvCountry.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         Intent show = getIntent();
         check = show.getStringExtra("check");
-         s=show.getStringExtra("sub");
+        s = show.getStringExtra("sub");
         if (check == null) {
             CallContractorSignUp();
         }
-        if(s!=null){
+        if (s != null) {
             subscription.setVisibility(View.VISIBLE);
             back.setVisibility(View.GONE);
             txtSelectedContract.setVisibility(View.GONE);
         }
-        sp.showProgressDialog(CountryList.this);
+        if (!this.isFinishing())
+            sp.showProgressDialog(CountryList.this);
 
         mAPIService.getCountryData().enqueue(new Callback<ArrayList<GetCountry>>() {
             @Override
             public void onResponse(Call<ArrayList<GetCountry>> call, Response<ArrayList<GetCountry>> response) {
-                Log.i("array-------", response.body().get(0).getCountryName().toString());
+
                 Data = response.body();
-               for (int i = 0; i < Data.size(); i++) {
-                    String name = response.body().get(i).getCountryName().toString();
-                    String flag = response.body().get(i).getImageString().toString();
-                    String countryCode = response.body().get(i).getCountryCode().toString();
-                    String id = response.body().get(i).getId().toString();
-                    alpha.add(name + '~' + id + '~' + countryCode + '`' + flag);
-                }
+                if (Data != null && !Data.isEmpty() && Data.size() > 0) {
+                    for (int i = 0; i < Data.size(); i++) {
+                        String name = response.body().get(i).getCountryName();
+                        String flag = response.body().get(i).getImageString();
+                        String countryCode = response.body().get(i).getCountryCode();
+                        String id = response.body().get(i).getId();
+                        alpha.add(name + '~' + id + '~' + countryCode + '`' + flag);
+                    }
 
-                Collections.sort(alpha);
-                for (int i = 0; i < Data.size(); i++) {
-                    String name = alpha.get(i).split("~")[0];
-                    String id = alpha.get(i).split("~")[1].split("~")[0];
-                    String countryCode = alpha.get(i).split("~")[2].split("`")[0];
-                    String flag = alpha.get(i).split("~")[2].split("`")[1];
-                    String value = String.valueOf(name.charAt(0));
-                    if (!list.contains(value)) {
-                        list.add(value);
-                        alphabetS.concat(value);//alphabetlist.append(value);
-                        Log.i("array-------", String.valueOf(list));
-                        alpha2.add(value);
-                        alpha2.add(name);
+                    Collections.sort(alpha);
+                    for (int i = 0; i < Data.size(); i++) {
+                        String name = alpha.get(i).split("~")[0];
+                        String id = alpha.get(i).split("~")[1].split("~")[0];
+                        String countryCode = alpha.get(i).split("~")[2].split("`")[0];
+                        String flag = alpha.get(i).split("~")[2].split("`")[1];
+                        String value = String.valueOf(name.charAt(0));
+                        if (!list.contains(value)) {
+                            list.add(value);
+                            alphabetS.concat(value);//alphabetlist.append(value);
+                            Log.i("array-------", String.valueOf(list));
+                            alpha2.add(value);
+                            alpha2.add(name);
 
-                        //set Country Header (Like:-A,B,C,...)
-                        countryList.add(new SectionItem(value, "", "", "", false));
-                        //set Country Name
-                        countryList.add(new EntryItem(name, flag, countryCode, id, false));
+                            //set Country Header (Like:-A,B,C,...)
+                            countryList.add(new SectionItem(value, "", "", "", false));
+                            //set Country Name
+                            countryList.add(new EntryItem(name, flag, countryCode, id, false));
 
-                        //Log.i("array section-------",alpha.get(n).getTitle());
+                            //Log.i("array section-------",alpha.get(n).getTitle());
 
-                    } else {
-                        alpha2.add(name);
+                        } else {
+                            alpha2.add(name);
 
-                        //set Country Name
-                        countryList.add(new EntryItem(name, flag, countryCode, id, false));
+                            //set Country Name
+                            countryList.add(new EntryItem(name, flag, countryCode, id, false));
+                        }
                     }
                 }
 
                 alpha.clear();
-                String str = list.toString().replaceAll(",", "");
-                char[] chars = str.toCharArray();
-                Log.i(TAG, "post submitted to API." + chars);
-                char[] al = new char[27];
+                String str = null;
+                char[] chars = new char[0];
+                char[] al = new char[0];
+                if (!list.isEmpty() && list.size() > 0) {
+                    str = list.toString().replaceAll(",", "");
+                    chars = str.toCharArray();
+                    Log.i(TAG, "post submitted to API." + chars);
+                    al = new char[27];
 
-                for (int j = 1, i = 0; j < chars.length; j = j + 2, i++) {
-                    al[i] = chars[j];
-                    Log.i(TAG, "post." + chars[j]);
+                    for (int j = 1, i = 0; j < chars.length; j = j + 2, i++) {
+                        al[i] = chars[j];
+                        Log.i(TAG, "post." + chars[j]);
+                    }
+
+                    Log.i(TAG, "post submitted to API." + al);
+                    SideSelector ss = new SideSelector(getApplicationContext());
+                    ss.setAlphabet(al);
+                    alphabetlist = str.substring(1, str.length() - 1).replaceAll(" ", "").toCharArray();
+                    adapter = new IndexingArrayAdapter(getApplicationContext(), R.id.lvCountry, countryList, alpha2, list, chars);
+                    lvCountry.clearChoices();
+                    lvCountry.setAdapter(adapter);
+                    lvCountry.clearChoices();
+                    lvCountry.setTextFilterEnabled(true);
                 }
-
-                Log.i(TAG, "post submitted to API." + al);
-                SideSelector ss = new SideSelector(getApplicationContext());
-                ss.setAlphabet(al);
-                alphabetlist = str.substring(1, str.length() - 1).replaceAll(" ", "").toCharArray();
-                adapter = new IndexingArrayAdapter(getApplicationContext(), R.id.lvCountry, countryList, alpha2, list, chars);
-                lvCountry.clearChoices();
-                lvCountry.setAdapter(adapter);
                 sp.hideProgressDialog();
-                lvCountry.clearChoices();
-                lvCountry.setTextFilterEnabled(true);
-                if (sideSelector != null)
+                if (sideSelector != null && lvCountry != null)
                     sideSelector.setListView(lvCountry);
                 else {
                     sp.ShowDialog(CountryList.this, response.errorBody().source().toString().split("\"")[3]);
@@ -168,17 +176,15 @@ public class CountryList extends AppCompatActivity {
             @Override
             public void onFailure(Call<ArrayList<GetCountry>> call, Throwable t) {
                 sp.ShowDialog(CountryList.this, "Server is down. Come back later!!");
-
                 Log.i(TAG, "post submitted to API.");
-
             }
         });
 
         imgClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i=new Intent(CountryList.this, MainDrawer.class);
-                i.putExtra("nav_sub","true");
+                Intent i = new Intent(CountryList.this, MainDrawer.class);
+                i.putExtra("nav_sub", "true");
                 startActivity(i);
             }
         });
@@ -192,7 +198,12 @@ public class CountryList extends AppCompatActivity {
                 list.clear();
                 alpha.clear();
                 intent.putExtra("Country", a_country);
-                adapter.setItemSelected(pos);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        adapter.setItemSelected(pos);
+                    }
+                });
                 countryList.clear();
                 alpha2.clear();
                 list.clear();
@@ -219,13 +230,15 @@ public class CountryList extends AppCompatActivity {
 
                 SharedPreference ss = new SharedPreference();
 
-                HashMap<String, String> items = adapter.getallitems();
-                for (Map.Entry<String, String> entry : items.entrySet()) {
-                    a_country.add(entry.getValue());
-                }
-                HashMap<String, String> items2 = adapter.getallitems();
-                for (Map.Entry<String, String> entry : items2.entrySet()) {
-                    a_countryID.add(entry.getValue().split("~")[2]);
+                if (adapter != null && adapter.getallitems() != null) {
+                    HashMap<String, String> items = adapter.getallitems();
+                    for (Map.Entry<String, String> entry : items.entrySet()) {
+                        a_country.add(entry.getValue());
+                    }
+                    HashMap<String, String> items2 = adapter.getallitems();
+                    for (Map.Entry<String, String> entry : items2.entrySet()) {
+                        a_countryID.add(entry.getValue().split("~")[2]);
+                    }
                 }
 
                 if (txtSelectedContract.getText().toString().equals("Trial Version")) {
@@ -238,23 +251,33 @@ public class CountryList extends AppCompatActivity {
                     } else {
                         if (check == null) {
                             intent = new Intent(CountryList.this, Category.class);
-                            intent.putExtra("sub",s);
+                            intent.putExtra("sub", s);
                             intent.putExtra("CountryAtContractor", a_countryID);
                             intent.putExtra("Country", a_country);
                             intent.putExtra("version", txtSelectedContract.getText().toString());
-                            adapter.setItemSelected(pos);
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    adapter.setItemSelected(pos);
+                                }
+                            });
 
                             countryList.clear();
                             alpha2.clear();
                             list.clear();
                             alpha.clear();
                             startActivity(intent);
-
                             finish();
                         } else {
                             intent = new Intent(CountryList.this, SignUp.class);
                             intent.putExtra("Country", a_country);
-                            adapter.setItemSelected(pos);
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    adapter.setItemSelected(pos);
+                                }
+                            });
+
                             countryList.clear();
                             alpha2.clear();
                             list.clear();
@@ -262,15 +285,20 @@ public class CountryList extends AppCompatActivity {
                             setResult(Activity.RESULT_OK, intent);
                             finish();
                         }
-
                     }
                 } else {
                     intent = new Intent(CountryList.this, Category.class);
-                    intent.putExtra("sub",s);
+                    intent.putExtra("sub", s);
                     intent.putExtra("CountryAtContractor", a_countryID);
                     intent.putExtra("Country", a_country);
                     intent.putExtra("version", txtSelectedContract.getText().toString());
-                    adapter.setItemSelected(pos);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            adapter.setItemSelected(pos);
+                        }
+                    });
+
                     countryList.clear();
                     alpha2.clear();
                     list.clear();
@@ -315,7 +343,7 @@ public class CountryList extends AppCompatActivity {
         final TextView txtTrial = (TextView) dialog.findViewById(R.id.txt_trial);
         TextView txtMonth = (TextView) dialog.findViewById(R.id.txt_month);
         TextView txtYear = (TextView) dialog.findViewById(R.id.txt_year);
-        if(s!=null){
+        if (s != null) {
             txtTrial.setVisibility(View.GONE);
         }
         txtTrial.setOnClickListener(new View.OnClickListener() {

@@ -211,7 +211,7 @@ public class SignUpSelection extends AppCompatActivity implements View.OnClickLi
                                     JSONObject data = response.getJSONObject();
                                     if (data.has("picture")) {
                                         profilePicUrl = data.getJSONObject("picture").getJSONObject("data").getString("url");
-                                        String src = profilePicUrl.toString();
+                                        String src = profilePicUrl;
                                         URL url = new URL(profilePicUrl);
                                         txtEmail.setText(object.getString("email"));
                                         Picasso.with(SignUpSelection.this)

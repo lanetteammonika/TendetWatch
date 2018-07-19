@@ -40,6 +40,6 @@ public class Support extends Fragment {
         userSubject=(EditText) view.findViewById(R.id.subject);
         userBodyText=(EditText) view.findViewById(R.id.bodyText);
         user=(User)sp.getPreferencesObject(getActivity());
-        userEmail.setText(user.getEmail().toString());
+        userEmail.setText(user.getEmail());
     }
 }

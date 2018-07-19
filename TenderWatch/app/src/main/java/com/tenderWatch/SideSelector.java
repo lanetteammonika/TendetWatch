@@ -56,10 +56,15 @@ public class SideSelector extends View {
         list = _list;
         selectionIndexer = (SectionIndexer) _list.getAdapter();
 
-        Object[] sectionsArr = selectionIndexer.getSections();
-        sections = new String[sectionsArr.length];
-        for (int i = 0; i < sectionsArr.length; i++) {
-            sections[i] = sectionsArr[i].toString();
+        if (selectionIndexer != null && selectionIndexer.getSections() != null) {
+            Object[] sectionsArr = selectionIndexer.getSections();
+
+            if (sectionsArr != null && sectionsArr.length > 0) {
+                sections = new String[sectionsArr.length];
+                for (int i = 0; i < sectionsArr.length; i++) {
+                    sections[i] = sectionsArr[i].toString();
+                }
+            }
         }
         requestLayout();
     }

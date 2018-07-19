@@ -131,7 +131,7 @@ public class ChangePassword extends Fragment implements View.OnClickListener{
 
     private void ApiCall() {
         user=sp.getPreferencesObject(getActivity());
-        String Id=((User) user).getId().toString();
+        String Id= ((User) user).getId();
         String token="Bearer "+sp.getPreferences(getActivity(),"token");
         String oldPassword=txt_oldPassword.getText().toString();
         String newPassword=txt_newPassword.getText().toString();
@@ -141,7 +141,7 @@ public class ChangePassword extends Fragment implements View.OnClickListener{
             public void onResponse(Call<Success> call, Response<Success> response) {
                 Log.i(TAG, "response register-->");
                 if (response.isSuccessful()) {
-                    sp.ShowDialog(getActivity(), response.body().getMessage().toString());
+                    sp.ShowDialog(getActivity(), response.body().getMessage());
                     intent = new Intent(getActivity(),ClientDrawer.class );startActivity(intent);
                 } else {
                     sp.ShowDialog(getActivity(), response.errorBody().source().toString().split("\"")[3]);

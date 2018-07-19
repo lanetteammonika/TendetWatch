@@ -117,8 +117,8 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener {
             }
         }
         if (empNo != null) {
-            countryName = empNo.get(0).toString().split("~")[0];
-            countryCode = empNo.get(0).toString().split("~")[1];
+            countryName = empNo.get(0).split("~")[0];
+            countryCode = empNo.get(0).split("~")[1];
         }
         if (empNo != null) {
             country.setText(countryName);
@@ -310,8 +310,8 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener {
                         if (data.getStringArrayListExtra("Country") != null) {
                             ArrayList<String> result = data.getStringArrayListExtra("Country");
                             Log.i(TAG, String.valueOf(result));
-                            countryName = result.get(0).toString().split("~")[0];
-                            countryCode = result.get(0).toString().split("~")[1].split("~")[0];
+                            countryName = result.get(0).split("~")[0];
+                            countryCode = result.get(0).split("~")[1].split("~")[0];
                             country.setText(countryName);
                             mobileNo.setText(countryCode + '-');
                         }

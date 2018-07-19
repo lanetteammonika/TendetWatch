@@ -79,9 +79,9 @@ public class TenderListAdapter extends BaseAdapter {
         TextView txtTenderTitle=(TextView) convertView.findViewById(R.id.tender_title);
         TextView txtTenderExpDate=(TextView) convertView.findViewById(R.id.tender_expdate);
         LinearLayout stampRemove=(LinearLayout) convertView.findViewById(R.id.stamp_remove);
-        if(!tenderList.get(position).getTenderPhoto().toString().equals("")) {
+        if(!tenderList.get(position).getTenderPhoto().equals("")) {
             Picasso.with(context)
-                    .load(tenderList.get(position).getTenderPhoto().toString())
+                    .load(tenderList.get(position).getTenderPhoto())
                     .into(new Target() {
                         @Override
                         public void onBitmapLoaded(final Bitmap bitmap, Picasso.LoadedFrom from) {
@@ -132,8 +132,8 @@ public class TenderListAdapter extends BaseAdapter {
             txtTenderExpDate.setText(days+" days");
         }
         Log.d("days", "" + days);
-        txtTenderName.setText(tenderList.get(position).getTenderName().toString());
-        txtTenderTitle.setText(tenderList.get(position).getTenderName().toString());
+        txtTenderName.setText(tenderList.get(position).getTenderName());
+        txtTenderTitle.setText(tenderList.get(position).getTenderName());
         User user= (User) sp.getPreferencesObject(context);
         if(tenderList.get(position).getFavorite().size()>0){
             for(int i=0;i<tenderList.get(position).getFavorite().size();i++){

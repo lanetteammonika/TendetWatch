@@ -181,8 +181,8 @@ public class PaymentSelection extends AppCompatActivity implements View.OnClickL
                 sp.hideProgressDialog();
                 Data = response.body();
                 for (int i = 0; i < Data.size(); i++) {
-                    alpha.add(response.body().get(i).getCountryName().toString() + "~" + response.body().get(i).getImageString().toString());
-                    countryName.add(response.body().get(i).getCountryName().toString() + "~" + response.body().get(i).getCountryCode().toString() + "~" + response.body().get(i).getId().toString());
+                    alpha.add(response.body().get(i).getCountryName() + "~" + response.body().get(i).getImageString());
+                    countryName.add(response.body().get(i).getCountryName() + "~" + response.body().get(i).getCountryCode() + "~" + response.body().get(i).getId());
                 }
                 Collections.sort(alpha);
                 Collections.sort(countryName);

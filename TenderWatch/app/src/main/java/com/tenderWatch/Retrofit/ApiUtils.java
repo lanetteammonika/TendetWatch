@@ -11,7 +11,7 @@ public class ApiUtils {
 //var BASE_URL: String = "http://lanetteam.com:4000/api/"
 //var BASE_URL: String = "http://192.168.200.46:4000/api/"
 
-    public static final String BASE_URL = "https://1b610445.ngrok.io/api/";
+    public static final String BASE_URL = "http://ec2-35-154-21-52.ap-south-1.compute.amazonaws.com:4000/api/";
 
     public static Api getAPIService() {
         return RetrofitClient.getClient(BASE_URL).create(Api.class);

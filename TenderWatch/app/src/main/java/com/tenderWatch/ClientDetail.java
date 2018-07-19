@@ -159,7 +159,7 @@ public class ClientDetail extends AppCompatActivity {
     }
     private void GetUser() {
         String token = "Bearer " + sp.getPreferences(ClientDetail.this, "token");
-        String userId=obj.getId().toString();
+        String userId= obj.getId();
         sp.showProgressDialog(ClientDetail.this);
 
         mApiService.getUserDetail(token,userId).enqueue(new Callback<User>() {
@@ -180,7 +180,7 @@ public class ClientDetail extends AppCompatActivity {
 
     private void callRatingApi() {
         String token="Bearer " + sp.getPreferences(ClientDetail.this,"token");
-        String clientId=obj.getId().toString();
+        String clientId= obj.getId();
         sp.showProgressDialog(ClientDetail.this);
 
         mApiService.giveRating(token,clientId,rate).enqueue(new Callback<ResponseRating>() {
@@ -207,15 +207,15 @@ public class ClientDetail extends AppCompatActivity {
                sp.hideProgressDialog();
                 Data = response.body();
                 for (int i = 0; i < Data.size(); i++) {
-                    falpha.add(response.body().get(i).getCountryName().toString() + "~" + response.body().get(i).getImageString().toString());
-                    fcountryName.add(response.body().get(i).getCountryName().toString() + "~" + response.body().get(i).getCountryCode().toString() + "~" + response.body().get(i).getImageString().toString());
+                    falpha.add(response.body().get(i).getCountryName() + "~" + response.body().get(i).getImageString());
+                    fcountryName.add(response.body().get(i).getCountryName() + "~" + response.body().get(i).getCountryCode() + "~" + response.body().get(i).getImageString());
                 }
                 Collections.sort(falpha);
                 Collections.sort(fcountryName);
                 for (int i = 0; i < Data.size(); i++) {
-                    if(fcountryName.get(i).split("~")[0].toString().equals(obj.getCountry().toString())){
-                        country.setText(fcountryName.get(i).split("~")[0].toString());
-                        Bitmap bitmap=StringToBitMap(fcountryName.get(i).split("~")[2].toString());
+                    if(fcountryName.get(i).split("~")[0].equals(obj.getCountry())){
+                        country.setText(fcountryName.get(i).split("~")[0]);
+                        Bitmap bitmap=StringToBitMap(fcountryName.get(i).split("~")[2]);
                         flag.setImageBitmap(bitmap);
                         break;
                     }
@@ -254,16 +254,16 @@ public class ClientDetail extends AppCompatActivity {
         Gson gson=new Gson();
         obj=gson.fromJson(sender, Sender.class);
         Picasso.with(this).load(obj.getProfilePhoto()).into(clientImage);FGetAllCountry();
-        email.setText(obj.getEmail().toString());
-        mobile.setText(obj.getContactNo().toString());
-        occcupation.setText(obj.getOccupation().toString());
+        email.setText(obj.getEmail());
+        mobile.setText(obj.getContactNo());
+        occcupation.setText(obj.getOccupation());
         aboutMe.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 final Dialog dialog = new Dialog(ClientDetail.this);
                 dialog.setContentView(R.layout.client_detail);
                 final TextView code=(TextView) dialog.findViewById(R.id.dialog_aboutMe);
-                code.setText(obj.getAboutMe().toString());
+                code.setText(obj.getAboutMe());
                 dialog.show();
             }
         });

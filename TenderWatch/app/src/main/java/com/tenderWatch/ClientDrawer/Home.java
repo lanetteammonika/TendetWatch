@@ -69,14 +69,14 @@ public class Home extends Fragment implements AdapterView.OnItemSelectedListener
     private List Data, Data2;
     CustomList countryAdapter, categoryAdapter;
     ListView spinner, spinner2;
-    ImageView down_arrow, up_arrow, down_arrow2, up_arrow2, down_arrow3, up_arrow3,tenderImage;
+    ImageView down_arrow, up_arrow, down_arrow2, up_arrow2, down_arrow3, up_arrow3, tenderImage;
     LinearLayout country_home, category_home;
     TextView country, category;
     String countryCode, categoryname, countryname, follow = "false";
     SharedPreference sp = new SharedPreference();
     MyScrollView scrollView;
-    MultipartBody.Part name1, email1, countryId1,image1, categoryId1, landlineNo1, contactNo1, city1, description1, address1, isFollowTendeer1, tenderPhono1;
-    EditText city,title,description,edtSearch;
+    MultipartBody.Part name1, email1, countryId1, image1, categoryId1, landlineNo1, contactNo1, city1, description1, address1, isFollowTendeer1, tenderPhono1;
+    EditText city, title, description, edtSearch;
     Button btnUploadTender;
     private Uri mPictureUri;
     private static final int PICTURE_WIDTH = 1100;
@@ -87,6 +87,7 @@ public class Home extends Fragment implements AdapterView.OnItemSelectedListener
 
     private static final int REQUEST_CODE_SELECT_PICTURE = 0;
     private static final int REQUEST_CODE_CROP_PICTURE = 1;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -101,13 +102,13 @@ public class Home extends Fragment implements AdapterView.OnItemSelectedListener
         getActivity().setTitle("Home");
         spinner = (ListView) view.findViewById(R.id.spinner);
         spinner2 = (ListView) view.findViewById(R.id.spinner3);
-        edtSearch=(EditText) view.findViewById(R.id.edtSearch);
+        edtSearch = (EditText) view.findViewById(R.id.edtSearch);
 
-        city=(EditText) view.findViewById(R.id.home_city);
-        title=(EditText) view.findViewById(R.id.home_title);
-        description=(EditText) view.findViewById(R.id.home_address);
+        city = (EditText) view.findViewById(R.id.home_city);
+        title = (EditText) view.findViewById(R.id.home_title);
+        description = (EditText) view.findViewById(R.id.home_address);
 
-        btnUploadTender=(Button) view.findViewById(R.id.btn_uploadTender);
+        btnUploadTender = (Button) view.findViewById(R.id.btn_uploadTender);
 
         down_arrow = (ImageView) view.findViewById(R.id.down_arrow);
         up_arrow = (ImageView) view.findViewById(R.id.up_arrow);
@@ -230,7 +231,7 @@ public class Home extends Fragment implements AdapterView.OnItemSelectedListener
                     final EditText address = (EditText) dialog.findViewById(R.id.contact_address);
                     final ImageView box = (ImageView) dialog.findViewById(R.id.home_box);
                     final ImageView boxright = (ImageView) dialog.findViewById(R.id.home_box_checked);
-                    final TextView code=(TextView) dialog.findViewById(R.id.contact_code);
+                    final TextView code = (TextView) dialog.findViewById(R.id.contact_code);
 
                     box.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -263,7 +264,7 @@ public class Home extends Fragment implements AdapterView.OnItemSelectedListener
 
                         @Override
                         public void afterTextChanged(Editable s) {
-                            Validation.isEmailAddress(email2,true);
+                            Validation.isEmailAddress(email2, true);
 
                         }
                     });
@@ -280,7 +281,7 @@ public class Home extends Fragment implements AdapterView.OnItemSelectedListener
 
                         @Override
                         public void afterTextChanged(Editable s) {
-                            Validation.isPhoneNumber(mobile,true);
+                            Validation.isPhoneNumber(mobile, true);
 
                         }
                     });
@@ -294,10 +295,10 @@ public class Home extends Fragment implements AdapterView.OnItemSelectedListener
                                 if (email2.getText().toString().equals("") && mobile.getText().toString().equals("") && address.getText().toString().equals("") && landline.getText().toString().equals("")) {
                                     sp.ShowDialog(getActivity(), "please fill at least one information");
                                 } else {
-                                    String e = email2.getText().toString() != "" ? email2.getText().toString() : "";
-                                    String m = mobile.getText().toString() != "" ? "+" + countryCode + "-"+mobile.getText().toString() : "";
-                                    String l = landline.getText().toString() != "" ? landline.getText().toString() : "";
-                                    String a = address.getText().toString() != "" ? address.getText().toString() : "";
+                                    String e = email2.getText().toString();
+                                    String m = !mobile.getText().toString().equals("") ? "+" + countryCode + "-" + mobile.getText().toString() : "";
+                                    String l = landline.getText().toString();
+                                    String a = address.getText().toString();
 
                                     email1 = MultipartBody.Part.createFormData("email", e);
                                     contactNo1 = MultipartBody.Part.createFormData("contactNo", m);
@@ -357,6 +358,7 @@ public class Home extends Fragment implements AdapterView.OnItemSelectedListener
         });
 
     }
+
     public static File createPictureFile(String fileName) {
         // To be safe, you should check that the SDCard is mounted
         // using Environment.getExternalStorageState() before doing this.
@@ -375,6 +377,7 @@ public class Home extends Fragment implements AdapterView.OnItemSelectedListener
 
         return picture;
     }
+
     private void SetProfile() {
         Intent pickIntent = new Intent(Intent.ACTION_GET_CONTENT);
         pickIntent.setType("image/*");
@@ -394,37 +397,37 @@ public class Home extends Fragment implements AdapterView.OnItemSelectedListener
 
 
     private void CallApi() {
-        String City=city.getText().toString();
-        String Title=title.getText().toString();
-        String Des=description.getText().toString();
-        if(City.equals("") || Title.equals("") || Des.equals("")){
-            sp.ShowDialog(getActivity(),"fill all detail");
-        }else {
-            city1 = MultipartBody.Part.createFormData("city",City);
-            name1=MultipartBody.Part.createFormData("tenderName",Title);
-            description1=MultipartBody.Part.createFormData("description",Des);
+        String City = city.getText().toString();
+        String Title = title.getText().toString();
+        String Des = description.getText().toString();
+        if (City.equals("") || Title.equals("") || Des.equals("")) {
+            sp.ShowDialog(getActivity(), "fill all detail");
+        } else {
+            city1 = MultipartBody.Part.createFormData("city", City);
+            name1 = MultipartBody.Part.createFormData("tenderName", Title);
+            description1 = MultipartBody.Part.createFormData("description", Des);
         }
-        String token="Bearer " +sp.getPreferences(getActivity(),"token");
+        String token = "Bearer " + sp.getPreferences(getActivity(), "token");
 
-        if(image1==null) {
+        if (image1 == null) {
             image1 = MultipartBody.Part.createFormData("image", "");
         }
-        isFollowTendeer1=MultipartBody.Part.createFormData("isFollowTender","true");
+        isFollowTendeer1 = MultipartBody.Part.createFormData("isFollowTender", "true");
         sp.showProgressDialog(getActivity());
-        mApiService.uploadTender(token,email1,name1,city1,description1,contactNo1,landlineNo1,address1,countryId1,categoryId1,isFollowTendeer1,image1)
+        mApiService.uploadTender(token, email1, name1, city1, description1, contactNo1, landlineNo1, address1, countryId1, categoryId1, isFollowTendeer1, image1)
                 .enqueue(new Callback<UploadTender>() {
                     @Override
                     public void onResponse(Call<UploadTender> call, Response<UploadTender> response) {
                         sp.hideProgressDialog();
-                        Intent intent = new Intent(getActivity(),ClientDrawer.class);
+                        Intent intent = new Intent(getActivity(), ClientDrawer.class);
                         startActivity(intent);
-                        Log.i(TAG,"response---"+response.body());
+                        Log.i(TAG, "response---" + response.body());
 
                     }
 
                     @Override
                     public void onFailure(Call<UploadTender> call, Throwable t) {
-                        Log.i(TAG,"response---"+t);
+                        Log.i(TAG, "response---" + t);
 
                     }
                 });
@@ -440,12 +443,14 @@ public class Home extends Fragment implements AdapterView.OnItemSelectedListener
                 Data2 = response.body();
                 sp.hideProgressDialog();
 
-                for (int i = 0; i < Data2.size(); i++) {
-                    alpha2.add(response.body().get(i).getCategoryName().toString() + "~" + response.body().get(i).getImgString().toString());
-                    categoryName.add(response.body().get(i).getCategoryName().toString() + "~" + response.body().get(i).getId().toString());
-               }
-                categoryAdapter = new CustomList(getContext(), alpha2);
-                spinner2.setAdapter(categoryAdapter);
+                if (Data2 != null && !Data2.isEmpty() && Data2.size() > 0) {
+                    for (int i = 0; i < Data2.size(); i++) {
+                        alpha2.add(response.body().get(i).getCategoryName() + "~" + response.body().get(i).getImgString());
+                        categoryName.add(response.body().get(i).getCategoryName() + "~" + response.body().get(i).getId());
+                    }
+                    categoryAdapter = new CustomList(getContext(), alpha2);
+                    spinner2.setAdapter(categoryAdapter);
+                }
             }
 
             @Override
@@ -463,20 +468,21 @@ public class Home extends Fragment implements AdapterView.OnItemSelectedListener
             public void onResponse(Call<ArrayList<GetCountry>> call, Response<ArrayList<GetCountry>> response) {
                 Data = response.body();
                 sp.hideProgressDialog();
-                for (int i = 0; i < Data.size(); i++) {
-                    alpha.add(response.body().get(i).getCountryName().toString() + "~" + response.body().get(i).getImageString().toString());
-                    countryName.add(response.body().get(i).getCountryName().toString() + "~" + response.body().get(i).getCountryCode().toString() + "~" + response.body().get(i).getId().toString());
+                if (Data != null && !Data.isEmpty() && Data.size() > 0) {
+                    for (int i = 0; i < Data.size(); i++) {
+                        alpha.add(response.body().get(i).getCountryName() + "~" + response.body().get(i).getImageString());
+                        countryName.add(response.body().get(i).getCountryName() + "~" + response.body().get(i).getCountryCode() + "~" + response.body().get(i).getId());
+                    }
+                    Collections.sort(alpha);
+                    Collections.sort(countryName);
+                    countryAdapter = new CustomList(getContext(), alpha);
+                    spinner.setAdapter(countryAdapter);
                 }
-                Collections.sort(alpha);
-                Collections.sort(countryName);
-                countryAdapter = new CustomList(getContext(), alpha);
-
-                spinner.setAdapter(countryAdapter);
             }
 
             @Override
             public void onFailure(Call<ArrayList<GetCountry>> call, Throwable t) {
-
+                sp.hideProgressDialog();
             }
         });
     }

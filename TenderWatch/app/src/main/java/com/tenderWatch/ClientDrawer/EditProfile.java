@@ -12,6 +12,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -60,17 +61,17 @@ import static com.tenderWatch.SignUp.createPictureFile;
  * Created by lcom48 on 14/12/17.
  */
 
-public class EditProfile extends Fragment implements View.OnClickListener{
-    EditText txtCountry,txtMobileNo,txtOccupation,txtAboutMe;
+public class EditProfile extends Fragment implements View.OnClickListener {
+    EditText txtCountry, txtMobileNo, txtOccupation, txtAboutMe;
     Api mAPIService;
     private List Data;
-    CreateUser users=new CreateUser();
+    CreateUser users = new CreateUser();
     ArrayList<String> countryName;
     RelativeLayout rlCountryList;
     Button btnUpdate;
     CircleImageView profileImg;
     Intent intent;
-    String txtaboutMe,countryName1,countryCode1;
+    String txtaboutMe, countryName1, countryCode1;
     private Uri mPictureUri;
     SharedPreference sp = new SharedPreference();
     Object user;
@@ -107,23 +108,25 @@ public class EditProfile extends Fragment implements View.OnClickListener{
         txtCountry = (EditText) view.findViewById(R.id.edit_country);
         txtMobileNo = (EditText) view.findViewById(R.id.edit_mobileNo);
         txtOccupation = (EditText) view.findViewById(R.id.edit_occupation);
-        rlCountryList=(RelativeLayout) view.findViewById(R.id.edit_rlselectCountry);
-        btnUpdate=(Button) view.findViewById(R.id.edit_btn_Update);
+        rlCountryList = (RelativeLayout) view.findViewById(R.id.edit_rlselectCountry);
+        btnUpdate = (Button) view.findViewById(R.id.edit_btn_Update);
         profileImg = (CircleImageView) view.findViewById(R.id.edit_circleView);
 
-        user=sp.getPreferencesObject(getActivity());
-        Picasso.with(getApplicationContext()).load(((User) user).getProfilePhoto().toString())
+        user = sp.getPreferencesObject(getActivity());
+        Picasso.with(getApplicationContext()).load(((User) user).getProfilePhoto())
                 .placeholder(R.drawable.avtar).error(R.drawable.avtar)
                 .into(profileImg);
-        String c=((User) user).getCountry().toString();
-        txtCountry.setText(c);
-        txtaboutMe=((User) user).getAboutMe().toString();
-        if(txtaboutMe.equals("")){
-            txtaboutMe="About Me";
+        if (user != null) {
+            String c = ((User) user).getCountry();
+            txtCountry.setText(c);
         }
-        txtMobileNo.setText(((User) user).getContactNo().toString());
+        txtaboutMe = ((User) user).getAboutMe();
+        if (txtaboutMe == null || txtaboutMe.isEmpty()) {
+            txtaboutMe = "About Me";
+        }
+        txtMobileNo.setText(((User) user).getContactNo());
         txtAboutMe.setText(txtaboutMe);
-        txtOccupation.setText(((User) user).getOccupation().toString());
+        txtOccupation.setText(((User) user).getOccupation());
         InitListener();
     }
 
@@ -193,39 +196,41 @@ public class EditProfile extends Fragment implements View.OnClickListener{
     private void ApiCall() {
         File file1 = users.getProfilePhoto();
 
-        RequestBody requestFile=null;
-        String name="";
-        if(file1!=null) {
-           requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file1);
-           name= file1.getName();
+        RequestBody requestFile = null;
+        String name = "";
+        if (file1 != null) {
+            requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file1);
+            name = file1.getName();
         }
         String country = txtCountry.getText().toString();
         String mobile = txtMobileNo.getText().toString();
         String occupation = txtOccupation.getText().toString();
-        String about=txtaboutMe;
-        String Id=((User) user).getId().toString();
+        String about = txtaboutMe;
+        String Id = ((User) user).getId();
 
 
         country1 = MultipartBody.Part.createFormData("country", country);
         contactNo1 = MultipartBody.Part.createFormData("contactNo", mobile);
         occupation1 = MultipartBody.Part.createFormData("occupation", occupation);
         aboutMe1 = MultipartBody.Part.createFormData("aboutMe", about);
-        image1 = MultipartBody.Part.createFormData("image",name, requestFile);
-       String token="Bearer "+sp.getPreferences(getActivity(),"token");
-        Call<User> resultCall = mAPIService.UpdateUser(token,Id,country1, contactNo1, occupation1, aboutMe1, image1);
-       sp.showProgressDialog(getActivity());
+        image1 = MultipartBody.Part.createFormData("image", name, requestFile);
+        String token = "Bearer " + sp.getPreferences(getActivity(), "token");
+        Call<User> resultCall = mAPIService.UpdateUser(token, Id, country1, contactNo1, occupation1, aboutMe1, image1);
+        sp.showProgressDialog(getActivity());
         resultCall.enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
                 Log.i(TAG, "response register-->");
-                sp.hideProgressDialog();;
+                sp.hideProgressDialog();
+                ;
                 if (response.isSuccessful()) {
-                    sp.setPreferencesObject(getActivity(),response.body());
+                    sp.setPreferencesObject(getActivity(), response.body());
                     sp.ShowDialog(getActivity(), "Profile Update Successful");
                     intent = new Intent(getActivity(), ClientDrawer.class);
                     startActivity(intent);
                 } else {
-                    sp.ShowDialog(getActivity(), response.errorBody().source().toString().split("\"")[3]);
+                    if (!getActivity().isFinishing())
+                        sp.ShowDialog(getActivity(), response.errorBody().source().toString().split("\"")[3]);
                 }
             }
 
@@ -300,15 +305,17 @@ public class EditProfile extends Fragment implements View.OnClickListener{
                                     txtAboutMe.setText(txtaboutMe);
                                 }
                             }
-                           // user.setAboutMe(txtaboutMe);
+                            // user.setAboutMe(txtaboutMe);
                         }
                         if (data.getStringArrayListExtra("Country") != null) {
                             ArrayList<String> result = data.getStringArrayListExtra("Country");
                             Log.i(TAG, String.valueOf(result));
-                            countryName1 = result.get(0).toString().split("~")[0];
-                            countryCode1 = result.get(0).toString().split("~")[1].split("~")[0];
-                            txtCountry.setText(countryName1);
-                            txtMobileNo.setText(countryCode1 + '-');
+                            if (result != null && result.size() > 0) {
+                                countryName1 = result.get(0).split("~")[0];
+                                countryCode1 = result.get(0).split("~")[1].split("~")[0];
+                                txtCountry.setText(countryName1);
+                                txtMobileNo.setText(countryCode1 + '-');
+                            }
                         }
                     }
                     if (resultCode == Activity.RESULT_CANCELED) {
@@ -352,7 +359,8 @@ public class EditProfile extends Fragment implements View.OnClickListener{
                 // If request is cancelled, the result arrays are empty.
                 if (!(grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    getActivity().finish();                }
+                    getActivity().finish();
+                }
                 break;
             }
         }

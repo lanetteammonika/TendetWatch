@@ -42,7 +42,7 @@ public class Home extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         user= (User) sp.getPreferencesObject(getActivity());
         Picasso.with(getActivity())
-                .load(user.getProfilePhoto().toString())
+                .load(user.getProfilePhoto())
                 .into(new Target() {
                     @Override
                     public void onBitmapLoaded(final Bitmap bitmap, Picasso.LoadedFrom from) {

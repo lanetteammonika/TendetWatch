@@ -87,18 +87,18 @@ public class Category extends AppCompatActivity {
             public void onResponse(Call<ArrayList<GetCategory>> call, Response<ArrayList<GetCategory>> response) {
 
                 if (response.isSuccessful()) {
-                    Log.i("array-------", response.body().get(0).getCategoryName().toString());
+                    Log.i("array-------", response.body().get(0).getCategoryName());
                     Data = response.body();
                     for (int i = 0; i < Data.size(); i++) {
-                        String name = response.body().get(i).getCategoryName().toString();
-                        String flag = response.body().get(i).getImgString().toString();
-                        String id = response.body().get(i).getId().toString();
+                        String name = response.body().get(i).getCategoryName();
+                        String flag = response.body().get(i).getImgString();
+                        String id = response.body().get(i).getId();
                         alpha.add(name + '~' + id + '~' + flag);
                     }
 
                     for (int y = 0; y < empNo.size(); y++) {
-                        String categoryName = countryListName.get(y).toString().split("~")[0];
-                        String categoryId = countryListName.get(y).toString().split("~")[2];
+                        String categoryName = countryListName.get(y).split("~")[0];
+                        String categoryId = countryListName.get(y).split("~")[2];
                         String value = String.valueOf(categoryName.charAt(0));
 
                         countryList.add(new SectionItem(categoryName, "", categoryId, categoryId, false));
