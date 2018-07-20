@@ -1,45 +1,35 @@
 package com.tenderWatch.Drawer;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.IdRes;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
-import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
-import com.tenderWatch.Adapters.NotificationAdapter;
-import com.tenderWatch.ClientDrawer.ClientDrawer;
 import com.tenderWatch.ClientDrawer.Support;
 import com.tenderWatch.ClientDrawer.TenderList;
 import com.tenderWatch.CountryList;
 import com.tenderWatch.MainActivity;
 import com.tenderWatch.Models.ResponseNotifications;
-import com.tenderWatch.Models.Tender;
 import com.tenderWatch.Models.User;
-import com.tenderWatch.NTenderDetail;
 import com.tenderWatch.R;
 import com.tenderWatch.Retrofit.Api;
 import com.tenderWatch.Retrofit.ApiUtils;
 import com.tenderWatch.SharedPreference.SharedPreference;
-import com.tenderWatch.SignUpSelection;
 
 import java.util.ArrayList;
 

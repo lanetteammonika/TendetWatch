@@ -51,27 +51,12 @@ import retrofit2.http.Query;
 
 import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
-//let parameters: Parameters = [“email” : self.txfEmail.text!,
-//        “password” : self.txfPassword.text!,
-//        “role” : appDelegate.isClient! ? “client” : “contractor”,
-//        “deviceId”: appDelegate.token!]
-//        5:05
-////facebook
-//        5:05
-//        let param: Parameters = [“token”: email!,
-//        “role”: appDelegate.isClient! ? “client” : “contractor”]
-//        self.Login(F_LOGIN, param)
-//var G_LOGIN: String = "auth/glogin"
 
 /**
  * Created by Belal on 10/2/2017.
  */
 
 public interface Api {
-    //String BASE_URL = "https://simplifiedcoding.net/demos/";
-    //  String BASE_URL = "http://jsonplaceholder.typicode.com/";
-//    @GET("marvel")
-//    Call<List<Hero>> getHeroes();
     @POST("auth/glogin")
     @FormUrlEncoded
     Call<Register> savePostGoogle(@Field("token") String idToken,
@@ -117,8 +102,7 @@ public interface Api {
                                @Part MultipartBody.Part aboutMe,
                                @Part MultipartBody.Part role,
                                @Part MultipartBody.Part androidDeviceId,
-                               @Part MultipartBody.Part image
-    );
+                               @Part MultipartBody.Part image);
 
     @Multipart
     @POST("auth/register")
@@ -132,8 +116,7 @@ public interface Api {
                                     @Part MultipartBody.Part androidDeviceId,
                                     @Part MultipartBody.Part image,
                                     @Part MultipartBody.Part selections,
-                                    @Part MultipartBody.Part subscribe
-    );
+                                    @Part MultipartBody.Part subscribe);
 
     @FormUrlEncoded
     @HTTP(method = "DELETE", path = "users", hasBody = true)
@@ -150,14 +133,12 @@ public interface Api {
             @Part MultipartBody.Part contactNo,
             @Part MultipartBody.Part occupation,
             @Part MultipartBody.Part aboutMe,
-            @Part MultipartBody.Part image
-    );
+            @Part MultipartBody.Part image);
 
     @GET("users/{userId}")
     Call<User> getUserDetail(
             @Header("Authorization") String token,
-            @Path("userId") String userId
-    );
+            @Path("userId") String userId);
 
     @POST("users/changePassword/{userId}")
     @FormUrlEncoded
@@ -165,18 +146,15 @@ public interface Api {
             @Header("Authorization") String token,
             @Path("userId") String userId,
             @Field("oldPassword") String oldPassword,
-            @Field("newPassword") String newPassword
-    );
+            @Field("newPassword") String newPassword);
 
     @POST("tender/getTenders")
     Call<ArrayList<Tender>> getAllTender(
-            @Header("Authorization") String token
-    );
+            @Header("Authorization") String token);
 
     @POST("tender/getTenders")
     Call<ArrayList<AllContractorTender>> getAllContractorTender(
-            @Header("Authorization") String token
-    );
+            @Header("Authorization") String token);
 
     @Multipart
     @POST("tender")
@@ -192,8 +170,7 @@ public interface Api {
             @Part MultipartBody.Part country,
             @Part MultipartBody.Part category,
             @Part MultipartBody.Part isFollowTender,
-            @Part MultipartBody.Part image
-    );
+            @Part MultipartBody.Part image);
 
     @Multipart
     @PUT("tender/{tenderDetailId}")
@@ -210,72 +187,63 @@ public interface Api {
             @Part MultipartBody.Part country,
             @Part MultipartBody.Part category,
             @Part MultipartBody.Part isFollowTender,
-            @Part MultipartBody.Part image
-    );
+            @Part MultipartBody.Part image);
 
     @DELETE("tender/{tenderDetailId}")
     Call<ResponseBody> removeTender(
             @Header("Authorization") String token,
-            @Path("tenderDetailId") String id
-    );
+            @Path("tenderDetailId") String id);
 
     @GET("service/userServices")
     Call<SubScriptionResponse> getSubscriptionDetails(
-            @Header("Authorization") String token
-    );
+            @Header("Authorization") String token);
 
     @GET("notification")
     Call<ArrayList<ResponseNotifications>> getNotifications(
-            @Header("Authorization") String token
-    );
+            @Header("Authorization") String token);
 
     @FormUrlEncoded
     @HTTP(method = "DELETE", path = "notification/delete", hasBody = true)
     Call<ResponseBody> deleteNotification(@Header("Authorization") String token,
-                                          @Field("notification") ArrayList<String> notification
-    );
+                                          @Field("notification") ArrayList<String> notification);
 
     @POST("review")
     @FormUrlEncoded
     Call<ResponseRating> giveRating(
             @Header("Authorization") String token,
             @Field("user") String clientId,
-            @Field("rating") String Rating
-    );
+            @Field("rating") String Rating);
 
     @GET("tender/{tenderDetailId}")
     Call<UpdateTender> getTender(
             @Header("Authorization") String token,
-            @Path("tenderDetailId") String id
-    );
+            @Path("tenderDetailId") String id);
 
     @PUT("tender/interested/{tenderId}")
     Call<ResponseBody> callInterested(
             @Header("Authorization") String token,
-            @Path("tenderId") String id
-    );
+            @Path("tenderId") String id);
+
     @PUT("tender/favorite/{tenderId}")
     Call<UpdateTender> addFavorite(
             @Header("Authorization") String token,
-            @Path("tenderId") String id
-    );
+            @Path("tenderId") String id);
 
     @GET("tender/getTenders")
     Call<ArrayList<AllContractorTender>> getAllFavoriteTender(
-            @Header("Authorization") String token
-    );
-
+            @Header("Authorization") String token);
 
     @PUT("notification/{notificationId}")
     Call<ResponseBody> readNotification(
             @Header("Authorization") String token,
-            @Path("notificationId") String id
-    );
+            @Path("notificationId") String id);
+
     @DELETE("tender/favorite/{favoriteId}")
     Call<ResponseBody> removeFavorite(
             @Header("Authorization") String token,
-            @Path("favoriteId") String id
-    );
+            @Path("favoriteId") String id);
 
+    @POST("payments/pesapal")
+    Call<JSONObject> getPesaPalURL();
 }
 

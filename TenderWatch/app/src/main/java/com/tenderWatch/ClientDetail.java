@@ -45,15 +45,15 @@ import retrofit2.Response;
 
 public class ClientDetail extends AppCompatActivity {
     CircleImageView clientImage;
-    ImageView close,flag,eRat1,eRat2,eRat3,eRat4,eRat5,fRat1,fRat2,fRat3,fRat4,fRat5;
-    TextView email,mobile,country,occcupation,aboutMe,txtRate;
-    String sender,jsonString;
+    ImageView close, flag, eRat1, eRat2, eRat3, eRat4, eRat5, fRat1, fRat2, fRat3, fRat4, fRat5;
+    TextView email, mobile, country, occcupation, aboutMe, txtRate;
+    String sender, jsonString;
     Sender obj;
     Api mApiService;
     private List Data;
     private static final ArrayList<String> falpha = new ArrayList<String>();
     private static final ArrayList<String> fcountryName = new ArrayList<String>();
-    SharedPreference sp=new SharedPreference();
+    SharedPreference sp = new SharedPreference();
     private static final String TAG = ClientDetail.class.getSimpleName();
     String rate;
     Button btnClientSubmit;
@@ -63,29 +63,29 @@ public class ClientDetail extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.layout_client_drawer);
-        mApiService= ApiUtils.getAPIService();
-        sender=getIntent().getStringExtra("sender");
-        jsonString=getIntent().getStringExtra("data");
-        flag=(ImageView) findViewById(R.id.c_flag);
-        eRat1=(ImageView) findViewById(R.id.e_s1);
-        eRat2=(ImageView) findViewById(R.id.e_s2);
-        eRat3=(ImageView) findViewById(R.id.e_s3);
-        eRat4=(ImageView) findViewById(R.id.e_s4);
-        eRat5=(ImageView) findViewById(R.id.e_s5);
-        fRat1=(ImageView) findViewById(R.id.f_s1);
-        fRat2=(ImageView) findViewById(R.id.f_s2);
-        fRat3=(ImageView) findViewById(R.id.f_s3);
-        fRat4=(ImageView) findViewById(R.id.f_s4);
-        fRat5=(ImageView) findViewById(R.id.f_s5);
-        close=(ImageView) findViewById(R.id.img_close);
-        email=(TextView) findViewById(R.id.txt_client_email);
-        mobile=(TextView) findViewById(R.id.txt_client_mobileNo);
-        country=(TextView) findViewById(R.id.txt_client_country);
-        occcupation=(TextView) findViewById(R.id.txt_client_occupation);
-        aboutMe=(TextView) findViewById(R.id.txt_client_aboutme);
-        clientImage=(CircleImageView) findViewById(R.id.client_circleView);
-        btnClientSubmit=(Button) findViewById(R.id.btn_client_submit);
-        txtRate=(TextView) findViewById(R.id.txt_avgRate);
+        mApiService = ApiUtils.getAPIService();
+        sender = getIntent().getStringExtra("sender");
+        jsonString = getIntent().getStringExtra("data");
+        flag = (ImageView) findViewById(R.id.c_flag);
+        eRat1 = (ImageView) findViewById(R.id.e_s1);
+        eRat2 = (ImageView) findViewById(R.id.e_s2);
+        eRat3 = (ImageView) findViewById(R.id.e_s3);
+        eRat4 = (ImageView) findViewById(R.id.e_s4);
+        eRat5 = (ImageView) findViewById(R.id.e_s5);
+        fRat1 = (ImageView) findViewById(R.id.f_s1);
+        fRat2 = (ImageView) findViewById(R.id.f_s2);
+        fRat3 = (ImageView) findViewById(R.id.f_s3);
+        fRat4 = (ImageView) findViewById(R.id.f_s4);
+        fRat5 = (ImageView) findViewById(R.id.f_s5);
+        close = (ImageView) findViewById(R.id.img_close);
+        email = (TextView) findViewById(R.id.txt_client_email);
+        mobile = (TextView) findViewById(R.id.txt_client_mobileNo);
+        country = (TextView) findViewById(R.id.txt_client_country);
+        occcupation = (TextView) findViewById(R.id.txt_client_occupation);
+        aboutMe = (TextView) findViewById(R.id.txt_client_aboutme);
+        clientImage = (CircleImageView) findViewById(R.id.client_circleView);
+        btnClientSubmit = (Button) findViewById(R.id.btn_client_submit);
+        txtRate = (TextView) findViewById(R.id.txt_avgRate);
 
         eRat1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -95,7 +95,7 @@ public class ClientDetail extends AppCompatActivity {
                 fRat3.setVisibility(View.GONE);
                 fRat4.setVisibility(View.GONE);
                 fRat5.setVisibility(View.GONE);
-                rate= String.valueOf(1);
+                rate = String.valueOf(1);
             }
         });
         eRat2.setOnClickListener(new View.OnClickListener() {
@@ -106,7 +106,7 @@ public class ClientDetail extends AppCompatActivity {
                 fRat3.setVisibility(View.GONE);
                 fRat4.setVisibility(View.GONE);
                 fRat5.setVisibility(View.GONE);
-                rate= String.valueOf(2);
+                rate = String.valueOf(2);
             }
         });
         eRat3.setOnClickListener(new View.OnClickListener() {
@@ -117,7 +117,7 @@ public class ClientDetail extends AppCompatActivity {
                 fRat3.setVisibility(View.VISIBLE);
                 fRat4.setVisibility(View.GONE);
                 fRat5.setVisibility(View.GONE);
-                rate= String.valueOf(3);
+                rate = String.valueOf(3);
             }
         });
         eRat4.setOnClickListener(new View.OnClickListener() {
@@ -128,7 +128,7 @@ public class ClientDetail extends AppCompatActivity {
                 fRat3.setVisibility(View.VISIBLE);
                 fRat4.setVisibility(View.VISIBLE);
                 fRat5.setVisibility(View.GONE);
-                rate= String.valueOf(4);
+                rate = String.valueOf(4);
             }
         });
         eRat5.setOnClickListener(new View.OnClickListener() {
@@ -139,7 +139,7 @@ public class ClientDetail extends AppCompatActivity {
                 fRat3.setVisibility(View.VISIBLE);
                 fRat4.setVisibility(View.VISIBLE);
                 fRat5.setVisibility(View.VISIBLE);
-                rate= String.valueOf(5);
+                rate = String.valueOf(5);
             }
         });
         DisplayDetail();
@@ -157,17 +157,18 @@ public class ClientDetail extends AppCompatActivity {
             }
         });
     }
+
     private void GetUser() {
         String token = "Bearer " + sp.getPreferences(ClientDetail.this, "token");
-        String userId= obj.getId();
+        String userId = obj.getId();
         sp.showProgressDialog(ClientDetail.this);
 
-        mApiService.getUserDetail(token,userId).enqueue(new Callback<User>() {
+        mApiService.getUserDetail(token, userId).enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
                 sp.hideProgressDialog();
                 Log.i(TAG, "post submitted to API." + response);
-                txtRate.setText(response.body().getAvg().toString()+"/5.0");
+                txtRate.setText(response.body().getAvg().toString() + "/5.0");
             }
 
             @Override
@@ -179,11 +180,11 @@ public class ClientDetail extends AppCompatActivity {
 
 
     private void callRatingApi() {
-        String token="Bearer " + sp.getPreferences(ClientDetail.this,"token");
-        String clientId= obj.getId();
+        String token = "Bearer " + sp.getPreferences(ClientDetail.this, "token");
+        String clientId = obj.getId();
         sp.showProgressDialog(ClientDetail.this);
 
-        mApiService.giveRating(token,clientId,rate).enqueue(new Callback<ResponseRating>() {
+        mApiService.giveRating(token, clientId, rate).enqueue(new Callback<ResponseRating>() {
             @Override
             public void onResponse(Call<ResponseRating> call, Response<ResponseRating> response) {
                 sp.hideProgressDialog();
@@ -204,7 +205,7 @@ public class ClientDetail extends AppCompatActivity {
             @SuppressLint("ResourceType")
             @Override
             public void onResponse(Call<ArrayList<GetCountry>> call, Response<ArrayList<GetCountry>> response) {
-               sp.hideProgressDialog();
+                sp.hideProgressDialog();
                 Data = response.body();
                 for (int i = 0; i < Data.size(); i++) {
                     falpha.add(response.body().get(i).getCountryName() + "~" + response.body().get(i).getImageString());
@@ -213,9 +214,9 @@ public class ClientDetail extends AppCompatActivity {
                 Collections.sort(falpha);
                 Collections.sort(fcountryName);
                 for (int i = 0; i < Data.size(); i++) {
-                    if(fcountryName.get(i).split("~")[0].equals(obj.getCountry())){
+                    if (fcountryName.get(i).split("~")[0].equals(obj.getCountry())) {
                         country.setText(fcountryName.get(i).split("~")[0]);
-                        Bitmap bitmap=StringToBitMap(fcountryName.get(i).split("~")[2]);
+                        Bitmap bitmap = StringToBitMap(fcountryName.get(i).split("~")[2]);
                         flag.setImageBitmap(bitmap);
                         break;
                     }
@@ -229,6 +230,7 @@ public class ClientDetail extends AppCompatActivity {
         });
 
     }
+
     @Override
     public void onBackPressed() {
         if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
@@ -251,9 +253,10 @@ public class ClientDetail extends AppCompatActivity {
 
     private void DisplayDetail() {
 
-        Gson gson=new Gson();
-        obj=gson.fromJson(sender, Sender.class);
-        Picasso.with(this).load(obj.getProfilePhoto()).into(clientImage);FGetAllCountry();
+        Gson gson = new Gson();
+        obj = gson.fromJson(sender, Sender.class);
+        Picasso.with(this).load(obj.getProfilePhoto()).into(clientImage);
+        FGetAllCountry();
         email.setText(obj.getEmail());
         mobile.setText(obj.getContactNo());
         occcupation.setText(obj.getOccupation());
@@ -262,7 +265,7 @@ public class ClientDetail extends AppCompatActivity {
             public void onClick(View view) {
                 final Dialog dialog = new Dialog(ClientDetail.this);
                 dialog.setContentView(R.layout.client_detail);
-                final TextView code=(TextView) dialog.findViewById(R.id.dialog_aboutMe);
+                final TextView code = (TextView) dialog.findViewById(R.id.dialog_aboutMe);
                 code.setText(obj.getAboutMe());
                 dialog.show();
             }

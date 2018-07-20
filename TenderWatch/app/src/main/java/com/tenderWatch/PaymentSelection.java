@@ -58,7 +58,7 @@ import retrofit2.Response;
 import static java.security.AccessController.getContext;
 
 public class PaymentSelection extends AppCompatActivity implements View.OnClickListener {
-    Button btnPaypal, btnCreditCard, btnGooglePay, btnBank;
+    Button btnPaypal, btnCreditCard, btnGooglePay, btnBank, btnPesaPal;
     public static final int PAYPAL_REQUEST_CODE = 123;
     private static PayPalConfiguration config = new PayPalConfiguration()
             // Start with mock environment.  When ready, switch to sandbox (ENVIRONMENT_SANDBOX)
@@ -72,11 +72,11 @@ public class PaymentSelection extends AppCompatActivity implements View.OnClickL
     private static final ArrayList<String> countryName = new ArrayList<String>();
     Api mApiService;
     CustomList countryAdapter;
-    ImageView down_arrow, up_arrow, down_arrow2, up_arrow2, down_arrow3, up_arrow3,tenderImage;
-    LinearLayout country_home,llbankType;
-    ListView spinner,spinnerbanktype;
-    private ArrayAdapter<String> listAdapter ;
-    SharedPreference sp=new SharedPreference();
+    ImageView down_arrow, up_arrow, down_arrow2, up_arrow2, down_arrow3, up_arrow3, tenderImage;
+    LinearLayout country_home, llbankType;
+    ListView spinner, spinnerbanktype;
+    private ArrayAdapter<String> listAdapter;
+    SharedPreference sp = new SharedPreference();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,12 +86,14 @@ public class PaymentSelection extends AppCompatActivity implements View.OnClickL
         btnCreditCard = (Button) findViewById(R.id.payment_creditcard);
         btnGooglePay = (Button) findViewById(R.id.payment_googlepay);
         btnBank = (Button) findViewById(R.id.payment_bank);
+        btnPesaPal = (Button) findViewById(R.id.payment_pesapal);
         btnPaypal.setOnClickListener(this);
         btnCreditCard.setOnClickListener(this);
         btnGooglePay.setOnClickListener(this);
         btnBank.setOnClickListener(this);
+        btnPesaPal.setOnClickListener(this);
         Intent intent = new Intent(this, PayPalService.class);
-        mApiService= ApiUtils.getAPIService();
+        mApiService = ApiUtils.getAPIService();
 
         intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, config);
 
@@ -110,7 +112,7 @@ public class PaymentSelection extends AppCompatActivity implements View.OnClickL
                 getPayment();
                 break;
             case R.id.payment_creditcard:
-                Intent i=new Intent(PaymentSelection.this,CardDemoDesign.class);
+                Intent i = new Intent(PaymentSelection.this, CardDemoDesign.class);
                 startActivity(i);
                 //call();
 //                curl https://api.stripe.com/v1/transfers \
@@ -153,6 +155,8 @@ public class PaymentSelection extends AppCompatActivity implements View.OnClickL
                 });
                 //GetBankDetail();
                 break;
+            case R.id.payment_pesapal:
+                break;
         }
     }
 
@@ -160,17 +164,17 @@ public class PaymentSelection extends AppCompatActivity implements View.OnClickL
         final Dialog dialog = new Dialog(PaymentSelection.this);
         dialog.setContentView(R.layout.bankdetail);
 
-        spinner=(ListView) dialog.findViewById(R.id.spinner3);
-        country_home=(LinearLayout) dialog.findViewById(R.id.category_home) ;
-        down_arrow=(ImageView) dialog.findViewById(R.id.bank_down_arrow);
-        up_arrow=(ImageView) dialog.findViewById(R.id.bank_up_arrow);
-        down_arrow2=(ImageView) dialog.findViewById(R.id.bank_down_arrow2);
-        up_arrow2=(ImageView) dialog.findViewById(R.id.bank_up_arrow2);
-        spinnerbanktype=(ListView) dialog.findViewById(R.id.spinner4);
-        llbankType=(LinearLayout) dialog.findViewById(R.id.bank_type);
-        String[] planets = new String[] { "Individual" ,"Company"};
+        spinner = (ListView) dialog.findViewById(R.id.spinner3);
+        country_home = (LinearLayout) dialog.findViewById(R.id.category_home);
+        down_arrow = (ImageView) dialog.findViewById(R.id.bank_down_arrow);
+        up_arrow = (ImageView) dialog.findViewById(R.id.bank_up_arrow);
+        down_arrow2 = (ImageView) dialog.findViewById(R.id.bank_down_arrow2);
+        up_arrow2 = (ImageView) dialog.findViewById(R.id.bank_up_arrow2);
+        spinnerbanktype = (ListView) dialog.findViewById(R.id.spinner4);
+        llbankType = (LinearLayout) dialog.findViewById(R.id.bank_type);
+        String[] planets = new String[]{"Individual", "Company"};
         ArrayList<String> planetList = new ArrayList<String>();
-        planetList.addAll( Arrays.asList(planets) );
+        planetList.addAll(Arrays.asList(planets));
         // Create ArrayAdapter using the planet list.
         listAdapter = new ArrayAdapter<String>(this, R.layout.simplerow, planetList);
         sp.showProgressDialog(PaymentSelection.this);
