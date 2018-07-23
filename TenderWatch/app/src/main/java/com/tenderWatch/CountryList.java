@@ -61,8 +61,9 @@ public class CountryList extends AppCompatActivity {
     SharedPreference sp = new SharedPreference();
     ArrayList<String> a_country = new ArrayList<String>();
     ImageView imgClose;
-
     int pos = 0;
+    int subscriptionType = 0;
+    private int selectedAmount = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -241,33 +242,38 @@ public class CountryList extends AppCompatActivity {
                     }
                 }
 
-                if (txtSelectedContract.getText().toString().equals("Trial Version")) {
+                if (txtSelectedContract.getText().toString().equalsIgnoreCase("Trial Version")) {
                     if (a_country.size() > 1) {
                         if (check == null) {
-                            ss.ShowDialog(CountryList.this, "During Free Trial Period you can choose only 1 country");
+                            ss.ShowDialog(CountryList.this, "During free trial period you can choose only 1 country");
                         } else {
-                            ss.ShowDialog(CountryList.this, "Choose one country");
+                            ss.ShowDialog(CountryList.this, "Please choose one country");
                         }
                     } else {
                         if (check == null) {
-                            intent = new Intent(CountryList.this, Category.class);
-                            intent.putExtra("sub", s);
-                            intent.putExtra("CountryAtContractor", a_countryID);
-                            intent.putExtra("Country", a_country);
-                            intent.putExtra("version", txtSelectedContract.getText().toString());
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    adapter.setItemSelected(pos);
-                                }
-                            });
+                            if (a_country == null || a_country.size() == 0) {
+                                ss.ShowDialog(CountryList.this, "Please choose one country");
+                            } else {
+                                intent = new Intent(CountryList.this, Category.class);
+                                intent.putExtra("sub", s);
+                                intent.putExtra("CountryAtContractor", a_countryID);
+                                intent.putExtra("Country", a_country);
+                                intent.putExtra("version", txtSelectedContract.getText().toString());
+                                intent.putExtra("amount", selectedAmount);
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+//                                        adapter.setItemSelected(pos);
+                                    }
+                                });
 
-                            countryList.clear();
-                            alpha2.clear();
-                            list.clear();
-                            alpha.clear();
-                            startActivity(intent);
-                            finish();
+                                countryList.clear();
+                                alpha2.clear();
+                                list.clear();
+                                alpha.clear();
+                                startActivity(intent);
+                                finish();
+                            }
                         } else {
                             intent = new Intent(CountryList.this, SignUp.class);
                             intent.putExtra("Country", a_country);
@@ -287,24 +293,28 @@ public class CountryList extends AppCompatActivity {
                         }
                     }
                 } else {
-                    intent = new Intent(CountryList.this, Category.class);
-                    intent.putExtra("sub", s);
-                    intent.putExtra("CountryAtContractor", a_countryID);
-                    intent.putExtra("Country", a_country);
-                    intent.putExtra("version", txtSelectedContract.getText().toString());
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            adapter.setItemSelected(pos);
-                        }
-                    });
-
-                    countryList.clear();
-                    alpha2.clear();
-                    list.clear();
-                    alpha.clear();
-                    startActivity(intent);
-                    finish();
+                    if (a_country == null || a_country.size() == 0) {
+                        ss.ShowDialog(CountryList.this, "Please choose one country");
+                    } else {
+                        intent = new Intent(CountryList.this, Category.class);
+                        intent.putExtra("sub", s);
+                        intent.putExtra("CountryAtContractor", a_countryID);
+                        intent.putExtra("Country", a_country);
+                        intent.putExtra("version", txtSelectedContract.getText().toString());
+                        intent.putExtra("amount", selectedAmount);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+//                                adapter.setItemSelected(pos);
+                            }
+                        });
+                        countryList.clear();
+                        alpha2.clear();
+                        list.clear();
+                        alpha.clear();
+                        startActivity(intent);
+                        finish();
+                    }
                 }
             }
         });
@@ -339,6 +349,7 @@ public class CountryList extends AppCompatActivity {
     private void CallContractorSignUp() {
         final Dialog dialog = new Dialog(CountryList.this);
         dialog.setContentView(R.layout.select_contract);
+        dialog.setCancelable(false);
         lltext.setVisibility(View.VISIBLE);
         final TextView txtTrial = (TextView) dialog.findViewById(R.id.txt_trial);
         TextView txtMonth = (TextView) dialog.findViewById(R.id.txt_month);
@@ -350,6 +361,7 @@ public class CountryList extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 txtSelectedContract.setText("Trial Version");
+                selectedAmount = 0;
                 dialog.dismiss();
             }
         });
@@ -357,6 +369,7 @@ public class CountryList extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 txtSelectedContract.setText("$15 / month");
+                selectedAmount = 15;
                 dialog.dismiss();
             }
         });
@@ -364,6 +377,7 @@ public class CountryList extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 txtSelectedContract.setText("$120 / year");
+                selectedAmount = 120;
                 dialog.dismiss();
             }
         });
@@ -491,10 +505,4 @@ public class CountryList extends AppCompatActivity {
             return false;
         }
     }
-
-
-    /**
-     * Adapter
-     */
-
 }

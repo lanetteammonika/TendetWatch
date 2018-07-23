@@ -1,5 +1,6 @@
 package com.tenderWatch.Drawer;
 
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -10,8 +11,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
 import com.tenderWatch.Models.SubScriptionResponse;
+import com.tenderWatch.Models.User;
 import com.tenderWatch.R;
 import com.tenderWatch.Retrofit.Api;
 import com.tenderWatch.Retrofit.ApiUtils;
@@ -28,8 +31,9 @@ import retrofit2.Response;
 public class SubScription extends Fragment {
     Api mAPIServices;
     private static final String TAG = SubScription.class.getSimpleName();
-    SharedPreference sp=new SharedPreference();
+    SharedPreference sp = new SharedPreference();
     WebView mWebView;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -41,31 +45,54 @@ public class SubScription extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mAPIServices= ApiUtils.getAPIService();
+        mAPIServices = ApiUtils.getAPIService();
         getActivity().setTitle("SubScription Detail");
-        mWebView= (WebView) view.findViewById(R.id.webview23);
+        mWebView = (WebView) view.findViewById(R.id.webview23);
         mWebView.getSettings().setJavaScriptEnabled(true);
         mWebView.setBackgroundColor(Color.TRANSPARENT);
 //        sp.showProgressDialog(getActivity());
-//
-//        String token = "Bearer " + sp.getPreferences(getActivity(), "token");
-//        mAPIServices.getSubscriptionDetails(token).enqueue(new Callback<SubScriptionResponse>() {
-//            @Override
-//            public void onResponse(Call<SubScriptionResponse> call, Response<SubScriptionResponse> response) {
-//                Log.i(TAG, "post submitted to API." + response);
-//                sp.hideProgressDialog();
-//              mWebView.loadUrl("http://docs.google.com/gview?embedded=true&url="+response.body().getInvoiceURL().toString());
-//
-//                //  new DownloadTask(getActivity(), response.body().getInvoiceURL().toString());
-//            }
-//
-//            @Override
-//            public void onFailure(Call<SubScriptionResponse> call, Throwable t) {
-//                sp.hideProgressDialog();
-//
-//                Log.i(TAG, "post submitted to API." + t);
-//            }
-//        });
+
+        User user = (User) sp.getPreferencesObject(getActivity());
+
+        mWebView.loadUrl(user.getInvoiceURL());
+
+        mWebView.setWebViewClient(new WebViewClient(){
+            @Override
+            public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                sp.showProgressDialog(getActivity());
+                super.onPageStarted(view, url, favicon);
+            }
+
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                sp.hideProgressDialog();
+                super.onPageFinished(view, url);
+            }
+
+            @Override
+            public void onLoadResource(WebView view, String url) {
+                super.onLoadResource(view, url);
+            }
+        });
+
+        /*String token = "Bearer " + sp.getPreferences(getActivity(), "token");
+        mAPIServices.getSubscriptionDetails(token).enqueue(new Callback<SubScriptionResponse>() {
+            @Override
+            public void onResponse(Call<SubScriptionResponse> call, Response<SubScriptionResponse> response) {
+                Log.i(TAG, "post submitted to API." + response);
+                sp.hideProgressDialog();
+              mWebView.loadUrl("http://docs.google.com/gview?embedded=true&url="+response.body().getInvoiceURL().toString());
+
+                //  new DownloadTask(getActivity(), response.body().getInvoiceURL().toString());
+            }
+
+            @Override
+            public void onFailure(Call<SubScriptionResponse> call, Throwable t) {
+                sp.hideProgressDialog();
+
+                Log.i(TAG, "post submitted to API." + t);
+            }
+        });*/
     }
 }
 

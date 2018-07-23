@@ -296,9 +296,9 @@ public class User {
 
     public class PesapalDetail {
 
-        /*@SerializedName("selections")
+        @SerializedName("selections")
         @Expose
-        private JSONObject selections;*/
+        private JSONObject selections;
         @SerializedName("subscriptionPackage")
         @Expose
         private String subscriptionPackage;
@@ -315,13 +315,13 @@ public class User {
         @Expose
         private String pesapalStatus;
 
-       /* public JSONObject getSelections() {
+        public JSONObject getSelections() {
             return selections;
         }
 
         public void setSelections(JSONObject selections) {
             this.selections = selections;
-        }*/
+        }
 
         public String getSubscriptionPackage() {
             return subscriptionPackage;

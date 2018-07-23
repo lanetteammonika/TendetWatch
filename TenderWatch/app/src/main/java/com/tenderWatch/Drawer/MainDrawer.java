@@ -120,14 +120,14 @@ public class MainDrawer extends AppCompatActivity implements NavigationView.OnNa
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+//            super.onBackPressed();
         }
         // Checking for fragment count on backstack
         if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
             getSupportFragmentManager().popBackStack();
         } else if (!doubleBackToExitPressedOnce) {
             this.doubleBackToExitPressedOnce = true;
-            Toast.makeText(this, "Please click BACK again to exit.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Please click Back again to exit.", Toast.LENGTH_SHORT).show();
             new Handler().postDelayed(new Runnable() {
 
                 @Override
@@ -137,7 +137,6 @@ public class MainDrawer extends AppCompatActivity implements NavigationView.OnNa
             }, 2000);
         } else {
             super.onBackPressed();
-            return;
         }
     }
 

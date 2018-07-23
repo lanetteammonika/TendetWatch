@@ -71,6 +71,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
     SharedPreference sp = new SharedPreference();
 
     User user;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -173,13 +174,13 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
                 sp.hideProgressDialog();
                 String accessToken = loginResult.getAccessToken().getToken();
                 String deviceId = FirebaseInstanceId.getInstance().getToken();
-                String role = sp.getPreferences(Login.this, "role");
+                String role = SharedPreference.getPreferences(Login.this, "role");
                 savePostFB(accessToken, role, deviceId);
                 if (AccessToken.getCurrentAccessToken() != null) {
                     Log.v("User is login", "YES");
 
                 }
-                sp.setPreferences(getApplicationContext(), "Login", "FBYES");
+                SharedPreference.setPreferences(getApplicationContext(), "Login", "FBYES");
 
             }
 
@@ -244,16 +245,16 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
             public void onResponse(Call<Register> call, Response<Register> response) {
                 sp.hideProgressDialog();
                 if (response.isSuccessful()) {
-                    sp.setPreferencesObject(Login.this,response.body().getUser());
-                    Object user=sp.getPreferencesObject(Login.this);
-                    String role = sp.getPreferences(Login.this, "role");
-                    if(role.equals("client")){
+                    SharedPreference.setPreferencesObject(Login.this, response.body().getUser());
+                    Object user = SharedPreference.getPreferencesObject(Login.this);
+                    String role = SharedPreference.getPreferences(Login.this, "role");
+                    if (role.equals("client")) {
                         intent = new Intent(Login.this, ClientDrawer.class);
 
-                    }else {
+                    } else {
                         intent = new Intent(Login.this, MainDrawer.class);
                     }
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
 
                     startActivity(intent);
                     Log.i(TAG, "post submitted to API." + response.body().toString());
@@ -278,16 +279,16 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
             public void onResponse(Call<Register> call, Response<Register> response) {
                 sp.hideProgressDialog();
                 if (response.isSuccessful()) {
-                    sp.setPreferencesObject(Login.this,response.body().getUser());
-                    Object user=sp.getPreferencesObject(Login.this);
-                    String role = sp.getPreferences(Login.this, "role");
-                    if(role.equals("client")){
+                    SharedPreference.setPreferencesObject(Login.this, response.body().getUser());
+                    Object user = SharedPreference.getPreferencesObject(Login.this);
+                    String role = SharedPreference.getPreferences(Login.this, "role");
+                    if (role.equals("client")) {
                         intent = new Intent(Login.this, ClientDrawer.class);
 
-                    }else {
+                    } else {
                         intent = new Intent(Login.this, MainDrawer.class);
                     }
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
 
                     startActivity(intent);
                     Log.i(TAG, "post submitted to API." + response.body().toString());
@@ -305,45 +306,53 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
     }
 
     public void sendPost(String email, String password, String role, final String deviceId) {
-        sp.showProgressDialog(Login.this);
+        if (!this.isFinishing())
+            sp.showProgressDialog(Login.this);
 
         mAPIService.savePost(email, password, role, deviceId).enqueue(new Callback<Register>() {
             @Override
             public void onResponse(Call<Register> call, Response<Register> response) {
                 sp.hideProgressDialog();
+
+                if (response.body() == null)
+                    return;
+
                 if (response.isSuccessful()) {
-                    sp.setPreferences(Login.this,"androidId",deviceId);
-                    sp.setPreferencesObject(Login.this,response.body().getUser());
-                    Object user=sp.getPreferencesObject(Login.this);
-                    String role = sp.getPreferences(Login.this, "role");
-                    String profile=response.body().getUser().getProfilePhoto().toString();
-                    String email=response.body().getUser().getEmail().toString();
-                    String id=response.body().getUser().getId().toString();
-                    String token=response.body().getToken().toString();
-                    sp.setPreferences(Login.this,"profile",profile);
-                    sp.setPreferences(Login.this,"email",email);
-                    sp.setPreferences(Login.this,"id",id);
-                    sp.setPreferences(Login.this,"token",token);
+                    SharedPreference.setPreferences(Login.this, "androidId", deviceId);
+                    SharedPreference.setPreferencesObject(Login.this, response.body().getUser());
+                    Object user = SharedPreference.getPreferencesObject(Login.this);
+                    String role = SharedPreference.getPreferences(Login.this, "role");
+                    String profile = response.body().getUser().getProfilePhoto();
+                    String email = response.body().getUser().getEmail();
+                    String id = response.body().getUser().getId();
+                    String token = response.body().getToken();
+                    SharedPreference.setPreferences(Login.this, "profile", profile);
+                    SharedPreference.setPreferences(Login.this, "email", email);
+                    SharedPreference.setPreferences(Login.this, "id", id);
+                    SharedPreference.setPreferences(Login.this, "token", token);
 
-                    if(role.equals("client")){
-                        intent = new Intent(Login.this, ClientDrawer.class);
+                    if (role != null) {
+                        if (role.equalsIgnoreCase("client")) {
+                            intent = new Intent(Login.this, ClientDrawer.class);
 
-                    }else {
-                        intent = new Intent(Login.this, MainDrawer.class);
+                        } else {
+                            intent = new Intent(Login.this, MainDrawer.class);
+                        }
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+
+                        startActivity(intent);
+                        finish();
                     }
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
-
-                    startActivity(intent);
-                    finish();
-                    Log.i(TAG, "post submitted to API." + response.body().toString());
                 } else {
-                    sp.ShowDialog(Login.this, response.errorBody().source().toString().split("\"")[3]);
+                    if (!Login.this.isFinishing())
+                        sp.ShowDialog(Login.this, response.errorBody().source().toString().split("\"")[3]);
                 }
             }
 
             @Override
             public void onFailure(Call<Register> call, Throwable t) {
-                sp.ShowDialog(Login.this, "Server is down. Come back later!!");
+                if (!Login.this.isFinishing())
+                    sp.ShowDialog(Login.this, "Server is down. Come back later!!");
                 Log.e(TAG, "Unable to submit post to API.");
             }
         });
@@ -354,11 +363,11 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
         //  if(sp.getPreferences(Login.this,"Login") == null) {
         if (result.isSuccess()) {
             SharedPreference sp = new SharedPreference();
-            sp.setPreferences(getApplicationContext(), "Login", "GOOGLEYES");
+            SharedPreference.setPreferences(getApplicationContext(), "Login", "GOOGLEYES");
             GoogleSignInAccount acct = result.getSignInAccount();
             String idToken = acct.getIdToken();
             String deviceId = FirebaseInstanceId.getInstance().getToken();
-            String role = sp.getPreferences(Login.this, "role");
+            String role = SharedPreference.getPreferences(Login.this, "role");
             sendPostGoogle(idToken, role, deviceId);
             // Show signed-in UI.
             Log.d(TAG, "idToken:" + idToken);
@@ -423,7 +432,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Go
         String email = txtEmail.getText().toString();
         String password = txtPassword.getText().toString();
         SharedPreference sp = new SharedPreference();
-        String role = sp.getPreferences(Login.this, "role");
+        String role = SharedPreference.getPreferences(Login.this, "role");
         //user =sp.getPreferencesObject(Login.this);
         String deviceId = FirebaseInstanceId.getInstance().getToken();
         sendPost(email, password, role, deviceId);

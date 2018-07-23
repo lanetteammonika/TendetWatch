@@ -244,6 +244,9 @@ public interface Api {
             @Path("favoriteId") String id);
 
     @POST("payments/pesapal")
-    Call<JSONObject> getPesaPalURL();
+    Call<JSONObject> getPesaPalURL(@Field("desc") String desc,
+                                   @Field("amount") int amount,
+                                   @Field("email") String email,
+                                   @Field("pesapalInfo") String pesapalInfo);
 }
 

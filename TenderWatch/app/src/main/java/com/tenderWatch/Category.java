@@ -55,12 +55,15 @@ public class Category extends AppCompatActivity {
     SharedPreference sp = new SharedPreference();
     LinearLayout back;
     TextView txtContract;
-    String contract,s;
+    String contract, s;
+    private int amount = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_category);
+
+        getDataFromIntent();
 
         lvCountry = (ListView) findViewById(R.id.lvCategory);
         btnCategory = (Button) findViewById(R.id.btn_CategoryNext);
@@ -71,21 +74,99 @@ public class Category extends AppCompatActivity {
         lvCountry.setDivider(null);
         lvCountry.clearChoices();
 
-        Intent show = getIntent();
-
-        empNo = show.getStringArrayListExtra("CountryAtContractor");
-        s=show.getStringExtra("sub");
-
-        countryListName = show.getStringArrayListExtra("Country");
-        contract = show.getStringExtra("version");
         txtContract.setText(contract);
         user.setSelections(empNo.size());
         sp.showProgressDialog(Category.this);
 
+        callApiForGetCategoryData();
+
+        lvCountry.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @SuppressLint("ResourceType")
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                bAdapter.setItemSelected(position);
+                bAdapter.setCheckedItem(position);
+            }
+        });
+
+        btnCategory.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.N)
+            @Override
+            public void onClick(View v) {
+                SharedPreference ss = new SharedPreference();
+                HashMap<String, String> items = bAdapter.getallitems();
+
+                for (Map.Entry<String, String> entry : items.entrySet()) {
+                    populateMap(map, entry.getValue().split("~")[1], entry.getValue().split("~")[2]);
+                }
+
+                if (txtContract.getText().toString().equals("Trial Version")) {
+                    if (items.size() > 1) {
+                        ss.ShowDialog(Category.this, "During Free Trial Period you can choose only 1 category");
+                    } else {
+                        if (s != null) {
+                            intent = new Intent(Category.this, PaymentSelection.class);
+                            intent.putExtra("amount", amount);
+                        } else {
+                            intent = new Intent(Category.this, Agreement.class);
+                        }
+                        user.setSubscribe(map);
+                        startActivity(intent);
+                        map.clear();
+                        finish();
+                    }
+                } else {
+                    if (map == null || map.size() == 0) {
+                        ss.ShowDialog(Category.this, "Please choose one category");
+                    } else {
+                        user.setSubscribe(map);
+                        if (s != null) {
+                            intent = new Intent(Category.this, PaymentSelection.class);
+                            intent.putExtra("amount", amount);
+                        } else {
+                            intent = new Intent(Category.this, Agreement.class);
+                        }
+                        startActivity(intent);
+                        map.clear();
+                        finish();
+                    }
+                }
+            }
+        });
+
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                intent = new Intent(Category.this, CountryList.class);
+                intent.putExtra("sub", "1234");
+                startActivity(intent);
+                finish();
+            }
+        });
+    }
+
+    public void getDataFromIntent() {
+        if (getIntent() != null && getIntent().getExtras() != null) {
+            if (getIntent().getExtras().getStringArrayList("CountryAtContractor") != null) {
+                empNo = getIntent().getExtras().getStringArrayList("CountryAtContractor");
+            }
+            if (getIntent().getExtras().getString("sub") != null) {
+                s = getIntent().getExtras().getString("sub");
+            }
+            if (getIntent().getExtras().getStringArrayList("Country") != null) {
+                countryListName = getIntent().getExtras().getStringArrayList("Country");
+            }
+            if (getIntent().getExtras().getString("version") != null) {
+                contract = getIntent().getExtras().getString("version");
+            }
+            amount = getIntent().getExtras().getInt("amount", 0);
+        }
+    }
+
+    public void callApiForGetCategoryData() {
         mAPIService.getCategoryData().enqueue(new Callback<ArrayList<GetCategory>>() {
             @Override
             public void onResponse(Call<ArrayList<GetCategory>> call, Response<ArrayList<GetCategory>> response) {
-
                 if (response.isSuccessful()) {
                     Log.i("array-------", response.body().get(0).getCategoryName());
                     Data = response.body();
@@ -154,73 +235,9 @@ public class Category extends AppCompatActivity {
             @Override
             public void onFailure(Call<ArrayList<GetCategory>> call, Throwable t) {
                 sp.ShowDialog(Category.this, "Server is down. Come back later!!");
-
                 Log.i(TAG, "post submitted to API.");
-
             }
         });
-
-        lvCountry.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @SuppressLint("ResourceType")
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position,
-                                    long id) {
-                bAdapter.setItemSelected(position);
-                bAdapter.setCheckedItem(position);
-            }
-        });
-
-        btnCategory.setOnClickListener(new View.OnClickListener() {
-            @RequiresApi(api = Build.VERSION_CODES.N)
-            @Override
-            public void onClick(View v) {
-                SharedPreference ss = new SharedPreference();
-                HashMap<String, String> items = bAdapter.getallitems();
-
-                for (Map.Entry<String, String> entry : items.entrySet()) {
-                    populateMap(map, entry.getValue().split("~")[1], entry.getValue().split("~")[2]);
-                }
-
-                if (txtContract.getText().toString().equals("Trial Version")) {
-                    if (items.size() > 1) {
-                        ss.ShowDialog(Category.this, "During Free Trial Period you can choose only 1 category");
-                    } else {
-                        if(s!=null){
-                            intent = new Intent(
-                                    Category.this, PaymentSelection.class);
-                        }else{
-                            intent = new Intent(
-                                    Category.this, Agreement.class);
-                        }
-                        user.setSubscribe(map);
-                        startActivity(intent);
-                        finish();
-                    }
-                } else {
-                    user.setSubscribe(map);
-                    if(s!=null){
-                        intent = new Intent(
-                                Category.this, PaymentSelection.class);
-                    }else{
-                    intent = new Intent(
-                            Category.this, Agreement.class);}
-                    startActivity(intent);
-                    finish();
-                }
-            }
-        });
-
-        back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                intent = new Intent(
-                        Category.this, CountryList.class);
-                intent.putExtra("sub","1234");
-                startActivity(intent);
-                finish();
-            }
-        });
-
     }
 
     @Override

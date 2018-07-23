@@ -4,17 +4,16 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
-import android.media.session.MediaSession;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.webkit.WebView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.wallet.AutoResolveHelper;
@@ -35,15 +34,16 @@ import com.stripe.android.Stripe;
 import com.stripe.android.TokenCallback;
 import com.stripe.android.model.BankAccount;
 import com.stripe.android.model.Card;
-import com.stripe.android.model.Token;
 import com.tenderWatch.Adapters.CustomList;
 import com.tenderWatch.Models.GetCountry;
+import com.tenderWatch.Models.User;
 import com.tenderWatch.Retrofit.Api;
 import com.tenderWatch.Retrofit.ApiUtils;
 import com.tenderWatch.SharedPreference.PayPalConfig;
 import com.tenderWatch.SharedPreference.SharedPreference;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -54,8 +54,6 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
-import static java.security.AccessController.getContext;
 
 public class PaymentSelection extends AppCompatActivity implements View.OnClickListener {
     Button btnPaypal, btnCreditCard, btnGooglePay, btnBank, btnPesaPal;
@@ -77,31 +75,57 @@ public class PaymentSelection extends AppCompatActivity implements View.OnClickL
     ListView spinner, spinnerbanktype;
     private ArrayAdapter<String> listAdapter;
     SharedPreference sp = new SharedPreference();
+    WebView mWebViewPesaPal;
+    LinearLayout mLlPbLoader;
+    private String selection;
+    private int amount = 0;
+    LinearLayout llToolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.payment);
+
+        getDataFromIntent();
+
         btnPaypal = (Button) findViewById(R.id.payment_paypal);
         btnCreditCard = (Button) findViewById(R.id.payment_creditcard);
         btnGooglePay = (Button) findViewById(R.id.payment_googlepay);
         btnBank = (Button) findViewById(R.id.payment_bank);
         btnPesaPal = (Button) findViewById(R.id.payment_pesapal);
+        mWebViewPesaPal = (WebView) findViewById(R.id.webview_pesapal);
+        mLlPbLoader = (LinearLayout) findViewById(R.id.ll_pb_loader);
+        llToolbar = (LinearLayout) findViewById(R.id.ll_toolbar);
+
+        mWebViewPesaPal.setVisibility(View.GONE);
+        mLlPbLoader.setVisibility(View.GONE);
+
         btnPaypal.setOnClickListener(this);
         btnCreditCard.setOnClickListener(this);
         btnGooglePay.setOnClickListener(this);
         btnBank.setOnClickListener(this);
         btnPesaPal.setOnClickListener(this);
-        Intent intent = new Intent(this, PayPalService.class);
+        llToolbar.setOnClickListener(this);
+
         mApiService = ApiUtils.getAPIService();
 
+        Intent intent = new Intent(this, PayPalService.class);
         intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, config);
-
         startService(intent);
+
         paymentsClient =
                 Wallet.getPaymentsClient(this,
                         new Wallet.WalletOptions.Builder().setEnvironment(WalletConstants.ENVIRONMENT_TEST)
                                 .build());
+    }
+
+    public void getDataFromIntent() {
+        if (getIntent() != null && getIntent().getExtras() != null) {
+            if (getIntent().getExtras().getString("selections") != null) {
+                selection = getIntent().getExtras().getString("selections");
+            }
+            amount = getIntent().getExtras().getInt("amount", 0);
+        }
     }
 
     @Override
@@ -136,7 +160,6 @@ public class PaymentSelection extends AppCompatActivity implements View.OnClickL
                 }
                 break;
             case R.id.payment_bank:
-
                 Stripe stripe = new Stripe(PaymentSelection.this);
                 stripe.setDefaultPublishableKey("pk_test_mjxYxMlj4K2WZfR6TwlHdIXW");
                 BankAccount bankAccount = new BankAccount("000123456789", "US", "usd", "110000000");
@@ -156,8 +179,32 @@ public class PaymentSelection extends AppCompatActivity implements View.OnClickL
                 //GetBankDetail();
                 break;
             case R.id.payment_pesapal:
+
+//                callPesapalURL();
+                break;
+            case R.id.ll_toolbar:
+                onBackPressed();
                 break;
         }
+    }
+
+    public void callPesapalURL() {
+        mLlPbLoader.setVisibility(View.VISIBLE);
+
+        User user = (User) sp.getPreferencesObject(PaymentSelection.this);
+
+        mApiService.getPesaPalURL("PesaPal Payment", amount, user.getEmail(), "").enqueue(new Callback<JSONObject>() {
+            @Override
+            public void onResponse(Call<JSONObject> call, Response<JSONObject> response) {
+                mLlPbLoader.setVisibility(View.GONE);
+                mWebViewPesaPal.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onFailure(Call<JSONObject> call, Throwable t) {
+                mLlPbLoader.setVisibility(View.GONE);
+            }
+        });
     }
 
     private void GetBankDetail() {

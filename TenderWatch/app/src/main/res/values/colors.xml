@@ -9,4 +9,5 @@
     <color name="colorGray">#CFCFCF</color>
     <color name="colorTender">#007bF9</color>
     <color name="transparent_grey">#00FFFFFF</color>
+    <color name="semi_transparant_gray">#7dcfcfcf</color>
 </resources>
