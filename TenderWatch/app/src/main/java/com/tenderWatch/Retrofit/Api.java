@@ -243,10 +243,12 @@ public interface Api {
             @Header("Authorization") String token,
             @Path("favoriteId") String id);
 
+    @FormUrlEncoded
     @POST("payments/pesapal")
-    Call<JSONObject> getPesaPalURL(@Field("desc") String desc,
+    Call<ResponseBody> getPesaPalURL(@Header("Authorization") String token,
+                                   @Field("desc") String desc,
                                    @Field("amount") int amount,
                                    @Field("email") String email,
-                                   @Field("pesapalInfo") String pesapalInfo);
+                                   @Field("pesapalInfo") JSONObject pesapalInfo);
 }
 

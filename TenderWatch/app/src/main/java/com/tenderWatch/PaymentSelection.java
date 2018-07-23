@@ -4,11 +4,14 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -45,12 +48,16 @@ import com.tenderWatch.SharedPreference.SharedPreference;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -77,9 +84,11 @@ public class PaymentSelection extends AppCompatActivity implements View.OnClickL
     SharedPreference sp = new SharedPreference();
     WebView mWebViewPesaPal;
     LinearLayout mLlPbLoader;
-    private String selection;
+    private HashMap<String, ArrayList<String>> selection;
     private int amount = 0;
     LinearLayout llToolbar;
+    public static HashMap<String, ArrayList<String>> map = new HashMap<String, ArrayList<String>>();
+    private int subscriptionType = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -121,10 +130,11 @@ public class PaymentSelection extends AppCompatActivity implements View.OnClickL
 
     public void getDataFromIntent() {
         if (getIntent() != null && getIntent().getExtras() != null) {
-            if (getIntent().getExtras().getString("selections") != null) {
-                selection = getIntent().getExtras().getString("selections");
+            if (getIntent().getExtras().getSerializable("selections") != null) {
+                selection = (HashMap<String, ArrayList<String>>) getIntent().getExtras().getSerializable("selections");
             }
             amount = getIntent().getExtras().getInt("amount", 0);
+            subscriptionType = getIntent().getExtras().getInt("subscriptionType", 1);
         }
     }
 
@@ -179,8 +189,7 @@ public class PaymentSelection extends AppCompatActivity implements View.OnClickL
                 //GetBankDetail();
                 break;
             case R.id.payment_pesapal:
-
-//                callPesapalURL();
+                callPesapalURL();
                 break;
             case R.id.ll_toolbar:
                 onBackPressed();
@@ -189,19 +198,79 @@ public class PaymentSelection extends AppCompatActivity implements View.OnClickL
     }
 
     public void callPesapalURL() {
+        List<String> values = new ArrayList<>();
+        JSONObject jsonObject = new JSONObject();
+        try {
+            if (selection != null && selection.size() > 0) {
+                for (String currentKey : selection.keySet()) {
+                    values = selection.get(currentKey);
+                    jsonObject.put(currentKey, values);
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        JSONObject jObj = new JSONObject();
+
+        try {
+            jObj.put("selections", jsonObject);
+            jObj.put("subscriptionPackage", subscriptionType);
+            jObj.put("register", false);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
         mLlPbLoader.setVisibility(View.VISIBLE);
 
-        User user = (User) sp.getPreferencesObject(PaymentSelection.this);
+        User user = (User) SharedPreference.getPreferencesObject(PaymentSelection.this);
 
-        mApiService.getPesaPalURL("PesaPal Payment", amount, user.getEmail(), "").enqueue(new Callback<JSONObject>() {
+        final String token = "Bearer " + SharedPreference.getPreferences(PaymentSelection.this, "token");
+
+        mApiService.getPesaPalURL(token, "PesaPal Payment", amount, user.getEmail(), jObj).enqueue(new Callback<ResponseBody>() {
+            @SuppressLint("SetJavaScriptEnabled")
             @Override
-            public void onResponse(Call<JSONObject> call, Response<JSONObject> response) {
-                mLlPbLoader.setVisibility(View.GONE);
-                mWebViewPesaPal.setVisibility(View.VISIBLE);
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                try {
+                    mLlPbLoader.setVisibility(View.GONE);
+                    String responseString = response.body().string();
+                    if (!TextUtils.isEmpty(responseString)) {
+                        if (!PaymentSelection.this.isFinishing())
+                            sp.showProgressDialog(PaymentSelection.this);
+                        mWebViewPesaPal.setVisibility(View.VISIBLE);
+                        try {
+                            JSONObject jObj = new JSONObject(responseString);
+                            String url = jObj.optString("URL");
+
+                            mWebViewPesaPal.setWebViewClient(new WebViewClient() {
+
+                                @Override
+                                public void onPageFinished(WebView view, String url) {
+                                    super.onPageFinished(view, url);
+                                    if (!PaymentSelection.this.isFinishing())
+                                        sp.hideProgressDialog();
+                                }
+
+                                @Override
+                                public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                                    super.onPageStarted(view, url, favicon);
+                                }
+                            });
+
+                            mWebViewPesaPal.getSettings().setJavaScriptEnabled(true);
+                            mWebViewPesaPal.loadUrl(url);
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
 
             @Override
-            public void onFailure(Call<JSONObject> call, Throwable t) {
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
                 mLlPbLoader.setVisibility(View.GONE);
             }
         });

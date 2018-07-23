@@ -62,7 +62,7 @@ public class CountryList extends AppCompatActivity {
     ArrayList<String> a_country = new ArrayList<String>();
     ImageView imgClose;
     int pos = 0;
-    int subscriptionType = 0;
+    int subscriptionType = 1;
     private int selectedAmount = 0;
 
     @Override
@@ -260,10 +260,11 @@ public class CountryList extends AppCompatActivity {
                                 intent.putExtra("Country", a_country);
                                 intent.putExtra("version", txtSelectedContract.getText().toString());
                                 intent.putExtra("amount", selectedAmount);
+                                intent.putExtra("subscriptionType", subscriptionType);
                                 runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-//                                        adapter.setItemSelected(pos);
+                                        adapter.setItemSelected(pos);
                                     }
                                 });
 
@@ -302,10 +303,11 @@ public class CountryList extends AppCompatActivity {
                         intent.putExtra("Country", a_country);
                         intent.putExtra("version", txtSelectedContract.getText().toString());
                         intent.putExtra("amount", selectedAmount);
+                        intent.putExtra("subscriptionType", subscriptionType);
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-//                                adapter.setItemSelected(pos);
+                                adapter.setItemSelected(pos);
                             }
                         });
                         countryList.clear();
@@ -361,6 +363,7 @@ public class CountryList extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 txtSelectedContract.setText("Trial Version");
+                subscriptionType = 1;
                 selectedAmount = 0;
                 dialog.dismiss();
             }
@@ -369,6 +372,7 @@ public class CountryList extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 txtSelectedContract.setText("$15 / month");
+                subscriptionType = 2;
                 selectedAmount = 15;
                 dialog.dismiss();
             }
@@ -377,6 +381,7 @@ public class CountryList extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 txtSelectedContract.setText("$120 / year");
+                subscriptionType = 3;
                 selectedAmount = 120;
                 dialog.dismiss();
             }

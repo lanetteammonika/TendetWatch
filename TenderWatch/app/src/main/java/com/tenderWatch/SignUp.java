@@ -194,13 +194,11 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener {
         user.setRole(role);
 
         if (sp.getPreferences(SignUp.this, "role").equals("contractor")) {
-            intent = new Intent(
-                    SignUp.this, CountryList.class);
+            intent = new Intent(SignUp.this, CountryList.class);
             finish();
             startActivityForResult(intent, 1);
         } else {
-            intent = new Intent(
-                    SignUp.this, Agreement.class);
+            intent = new Intent(SignUp.this, Agreement.class);
             finish();
             startActivityForResult(intent, 1);
         }

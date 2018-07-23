@@ -36,13 +36,13 @@ public class Category extends AppCompatActivity {
     private Api mAPIService;
     private SideSelector sideSelector = null;
     private List Data;
-    private static final ArrayList<String> alpha = new ArrayList<String>();
-    private static final ArrayList<String> alpha2 = new ArrayList<String>();
+    private static ArrayList<String> alpha = new ArrayList<String>();
+    private static ArrayList<String> alpha2 = new ArrayList<String>();
     public static final ArrayList<String> list = new ArrayList<String>();
     public static final ArrayList<String> countryId = new ArrayList<String>();
 
     String alphabetS = "";
-    private static final ArrayList<Item> countryList = new ArrayList<Item>();
+    private static ArrayList<Item> countryList = new ArrayList<Item>();
     ArrayAdapter bAdapter;
     public static char[] alphabetlist = new char[27];
     ArrayList<String> empNo, countryListName;
@@ -57,6 +57,7 @@ public class Category extends AppCompatActivity {
     TextView txtContract;
     String contract, s;
     private int amount = 0;
+    private int subscriptionType = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +78,10 @@ public class Category extends AppCompatActivity {
         txtContract.setText(contract);
         user.setSelections(empNo.size());
         sp.showProgressDialog(Category.this);
+
+        alpha = new ArrayList<>();
+        alpha2 = new ArrayList<>();
+        countryList = new ArrayList<>();
 
         callApiForGetCategoryData();
 
@@ -107,13 +112,14 @@ public class Category extends AppCompatActivity {
                         if (s != null) {
                             intent = new Intent(Category.this, PaymentSelection.class);
                             intent.putExtra("amount", amount);
+                            intent.putExtra("subscriptionType", subscriptionType);
+                            intent.putExtra("selections", map);
                         } else {
                             intent = new Intent(Category.this, Agreement.class);
                         }
                         user.setSubscribe(map);
                         startActivity(intent);
                         map.clear();
-                        finish();
                     }
                 } else {
                     if (map == null || map.size() == 0) {
@@ -123,12 +129,13 @@ public class Category extends AppCompatActivity {
                         if (s != null) {
                             intent = new Intent(Category.this, PaymentSelection.class);
                             intent.putExtra("amount", amount);
+                            intent.putExtra("subscriptionType", subscriptionType);
+                            intent.putExtra("selections", map);
                         } else {
                             intent = new Intent(Category.this, Agreement.class);
                         }
                         startActivity(intent);
                         map.clear();
-                        finish();
                     }
                 }
             }
@@ -160,6 +167,7 @@ public class Category extends AppCompatActivity {
                 contract = getIntent().getExtras().getString("version");
             }
             amount = getIntent().getExtras().getInt("amount", 0);
+            subscriptionType = getIntent().getExtras().getInt("subscriptionType", 1);
         }
     }
 

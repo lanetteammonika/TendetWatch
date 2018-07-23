@@ -78,10 +78,15 @@ public class IndexingArrayAdapter extends BaseAdapter implements SectionIndexer 
     @Override
     public int getPositionForSection(int i) {
         //String indexer= String.valueOf(SideSelector.ALPHABET[i]);
-        String indexer = String.valueOf(list.get(i));
-        Log.d(TAG, "getPositionForSection " + i);
+        int retval = 0;
+        try {
+            String indexer = String.valueOf(list.get(i));
+            Log.d(TAG, "getPositionForSection " + i);
 
-        int retval = alpha2.indexOf(indexer);
+            retval = alpha2.indexOf(indexer);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         //int retval=alpha.indexOf("G");
         // int g = (int) (getCount() * ((float) i / (float) getSections().length));
         return retval;

@@ -54,9 +54,7 @@ public class SubScription extends Fragment {
 
         User user = (User) sp.getPreferencesObject(getActivity());
 
-        mWebView.loadUrl(user.getInvoiceURL());
-
-        mWebView.setWebViewClient(new WebViewClient(){
+        mWebView.setWebViewClient(new WebViewClient() {
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 sp.showProgressDialog(getActivity());
@@ -74,6 +72,8 @@ public class SubScription extends Fragment {
                 super.onLoadResource(view, url);
             }
         });
+
+        mWebView.loadUrl(user.getInvoiceURL());
 
         /*String token = "Bearer " + sp.getPreferences(getActivity(), "token");
         mAPIServices.getSubscriptionDetails(token).enqueue(new Callback<SubScriptionResponse>() {

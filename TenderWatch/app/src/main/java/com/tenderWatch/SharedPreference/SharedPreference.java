@@ -1,5 +1,6 @@
 package com.tenderWatch.SharedPreference;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -23,6 +24,7 @@ import static com.facebook.FacebookSdk.getApplicationContext;
 
 public class SharedPreference {
     ProgressDialog mProgressDialog;
+
     public static void setPreferences(Context context, String key, String value) {
         SharedPreferences appSharedPrefs = PreferenceManager
                 .getDefaultSharedPreferences(context);
@@ -30,6 +32,7 @@ public class SharedPreference {
         prefsEditor.putString(key, value);
         prefsEditor.commit();
     }
+
     public static void removePreferences(Context context, String key) {
         SharedPreferences appSharedPrefs = PreferenceManager
                 .getDefaultSharedPreferences(context);
@@ -37,6 +40,7 @@ public class SharedPreference {
         prefsEditor.remove(key);
         prefsEditor.commit();
     }
+
     public static void setPreferencesObject(Context context, Object MyObject) {
         SharedPreferences appSharedPrefs = PreferenceManager
                 .getDefaultSharedPreferences(context);
@@ -46,6 +50,7 @@ public class SharedPreference {
         prefsEditor.putString("MyObject", json);
         prefsEditor.commit();
     }
+
     public static Object getPreferencesObject(Context context) {
         SharedPreferences appSharedPrefs = PreferenceManager
                 .getDefaultSharedPreferences(context);
@@ -55,10 +60,12 @@ public class SharedPreference {
         User obj = gson.fromJson(json, User.class);
         return obj;
     }
+
     /**
      * This method is used to get shared object
+     *
      * @param context Application context
-     * @param key shared object key
+     * @param key     shared object key
      * @return return value, for default "" asign.
      */
     public static String getPreferences(Context context, String key) {
@@ -73,7 +80,7 @@ public class SharedPreference {
         return json;
     }
 
-    public void ShowDialog(Context context, String Msg){
+    public void ShowDialog(Context context, String Msg) {
         AlertDialog.Builder builder = new AlertDialog.Builder(
                 context);
         builder.setTitle("Tender Watch");
@@ -84,20 +91,24 @@ public class SharedPreference {
                     public void onClick(DialogInterface dialog,
                                         int which) {
                         dialog.dismiss();
-                      //  Toast.makeText(getApplicationContext(),"Yes is clicked",Toast.LENGTH_LONG).show();
+                        //  Toast.makeText(getApplicationContext(),"Yes is clicked",Toast.LENGTH_LONG).show();
                     }
                 });
 
         builder.show();
     }
+
     public void showProgressDialog(Context context) {
+        if (context == null)
+            return;
         if (mProgressDialog == null) {
             mProgressDialog = new ProgressDialog(context);
             mProgressDialog.setMessage("Loading....");
             mProgressDialog.setIndeterminate(true);
         }
 
-        mProgressDialog.show();
+        if (!((Activity) context).isFinishing())
+            mProgressDialog.show();
     }
 
     public void hideProgressDialog() {
@@ -105,5 +116,5 @@ public class SharedPreference {
             mProgressDialog.hide();
         }
     }
-   // public  void ShowAlert(Context con)
+    // public  void ShowAlert(Context con)
 }
