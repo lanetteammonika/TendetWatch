@@ -125,7 +125,6 @@
                 android:layout_height="33dp"
                 android:layout_marginHorizontal="@dimen/value_30"
                 android:background="@color/colorWhite"
-                android:drawableLeft="@drawable/paypal_icon"
                 android:gravity="center"
                 android:paddingLeft="@dimen/value_40"
                 android:text="PesaPal"
@@ -152,4 +151,28 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone" />
+
+    <LinearLayout
+        android:id="@+id/ll_payment_success"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorSemiBlack"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="@dimen/value_120"
+            android:layout_height="@dimen/value_120"
+            android:layout_gravity="center"
+            android:src="@drawable/payment_success" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Payment Complete"
+            android:textColor="@color/colorWhite"
+            android:textSize="@dimen/text_20" />
+    </LinearLayout>
 </android.support.constraint.ConstraintLayout>

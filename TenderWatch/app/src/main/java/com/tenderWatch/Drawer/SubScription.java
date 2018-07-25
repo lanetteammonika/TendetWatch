@@ -34,7 +34,6 @@ public class SubScription extends Fragment {
     SharedPreference sp = new SharedPreference();
     WebView mWebView;
 
-    @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         //returning our layout file
@@ -43,7 +42,7 @@ public class SubScription extends Fragment {
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mAPIServices = ApiUtils.getAPIService();
         getActivity().setTitle("SubScription Detail");
@@ -52,7 +51,7 @@ public class SubScription extends Fragment {
         mWebView.setBackgroundColor(Color.TRANSPARENT);
 //        sp.showProgressDialog(getActivity());
 
-        User user = (User) sp.getPreferencesObject(getActivity());
+        User user = (User) SharedPreference.getPreferencesObject(getActivity());
 
         mWebView.setWebViewClient(new WebViewClient() {
             @Override
@@ -73,7 +72,7 @@ public class SubScription extends Fragment {
             }
         });
 
-        mWebView.loadUrl(user.getInvoiceURL());
+        mWebView.loadUrl("http://docs.google.com/gview?embedded=true&url=" + user.getInvoiceURL());
 
         /*String token = "Bearer " + sp.getPreferences(getActivity(), "token");
         mAPIServices.getSubscriptionDetails(token).enqueue(new Callback<SubScriptionResponse>() {

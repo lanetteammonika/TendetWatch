@@ -4,14 +4,11 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -39,17 +36,13 @@ import com.stripe.android.model.BankAccount;
 import com.stripe.android.model.Card;
 import com.tenderWatch.Adapters.CustomList;
 import com.tenderWatch.Models.GetCountry;
-import com.tenderWatch.Models.User;
 import com.tenderWatch.Retrofit.Api;
 import com.tenderWatch.Retrofit.ApiUtils;
 import com.tenderWatch.SharedPreference.PayPalConfig;
 import com.tenderWatch.SharedPreference.SharedPreference;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
-import java.io.IOException;
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -57,12 +50,14 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class PaymentSelection extends AppCompatActivity implements View.OnClickListener {
+
+    private static final String TAG = "PaymentSelection";
+
     Button btnPaypal, btnCreditCard, btnGooglePay, btnBank, btnPesaPal;
     public static final int PAYPAL_REQUEST_CODE = 123;
     private static PayPalConfiguration config = new PayPalConfiguration()
@@ -89,6 +84,7 @@ public class PaymentSelection extends AppCompatActivity implements View.OnClickL
     LinearLayout llToolbar;
     public static HashMap<String, ArrayList<String>> map = new HashMap<String, ArrayList<String>>();
     private int subscriptionType = 1;
+    LinearLayout llPaymentSucess;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,9 +101,11 @@ public class PaymentSelection extends AppCompatActivity implements View.OnClickL
         mWebViewPesaPal = (WebView) findViewById(R.id.webview_pesapal);
         mLlPbLoader = (LinearLayout) findViewById(R.id.ll_pb_loader);
         llToolbar = (LinearLayout) findViewById(R.id.ll_toolbar);
+        llPaymentSucess = (LinearLayout) findViewById(R.id.ll_payment_success);
 
         mWebViewPesaPal.setVisibility(View.GONE);
         mLlPbLoader.setVisibility(View.GONE);
+        llPaymentSucess.setVisibility(View.GONE);
 
         btnPaypal.setOnClickListener(this);
         btnCreditCard.setOnClickListener(this);
@@ -189,91 +187,16 @@ public class PaymentSelection extends AppCompatActivity implements View.OnClickL
                 //GetBankDetail();
                 break;
             case R.id.payment_pesapal:
-                callPesapalURL();
+                Intent intent = new Intent(PaymentSelection.this, PesapalListActivity.class);
+                intent.putExtra("selections", selection);
+                intent.putExtra("amount", amount);
+                intent.putExtra("subscriptionType", subscriptionType);
+                startActivity(intent);
                 break;
             case R.id.ll_toolbar:
                 onBackPressed();
                 break;
         }
-    }
-
-    public void callPesapalURL() {
-        List<String> values = new ArrayList<>();
-        JSONObject jsonObject = new JSONObject();
-        try {
-            if (selection != null && selection.size() > 0) {
-                for (String currentKey : selection.keySet()) {
-                    values = selection.get(currentKey);
-                    jsonObject.put(currentKey, values);
-                }
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        JSONObject jObj = new JSONObject();
-
-        try {
-            jObj.put("selections", jsonObject);
-            jObj.put("subscriptionPackage", subscriptionType);
-            jObj.put("register", false);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        mLlPbLoader.setVisibility(View.VISIBLE);
-
-        User user = (User) SharedPreference.getPreferencesObject(PaymentSelection.this);
-
-        final String token = "Bearer " + SharedPreference.getPreferences(PaymentSelection.this, "token");
-
-        mApiService.getPesaPalURL(token, "PesaPal Payment", amount, user.getEmail(), jObj).enqueue(new Callback<ResponseBody>() {
-            @SuppressLint("SetJavaScriptEnabled")
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                try {
-                    mLlPbLoader.setVisibility(View.GONE);
-                    String responseString = response.body().string();
-                    if (!TextUtils.isEmpty(responseString)) {
-                        if (!PaymentSelection.this.isFinishing())
-                            sp.showProgressDialog(PaymentSelection.this);
-                        mWebViewPesaPal.setVisibility(View.VISIBLE);
-                        try {
-                            JSONObject jObj = new JSONObject(responseString);
-                            String url = jObj.optString("URL");
-
-                            mWebViewPesaPal.setWebViewClient(new WebViewClient() {
-
-                                @Override
-                                public void onPageFinished(WebView view, String url) {
-                                    super.onPageFinished(view, url);
-                                    if (!PaymentSelection.this.isFinishing())
-                                        sp.hideProgressDialog();
-                                }
-
-                                @Override
-                                public void onPageStarted(WebView view, String url, Bitmap favicon) {
-                                    super.onPageStarted(view, url, favicon);
-                                }
-                            });
-
-                            mWebViewPesaPal.getSettings().setJavaScriptEnabled(true);
-                            mWebViewPesaPal.loadUrl(url);
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                mLlPbLoader.setVisibility(View.GONE);
-            }
-        });
     }
 
     private void GetBankDetail() {
